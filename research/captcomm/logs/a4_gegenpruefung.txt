@@ -1,0 +1,77 @@
+== x (walk_b; erwartet FFA99E)
+# same:1:101: 32678 Kandidaten
+# inc:101:126: 1 Kandidaten
+# same:126:201: 1 Kandidaten
+# dec:201:216: 1 Kandidaten
+# same:216:241: 1 Kandidaten
+# inc:241:261: 1 Kandidaten
+# same:261:291: 1 Kandidaten
+# dec:291:301: 1 Kandidaten
+# same:301:330: 1 Kandidaten
+FFA99E 320 363 337 362 350
+== x als 16.16-Festkomma (walk_b; erwartet FFA99E, Nachkomma FFA9A0)
+# same:1:101: 32638 Kandidaten
+# inc:101:126: 2 Kandidaten
+# same:126:201: 2 Kandidaten
+# dec:201:216: 2 Kandidaten
+# same:216:241: 2 Kandidaten
+# inc:241:261: 2 Kandidaten
+# same:261:291: 2 Kandidaten
+# dec:291:301: 2 Kandidaten
+# same:301:330: 2 Kandidaten
+FFA99C
+FFA99E
+== Tiefe als 16.16-Festkomma (walk_b; erwartet FFA9A6, Nachkomma FFA9A8)
+# same:1:41: 32666 Kandidaten
+# dec:41:71: 2 Kandidaten
+# same:71:151: 2 Kandidaten
+# inc:151:171: 2 Kandidaten
+# same:171:241: 2 Kandidaten
+# dec:241:261: 1 Kandidaten
+# same:261:291: 1 Kandidaten
+# inc:291:301: 1 Kandidaten
+# same:301:330: 1 Kandidaten
+FFA9A6 19922944 17956864 19267584 18284544 18776064
+== Hoehe (jump_b; erwartet FFA9A2)
+# same:1:82: 32672 Kandidaten
+# val:84:gt:0: 1079 Kandidaten
+# val:100:gt:20: 683 Kandidaten
+# val:130:eq:0: 2 Kandidaten
+# same:130:162: 2 Kandidaten
+# val:180:gt:20: 2 Kandidaten
+# val:215:eq:0: 2 Kandidaten
+# same:215:252: 2 Kandidaten
+# val:265:gt:20: 2 Kandidaten
+# val:300:eq:0: 2 Kandidaten
+# same:300:360: 2 Kandidaten
+FFA9A2 0 9 50 0 51 44 0
+FFA9F8 0 5 50 0 50 42 0
+== Aktion (jump_b + attack_b; erwartet FFA99A)
+# val:1:eq:0: 31096 Kandidaten
+# val:70:eq:0: 31091 Kandidaten
+# val:90:eq:10: 1 Kandidaten
+# val:140:eq:0: 1 Kandidaten
+# val:190:eq:10: 1 Kandidaten
+# val:240:eq:0: 1 Kandidaten
+FFA99A 0 10 10 0
+# val:30:eq:0: 31096 Kandidaten
+# val:50:eq:16: 1 Kandidaten
+# val:100:eq:0: 1 Kandidaten
+# val:130:eq:16: 1 Kandidaten
+# val:200:eq:0: 1 Kandidaten
+FFA99A 0 16 0 16 0
+== LP Spieler (hurt_b; erwartet FFA9D0, Kopie FFA9D2)
+# same:1:200: 32618 Kandidaten
+# noinc:1:1300: 32451 Kandidaten
+# 600:200:lt: 14 Kandidaten
+# 1000:600:lt: 4 Kandidaten
+# 1300:1000:lt: 2 Kandidaten
+FFA9D0 72 57 37 27
+FFA9D2 72 57 37 27
+== LP Gegner (attack_b; erwartet FFCA50 = Slot 18 + 0x40, Kopie FFCA52)
+# same:1:360: 32635 Kandidaten
+# noinc:360:500: 32526 Kandidaten
+# 450:400:lt: 12 Kandidaten
+# 500:450:lt: 2 Kandidaten
+# val:360:gt:0: 1 Kandidaten
+FFCA50 16 16 4 -6
