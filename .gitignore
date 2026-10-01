@@ -1,0 +1,25 @@
+# ROMs und Archive nie committen (urheberrechtlich geschuetzt)
+roms/
+*.zip
+*.7z
+*.chd
+
+# MAME-Laufzeitdaten
+cfg/
+nvram/
+memcard/
+diff/
+snap/
+sta/
+inp/
+hi/
+*.inp
+*.sta
+
+# Rohlogs koennen gross werden; nur kuratierte Ausschnitte landen im Repo
+research/captcomm/logs/raw/
+
+__pycache__/
+
+# Snapshots dienen nur der lokalen Auswertung, keine Spielgrafik ins Repo
+research/**/*.png
