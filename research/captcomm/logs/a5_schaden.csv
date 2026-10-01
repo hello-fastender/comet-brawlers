@@ -1,0 +1,43 @@
+# LP-Abnahmen in Gegnerslots (stufe aus FFAA2D, max_lp aus S+0x9A, Status S+4 vorher/nachher).
+# Captain Commando: attack, attack_b (Gegner 16 LP), combo_c (zusaetzlich Gegner 30 LP)
+# attack
+frame,slot,max_lp,lp_vorher,lp_nachher,schaden,stufe,p1_aktion,status_vorher,status_nachher,umgefallen
+587,18,16,16,13,3,1,0x10,1,3/3,nein
+604,18,16,13,9,4,2,0x10,3,3/3,nein
+621,18,16,9,4,5,3,0x10,3,3/3,nein
+636,18,16,4,-6,10,4,0x10,3,3/2,ja
+# attack_b
+frame,slot,max_lp,lp_vorher,lp_nachher,schaden,stufe,p1_aktion,status_vorher,status_nachher,umgefallen
+402,18,16,16,13,3,1,0x10,1,3/3,nein
+419,18,16,13,9,4,2,0x10,3,3/3,nein
+438,18,16,9,4,5,3,0x10,3,3/3,nein
+455,18,16,4,-6,10,4,0x10,3,3/2,ja
+# combo_c
+frame,slot,max_lp,lp_vorher,lp_nachher,schaden,stufe,p1_aktion,status_vorher,status_nachher,umgefallen
+587,18,16,16,13,3,1,0x10,1,3/3,nein
+604,18,16,13,9,4,2,0x10,3,3/3,nein
+621,18,16,9,4,5,3,0x10,3,3/3,nein
+636,18,16,4,-6,10,4,0x10,3,3/2,ja
+903,17,30,30,27,3,1,0x10,1,3/3,nein
+920,17,30,27,23,4,2,0x10,3,3/3,nein
+937,17,30,23,18,5,3,0x10,3,3/3,nein
+952,17,30,18,8,10,4,0x10,3,3/2,ja
+# attract: Demo-Abschnitt 1 (FFAA34 = 1, Captain Commando), Frames 1401-2380
+frame,slot,max_lp,lp_vorher,lp_nachher,schaden,stufe,p1_aktion,status_vorher,status_nachher,umgefallen
+1488,15,32,32,23,9,2,0x6,1,3/2,ja
+1689,15,32,23,20,3,1,0x10,1,3/3,nein
+1692,13,20,20,17,3,1,0x10,1,3/3,nein
+1720,15,32,20,16,4,2,0x10,3,3/3,nein
+1743,15,32,16,11,5,3,0x10,3,3/3,nein
+1860,13,20,17,11,6,1,0x14,1,3/2,ja
+1860,17,30,30,24,6,1,0x14,1,3/2,ja
+1879,16,16,16,10,6,1,0x14,1,3/2,ja
+# attract: Demo-Abschnitt 3 (FFAA34 = 0, Mack the Knife), Kette gegen Gegner mit 26 und 46 LP
+3610,16,26,26,23,3,1,0x10,1,3/3,nein
+3610,18,46,46,43,3,1,0x10,1,3/3,nein
+3635,16,26,23,19,4,2,0x10,1,3/3,nein
+3635,18,46,43,39,4,2,0x10,1,3/3,nein
+3666,16,26,19,14,5,3,0x10,1,3/3,nein
+3666,18,46,39,34,5,3,0x10,1,3/3,nein
+3697,16,26,14,6,8,4,0x10,1,3/2,ja
+3697,18,46,34,26,8,4,0x10,1,3/2,ja

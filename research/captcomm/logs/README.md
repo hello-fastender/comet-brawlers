@@ -13,4 +13,12 @@ Aufgabe 4 (Speicheradressen):
   `a4_lp_gegner.csv`, `a4_gegnerzahl.csv`: erzeugt von
   `scripts/belege_a4.sh`
 
+Aufgabe 5 (Messungen), erzeugt von `scripts/belege_a5.sh` nach
+`scripts/laeufe_a5.sh`:
+
+- `a5_laufen.csv`: Geschwindigkeit je Eingabesegment
+- `a5_schaden.csv`: LP-Abnahmen der Gegner mit Kombostufe
+- `a5_schlag.csv`: Zeitachse der Einzel- und Leerschläge, Trefferstopp
+- `a5_schutz.csv`: Treffer gegen die Figur, Schutzfenster, Eingriffsläufe
+
 Zeilen mit `#` sind Kommentare und trennen die Läufe.

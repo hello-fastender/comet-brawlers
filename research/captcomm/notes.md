@@ -20,7 +20,7 @@ Kennzeichnung in diesem Dokument:
 | 2. `mame -verifyroms captcomm -rompath roms` | erledigt: alle Programm-, Grafik- und Sound-ROMs korrekt, nur ein PAL-Dump weicht ab (für die Emulation unerheblich, siehe unten) |
 | 3. Headless-Lauf mit Lua (Demo, Münze/Start/Laufen/Schlagen) | erledigt: alle vier Szenarien laufen, kalibriert, bitgleich reproduzierbar |
 | 4. Speicheradressen | erledigt: x, Tiefe, Höhe, LP Spieler und Gegner, Aktion, Kombostufe, Timer gesichert (blind in variierten Gegenläufen wiedergefunden). Gegnerzahl aus der Objekttabelle gezählt (kein eigener Zähler im RAM). Bedeutung einzelner Statuswerte unsicher, siehe „Gefundene Adressen“ |
-| 5. Messungen | **offen** |
+| 5. Messungen | erledigt: alle sieben Messgrößen gesichert (Captain Commando), dazu Kombo-Fenster und Trefferstopp. Offen bleibt nur, *wie* der Schutz wirkt (Treffer ignoriert oder Gegner greift nicht an), siehe „Messungen“ |
 | 6. Übernahme gesicherter Werte nach `docs/mechanik.md` | Gerüst angelegt, noch keine Werte |
 
 ### Umgebung
@@ -60,12 +60,15 @@ Kennzeichnung in diesem Dokument:
 
 | Datei | Zweck | Getestet |
 |---|---|---|
-| `run.sh` | startet `mame captcomm -video none -sound none -nothrottle` mit `runner.lua`; optional ab Savestate | ja (MAME 0.264) |
-| `runner.lua` | spielt Szenario-Eingaben framegenau ein; schreibt Eingabe-CSV, Watch-CSV, RAM-Vollabzug (`0xFF0000–0xFFFFFF`), Liste der Eingabefelder; Snapshots/Savestates auf Wunsch | ja: Eingaben, Watch-CSV, Abzug (Größe = Frames × 65.544 Bytes), Snapshots auch mit `-video none`, Savestate. Ein Fehler behoben: `machine:save()` erwartet nur den Namen (MAME ergänzt `captcomm/` und `.sta`) |
+| `run.sh` | startet `mame captcomm -video none -sound none -nothrottle` mit `runner.lua`; optional ab Savestate; `CC_NAME` setzt einen anderen Ausgabenamen (für parametrisierte Szenarien) | ja (MAME 0.264) |
+| `runner.lua` | spielt Szenario-Eingaben framegenau ein; schreibt Eingabe-CSV, Watch-CSV, RAM-Vollabzug (`0xFF0000–0xFFFFFF`), Liste der Eingabefelder; Snapshots/Savestates auf Wunsch | ja: Eingaben, Watch-CSV, Abzug (Größe = Frames × 65.544 Bytes), Snapshots auch mit `-video none`, Savestate. Ein Fehler behoben: `machine:save()` erwartet nur den Namen (MAME ergänzt `captcomm/` und `.sta`). Optionales Feld `pokes` schreibt Werte in den RAM; nur für ausdrücklich gekennzeichnete Eingriffe (`schutz_eingriff.lua`) |
 | `scenarios/*.lua` | `attract` (Demo, 90 s), `coin_start` (Münze, Start, Figurenwahl, Savestate `ingame`), `walk`, `attack`, `jump`, `hurt`; Gegenläufe mit variierten Eingaben: `walk_b`, `jump_b`, `attack_b`, `hurt_b` | ja; Zeitpunkte am 2026-10-01 anhand von Snapshots kalibriert (siehe „Szenarien“) |
 | `ramtools.py` | `info`, `search` (verkettete Filter, u. a. `noinc`/`nodec`), `track`, `changes`, `enemies` (Gegnerzahl aus der Objekttabelle) auf den RAM-Abzügen | ja, mit synthetischem Abzug und mit echten Abzügen (`search` über 64 KiB × 40 Frames < 1 s). Fehler behoben: `search --width 4` prüfte nur durch 4 teilbare Adressen, der 68000 liest Langwörter an jeder geraden Adresse |
 | `verify_b.sh` | blinde Suchen für Aufgabe 4 in den Gegenläufen; Ausgabe in `logs/a4_gegenpruefung.txt` | ja |
 | `belege_a4.sh` | erzeugt die Logausschnitte `logs/a4_*.csv` aus den Rohabzügen | ja |
+| `messen_a5.py` | Auswertungen für Aufgabe 5: `laufen`, `treffer` (LP-Abnahmen der Gegner mit Kombostufe), `schlag` (Zeitachse eines Einzelschlags), `anim`, `schutz`, `fenster`, `reaktion` | ja |
+| `laeufe_a5.sh` | alle MAME-Läufe für Aufgabe 5 (und die Grundläufe aus 3/4) von vorn, ~1 min | ja: zweimal ausgeführt, Ergebnisse identisch |
+| `belege_a5.sh` | erzeugt `logs/a5_*.csv` | ja |
 
 Ablauf:
 
@@ -76,6 +79,7 @@ scripts/run.sh scripts/scenarios/attract.lua
 scripts/run.sh scripts/scenarios/coin_start.lua          # legt Savestate "ingame" an
 scripts/run.sh scripts/scenarios/walk.lua ingame
 python3 scripts/ramtools.py info logs/raw/walk
+scripts/laeufe_a5.sh && scripts/belege_a5.sh             # alle Läufe und Belege für Aufgabe 5
 ```
 
 Rohdaten landen in `logs/raw/` und sind git-ignoriert (ein 90-s-Vollabzug
@@ -86,9 +90,10 @@ Zeitbezug: Alle Frame-Angaben sind **lokale Frames des Runners** (1 = erster
 Frame-Callback nach Skriptstart). Zum Gegenprüfen steht in jeder Zeile
 zusätzlich die MAME-interne Screen-Frame-Nummer. Eine Eingabe, die das
 Szenario für Frame f vorsieht, setzt der Runner im Callback von Frame f−1.
-Sie ist also während Frame f aktiv. Ob das Spiel sie in Frame f oder erst
-in f+1 auswertet (Eingabelatenz), muss gemessen werden. Bei Startup-Werten
-ist diese Latenz deshalb gesondert auszuweisen.
+Sie ist also während Frame f aktiv. Gemessen (Aufgabe 5): Das Spiel
+reagiert ab Frame f+1 (Laufen, Schlag, Sprung), die Eingabelatenz beträgt
+also 1 Frame. Eingaben für Frame 1 eines Laufs kann der Runner nicht setzen
+(es gibt keinen Callback davor); sie wirken erst ab Frame 2.
 
 Geprüft mit MAME 0.264: Beim Kaltstart gilt lokaler Frame = Screen-Frame + 1
 (Frame 1 hat Screen-Frame 0). Ein Savestate ist vor dem ersten Callback
@@ -112,6 +117,12 @@ Grundlage sind Snapshots alle 10 bis 300 Frames (nur lokal unter
 | `jump` | ab `ingame`: Sprung im Stand (61), Sprung nach vorn (181, rechts 181–210), Sprung mit Angriff (301, Angriff 315). Kein Gegner in der Nähe. |
 | `hurt` | ab `ingame`: rechts 61–180 löst den Gegner aus, danach keine Eingabe. Der Gegner packt und schlägt die Figur (~450–575), wirft sie (575), sie liegt und steht auf, ab ~1000 kommen weitere Gegner. Bis 1500 sinken die LP auf 0. |
 | `walk_b`, `jump_b`, `attack_b`, `hurt_b` | Gegenläufe mit anderen Startframes, Dauern und Reihenfolgen (Einzelheiten im Kopf der Dateien). `attack_b`: Gegner erscheint ~364, Kette trifft bei 402–455. `hurt_b`: erster Treffer 422, Wurf 544. |
+| `combo_c` | wie `attack`, danach weiter nach rechts zum nächsten Gegner (pink, 30 LP). Rechtslauf bis 885 und 15 Frames hoch lassen ihn in die Kette laufen (Treffer 903–952). Läuft die Figur bis 900, geht er an ihr vorbei und wird bei Kontakt gepackt statt geschlagen. |
+| `hurt_c` | wie `combo_c` bis 900, danach keine Eingabe: andere Gegner als in `hurt`, Schaden 5, 6 und 8. |
+| `kontakt`, `kontakt_b` | legen die Savestates `kontakt` (Frame 612 der `attack`-Annäherung ohne Schläge: Gegner mit 16 LP steht 46 px entfernt und trifft sonst bei Frame 28) und `kontakt_b` (Frame 900 von `combo_c`: Gegner mit 30 LP läuft heran) an. |
+| `schlag` | ab `kontakt`/`kontakt_b`: Einzelschlag ab `CC_PRESS`, optional zweiter Druck `CC_PRESS2` und Laufen (links) ab `CC_WALK`. |
+| `leerschlag` | ab `ingame`: Schlag ins Leere ab `CC_PRESS` (Standard 61), optional `CC_PRESS2`, Laufen (rechts) ab `CC_WALK`. |
+| `schutz_eingriff` | **Eingriff**: wie `hurt`, aber der Aufsteh-Timer `FFAA69` wird ab 697 auf 0 gezwungen (`CC_MODE=null`) bzw. bis 830 auf 35 gehalten (`halten`). |
 
 **Determinismus** (gesichert, je zwei Läufe): `attract`, `walk` und
 `attack` erzeugen bei gleichen Eingaben bitgleiche RAM-Abzüge (MD5 über die
@@ -142,15 +153,76 @@ gilt.
 
 ## Messgrößen
 
-| Messgröße | Methode | Wert | Status |
+Alle Werte gelten für Captain Commando. Frames bei 59,637405 Hz, Einheiten
+in Bildschirmpixeln. P = erster Frame, in dem die Taste gedrückt ist,
+h = Frame, in dem die LP des Gegners sinken. Belege in `logs/a5_*.csv`
+(erzeugt von `scripts/laeufe_a5.sh` und `scripts/belege_a5.sh`).
+
+| Messgröße | Wert | Beleg | Status |
 |---|---|---|---|
-| Schaden pro Schlag je Kombostufe | Differenz Gegner-LP (S+0x40) je Treffer, Stufe aus `FFAA2D` | – | offen |
-| Treffer bis zum Umfallen | Treffer zählen bis Gegner-S+4 = 2 | – | offen |
-| Startup-Frames Schlag | Frames von Eingabe bis erster LP-Änderung beim Gegner (bei direktem Kontakt), Eingabelatenz getrennt ausgewiesen | – | offen |
-| Recovery-Frames Schlag | Frames vom Trefferframe bis zur Rückkehr in den Ruhezustand, gegengeprüft über die früheste Laufeingabe, die x wieder ändert | – | offen |
-| Laufgeschwindigkeit x / Tiefe / diagonal | Δ pro Frame von `FFA99E`/`FFA9A6` (16.16) in `walk`/`walk_b` | – | offen |
-| Unverwundbarkeit nach Treffer | Frames nach eigenem Treffer, in denen gegnerische Treffer keine LP (`FFA9D0`) kosten | – | offen |
-| Unverwundbarkeit nach Aufstehen | wie oben, ab S+4 2 → 3; Kandidat ist der 35-Frame-Timer `FFAA69` | – | offen |
+| Laufgeschwindigkeit | x ±1,75 px/Frame (≈ 104 px/s), Tiefe ±1,0 px/Frame (≈ 60 px/s), diagonal x ±1,25 und Tiefe ±0,75 px/Frame. Ohne Anlauf und Abbremsen, auch beim Richtungswechsel | `walk`, `walk_b`: alle 12 Segmente, je Frame exakt diese Werte (16.16). `a5_laufen.csv` | gesichert |
+| Schaden je Kombostufe | Stufe 1: 3, Stufe 2: 4, Stufe 3: 5, Stufe 4 (Abschlusstritt): 10 LP. Unabhängig vom Gegnertyp | `attack`, `attack_b` (Gegner 16 LP), `combo_c` (Gegner 16 und 30 LP), Demo-Abschnitt 1 mit Captain (Stufen 1–3 gegen 32 LP). `a5_schaden.csv` | gesichert |
+| Treffer bis zum Umfallen | 4: Der Abschlusstritt (Stufe 4) wirft um, auch wenn der Gegner danach noch LP hat | `combo_c`: Gegner mit 30 LP liegt nach Stufe 4 mit 8 LP. 16-LP-Gegner sterben bei Stufe 4. Demo (Mack): Gegner mit 26 und 46 LP fallen bei Stufe 4 | gesichert |
+| Startup-Frames Schlag | Stufe 1: Treffer in P+2. Davon ist 1 Frame Eingabelatenz (Aktion ab P+1), der Treffer fällt in den 2. Frame der Aktion. Folgestufen: Stufe 2 in P+3, Stufe 3 in P+4, Stufe 4 in P+3 | `kontakt`: P = 2…10, `kontakt_b`: P = 2…4, immer P+2. Kettenstufen in `attack`, `attack_b`, `combo_c` je 3/4/3 Frames nach dem Druck. `a5_schlag.csv` | gesichert |
+| Recovery-Frames Schlag | Mit Treffer: 7 Frames Trefferstopp. Die Figur ist ab h+13 wieder frei (Laufen bewegt ab h+14; Kettendruck ab h+12 wird angenommen). Ohne weitere Eingabe bleibt die Schlagpose bis h+27, Ruhe ab h+28. Leerschlag: frei ab P+8 (x ab P+9), Ruhe ab P+17 (16 Frames Aktion) | `kontakt` P = 3/6, `kontakt_b` P = 2/4 mit Laufen ab P+1. Leerschlag mit P = 61/81. Trefferstopp: Animationswechsel bei Treffer +1, +2, +13, +14 statt +1, +2, +6, +7 | gesichert |
+| Unverwundbarkeit nach Treffer | 27 Frames (Trefferreaktion, Status S+4 = 3), unabhängig vom Schaden (5, 6, 8) | 23 abgeschlossene Reaktionen in `hurt`, `hurt_b`, `hurt_c`, alle 27 Frames, dazu zwei, die genau bei 27 von einem neuen Treffer abgelöst wurden. Kein Treffer kam früher als 27 Frames nach dem vorigen, zweimal genau 27 (`hurt` 1158, `hurt_c` 1437). `a5_schutz.csv` | gesichert (Wirkung); Mechanismus unsicher |
+| Unverwundbarkeit nach Aufstehen | 35 Frames ab dem Aufstehen (Status 2 → 3, Timer `FFAA69` 35 → 0) | 7 Fälle in `hurt`, `hurt_b`, `hurt_c`, alle 35. Dreimal Treffer genau beim Ablauf (`hurt` 731 und 1434, `hurt_c` 1265). In genau diesen drei Fenstern stand ein Gegner alle 35 Frames in Reichweite (\|dx\| ≤ 60, \|dz\| ≤ 8), in den vier anderen keiner. Eingriff: Timer gehalten → kein Treffer bis zum Ablauf | gesichert (Wirkung); Mechanismus unsicher |
+
+## Messungen im Einzelnen
+
+**Laufen.** Die Bewegung beginnt einen Frame nach dem ersten gedrückten
+Frame und endet einen Frame nach dem letzten. Die Zahl der Bewegungsframes
+ist also gleich der Zahl der gedrückten Frames. Die Einheit ist am Bild
+geprüft: Zwischen zwei Standbildern mit Δx = 70 liegen die beiden Figuren
+im Differenzbild genau 70 px auseinander (je 57 × 76 px). Bei Δ Tiefe = 37
+ist der gemeinsame Umriss 113 = 76 + 37 px hoch. Nach oben ist die Tiefe
+bei 341 begrenzt (`walk`).
+
+**Kette.** Ein Druck während der Kette wird nur im Fenster h+12 bis h+27
+nach dem letzten Treffer angenommen und startet dann die nächste Stufe.
+Drücke in h+1 bis h+11 werden verworfen und nicht gepuffert. Ein Druck ab
+h+28 beginnt eine neue Kette mit Stufe 1. Das Fenster ist in `kontakt`
+(P = 3 und 6) und `kontakt_b` (P = 3) auf den Frame gleich: h+11 verworfen,
+h+12 angenommen, h+27 angenommen, h+28 Stufe 1. Die Ketten in `attack`,
+`attack_b` und `combo_c` passen dazu (dort wurde bei h+6/h+8 verworfen und
+bei h+14 angenommen). Die Unterphase `FFA99C` springt genau dann auf 4,
+wenn die Figur wieder frei ist (beim Leerschlag auf 2).
+
+**Startup bei Annäherung.** Läuft der Gegner erst während des Schlags in
+die Reichweite, kommt der Treffer später (`attack_b`: neuer Schlag ab 399 bei
+89 px Abstand, der Gegner läuft heran, Treffer 402 bei 84 px). Die Faust
+bleibt also mindestens bis zum 4. Frame der Aktion aktiv, die Reichweite
+liegt bei etwa 84–86 px. Der
+Startup in der Tabelle gilt für einen Gegner, der schon in Reichweite steht.
+
+**Schutz.** Treffer gegen die Figur gab es in allen Läufen nur im Status
+S+4 = 1. Wenn ein Schutzfenster endet und im selben Frame ein Treffer
+kommt, wechselt der Status innerhalb dieses Frames von 3 auf 1 und wieder
+auf 3. Im Abzug sieht man dann durchgehend 3, daher „Status vorher 3“ in
+`a5_schutz.csv`. Der **Eingriff** (`schutz_eingriff.lua`, also kein reines
+Zusehen) zeigt, dass der Status die Ursache ist:
+- Timer bis 830 auf 35 gehalten: Status 3 bis 864, kein Treffer in diesen
+  168 Frames, obwohl der Gegner in Reichweite steht. Nächster Treffer 892.
+- Timer ab 697 auf 0 gezwungen: Der Status springt nie zurück auf 1 (das
+  macht nur der Ablauf des Timers). Bis zum Laufende (900) kommt kein
+  Treffer, 204 Frames mit Gegner in Reichweite.
+
+Ob die Angriffe dabei ins Leere gehen oder ob der Gegner nicht zuschlägt,
+lässt sich so nicht trennen. Der Gegner bleibt in seiner Angriffspose
+(Aktion 0x06) und schlägt sichtbar nicht zu. Für das Spielgefühl ist das
+Ergebnis gleich: kein LP-Verlust im Status 3.
+
+**Zusatzwert** (gesichert, gleiche Belege): Liegen nach einem Wurf bis
+zum Aufstehen dauert 121–122 Frames (7 Fälle in `hurt`, `hurt_b`, `hurt_c`).
+
+**Unsicher:** Wenn ein Gegner die Figur gepackt hält, kommen die Schläge im
+Abstand von 58–64 Frames (`hurt`, `hurt_b`) bzw. 73–76 Frames (`hurt_c`,
+anderer Gegner), und nach dem dritten Schlag folgt der Wurf. Aus dem RAM
+allein ist nicht klar, welche Treffer zu einem Griff gehören.
+
+**Figurabhängig** (unsicher, nur Demo): Mack the Knife macht in Stufe 1–3
+ebenfalls 3, 4 und 5 Schaden, mit dem Abschlusstritt aber nur 8. Ab
+Demo-Abschnitt 4 (Figur 3) macht die Kette in Stufe 1 und 2 je 6 Schaden.
 
 ## Objekt-Slots
 
@@ -201,12 +273,13 @@ Ausgabe `logs/a4_gegenpruefung.txt`).
 | `FFA9D0` | S+0x40 | 2, vorzeichenbehaftet | Lebenspunkte, Start 72, fällt nur bei Treffern | `hurt`: −5 bei 450, 510, 574, … `hurt_b`: blinde Suche (`same`, `noinc`, drei Abnahmen) → `FFA9D0` und Kopie. Demo: Start 72 je Abschnitt. `logs/a4_lp_spieler.csv` | gesichert |
 | `FFA9D2` | S+0x42 | 2 | Lebenspunkte des Vorframes | wie oben | gesichert |
 | `FFA99A` | S+0x0A | 2 | Aktion: 0 Stand/Laufen, 0x0A Sprung, 0x10 Schlag (bleibt bei Folgeschlägen der Kette 0x10). Weitere Werte unbekannt | `jump`/`attack`: Sprung 62–108, Leerschlag 62–77. `jump_b` und `attack_b`: blinde Suche nach diesen Werten zu den variierten Zeiten jeweils eindeutig | gesichert (für die drei Werte) |
-| `FFA99C` | S+0x0C | 2 | Unterphase der Aktion: Sprung 2 = Landung (6 Frames); Schlag 0/2, in der Kette 4/6 | `jump`, `attack`, `attack_b` | unsicher (Deutung) |
-| `FFA994` | S+0x04 | 1 | Grundzustand: 1 normal, 3 nach Treffer (27 Frames, Treffer währenddessen möglich), 2 am Boden nach Wurf, 0 vor Spielbeginn. In der Demo dauerhaft 3 | `hurt` und `hurt_b`: gleiches Muster zu anderen Zeiten | gesichert (Werte), unsicher (Deutung) |
+| `FFA99C` | S+0x0C | 2 | Unterphase der Aktion: Sprung 2 = Landung (6 Frames). Schlag: 2 (Leerschlag) bzw. 4 (nach Treffer) ab dem Frame, in dem der Schlag abbrechbar ist; in der Kette 6 | `jump`, `attack`, `attack_b`; Aufgabe 5: `kontakt`, `kontakt_b`, Leerschlag | unsicher (Deutung) |
+| `FFA994` | S+0x04 | 1 | Grundzustand: 1 normal, 3 geschützt (27 Frames Trefferreaktion bzw. 35 Frames nach dem Aufstehen), 2 am Boden nach Wurf, 0 vor Spielbeginn. In der Demo dauerhaft 3 | `hurt`, `hurt_b`, `hurt_c`. Eingriff `schutz_eingriff`: solange 3, kein LP-Verlust | gesichert (Werte und Schutzwirkung von 3), unsicher (Demo) |
 | `FFA995` | S+0x05 | 1 | 0 im Spiel, 1 in der Demo (KI-gesteuert?) | `hurt`, `attract` | unsicher |
 | `FFAA2D` | S+0x9D | 1 | Kombostufe × 4 (0/4/8/12). Wird 2–3 Frames vor dem Treffer des jeweiligen Kettenschlags gesetzt und erst beim nächsten Angriff nach der Kette wieder 0 (`attack`: Kette endet 666, Rücksetzen 674) | `attack` (602/618/634) und `attack_b` (417/435/453): identische Folge, Treffer je 2–3 Frames danach. `logs/a4_lp_gegner.csv` | gesichert |
 | `FFAA61` | – | 1 | Timer beim Liegen: startet mit 40, 54 Frames nach dem Wurf, zählt bis 0 | `hurt` (629, 980, 1332), `hurt_b` (598, 994); blind wiedergefunden | gesichert |
-| `FFAA69` | – | 1 | Timer nach dem Aufstehen: startet mit 35, wenn S+4 von 2 auf 3 geht. Bei 0 kehrt S+4 auf 1 zurück, falls kein Treffer kam | `hurt` (696, 1047, 1399), `hurt_b` (665, 1061); blind wiedergefunden. In `hurt` traf der Gegner zweimal genau beim Ablauf (731, 1434) | gesichert (Verhalten). Ob es eine Unverwundbarkeit ist: offen, Aufgabe 5 |
+| `FFAA69` | – | 1 | Timer nach dem Aufstehen: startet mit 35, wenn S+4 von 2 auf 3 geht. Sein Ablauf (1 → 0) setzt S+4 zurück auf 1 und beendet damit den Schutz | `hurt` (696, 1047, 1399), `hurt_b` (665, 1061), `hurt_c`; blind wiedergefunden. Eingriff: von außen auf 0 gesetzt, bleibt S+4 auf 3 | gesichert |
+| `FFAA34` | – | 1 | gewählte Figur: 0 Mack the Knife, 1 Captain Commando, 2 Ginzu, 3 vermutlich Baby Head | `coin_start`: 0 → 1 mit dem Rechtsdruck in der Figurenwahl. Demo: 1, 2, 0, 3 in der Reihenfolge der folgenden Figurenvorstellungen (Captain, Ginzu, Mack) | gesichert (0–2), unsicher (3) |
 | `FFAA76` | – | 2, BCD | Punkte Spieler 1 (0x140 = 140 Punkte) | `attack` und `attack_b`: 0x10, 0x30, 0x60, 0x140, passend zum HUD | gesichert |
 | `FFA9C8`, `FFA9CA` | S+0x38, +0x3A | je 2, vorzeichenbehaftet | LP des zuletzt getroffenen Gegners nach bzw. vor dem Treffer, 2 Frames nach dem Treffer gesetzt (vermutlich für den HUD-Balken) | `attack`, `attack_b`: gleiche Folge wie die Gegner-LP | unsicher (Deutung) |
 | `FFAA56` | – | 2 | +16 bei jedem Treffer, egal wer trifft | `attack`, `hurt` | unsicher |
@@ -217,15 +290,16 @@ Ausgabe `logs/a4_gegenpruefung.txt`).
 |---|---|---|---|---|
 | S+0x40 | 2, vorzeichenbehaftet | Lebenspunkte („WOOKY“: 16), fallen nur bei Treffern, nach dem Abschlusstritt negativ | `attack`: Slot 18 (`FFCA50`) 16 → 13 → 9 → 4 → −6. `attack_b`: blinde Suche eindeutig `FFCA50`. Demo: 48 Abnahmen, nie eine Zunahme in belegten Slots. Jede Abnahme fällt auf einen Statuswechsel 1 → 3 oder 1 → 2 oder liegt in Zustand 3 bzw. 2 | gesichert |
 | S+0x42 | 2 | Lebenspunkte des Vorframes | `attack`, `attack_b` | gesichert |
+| S+0x9A | 2 | Start- bzw. Maximal-LP des Gegners (16, 20, 22, 26, 30, 32, 36, 46) | In 59 von 60 Fällen (Demo, `hurt*`, `attack`, `combo_c`) gleich den LP beim Belegen oder Erscheinen. Ausnahme: ein Demo-Gegner, der beim Wiedererscheinen schon getroffen war | gesichert |
 | S+0x04 / S+0x05 | je 1 | Grundzustand wie beim Spieler: 0 frei, 1 normal, 3 Trefferreaktion, 2 am Boden bzw. wartend. Wartende Gegner stehen auf `0200`. S+5 wird später 1, noch bevor der Gegner ins Bild kommt; er wartet dann am Bildrand (`0201`). Ablauf in `attack`: `0201` → `0101` (544, aktiv) → `0301` (587, Treffer) → `0201` (637, Abschlusstritt) → `0000` (715, frei) | `attack`, `attack_b`, `hurt`, `hurt_b`, Demo. `logs/a4_gegnerzahl.csv` | gesichert (Werte), unsicher (Deutung) |
 | S+0x0E, +0x12, +0x16; Vorframe +0x66, +0x68, +0x6A | 16.16 bzw. 2 | x, Höhe, Tiefe wie beim Spieler | Der Gegner in `attack_b` läuft mit fallendem x auf den Spieler zu. Die Vorframe-Kopien stimmen in `hurt_b` immer, in Demo und `attack_b` aber nicht, solange ein Gegner nach einem Treffer durch die Luft fliegt (Höhen-Kopie bleibt 0) | unsicher |
 | S+0x89 | 1 | laufende Nummer des treffenden Angriffs? **Keine** Kombostufe: `attack` 7/8/9/10, `attack_b` 4/5/6/7 bei gleicher Kette | `attack`, `attack_b` | unsicher |
 
-### Nebenbefunde (Rohwerte für Aufgabe 5, dort zu bestätigen)
+### Nebenbefunde aus Aufgabe 4
 
-Diese Werte sind beim Suchen nebenbei angefallen. Sie stammen aus den
-Läufen oben, sind aber nicht nach der Methode aus „Messgrößen“ gemessen.
-Deshalb gelten sie alle als **unsicher**.
+Diese Werte sind beim Suchen nebenbei angefallen. Laufen, Eingabelatenz,
+Leerschlag, Schaden und Schutz sind inzwischen in Aufgabe 5 gemessen (siehe
+„Messgrößen“). Der Rest bleibt **unsicher**.
 
 - Eingabelatenz: Eine Laufeingabe, die ab Frame f anliegt, ändert x bzw.
   Tiefe ab f+1 (`walk`, `walk_b`). Beim Sprung steht die Aktion ab f+1,
@@ -264,3 +338,8 @@ Deshalb gelten sie alle als **unsicher**.
   `attack_b` widerlegt, der echte Kombozähler ist S+0x9D im Spielerblock.
   Einen Fehler in `ramtools.py` behoben (Ausrichtung bei Breite 4),
   Filter `noinc`/`nodec` und Befehl `enemies` ergänzt.
+- 2026-10-01 (Aufgabe 5): Alle sieben Messgrößen gemessen. Neue Szenarien
+  `combo_c`, `hurt_c`, `kontakt`, `kontakt_b`, `schlag`, `leerschlag` und
+  der gekennzeichnete Eingriff `schutz_eingriff` (Runner-Feld `pokes`).
+  Neue Adressen: Figur `FFAA34`, Start-LP der Gegner S+0x9A. Alle Läufe mit
+  `laeufe_a5.sh` von vorn wiederholt: Ergebnisse und A4-Belege identisch.

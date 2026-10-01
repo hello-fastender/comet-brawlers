@@ -15,6 +15,11 @@
 -- Der Header (_ram.hdr) haelt start/stop fest, damit die Python-Werkzeuge
 -- Adressen zurueckrechnen koennen.
 --
+-- Eingriffe (nur fuer gekennzeichnete Experimente): Das Szenario-Feld
+-- "pokes" = { { von, bis, addr, wert [, breite] }, ... } schreibt den Wert
+-- vor jedem Frame von..bis in den Arbeitsspeicher (breite 1 oder 2, Standard
+-- 1). Protokolliert wird jeweils der Zustand am Frame-Ende.
+--
 -- Zeitbezug: "lokaler Frame" zaehlt die Frame-Callbacks seit Skriptstart
 -- (Frame 1 = erster Callback). Eingaben, die im Callback von Frame f gesetzt
 -- werden, wirken ab Frame f+1. Die Szenario-Angaben {von, bis} beziehen sich
@@ -175,6 +180,14 @@ local function on_frame()
 		if not active[name] then fields[name]:set_value(1) end
 	end
 	active = want
+
+	-- Eingriffe fuer den naechsten Frame
+	for _, pk in ipairs(sc.pokes or {}) do
+		if frame + 1 >= pk[1] and frame + 1 <= pk[2] then
+			if (pk[5] or 1) == 2 then space:write_u16(pk[3], pk[4])
+			else space:write_u8(pk[3], pk[4]) end
+		end
+	end
 end
 
 -- Referenz halten, sonst wird die Anmeldung vom GC aufgehoben

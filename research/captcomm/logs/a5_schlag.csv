@@ -1,0 +1,48 @@
+# Einzelschlag ab Savestate kontakt (Gegner 16 LP, 46 px) bzw. kontakt_b (Gegner 30 LP)
+# und Leerschlag ab ingame. Alle Frames lokal; eingabe = erster Frame mit gedrueckter Taste.
+# aktion_ende = erster Frame mit Aktion 0; x_aendert_ab = erster Frame mit x-Aenderung.
+lauf,eingabe,aktion_ab,treffer,aktion_ende,laufen_gedrueckt_ab,x_aendert_ab,zweiter_druck,zweiter_treffer,stufe_zweiter_treffer
+schlag_p2,2,3,4,32,-,-,-,-,-
+schlag_p3,3,4,5,33,-,-,-,-,-
+schlag_p4,4,5,6,34,-,-,-,-,-
+schlag_p5,5,6,7,35,-,-,-,-,-
+schlag_p6,6,7,8,36,-,-,-,-,-
+schlag_p8,8,9,10,38,-,-,-,-,-
+schlag_p10,10,11,12,40,-,-,-,-,-
+schlag_p3_w4,3,4,5,18,4,19,-,-,-
+schlag_p3_w20,3,4,5,21,20,22,-,-,-
+schlag_p3_w40,3,4,5,33,40,41,-,-,-
+schlag_p6_w7,6,7,8,21,7,22,-,-,-
+schlag_p3_k10,3,4,5,33,-,-,10,-,-
+schlag_p3_k16,3,4,5,33,-,-,16,-,-
+schlag_p3_k17,3,4,5,47,-,-,17,20,2
+schlag_p3_k18,3,4,5,48,-,-,18,21,2
+schlag_p3_k20,3,4,5,50,-,-,20,23,2
+schlag_p3_k25,3,4,5,55,-,-,25,28,2
+schlag_p3_k31,3,4,5,61,-,-,31,34,2
+schlag_p3_k32,3,4,5,62,-,-,32,35,2
+schlag_p3_k33,3,4,5,33,-,-,33,35,1
+schlag_p6_k19,6,7,8,36,-,-,19,-,-
+schlag_p6_k20,6,7,8,50,-,-,20,23,2
+schlag_p6_k35,6,7,8,65,-,-,35,38,2
+schlag_p6_k36,6,7,8,36,-,-,36,38,1
+schlagb_p2,2,3,4,32,-,-,-,-,-
+schlagb_p3,3,4,5,33,-,-,-,-,-
+schlagb_p4,4,5,6,34,-,-,-,-,-
+schlagb_p2_w3,2,3,4,17,3,18,-,-,-
+schlagb_p4_w5,4,5,6,19,5,20,-,-,-
+schlagb_p3_k16,3,4,5,33,-,-,16,-,-
+schlagb_p3_k17,3,4,5,47,-,-,17,20,2
+schlagb_p3_k32,3,4,5,62,-,-,32,35,2
+schlagb_p3_k33,3,4,5,33,-,-,33,35,1
+leer_p61_w62,61,62,-,69,62,70,-,-,-
+leer_p81_w82,81,82,-,89,82,90,-,-,-
+leer_p61_w75,61,62,-,76,75,77,-,-,-
+leer_p61_k66,61,62,-,78,-,-,66,-,-
+leer_p61_k68,61,62,-,85,-,-,68,-,-
+leer_p61_k69,61,62,-,86,-,-,69,-,-
+leer_p61_k70,61,62,-,87,-,-,70,-,-
+# Trefferstopp: Animationswechsel von P1, Treffer (schlag_p3, Eingabe 3) gegen Leerschlag (Eingabe 61)
+wechsel_in_frame,4,5,16,17
+wechsel_in_frame,62,63,67,68,69,70,78
+# Kettenschlaege in attack/attack_b/combo_c: Eingabe (P1 Button 1) und Treffer siehe a5_schaden.csv

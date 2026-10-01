@@ -3,6 +3,7 @@
 #
 #   scripts/run.sh scenarios/attract.lua            # ab Kaltstart
 #   scripts/run.sh scenarios/walk.lua ingame        # ab Savestate "ingame"
+#   CC_PRESS=3 CC_NAME=schlag_p3 scripts/run.sh scenarios/schlag.lua kontakt
 #
 # Ausgaben landen in logs/raw/ (git-ignoriert). MAME-Konfiguration,
 # Savestates und Snapshots ebenfalls dort, damit nichts davon ins Repo geraet.
@@ -16,7 +17,8 @@ mame="${MAME:-$(command -v mame || echo /usr/games/mame)}"
 
 scenario="$(realpath "$1")"
 state="${2:-}"
-name="$(basename "$scenario" .lua)"
+# CC_NAME: anderer Ausgabename, z. B. fuer parametrisierte Szenarien
+name="${CC_NAME:-$(basename "$scenario" .lua)}"
 raw="$base/logs/raw"
 mkdir -p "$raw"
 
