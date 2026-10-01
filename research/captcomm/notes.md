@@ -21,7 +21,7 @@ Kennzeichnung in diesem Dokument:
 | 3. Headless-Lauf mit Lua (Demo, Münze/Start/Laufen/Schlagen) | erledigt: alle vier Szenarien laufen, kalibriert, bitgleich reproduzierbar |
 | 4. Speicheradressen | erledigt: x, Tiefe, Höhe, LP Spieler und Gegner, Aktion, Kombostufe, Timer gesichert (blind in variierten Gegenläufen wiedergefunden). Gegnerzahl aus der Objekttabelle gezählt (kein eigener Zähler im RAM). Bedeutung einzelner Statuswerte unsicher, siehe „Gefundene Adressen“ |
 | 5. Messungen | erledigt: alle sieben Messgrößen gesichert (Captain Commando), dazu Kombo-Fenster und Trefferstopp. Offen bleibt nur, *wie* der Schutz wirkt (Treffer ignoriert oder Gegner greift nicht an), siehe „Messungen“ |
-| 6. Übernahme gesicherter Werte nach `docs/mechanik.md` | Gerüst angelegt, noch keine Werte |
+| 6. Übernahme gesicherter Werte nach `docs/mechanik.md` | erledigt: alle gesicherten Messwerte aus Aufgabe 5 sowie Eingabelatenz, Trefferstopp, Kombo-Fenster, Liegedauer und Lebenspunkte. Unsichere Punkte stehen dort unter „Nicht übernommen“ |
 
 ### Umgebung
 
@@ -343,3 +343,5 @@ Leerschlag, Schaden und Schutz sind inzwischen in Aufgabe 5 gemessen (siehe
   der gekennzeichnete Eingriff `schutz_eingriff` (Runner-Feld `pokes`).
   Neue Adressen: Figur `FFAA34`, Start-LP der Gegner S+0x9A. Alle Läufe mit
   `laeufe_a5.sh` von vorn wiederholt: Ergebnisse und A4-Belege identisch.
+- 2026-10-01 (Aufgabe 6): Gesicherte Werte nach `docs/mechanik.md`
+  übernommen, mit Verweisen auf diese Notizen und die Logausschnitte.
