@@ -17,6 +17,8 @@ Unterbefehle:
                   naechsten Gegner (ganzzahlig, Frame-Ende) und ob er trifft
   kette PREFIX..  fuer kette.lua: je Frame nach dem letzten Druck (D+1..D+10)
                   Stufe, Abstand und Tiefe zum Gegner, Treffer
+  sprungangriff PREFIX..  je Frame ab dem Angriffsdruck bis zur Landung (oder
+                  zum ersten Treffer): Hoehe von P1, Abstand, Tiefe, Treffer
 """
 
 import argparse
@@ -339,6 +341,45 @@ def cmd_kette(args):
                 break
 
 
+def cmd_sprungangriff(args):
+    print("lauf,angriff,frame,rel,p1_aktion,p1_hoehe,dx,dz,gegner_slot,gegner_status,p1_lp_verlust,treffer,schaden")
+    for prefix in args.prefix:
+        d = Dump(prefix)
+        pr = presses(prefix)
+        if not pr:
+            continue
+        a = pr[-1]
+        name = Path(prefix).name
+        slot = None
+        for f in d.frames[1:]:
+            for n in range(20):
+                s = SLOT_BASE + n * SLOT_SIZE
+                if d.value(f - 1, s + 4) and d.value(f, s + 0x40, 2, True) < d.value(f - 1, s + 0x40, 2, True):
+                    slot = n
+                    break
+            if slot is not None:
+                break
+        if slot is None:
+            near = [(abs(d.value(a, SLOT_BASE + n * SLOT_SIZE + 0x0E, 2) - d.value(a, X, 2)), n)
+                    for n in range(20)
+                    if d.value(a, SLOT_BASE + n * SLOT_SIZE + 4) and d.value(a, SLOT_BASE + n * SLOT_SIZE + 5)]
+            if not near:
+                continue
+            slot = min(near)[1]
+        s = SLOT_BASE + slot * SLOT_SIZE
+        for f in range(a + 1, d.frames[-1] + 1):
+            act = d.value(f, ACTION, 2)
+            if act not in (0x0A, 0x0E):
+                break
+            dmg = d.value(f - 1, s + 0x40, 2, True) - d.value(f, s + 0x40, 2, True)
+            lost = d.value(f - 1, HP, 2, True) - d.value(f, HP, 2, True)
+            print(f"{name},{a},{f},A+{f - a},{act:#x},{d.value(f, H, 2, True)},"
+                  f"{d.value(f, s + 0x0E, 2) - d.value(f, X, 2)},{d.value(f, s + 0x16, 2) - d.value(f, Z, 2)},"
+                  f"{slot},{d.value(f, s + 4)},{lost if lost > 0 else 0},{'ja' if dmg > 0 else 'nein'},{dmg if dmg > 0 else 0}")
+            if dmg > 0:
+                break
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -373,6 +414,9 @@ def main():
     p = sub.add_parser("kette")
     p.add_argument("prefix", nargs="+")
     p.set_defaults(fn=cmd_kette)
+    p = sub.add_parser("sprungangriff")
+    p.add_argument("prefix", nargs="+")
+    p.set_defaults(fn=cmd_sprungangriff)
     args = ap.parse_args()
     args.fn(args)
 
