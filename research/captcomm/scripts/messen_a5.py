@@ -19,6 +19,9 @@ Unterbefehle:
                   Stufe, Abstand und Tiefe zum Gegner, Treffer
   sprungangriff PREFIX..  je Frame ab dem Angriffsdruck bis zur Landung (oder
                   zum ersten Treffer): Hoehe von P1, Abstand, Tiefe, Treffer
+  gegnerschaden PREFIX..  jeder LP-Verlust von P1 mit den naechsten Gegnern
+                  (Max-LP S+0x9A, Typkennung S+0x38, Aktion/Phase in den
+                  Frames davor) und dem Zustand der Figur
   griff PREFIX..  Griffbeginn (Gegner verlaesst Status 1 ohne LP-Verlust und
                   wird gehalten, Aktion 0x02): die Frames davor mit Abstand,
                   Tiefe, Eingaben; danach Treffer im Griff, Wechsel der
@@ -430,6 +433,37 @@ def cmd_griff(args):
             row(f, n, "laufende (gegner noch in status 2/3)")
 
 
+def cmd_gegnerschaden(args):
+    """Kandidaten = angezeigte Gegner (S+4 != 0, S+5 == 1), nach Abstand
+    sortiert. Die Zuordnung zum Angreifer ist eine Vermutung (naechster
+    Gegner, dessen Aktion in den Frames davor wechselt)."""
+    print("lauf,frame,schaden,p1_lp_nachher,p1_status_vorher,p1_aktion_vorher,p1_hoehe,"
+          "kandidat,slot,max_lp,typ,dx,dz,aktion_f-8..f,status")
+    for prefix in args.prefix:
+        d = Dump(prefix)
+        name = Path(prefix).name
+        for f0, f in zip(d.frames, d.frames[1:]):
+            dmg = d.value(f0, HP, 2, True) - d.value(f, HP, 2, True)
+            if dmg <= 0 or not d.value(f0, STATE):
+                continue
+            cands = []
+            for n in range(20):
+                s = SLOT_BASE + n * SLOT_SIZE
+                if d.value(f, s + 4) and d.value(f, s + 5):
+                    dx = d.value(f, s + 0x0E, 2) - d.value(f, X, 2)
+                    dz = d.value(f, s + 0x16, 2) - d.value(f, Z, 2)
+                    cands.append((abs(dx) + abs(dz), n, dx, dz))
+            cands.sort()
+            for i, (_, n, dx, dz) in enumerate(cands[:2]):
+                s = SLOT_BASE + n * SLOT_SIZE
+                acts = "/".join(f"{d.value(g, s + 0x0A, 2):x}.{d.value(g, s + 0x0C, 2):x}"
+                                for g in range(f - 8, f + 1) if g in d.offsets)
+                print(f"{name},{f},{dmg},{d.value(f, HP, 2, True)},{d.value(f0, STATE)},"
+                      f"{d.value(f0, ACTION, 2):#x},{d.value(f, H, 2, True)},{i + 1},{n},"
+                      f"{d.value(f, s + 0x9A, 2)},{d.value(f, s + 0x38, 4):#x},{dx},{dz},{acts},"
+                      f"{d.value(f, s + 4)}")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -467,6 +501,9 @@ def main():
     p = sub.add_parser("sprungangriff")
     p.add_argument("prefix", nargs="+")
     p.set_defaults(fn=cmd_sprungangriff)
+    p = sub.add_parser("gegnerschaden")
+    p.add_argument("prefix", nargs="+")
+    p.set_defaults(fn=cmd_gegnerschaden)
     p = sub.add_parser("griff")
     p.add_argument("prefix", nargs="+")
     p.set_defaults(fn=cmd_griff)
