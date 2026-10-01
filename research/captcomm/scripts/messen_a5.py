@@ -19,6 +19,10 @@ Unterbefehle:
                   Stufe, Abstand und Tiefe zum Gegner, Treffer
   sprungangriff PREFIX..  je Frame ab dem Angriffsdruck bis zur Landung (oder
                   zum ersten Treffer): Hoehe von P1, Abstand, Tiefe, Treffer
+  griff PREFIX..  Griffbeginn (Gegner verlaesst Status 1 ohne LP-Verlust und
+                  wird gehalten, Aktion 0x02): die Frames davor mit Abstand,
+                  Tiefe, Eingaben; danach Treffer im Griff, Wechsel der
+                  Gegneraktion und das Ende von Gegnerstatus 2/3
 """
 
 import argparse
@@ -380,6 +384,50 @@ def cmd_sprungangriff(args):
                 break
 
 
+def cmd_griff(args):
+    print("lauf,frame,ereignis,dx,dz,p1_aktion,p1_phase,gegner_slot,gegner_status,gegner_aktion,schaden,eingaben")
+    for prefix in args.prefix:
+        d = Dump(prefix)
+        inputs = {int(r["frame"]): r["inputs"] for r in csv.DictReader(open(prefix + "_inputs.csv"))}
+        name = Path(prefix).name
+        grab = None
+        for f in d.frames[1:-1]:
+            for n in range(20):
+                s = SLOT_BASE + n * SLOT_SIZE
+                if (d.value(f - 1, s + 4) == 1 and d.value(f, s + 4) in (2, 3)
+                        and d.value(f, s + 0x40, 2, True) == d.value(f - 1, s + 0x40, 2, True)
+                        and d.value(f + 1, s + 0x0A, 2) == 2):
+                    grab = (f, n)
+                    break
+            if grab:
+                break
+        def row(f, n, ev, dmg=0):
+            s = SLOT_BASE + n * SLOT_SIZE
+            print(f"{name},{f},{ev},{d.value(f, s + 0x0E, 2) - d.value(f, X, 2)},"
+                  f"{d.value(f, s + 0x16, 2) - d.value(f, Z, 2)},{d.value(f, ACTION, 2):#x},"
+                  f"{d.value(f, PHASE, 2)},{n},{d.value(f, s + 4)},{d.value(f, s + 0x0A, 2):#x},{dmg},"
+                  f"{inputs.get(f, '')}")
+        if not grab:
+            # kein Griff: Abstand zum naechsten Gegner in den letzten Frames
+            print(f"{name},-,kein Griff,,,,,,,,,")
+            continue
+        g, n = grab
+        s = SLOT_BASE + n * SLOT_SIZE
+        for f in range(max(2, g - 4), g):
+            row(f, n, "vorher")
+        row(g, n, "GRIFF")
+        f = g + 1
+        while f in d.offsets and d.value(f, s + 4) in (2, 3) and f < d.frames[-1]:
+            dmg = d.value(f - 1, s + 0x40, 2, True) - d.value(f, s + 0x40, 2, True)
+            if dmg > 0:
+                row(f, n, "treffer im griff", dmg)
+            if d.value(f, s + 0x0A, 2) != d.value(f - 1, s + 0x0A, 2):
+                row(f, n, "gegner_aktion wechselt")
+            f += 1
+        if f in d.offsets:
+            row(f, n, "gegner verlaesst status 2/3")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -417,6 +465,9 @@ def main():
     p = sub.add_parser("sprungangriff")
     p.add_argument("prefix", nargs="+")
     p.set_defaults(fn=cmd_sprungangriff)
+    p = sub.add_parser("griff")
+    p.add_argument("prefix", nargs="+")
+    p.set_defaults(fn=cmd_griff)
     args = ap.parse_args()
     args.fn(args)
 
