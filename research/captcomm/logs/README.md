@@ -21,4 +21,11 @@ Aufgabe 5 (Messungen), erzeugt von `scripts/belege_a5.sh` nach
 - `a5_schlag.csv`: Zeitachse der Einzel- und Leerschläge, Trefferstopp
 - `a5_schutz.csv`: Treffer gegen die Figur, Schutzfenster, Eingriffsläufe
 
+Nachtrag Sprung und Schlagreichweite, erzeugt von `scripts/belege_a7.sh`
+nach `scripts/laeufe_a7.sh`:
+
+- `a7_sprung.csv`: alle Sprünge mit Ablauf, Höhe, Weite und Eingaben in der Luft
+- `a7_reichweite.csv`: Zusammenfassung und je aktivem Schlagframe Abstand,
+  Tiefe und Treffer
+
 Zeilen mit `#` sind Kommentare und trennen die Läufe.

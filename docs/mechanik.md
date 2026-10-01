@@ -7,7 +7,8 @@ der Bildrate des Originals: 59,637405 Hz laut `mame -listxml captcomm`
 (MAME 0.264, 8 MHz Pixeltakt ÷ (512 × 262)). Referenzfigur für alle
 Messungen ist Captain Commando.
 
-Stand 2026-10-01: Werte aus Aufgabe 4 und 5 übernommen.
+Stand 2026-10-01: Werte aus Aufgabe 4 und 5 sowie aus dem Nachtrag
+(Sprung, Schlagreichweite) übernommen.
 
 ## Konventionen
 
@@ -43,7 +44,22 @@ Stand 2026-10-01: Werte aus Aufgabe 4 und 5 übernommen.
 | Trefferstopp | 7 Frames (≈ 0,12 s): Die Animation des Angreifers steht still | wie oben |
 | Recovery-Frames Standardschlag (Treffer) | handlungsfähig ab h+13 (Laufen oder nächster Schlag). Ohne Eingabe bleibt die Schlagpose bis h+27, Ruhe ab h+28 | wie oben |
 | Recovery-Frames Standardschlag (Leerschlag) | handlungsfähig ab P+8. Ohne Eingabe Aktion von P+1 bis P+16 (16 Frames), Ruhe ab P+17 | wie oben (`leerschlag`) |
+| Reichweite Standardschlag (x) | Treffer bei x-Abstand ≤ 85 px zwischen den Positionen von Figur und Gegner, kein Treffer ab 86 px | notes.md „Nachtrag“, `logs/a7_reichweite.csv` |
+| Reichweite Standardschlag (Tiefe) | Treffer bei Tiefenabstand ≤ 11 px, nie ab 13 px. 12 px ist ein Grenzfall (trifft fast immer) | wie oben |
+| Aktive Frames Standardschlag | P+2 bis P+5 (4 Frames): Ein Gegner, der in dieser Zeit in Reichweite kommt, wird getroffen | wie oben |
 | Kombo-Fenster | Der nächste Kettenschlag wird nur bei einem Druck in h+12 bis h+27 angenommen (16 Frames, ≈ 0,27 s). Drücke in h+1 bis h+11 werden verworfen, nicht gepuffert. Ein Druck ab h+28 beginnt eine neue Kette mit Stufe 1 | notes.md „Messungen im Einzelnen“, `logs/a5_schlag.csv` |
+
+## Sprung
+
+| Größe | Wert | Beleg |
+|---|---|---|
+| Ablauf | Aktion ab P+1, Absprung P+2, 40 Frames in der Luft, Aufsetzen P+42, 6 Frames Landung (nicht abbrechbar), handlungsfähig ab P+48 (≈ 0,8 s ab Druck) | notes.md „Nachtrag“, `logs/a7_sprung.csv` |
+| Steighöhe | 51,25 px, Scheitel bei P+21 | wie oben |
+| Anfangsgeschwindigkeit, Schwerkraft | 4,9375 px/Frame nach oben, 0,25 px/Frame² | wie oben |
+| Horizontal | 2,25 px/Frame vor- oder rückwärts, festgelegt durch die Richtung im Frame des Sprungdrucks; Weite 92,25 px. In der Luft nicht steuerbar | wie oben |
+| Tiefe in der Luft | 0,5 px/Frame, solange hoch oder runter gehalten wird (jederzeit in der Luft) | wie oben |
+| Tastendauer | ohne Einfluss auf den Sprung | wie oben |
+| Sprungangriff | hält die Höhe einen Frame lang an, der Sprung dauert dadurch einen Frame länger | wie oben |
 
 ## Unverwundbarkeit
 
@@ -70,9 +86,9 @@ ist dieselbe.
 ## Nicht übernommen (unsicher oder nicht gemessen)
 
 - Mechanismus der Unverwundbarkeit (Treffer ignoriert oder Gegner wartet).
-- Reichweite des Standardschlags (einmal beobachtet: etwa 84–86 px) und
-  die Zahl seiner aktiven Frames (mindestens bis zum 4. Frame der Aktion).
-- Sprung: Dauer, Höhe und Weite sind nur als Nebenbefund notiert.
+- Reichweite der Kettenstufen 2–4 und des Sprungangriffs, Mindestabstand
+  des Standardschlags (Treffer bis hinunter zu 41 px beobachtet).
+- Schaden des Sprungangriffs.
 - Schaden der Gegner gegen die Figur (5, 6, 8 beobachtet) ist noch keinem
   Gegnertyp sicher zugeordnet.
 - Griffe und Würfe durch Gegner, Griff-Angriffe der Figur.

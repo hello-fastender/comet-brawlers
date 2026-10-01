@@ -21,7 +21,8 @@ Kennzeichnung in diesem Dokument:
 | 3. Headless-Lauf mit Lua (Demo, Münze/Start/Laufen/Schlagen) | erledigt: alle vier Szenarien laufen, kalibriert, bitgleich reproduzierbar |
 | 4. Speicheradressen | erledigt: x, Tiefe, Höhe, LP Spieler und Gegner, Aktion, Kombostufe, Timer gesichert (blind in variierten Gegenläufen wiedergefunden). Gegnerzahl aus der Objekttabelle gezählt (kein eigener Zähler im RAM). Bedeutung einzelner Statuswerte unsicher, siehe „Gefundene Adressen“ |
 | 5. Messungen | erledigt: alle sieben Messgrößen gesichert (Captain Commando), dazu Kombo-Fenster und Trefferstopp. Offen bleibt nur, *wie* der Schutz wirkt (Treffer ignoriert oder Gegner greift nicht an), siehe „Messungen“ |
-| 6. Übernahme gesicherter Werte nach `docs/mechanik.md` | erledigt: alle gesicherten Messwerte aus Aufgabe 5 sowie Eingabelatenz, Trefferstopp, Kombo-Fenster, Liegedauer und Lebenspunkte. Unsichere Punkte stehen dort unter „Nicht übernommen“ |
+| 6. Übernahme gesicherter Werte nach `docs/mechanik.md` | erledigt: alle gesicherten Messwerte aus Aufgabe 5 sowie Eingabelatenz, Trefferstopp, Kombo-Fenster, Liegedauer und Lebenspunkte; nach dem Nachtrag auch Sprung und Schlagreichweite. Unsichere Punkte stehen dort unter „Nicht übernommen“ |
+| 7. Nachtrag: Sprung und Schlagreichweite | erledigt: Sprungablauf, Höhe, Schwerkraft, Weite und Steuerung sowie x-Reichweite, Tiefentoleranz und aktive Frames des Standardschlags gesichert, siehe „Nachtrag“ |
 
 ### Umgebung
 
@@ -69,6 +70,7 @@ Kennzeichnung in diesem Dokument:
 | `messen_a5.py` | Auswertungen für Aufgabe 5: `laufen`, `treffer` (LP-Abnahmen der Gegner mit Kombostufe), `schlag` (Zeitachse eines Einzelschlags), `anim`, `schutz`, `fenster`, `reaktion` | ja |
 | `laeufe_a5.sh` | alle MAME-Läufe für Aufgabe 5 (und die Grundläufe aus 3/4) von vorn, ~1 min | ja: zweimal ausgeführt, Ergebnisse identisch |
 | `belege_a5.sh` | erzeugt `logs/a5_*.csv` | ja |
+| `laeufe_a7.sh`, `belege_a7.sh` | Läufe (~1 min) und Logausschnitte `logs/a7_*.csv` für den Nachtrag Sprung und Schlagreichweite; dazu `messen_a5.py sprung` und `aktiv` | ja |
 
 Ablauf:
 
@@ -120,7 +122,9 @@ Grundlage sind Snapshots alle 10 bis 300 Frames (nur lokal unter
 | `combo_c` | wie `attack`, danach weiter nach rechts zum nächsten Gegner (pink, 30 LP). Rechtslauf bis 885 und 15 Frames hoch lassen ihn in die Kette laufen (Treffer 903–952). Läuft die Figur bis 900, geht er an ihr vorbei und wird bei Kontakt gepackt statt geschlagen. |
 | `hurt_c` | wie `combo_c` bis 900, danach keine Eingabe: andere Gegner als in `hurt`, Schaden 5, 6 und 8. |
 | `kontakt`, `kontakt_b` | legen die Savestates `kontakt` (Frame 612 der `attack`-Annäherung ohne Schläge: Gegner mit 16 LP steht 46 px entfernt und trifft sonst bei Frame 28) und `kontakt_b` (Frame 900 von `combo_c`: Gegner mit 30 LP läuft heran) an. |
-| `schlag` | ab `kontakt`/`kontakt_b`: Einzelschlag ab `CC_PRESS`, optional zweiter Druck `CC_PRESS2` und Laufen (links) ab `CC_WALK`. |
+| `schlag` | ab `kontakt`/`kontakt_b` (bzw. `anlauf`, `anlauf_b`, `anlauf_c`, `tiefe_b`): Einzelschlag ab `CC_PRESS`, optional zweiter Druck `CC_PRESS2`, Laufen (links) ab `CC_WALK` und vor dem Schlag `CC_VERT` Frames hoch (> 0) bzw. runter (< 0). |
+| `sprung_c`, `sprung_d` | ab `ingame`: je 6–7 Sprünge ohne Gegner, mit Rückwärtssprung, Richtung nur vor bzw. nur nach dem Sprungdruck, Richtung in der Luft, Tiefe in der Luft (auch erst nach dem Scheitel), Tastendauer 1 und 40 Frames. |
+| `anlauf_b`, `anlauf_c` | Savestates `anlauf_b` (Weg von `attack_b`, Gegner 16 LP läuft heran) und `anlauf_c` (Weg von `combo_c` mit Rechtslauf nur bis 860: Gegner 30 LP läuft aus 105 px heran). `kontakt` legt zusätzlich `anlauf` an (Frame 570), `kontakt_b` zusätzlich `tiefe_b` (Frame 886: Gegner 30 LP steht 62 px entfernt, 16 px weiter hinten). |
 | `leerschlag` | ab `ingame`: Schlag ins Leere ab `CC_PRESS` (Standard 61), optional `CC_PRESS2`, Laufen (rechts) ab `CC_WALK`. |
 | `schutz_eingriff` | **Eingriff**: wie `hurt`, aber der Aufsteh-Timer `FFAA69` wird ab 697 auf 0 gezwungen (`CC_MODE=null`) bzw. bis 830 auf 35 gehalten (`halten`). |
 
@@ -224,6 +228,53 @@ allein ist nicht klar, welche Treffer zu einem Griff gehören.
 ebenfalls 3, 4 und 5 Schaden, mit dem Abschlusstritt aber nur 8. Ab
 Demo-Abschnitt 4 (Figur 3) macht die Kette in Stufe 1 und 2 je 6 Schaden.
 
+## Nachtrag: Sprung und Schlagreichweite
+
+Gemessen nach Aufgabe 6, gleiche Konventionen wie in „Messgrößen“
+(Captain Commando, P = erster Frame mit gedrückter Taste). Belege:
+`logs/a7_sprung.csv`, `logs/a7_reichweite.csv` (erzeugt von
+`scripts/laeufe_a7.sh` und `scripts/belege_a7.sh`).
+
+### Sprung
+
+19 Sprünge in `jump`, `jump_b`, `sprung_c`, `sprung_d` haben alle exakt
+dieselbe Höhenkurve (16.16).
+
+| Größe | Wert | Status |
+|---|---|---|
+| Ablauf | Aktion ab P+1, Absprung P+2, 40 Frames in der Luft (P+2 bis P+41), Aufsetzen P+42, Landung bis P+47 (6 Frames), handlungsfähig ab P+48 | gesichert |
+| Steighöhe | 51,25 px, Scheitel bei P+21 | gesichert |
+| Anfangsgeschwindigkeit / Schwerkraft | 4,9375 px/Frame nach oben, −0,25 px/Frame² in jedem Frame | gesichert |
+| Horizontal | ±2,25 px/Frame, festgelegt durch die Richtung im Frame des Sprungdrucks (P). Richtung erst ab P+1: Sprung im Stand. Anlauf ändert nichts. Weite 92,25 px (41 Frames). Keine Steuerung in der Luft | gesichert |
+| Tiefe in der Luft | ±0,5 px/Frame, solange hoch/runter gehalten wird, auch erst nach dem Scheitel und zusammen mit der x-Bewegung | gesichert |
+| Tastendauer | ohne Einfluss (1 und 40 Frames ergeben denselben Sprung) | gesichert |
+| Landung | nicht abbrechbar: Bei gehaltener Richtung bewegt sich die Figur erst ab P+49 | gesichert |
+| Sprungangriff | Aktion 0x0E; die Höhe steht im Frame des Angriffsbeginns einmal still, Landung und Ende kommen dadurch einen Frame später | gesichert (`jump`, `jump_b`) |
+
+Am linken Bildrand wird ein Rückwärtssprung gebremst (`jump_b` 161,
+`sprung_d` 251). Das ist der Rand, keine Sprungeigenschaft.
+
+### Schlagreichweite (Standardschlag, Stufe 1)
+
+Methode: Einzelschläge mit variiertem Eingabeframe, während ein Gegner
+heranläuft (`anlauf`, `anlauf_b`: 16 LP; `anlauf_c`: 30 LP), dazu Schläge
+nach gezielter Tiefenänderung (`tiefe_v*` gegen 16 LP, `tiefeA_v*`,
+`tiefeB_v*` gegen 30 LP). Ausgewertet wird jeder aktive Frame mit den
+ganzzahligen Positionen am Frame-Ende (`messen_a5.py aktiv`).
+
+| Größe | Wert | Status |
+|---|---|---|
+| x-Reichweite | Treffer bei x-Abstand ≤ 85 px, kein Treffer ab 86 (bei \|dz\| ≤ 11). Gleich bei beiden Gegnertypen und in allen vier Annäherungen (`anlauf`, `anlauf_b`, `anlauf_c`, `attack_b`). Kleinster beobachteter Trefferabstand: 41 px | gesichert |
+| Tiefentoleranz | \|dz\| ≤ 11: immer Treffer. 12: Grenzfall (7 von 8 aktiven Frames; beim 30-LP-Gegner erst im 2. aktiven Frame). Ab 13: nie (55 aktive Frames). Oben und unten gleich | gesichert |
+| Aktive Frames | P+2 bis P+5 (4 Frames). Ein Gegner, der erst in P+5 in Reichweite kommt, wird noch getroffen, in P+6 nicht mehr | gesichert (`anlauf`, `anlauf_b`, `anlauf_c`) |
+
+Die Positionsregel ist geprüft: Mit den exakten 16.16-Abständen oder mit
+den Positionen vom Frame-Anfang widersprechen sich die Annäherungen. Nur die
+ganzzahligen Positionen am Frame-Ende ergeben eine gemeinsame Grenze.
+Gegner gleichen ihre Tiefe an die Figur an. Deshalb ist die untere Grenze
+(Gegner 13 px weiter vorn, kein Treffer) nur in zwei Läufen belegt
+(`tiefeA_v21`, `tiefeA_v22`). Nicht gemessen: Reichweite der Kettenstufen 2–4 und des Sprungangriffs.
+
 ## Objekt-Slots
 
 Spieler und Gegner liegen in Blöcken mit gleichem Feldaufbau.
@@ -298,8 +349,8 @@ Ausgabe `logs/a4_gegenpruefung.txt`).
 ### Nebenbefunde aus Aufgabe 4
 
 Diese Werte sind beim Suchen nebenbei angefallen. Laufen, Eingabelatenz,
-Leerschlag, Schaden und Schutz sind inzwischen in Aufgabe 5 gemessen (siehe
-„Messgrößen“). Der Rest bleibt **unsicher**.
+Leerschlag, Schaden und Schutz sind inzwischen in Aufgabe 5 gemessen, der
+Sprung im Nachtrag (siehe dort). Der Rest bleibt **unsicher**.
 
 - Eingabelatenz: Eine Laufeingabe, die ab Frame f anliegt, ändert x bzw.
   Tiefe ab f+1 (`walk`, `walk_b`). Beim Sprung steht die Aktion ab f+1,
@@ -345,3 +396,6 @@ Leerschlag, Schaden und Schutz sind inzwischen in Aufgabe 5 gemessen (siehe
   `laeufe_a5.sh` von vorn wiederholt: Ergebnisse und A4-Belege identisch.
 - 2026-10-01 (Aufgabe 6): Gesicherte Werte nach `docs/mechanik.md`
   übernommen, mit Verweisen auf diese Notizen und die Logausschnitte.
+- 2026-10-01 (Nachtrag): Sprung und Schlagreichweite gemessen. Neue
+  Szenarien `sprung_c`, `sprung_d`, `anlauf_b`, `anlauf_c`, neue
+  Savestates `anlauf` und `tiefe_b`, `schlag.lua` mit `CC_VERT`.

@@ -12,6 +12,9 @@ Unterbefehle:
   schlag PREFIX.. Zeitachse eines Einzelschlags je Lauf (schlag.lua, leerschlag.lua)
   anim PREFIX A B Frames A..B, in denen der Animationszeiger von P1 (S+0x1C) wechselt
   reaktion PREFIX Dauer von Trefferreaktion, Aufsteh-Schutz und Liegen (Status S+4)
+  sprung PREFIX   je Sprung: Eingabe, Absprung, Scheitel, Landung, Weite, Geschwindigkeiten
+  aktiv PREFIX..  je aktivem Frame des Einzelschlags (P+2..P+5): Abstand zum
+                  naechsten Gegner (ganzzahlig, Frame-Ende) und ob er trifft
 """
 
 import argparse
@@ -156,7 +159,8 @@ def cmd_schlag(args):
     """Je Lauf eine Zeile: Eingabe P, Aktionsbeginn, erster Treffer, Ende der
     Aktion, erste x-Aenderung, zweiter Druck und dessen Treffer/Stufe."""
     print("lauf,eingabe,aktion_ab,treffer,aktion_ende,laufen_gedrueckt_ab,"
-          "x_aendert_ab,zweiter_druck,zweiter_treffer,stufe_zweiter_treffer")
+          "x_aendert_ab,zweiter_druck,zweiter_treffer,stufe_zweiter_treffer,"
+          "dx_treffer/dx_vorher,dz_treffer")
     for prefix in args.prefix:
         d = Dump(prefix)
         p = first_input(prefix, "P1 Button 1")
@@ -177,12 +181,19 @@ def cmd_schlag(args):
             for n in range(20):
                 s = SLOT_BASE + n * SLOT_SIZE
                 if d.value(f0, s + 4) and d.value(f, s + 0x40, 2, True) < d.value(f0, s + 0x40, 2, True):
-                    hits.append((f, d.value(f, COMBO) // 4 + 1))
-        h1 = hits[0][0] if hits else "-"
+                    # Abstand Gegner - Figur (ganzzahlige Positionen) im
+                    # Trefferframe und im Frame davor
+                    dxi = lambda g: d.value(g, s + 0x0E, 2) - d.value(g, X, 2)
+                    hits.append((f, d.value(f, COMBO) // 4 + 1,
+                                 f"{dxi(f)}/{dxi(f0)}",
+                                 d.value(f, s + 0x16, 2) - d.value(f, Z, 2)))
+        h1 = hits[0] if hits else ("-", "-", "-", "-")
         h2 = hits[1] if len(hits) > 1 else ("-", "-")
         name = Path(prefix).name
-        print(f"{name},{p or '-'},{act or '-'},{h1},{end or '-'},{walk or '-'},{xch or '-'},"
-              f"{p2 or '-'},{h2[0]},{h2[1]}")
+        dx = h1[2] if hits else "-"
+        dz = h1[3] if hits else "-"
+        print(f"{name},{p or '-'},{act or '-'},{h1[0]},{end or '-'},{walk or '-'},{xch or '-'},"
+              f"{p2 or '-'},{h2[0]},{h2[1]},{dx},{dz}")
 
 
 def cmd_anim(args):
@@ -217,6 +228,65 @@ def cmd_reaktion(args):
         print(f"{kind},{a},{b},{b - a},{note}")
 
 
+def cmd_sprung(args):
+    """Ein Sprung beginnt, wenn die Aktion auf 0x0A (Sprung) oder 0x0E
+    (Sprungangriff) wechselt und vorher 0 war. Hoehe/x/Tiefe als 16.16."""
+    d = Dump(args.prefix)
+    inputs = {int(r["frame"]): r["inputs"] for r in csv.DictReader(open(args.prefix + "_inputs.csv"))}
+    fr = d.frames
+    print("aktion_ab,taste_ab,absprung,scheitel_frame,steighoehe,landung,aktion_ende,"
+          "frames_in_luft,vy0,schwerkraft,dx_je_frame,dz_je_frame,weite_x,eingaben_in_luft")
+    for f in fr[1:]:
+        if not (d.value(f - 1, ACTION, 2) == 0 and d.value(f, ACTION, 2) == 0x0A):
+            continue
+        p = f - 1
+        while p - 1 in inputs and "P1 Button 2" in inputs[p - 1].split("|"):
+            p -= 1
+        h0 = fix(d, f, H)
+        air = []
+        g = f + 1
+        while g in d.offsets and fix(d, g, H) >= 1 + int(h0) or (g in d.offsets and int(fix(d, g, H)) > int(h0)):
+            air.append(g)
+            g += 1
+        if not air:
+            continue
+        land = air[-1] + 1
+        end = next(x for x in fr if x > f and d.value(x, ACTION, 2) == 0)
+        hs = [fix(d, x, H) for x in [air[0] - 1] + air]
+        v = [hs[i + 1] - hs[i] for i in range(len(hs) - 1)]
+        grav = Counter(round(v[i + 1] - v[i], 4) for i in range(len(v) - 1) if v[i + 1] and v[i])
+        peak = max(air, key=lambda x: fix(d, x, H))
+        cx = Counter(fix(d, x, X) - fix(d, x - 1, X) for x in air + [land])
+        cz = Counter(fix(d, x, Z) - fix(d, x - 1, Z) for x in air + [land])
+        inl = sorted({i for x in air for i in inputs.get(x, "").split("|") if i})
+        print(f"{f},{p},{air[0]},{peak},{fix(d, peak, H) - h0:g},{land},{end},{len(air)},"
+              f"{v[0]:g},{fmt(grav)},{fmt(cx)},{fmt(cz)},"
+              f"{fix(d, land, X) - fix(d, f, X):+g},{' '.join(inl)}")
+
+
+def cmd_aktiv(args):
+    print("lauf,eingabe,frame,frame_rel,dx,dz,gegner_slot,treffer")
+    for prefix in args.prefix:
+        d = Dump(prefix)
+        p = first_input(prefix, "P1 Button 1")
+        name = Path(prefix).name
+        for f in range(p + 2, p + 6):
+            cands = []
+            for n in range(20):
+                s = SLOT_BASE + n * SLOT_SIZE
+                if d.value(f, s + 4) and d.value(f, s + 5):
+                    dx = d.value(f, s + 0x0E, 2) - d.value(f, X, 2)
+                    dz = d.value(f, s + 0x16, 2) - d.value(f, Z, 2)
+                    hit = d.value(f, s + 0x40, 2, True) < d.value(f - 1, s + 0x40, 2, True)
+                    cands.append((abs(dx) + abs(dz), n, dx, dz, hit))
+            if not cands:
+                continue
+            _, n, dx, dz, hit = min(cands)
+            print(f"{name},{p},{f},P+{f - p},{dx},{dz},{n},{'ja' if hit else 'nein'}")
+            if hit:
+                break
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -242,6 +312,12 @@ def main():
     p = sub.add_parser("reaktion")
     p.add_argument("prefix")
     p.set_defaults(fn=cmd_reaktion)
+    p = sub.add_parser("sprung")
+    p.add_argument("prefix")
+    p.set_defaults(fn=cmd_sprung)
+    p = sub.add_parser("aktiv")
+    p.add_argument("prefix", nargs="+")
+    p.set_defaults(fn=cmd_aktiv)
     args = ap.parse_args()
     args.fn(args)
 
