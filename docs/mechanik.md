@@ -3,8 +3,9 @@
 Dieses Dokument legt Zahlenwerte für unser Spiel fest. Übernommen werden
 nur Werte, die in der Captain-Commando-Analyse als **gesichert** gelten
 (Belege in `research/captcomm/notes.md`). Zeitangaben gelten in Frames bei
-der Bildrate des Originals. **Unsicher**: Laut MAME-Treiber liegt sie bei
-etwa 59,64 Hz, das ist noch per `mame -listxml captcomm` zu bestätigen.
+der Bildrate des Originals: 59,637405 Hz laut `mame -listxml captcomm`
+(MAME 0.264, 8 MHz Pixeltakt ÷ (512 × 262)). Referenzfigur für alle
+Messungen ist Captain Commando.
 
 Stand 2026-10-01: Es gibt noch keine gesicherten Werte, weil die Messläufe
 ausstehen. Die Tabellen geben die Struktur vor.

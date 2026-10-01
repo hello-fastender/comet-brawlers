@@ -154,8 +154,9 @@ local function on_frame()
 		screen:snapshot(string.format("%s_%06d.png", sc.snaps[frame], frame))
 	end
 	if sc.save_states and sc.save_states[frame] then
-		-- Slot-Pfad, den "-state <name>" beim Start erwartet
-		machine:save(string.format("%s/%s.sta", machine.system.name, sc.save_states[frame]))
+		-- Nur der Name: MAME (0.264) ergaenzt selbst "<state_directory>/captcomm/"
+		-- und ".sta", genau wie beim Laden mit "-state <name>"
+		machine:save(sc.save_states[frame])
 	end
 
 	if frame >= sc.frames then
