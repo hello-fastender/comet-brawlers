@@ -15,6 +15,8 @@ Unterbefehle:
   sprung PREFIX   je Sprung: Eingabe, Absprung, Scheitel, Landung, Weite, Geschwindigkeiten
   aktiv PREFIX..  je aktivem Frame des Einzelschlags (P+2..P+5): Abstand zum
                   naechsten Gegner (ganzzahlig, Frame-Ende) und ob er trifft
+  kette PREFIX..  fuer kette.lua: je Frame nach dem letzten Druck (D+1..D+10)
+                  Stufe, Abstand und Tiefe zum Gegner, Treffer
 """
 
 import argparse
@@ -287,6 +289,56 @@ def cmd_aktiv(args):
                 break
 
 
+def presses(prefix):
+    """Frames, in denen P1 Button 1 neu gedrueckt ist."""
+    out, prev = [], False
+    for r in csv.DictReader(open(prefix + "_inputs.csv")):
+        on = "P1 Button 1" in r["inputs"].split("|")
+        if on and not prev:
+            out.append(int(r["frame"]))
+        prev = on
+    return out
+
+
+def cmd_kette(args):
+    print("lauf,stufe_gedrueckt,druck,frame,rel,stufe_ram,p1_aktion,dx,dz,gegner_status,treffer,schaden")
+    for prefix in args.prefix:
+        d = Dump(prefix)
+        pr = presses(prefix)
+        if not pr:
+            continue
+        k, p = len(pr), pr[-1]
+        name = Path(prefix).name
+        # Gegner: der Slot, dessen LP im Lauf zuerst sinken, sonst der naechste
+        slot = None
+        for f in d.frames[1:]:
+            for n in range(20):
+                s = SLOT_BASE + n * SLOT_SIZE
+                if d.value(f - 1, s + 4) and d.value(f, s + 0x40, 2, True) < d.value(f - 1, s + 0x40, 2, True):
+                    slot = n
+                    break
+            if slot is not None:
+                break
+        if slot is None:
+            # kein Treffer im Lauf: naechster angezeigter Gegner beim Druck
+            near = [(abs(d.value(p, SLOT_BASE + n * SLOT_SIZE + 0x0E, 2) - d.value(p, X, 2)), n)
+                    for n in range(20)
+                    if d.value(p, SLOT_BASE + n * SLOT_SIZE + 4) and d.value(p, SLOT_BASE + n * SLOT_SIZE + 5)]
+            if not near:
+                continue
+            slot = min(near)[1]
+        s = SLOT_BASE + slot * SLOT_SIZE
+        for f in range(p + 1, min(p + 11, d.frames[-1] + 1)):
+            dx = d.value(f, s + 0x0E, 2) - d.value(f, X, 2)
+            dz = d.value(f, s + 0x16, 2) - d.value(f, Z, 2)
+            dmg = d.value(f - 1, s + 0x40, 2, True) - d.value(f, s + 0x40, 2, True)
+            print(f"{name},{k},{p},{f},D+{f - p},{d.value(f, COMBO) // 4 + 1},"
+                  f"{d.value(f, ACTION, 2):#x},{dx},{dz},{d.value(f, s + 4)},"
+                  f"{'ja' if dmg > 0 else 'nein'},{dmg if dmg > 0 else 0}")
+            if dmg > 0:
+                break
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -318,6 +370,9 @@ def main():
     p = sub.add_parser("aktiv")
     p.add_argument("prefix", nargs="+")
     p.set_defaults(fn=cmd_aktiv)
+    p = sub.add_parser("kette")
+    p.add_argument("prefix", nargs="+")
+    p.set_defaults(fn=cmd_kette)
     args = ap.parse_args()
     args.fn(args)
 

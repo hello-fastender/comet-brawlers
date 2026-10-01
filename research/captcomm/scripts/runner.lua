@@ -18,7 +18,9 @@
 -- Eingriffe (nur fuer gekennzeichnete Experimente): Das Szenario-Feld
 -- "pokes" = { { von, bis, addr, wert [, breite] }, ... } schreibt den Wert
 -- vor jedem Frame von..bis in den Arbeitsspeicher (breite 1 oder 2, Standard
--- 1). Protokolliert wird jeweils der Zustand am Frame-Ende.
+-- 1). "wert" darf auch eine Funktion function(space) sein; sie wird vor
+-- jedem Schreiben aufgerufen (z. B. Position relativ zur Figur).
+-- Protokolliert wird jeweils der Zustand am Frame-Ende.
 --
 -- Zeitbezug: "lokaler Frame" zaehlt die Frame-Callbacks seit Skriptstart
 -- (Frame 1 = erster Callback). Eingaben, die im Callback von Frame f gesetzt
@@ -184,8 +186,10 @@ local function on_frame()
 	-- Eingriffe fuer den naechsten Frame
 	for _, pk in ipairs(sc.pokes or {}) do
 		if frame + 1 >= pk[1] and frame + 1 <= pk[2] then
-			if (pk[5] or 1) == 2 then space:write_u16(pk[3], pk[4])
-			else space:write_u8(pk[3], pk[4]) end
+			local v = pk[4]
+			if type(v) == "function" then v = v(space) end
+			if (pk[5] or 1) == 2 then space:write_u16(pk[3], v)
+			else space:write_u8(pk[3], v) end
 		end
 	end
 end
