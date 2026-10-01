@@ -22,6 +22,9 @@ Unterbefehle:
   gegnerschaden PREFIX..  jeder LP-Verlust von P1 mit den naechsten Gegnern
                   (Max-LP S+0x9A, Typkennung S+0x38, Aktion/Phase in den
                   Frames davor) und dem Zustand der Figur
+  wurf PREFIX..   Wurf aus dem Griff: Eingabe, Schaden, Loslassen, Scheitel,
+                  Landung (ganzzahlige Hoehe 0), Ruheposition; Weiten relativ
+                  zur Startposition des Gegners und zur Figur
   griff PREFIX..  Griffbeginn (Gegner verlaesst Status 1 ohne LP-Verlust und
                   wird gehalten, Aktion 0x02): die Frames davor mit Abstand,
                   Tiefe, Eingaben; danach Treffer im Griff, Wechsel der
@@ -464,6 +467,55 @@ def cmd_gegnerschaden(args):
                       f"{d.value(f, s + 4)}")
 
 
+def cmd_wurf(args):
+    print("lauf,wurf_eingabe,richtung,schaden_frame,schaden,loslassen,scheitel_frame_nach_loslassen,scheitel_hoehe,"
+          "landung,ruhe_ab,gegner_start_dx,weite_ab_gegnerstart,ende_dx_zur_figur,ende_dz,"
+          "flug_x_bis_landung,rutschen_nach_landung,figur_dx_waehrend")
+    for prefix in args.prefix:
+        d = Dump(prefix)
+        rows = list(csv.DictReader(open(prefix + "_inputs.csv")))
+        name = Path(prefix).name
+        w = None
+        for r in rows:
+            ins = r["inputs"].split("|")
+            if "P1 Button 1" in ins and any(k in ins for k in ("P1 Left", "P1 Right", "P1 Up", "P1 Down")):
+                w = (int(r["frame"]), "+".join(k[3:] for k in ins if k != "P1 Button 1"))
+                break
+        if not w:
+            print(f"{name},-,keine Wurfeingabe")
+            continue
+        f0, richtung = w
+        # gehaltener Gegner: Slot mit Aktion 0x02 im Frame der Eingabe
+        held = [n for n in range(20) if d.value(f0, SLOT_BASE + n * SLOT_SIZE + 0x0A, 2) == 2
+                and d.value(f0, SLOT_BASE + n * SLOT_SIZE + 4) in (2, 3)]
+        if not held:
+            print(f"{name},{f0},{richtung},kein gehaltener Gegner")
+            continue
+        s = SLOT_BASE + held[0] * SLOT_SIZE
+        x0 = fix(d, f0, s + 0x0E)
+        px0 = fix(d, f0, X)
+        fr = [f for f in d.frames if f >= f0]
+        dmgf = next((f for f in fr[1:] if d.value(f, s + 0x40, 2, True) < d.value(f - 1, s + 0x40, 2, True)), None)
+        dmg = d.value(dmgf - 1, s + 0x40, 2, True) - d.value(dmgf, s + 0x40, 2, True) if dmgf else 0
+        rel = next((f for f in fr[1:] if d.value(f, s + 0x0A, 2) != 2), None)
+        hi = lambda f: d.value(f, s + 0x12, 2, True)
+        peak = max((f for f in fr if rel and f >= rel), key=hi, default=f0)
+        land = next((f for f in fr if rel and f > rel and hi(f) <= 0 < hi(f - 1)), None)
+        rest = None
+        if land:
+            for f in fr:
+                if f > land and all(f + k in d.offsets and fix(d, f + k, s + 0x0E) == fix(d, f, s + 0x0E) for k in range(1, 6)):
+                    rest = f
+                    break
+        end = rest or fr[-1]
+        xend = fix(d, end, s + 0x0E)
+        print(f"{name},{f0},{richtung},{dmgf or '-'},{dmg},{rel or '-'},{peak},{hi(peak)},{land or '-'},"
+              f"{rest or '-'},{x0 - px0:+g},{xend - x0:+g},{xend - fix(d, end, X):+g},"
+              f"{fix(d, end, s + 0x16) - fix(d, end, Z):+g},"
+              f"{(fix(d, land, s + 0x0E) - x0) if land else 0:+g},"
+              f"{(xend - fix(d, land, s + 0x0E)) if land else 0:+g},{fix(d, end, X) - px0:+g}")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -504,6 +556,9 @@ def main():
     p = sub.add_parser("gegnerschaden")
     p.add_argument("prefix", nargs="+")
     p.set_defaults(fn=cmd_gegnerschaden)
+    p = sub.add_parser("wurf")
+    p.add_argument("prefix", nargs="+")
+    p.set_defaults(fn=cmd_wurf)
     p = sub.add_parser("griff")
     p.add_argument("prefix", nargs="+")
     p.set_defaults(fn=cmd_griff)
