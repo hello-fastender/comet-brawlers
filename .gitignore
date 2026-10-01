@@ -21,5 +21,8 @@ research/captcomm/logs/raw/
 
 __pycache__/
 
-# Snapshots dienen nur der lokalen Auswertung, keine Spielgrafik ins Repo
+# Rohe Snapshots bleiben lokal (logs/raw/ ist ohnehin ausgeschlossen).
+# Ausgewählte Spielgrafiken liegen mit Genehmigung unter research/captcomm/grafik/
+# (siehe research/captcomm/notes.md).
 research/**/*.png
+!research/captcomm/grafik/**/*.png

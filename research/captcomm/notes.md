@@ -2,9 +2,13 @@
 
 Wir analysieren das Spiel, indem wir ihm beim Laufen zusehen. MAME läuft
 headless, ein Lua-Skript gibt Eingaben ein und protokolliert den
-Arbeitsspeicher Frame für Frame. Ins Repo kommen nur eigene Skripte,
-Messwerte und Beschreibungen. Keine ROM-Daten, keine Grafiken, keine Sounds
-und kein disassemblierter Code.
+Arbeitsspeicher Frame für Frame. Ins Repo kommen eigene Skripte, Messwerte
+und Beschreibungen sowie Grafiken aus dem Spiel (Bildschirmaufnahmen und
+daraus geschnittene Ausschnitte) unter `research/captcomm/grafik/`. Für die
+Grafiken liegt laut Nutzer eine Lizenz bzw. Sondergenehmigung vor, die auch
+die öffentliche Verbreitung in diesem Repo abdeckt (Freigabe 2026-10-01).
+Weiterhin nicht ins Repo: ROM-Dateien und ROM-Daten, Sounds und
+disassemblierter Code.
 
 Kennzeichnung in diesem Dokument:
 
