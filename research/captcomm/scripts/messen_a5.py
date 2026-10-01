@@ -424,8 +424,10 @@ def cmd_griff(args):
             if d.value(f, s + 0x0A, 2) != d.value(f - 1, s + 0x0A, 2):
                 row(f, n, "gegner_aktion wechselt")
             f += 1
-        if f in d.offsets:
+        if f in d.offsets and d.value(f, s + 4) not in (2, 3):
             row(f, n, "gegner verlaesst status 2/3")
+        else:
+            row(f, n, "laufende (gegner noch in status 2/3)")
 
 
 def main():
