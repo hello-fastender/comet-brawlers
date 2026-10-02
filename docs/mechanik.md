@@ -13,6 +13,9 @@ Griff und Würfe, Schaden der Gegner) übernommen. Werte mit „Workflow“ in d
 sind von mehreren Agenten unabhängig gemessen und gegengeprüft, aber nicht
 mit einem Skript im Repo nachvollziehbar (Kennzeichnung in notes.md).
 
+Überblick über alle Erkenntnisse, die Haltung „inspiriert, kein Nachbau“
+und was wir selbst gestalten: `docs/erkenntnisse.md`.
+
 ## Konventionen
 
 - **Einheiten**: Positionen und Geschwindigkeiten in Pixeln des

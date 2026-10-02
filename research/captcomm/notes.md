@@ -33,6 +33,7 @@ Kennzeichnung in diesem Dokument:
 | 10. Nachtrag: Schaden der Gegner | erledigt: Zuordnung jedes Treffers zum Angreifer, Schaden je Gegner und Angriff, Abhängigkeit vom Rang (Schwierigkeitswert FFF82A), Regeln für Umwerfen und Tod gesichert, siehe „Nachtrag: Schaden der Gegner“ |
 | 11. Nachtrag: Sprungangriff | erledigt: vier Varianten, Schaden, Umwerfen, aktive Frames, Höhen-, x- und Tiefenreichweite gesichert, siehe „Nachtrag: Sprungangriff“ |
 | 12. Grafik und Animationen | erledigt: Stage-Starts, Szenen und Panoramen aller 9 Stages, Animationsstreifen der 4 Spielfiguren, Pose-Galerien der Gegner je Stage, Beschreibung aller Stages, Helden und Gegner (Grafik-Workflow, Stichproben gegengeprüft: 115 von 129 bestätigt, Korrekturen eingearbeitet), siehe `grafik/README.md`. Offen: Titel, Figurenwahl, Abspann, Anzeigeleiste, Gegenstände |
+| 13. Zusammenfassung für das Spiel | erledigt (2026-10-02): `docs/erkenntnisse.md` fasst Stand, Erkenntnisse und Richtwerte zusammen. Entscheidung des Nutzers: Comet Brawlers ist inspiriert, kein Nachbau; weiteres Messen nur noch, wo es beim Gestalten hilft |
 
 ### Umgebung
 
