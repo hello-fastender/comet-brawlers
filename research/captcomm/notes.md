@@ -32,6 +32,7 @@ Kennzeichnung in diesem Dokument:
 | 9. Nachtrag: Würfe | erledigt: Eingabe, Schaden, Ablauf, Flugbahn und Weite des Wurfs, Kniestoß, Spezialangriff im Griff, geworfener Gegner als Geschoss; Umwerfen der Figur durch Gegner und Verkürzen des Liegens gesichert; dazu Reichweite und Bedingungen des Griffs, siehe „Nachtrag: Griff und Würfe“ |
 | 10. Nachtrag: Schaden der Gegner | erledigt: Zuordnung jedes Treffers zum Angreifer, Schaden je Gegner und Angriff, Abhängigkeit vom Rang (Schwierigkeitswert FFF82A), Regeln für Umwerfen und Tod gesichert, siehe „Nachtrag: Schaden der Gegner“ |
 | 11. Nachtrag: Sprungangriff | erledigt: vier Varianten, Schaden, Umwerfen, aktive Frames, Höhen-, x- und Tiefenreichweite gesichert, siehe „Nachtrag: Sprungangriff“ |
+| 12. Grafik und Animationen | Bilder erledigt: Stage-Starts, Szenen und Panoramen aller 9 Stages, Animationsstreifen der 4 Spielfiguren, Pose-Galerien der Gegner je Stage, siehe `grafik/README.md`. Beschreibungen aus dem Grafik-Workflow, Gegenprüfung läuft |
 
 ### Umgebung
 
@@ -80,6 +81,7 @@ Kennzeichnung in diesem Dokument:
 | `laeufe_a5.sh` | alle MAME-Läufe für Aufgabe 5 (und die Grundläufe aus 3/4) von vorn, ~1 min | ja: zweimal ausgeführt, Ergebnisse identisch |
 | `belege_a5.sh` | erzeugt `logs/a5_*.csv` | ja |
 | `laeufe_a7.sh`, `belege_a7.sh` | Läufe (~1 min) und Logausschnitte `logs/a7_*.csv` für den Nachtrag Sprung und Schlagreichweite; dazu `messen_a5.py sprung` und `aktiv` | ja |
+| `grafik/alle.sh` | erzeugt alle Spielgrafiken unter `grafik/` neu (~15 min): Stage-Starts (`scenarios/stage_start.lua`), Durchlauf-Bot (`grafik/bot.lua`, `bot.sh`, `durchlauf.lua`) mit Panoramen (`panorama.py`) und Szenenbildern (`szenen.py`), Animationsstreifen der Figuren (`helden.sh`, `scenarios/anim.lua`, `streifen.py`), Pose-Galerien (`gegner.sh`, `gegner.py`) und Ablaufstreifen der Gegner (`gegner_ablauf.sh`). Beschreibung in `grafik/README.md` | ja |
 | `belege_sprungangriff.sh` | 129 Läufe mit `scenarios/sprungangriff.lua` (Einzelframe-Proben `CC_FERN_BIS`/`CC_NAH_BIS`, Richtung zum Angriff `CC_ADIR`) und Auswertung mit `messen_a5.py sprungangriff` und `treffer` nach `logs/sprungangriff.csv` (~1 min) | ja: zweimal ausgeführt, Ergebnis identisch |
 | `belege_griff.sh` | 36 Läufe mit `scenarios/griff.lua` und Auswertung mit `messen_a5.py griff` und `treffer` nach `logs/griff.csv` (~20 s) | ja: zweimal ausgeführt, Ergebnis identisch |
 | `belege_wurf.sh` | 42 Läufe mit `scenarios/griff.lua` (freie Eingaben `CC_IN`, Länge `CC_FRAMES`; Eingriff nur zum Absetzen des Gegners) und Auswertung mit `messen_a5.py wurf`, `wurfablauf`, `umfallen` nach `logs/wurf.csv` (~1 min) | ja: zweimal ausgeführt, Ergebnis identisch |
