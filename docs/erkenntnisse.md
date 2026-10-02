@@ -44,6 +44,8 @@ Entscheidungen des Nutzers vom 2026-10-02 (verbindlich; eingearbeitet in
 | `docs/erkenntnisse.md` | dieses Dokument: Überblick, Erkenntnisse, Richtwerte, offene Punkte |
 | `docs/design.md` | Designdokument Kern (Entwurf): Vision, Welt, technische Grundlage, Grundkit der Spielfigur, Helden, Lebenspunkte und Schwierigkeit, Rahmen, vertikale Scheibe, offene Entscheidungen |
 | `docs/design-gegner-stages.md` | Designdokument Gegner, Bosse und Stages (Entwurf): Gegnerrollen, Verhaltensmodell, Wiederverwendung, Bosse, Stage-Schablone, acht Stages, erste Stage im Detail, Gegenstände, Animationsplan |
+| `docs/spezifikation-kampf.md` | Spezifikation der vertikalen Scheibe, Kampfsystem: Zeit und Raum (60 Hz, Festkomma 16.16), Zustandsautomat der Figur, Trefferprüfung, Schaden, LP und Schutz, Trefferreaktion der Gegner, Griff und Wurf, Sprint und Spezialangriff, Waffen, Frame-Protokoll, Abnahmetests, offene Fragen |
+| `docs/spezifikation-welt.md` | Spezifikation der vertikalen Scheibe, Welt: Stage-Daten, Kamera, Aktivierung und Wellen, Gegnerlogik der Nah- und Fernkämpfer, Boss, Rang, Gegenstände und Behälter, Anzeige und Rahmen, Zufall und Determinismus, Abnahmetests, offene Fragen |
 | `research/captcomm/notes.md` | Methode, alle Messungen mit Status und Belegen, Speicheradressen |
 | `research/captcomm/grafik/README.md` | Stages, Spielfiguren und Gegner mit Bildern, Kennwerten und Animationsdauern |
 | `research/captcomm/logs/` | Belege der Messungen (CSV) |

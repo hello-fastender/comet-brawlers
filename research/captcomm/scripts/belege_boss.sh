@@ -446,7 +446,7 @@ fi
 # 5600: beide Arena-WOOKY besiegt, Boss 97 LP), daraus boss_v_rakete (Raketen-
 # werfer aufgenommen), boss_v_r9 (Rang 9, Boss 100 LP); boss_v_laser aus
 # item_bot1_s1_cam02048 (belege_item.sh) mit eigener Aufnahme des Lasers.
-# EINGRIFFE (Einzelheiten im Kopf beider Szenarien und in entwuerfe/boss_v.md):
+# EINGRIFFE (Einzelheiten im Kopf beider Szenarien und im „Nachtrag: Boss“ in notes.md):
 # LP der Figur 72 (immer); Rang festgehalten (CC_RANG, BV_RANG); Lagen von Figur
 # und Boss (CC_SETZ, CC_FIG, CC_FIGV, CC_FIGA, CC_FIGH, CC_BOSS); LP des Bosses
 # (CC_BLP, Bot: BV_BLP_MIN); Gegner entfernt (CC_ENTF); Bot: LP der Gegner nach

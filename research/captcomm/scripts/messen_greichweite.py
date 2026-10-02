@@ -261,8 +261,8 @@ def cmd_gegnerangriff(args):
                       f"{(hex(d.value(hit, s + 0x24, 2)) if hit else '')}")
 
 
-# Kurznamen der Angriffsarten (erste Animation des Angriffs), siehe Entwurf
-# entwuerfe/greichweite.md
+# Kurznamen der Angriffsarten (erste Animation des Angriffs), siehe notes.md,
+# „Nachtrag: Reichweite der Gegnerangriffe“
 ART = {
     0x5FA54: "W-Schlag-A", 0x5FC18: "W-Schlag-B", 0x5FD24: "W-Schlag-C",
     0x5FB50: "W-Umwerf-A", 0x5FC8C: "W-Umwerf-B",
