@@ -119,9 +119,9 @@ Sprungdruck, **A** Angriffsdruck im Sprung, **E** Wurfeingabe im Griff,
 | Aktion | Startup | Aktive Frames | Nachlauf | Reichweite x | Tiefe | Schaden | Umwerfen | Besonderheit | Quelle |
 |---|---|---|---|---|---|---|---|---|---|
 | Kette Stufe 1 | Treffer in P+2 | P+2 bis P+5 | nach Treffer handlungsfähig ab h+13, Pose ohne Eingabe bis h+27; Leerschlag handlungsfähig ab P+8, Ruhe ab P+17 | ≤ 85 px, ab 86 px kein Treffer | ≤ 11 px, nie ab 13 px; 12 px Grenzfall: trifft wie Stufe 2 bis 4, beschlossen (E9) | 3 | nein | Trefferreaktion des Gegners 23 Frames (h bis h+22), kein Rückstoß; ein Treffer darin startet sie neu; danach holt er frühestens in h+45 aus (notes.md, „Nachtrag: Trefferreaktion der Gegner“) | „Angriff (Standardschlag, Kette)“ |
-| Kette Stufe 2 | Druck D in h+12 bis h+27 nach Stufe 1; Treffer in D+3 | D+3 bis D+6 | offen (M8, O1); Folgedruck ab h+11 | ≤ 87 px | ≤ 12 px | 4 | nein | jeweils 1 px weiter kein Treffer | wie oben |
-| Kette Stufe 3 | Druck in h+11 bis h+26 nach Stufe 2; Treffer in D+4 | D+4 bis D+7 | offen (M8, O2); Folgedruck ab h+11 | ≤ 91 px | ≤ 12 px | 5 | nein | – | wie oben |
-| Kette Stufe 4 (Abschluss) | Druck in h+11 bis h+26 nach Stufe 3; Treffer in D+3 | D+3 bis D+6; trifft er nichts, erneut D+17 bis D+20 | offen (M8, O3) | ≤ 100 px | ≤ 12 px | 10 | ja, immer, auch wenn der Gegner noch LP hat | Gegner fliegt nach 8 Frames Stillstand mit 2,875 px/Frame und liegt 55 Frames nach dem Treffer 135 px entfernt (notes.md, „Nachtrag: Trefferreaktion der Gegner“) | wie oben |
+| Kette Stufe 2 | Druck D in h+12 bis h+27 nach Stufe 1; Treffer in D+3 | D+3 bis D+6 | nach Treffer handlungsfähig ab h+12 (Druck ab h+11: Folgestufe oder Sprung), seitliches Gehen ab h+13, Gehen in die Tiefe erst ab h+28, Pose ohne Eingabe bis h+26; Leerschlag handlungsfähig ab D+8, Gehen ab D+9, Ruhe ab D+17 (notes.md, „Nachtrag: Rest der Spielfigur“) | ≤ 87 px | ≤ 12 px | 4 | nein | jeweils 1 px weiter kein Treffer | wie oben |
+| Kette Stufe 3 | Druck in h+11 bis h+26 nach Stufe 2; Treffer in D+4 | D+4 bis D+7 | nach Treffer wie Stufe 2 (handlungsfähig ab h+12, Druck ab h+11; seitliches Gehen ab h+13, Tiefe ab h+28; Pose bis h+26); Leerschlag handlungsfähig ab D+9, Gehen ab D+10, Ruhe ab D+18 (notes.md, „Nachtrag: Rest der Spielfigur“) | ≤ 91 px | ≤ 12 px | 5 | nein | – | wie oben |
+| Kette Stufe 4 (Abschluss) | Druck in h+11 bis h+26 nach Stufe 3; Treffer in D+3 | D+3 bis D+6; trifft er nichts, erneut D+17 bis D+20 | nicht abbrechbar: Aktion 25 Frames (D+1 bis D+25), je Treffer 7 mehr (mit einem Treffer bis D+32, auch im zweiten Fenster), danach handlungsfähig ab D+34 (Druck ab D+33), Gehen ab D+34; Leerschlag handlungsfähig ab D+27 (notes.md, „Nachtrag: Rest der Spielfigur“) | ≤ 100 px | ≤ 12 px | 10 | ja, immer, auch wenn der Gegner noch LP hat | Gegner fliegt nach 8 Frames Stillstand mit 2,875 px/Frame und liegt 55 Frames nach dem Treffer 135 px entfernt (notes.md, „Nachtrag: Trefferreaktion der Gegner“) | wie oben |
 
 ### 4.3 Sprungangriff
 
@@ -129,14 +129,14 @@ Sprungdruck, **A** Angriffsdruck im Sprung, **E** Wurfeingabe im Griff,
 |---|---|---|---|---|---|---|---|---|---|
 | Neutral (Sprung ohne Richtung) | Angriff ab J+1 (in J selbst: Spezialangriff); Treffer ab A+5 | A+5 bis A+28, solange in der Luft; +7 je Treffer | Sprung einen Frame länger; Landung wie „Sprung“ | 27 px hinter bis 76 px vor der Figur | ≤ 12 px | 7 | ja, Gegner fliegt 135 px (notes.md, „Nachtrag: Trefferreaktion der Gegner“) | trifft nur, solange die Figur höchstens 45 px hoch ist (am Scheitel nicht); mehrere Gegner je Sprung, jeder einmal; ab A = J+38 ohne Wirkung (Workflow) | „Sprungangriff“ |
 | Richtung (Sprung mit links oder rechts) | wie neutral | wie neutral | wie neutral | 24 px hinter bis 99 px vor der Figur | ≤ 12 px | 7 | ja | Figur höchstens 41 px hoch | „Sprungangriff“ |
-| Hoch (hoch im Frame des Sprungdrucks) | Treffer ab A+7 | ab A+7 | wie neutral | offen (M8, O4) | offen (M8, O4) | 12 | ja | – | „Sprungangriff“, „Nicht übernommen“ |
-| Runter (runter mit dem Angriff) | offen (M8, O5) | offen (M8, O5) | wie neutral | offen (M8, O5) | offen (M8, O5) | 4 | nein | – | „Sprungangriff“, „Nicht übernommen“ |
+| Hoch (hoch im Frame des Sprungdrucks) | Treffer ab A+7 | A+7 bis A+10 (4 Frames), solange die Figur höchstens 48 px hoch ist (notes.md, „Nachtrag: Rest der Spielfigur“) | wie neutral | 32 px hinter bis 85 px vor der Figur, nur bis 48 px Höhe der Figur (notes.md, „Nachtrag: Rest der Spielfigur“) | ≤ 12 px, nie ab 13 px | 12 | ja | – | „Sprungangriff“, „Nicht übernommen“ |
+| Runter (runter mit dem Angriff) | Treffer ab A+9 | A+9 bis A+32, solange die Figur höchstens 41 px hoch ist (steigend wie fallend) | wie neutral | 41 px hinter bis 42 px vor der Figur (notes.md, „Nachtrag: Rest der Spielfigur“) | ≤ 12 px, nie ab 13 px | 4 | nein | – | „Sprungangriff“, „Nicht übernommen“ |
 
 ### 4.4 Griff und Wurf
 
 | Aktion | Startup | Aktive Frames | Nachlauf | Reichweite x | Tiefe | Schaden | Umwerfen | Besonderheit | Quelle |
 |---|---|---|---|---|---|---|---|---|---|
-| Griff | beim Hineinlaufen mit gehaltener Richtung | Halten 60 Frames ab dem Griff, dann reißt sich der Gegner los | nach dem Losreißen 30 Frames kein neuer Griff (Workflow) | ≤ 39 px vor der Figur (Blick links 38 px); von hinten ≤ 24 px, nur wenn der Gegner die Figur anschaut (Workflow) | ≤ 10 px | – | – | kein Griff ohne Eingabe, im Sprung und in der eigenen Trefferreaktion; Angriff einen Frame vorher gibt einen Schlag, im Griff-Frame geht er verloren; Treffer anderer Gegner beenden den Griff (Workflow); Sprung lässt ohne Schaden los | „Griff und Wurf“ |
+| Griff | beim Hineinlaufen mit gehaltener Richtung | Halten 60 Frames ab dem Griff, dann reißt sich der Gegner los | nach dem Losreißen 30 Frames kein neuer Griff (Workflow) | ≤ 39 px vor der Figur (Blick links 38 px); von hinten ≤ 24 px, nur wenn der Gegner die Figur anschaut (Workflow) | ≤ 10 px | – | – | kein Griff ohne Eingabe, im Sprung und in der eigenen Trefferreaktion; Angriff einen Frame vorher gibt einen Schlag, im Griff-Frame geht er verloren; wirksame Treffer anderer Gegner beenden den Griff (Workflow), wirkungslose im Schutz der Figur nicht (E2); Sprung lässt ohne Schaden los | „Griff und Wurf“ |
 | Wurf (Angriff plus Richtung) | Schaden in E+1; frühestens im Frame nach dem Griff, spätestens im letzten Halteframe | geworfener Gegner trifft andere beim Tragen und im Flug bis zum ersten Bodenkontakt in E+59 | Figur gebunden E+1 bis E+37, handlungsfähig ab E+38 | Gegner liegt 184–185 px entfernt, vorwärts wie rückwärts (andere Gegnertypen 181–197 px) | andere Gegner bei ≤ 17 px | 14; jeder getroffene andere Gegner 3 | ja, auch die getroffenen | Richtung mit Blickrichtung (auch diagonal) wirft nach vorn, sonst rückwärts über die Figur; losgelassen in E+22 bei 59 px Höhe, still ab E+71; Bildrand begrenzt nicht (höchstens 96 px außerhalb), Wände stoppen | „Griff und Wurf“ |
 | Kniestoß (Angriff ohne Richtung im Griff) | Treffer in K+5 | – | nächste Eingabe ab K+18, frühere verworfen | im Griff | im Griff | 4 | beim dritten Kniestoß, etwa 165 px | jeder Kniestoß startet die 60 Halteframes neu | „Griff und Wurf“ |
 
@@ -165,10 +165,16 @@ Sprungdruck, **A** Angriffsdruck im Sprung, **E** Wurfeingabe im Griff,
   Kette verlangt also einen Rhythmus, Dauerdrücken reicht nicht. Quelle:
   „Angriff (Standardschlag, Kette)“, „Griff und Wurf“.
 - **Schutzfenster**: 27 Frames nach einem erlittenen Treffer, solange die
-  Trefferreaktion läuft, unabhängig vom Schaden; 35 Frames nach dem
-  Aufstehen; während des Spezialangriffs und danach bis P+70 (mit einem
-  Treffer bis P+77, Abschnitt 4.5). In diesen Fenstern und solange sie
-  liegt, verliert die Figur keine LP. Beschlossen (E2): Die Gegner greifen
+  Trefferreaktion läuft, unabhängig vom Schaden; vom Umwerfen über Flug,
+  Liegen und Aufstehen bis zum Stand; 35 Frames nach dem Aufstehen;
+  während des Spezialangriffs und 20 Frames danach (bei Vela ohne Treffer
+  bis P+70, mit einem Bild mit Treffer bis P+77, je weiteres Bild mit
+  Treffer 7 Frames später, Abschnitt 4.5); nach dem Neueinstieg vom
+  Erscheinen bis 199 Frames nach der Landung (252 Frames bei Landung auf
+  dem Boden, Abschnitt 7, Leben). In diesen Fenstern verliert die Figur
+  keine LP, auch nicht durch Geschosse (im Vorbild treffen Geschosse im
+  Schutz nach einem Treffer; notes.md, „Nachtrag: Fernangriffe der
+  Gegner“). Beschlossen (E2): Die Gegner greifen
   dort wie im Vorbild an, auch eine liegende Figur, und ihre Treffer
   bleiben wirkungslos; die Angriffserlaubnis nimmt auf Schutzfenster keine
   Rücksicht
@@ -246,7 +252,7 @@ erscheinende hängen vom Rang ab.
 | Anstieg | +1 nach 409 Frames, danach alle 600 Frames (≈ 10 s); 24 nach 409 + 14 × 600 = 8809 Frames (≈ 2,4 min) | wie oben |
 | Tod der Figur | −3 | wie oben |
 | Wirkung | legt beim Beginn eines Angriffs dessen Schaden fest und beim Erscheinen die LP eines später erscheinenden Gegners | wie oben |
-| Rang beim Stage-Wechsel | läuft weiter, beschlossen (E9); im Vorbild offen (M8, O7) | Abschnitt 9 |
+| Rang beim Stage-Wechsel | läuft weiter, beschlossen (E9); im Vorbild −3 im Frame des Wechsels, nie unter 7, der 600er-Zähler läuft weiter (notes.md, „Nachtrag: Rest der Spielfigur“) | Abschnitt 9 |
 
 | Rolle | Schaden vorplatziert | Schaden nach Rang | LP | Quelle |
 |---|---|---|---|---|
@@ -254,7 +260,7 @@ erscheinende hängen vom Rang ab.
 | Nahkämpfer schwer | 6 | jeweils 1 mehr: 8 / 9 / 10 / 11 | vorplatziert 30, später 32–42 | wie oben |
 | Schneller Messerkämpfer | – | Messer 7–10, Wurfmesser und Ausfallstich 10–13 | 34–46 | wie oben |
 | Fernkämpfer | – | Pistole 5–7 je Schuss, Raketen 12–15 (Workflow) | Richtwert 16–28 (erkenntnisse.md) | „Schaden der Gegner“ |
-| Boss | – | Schläge 9–12, Ansturm 12–17, Körperpresse 16–22, Griff und Wurf 16–22 (Workflow) | 90–120, beschlossen (E9); 100 bis 110 im Vorbild, Rangabhängigkeit offen (M6, O8): grafik/README.md nennt 100, die Messläufe 110 (notes.md, „Nachtrag: Verhalten der Nahkämpfer“) | „Schaden der Gegner“ |
+| Boss | – | Schläge 9–12, Ansturm 12–17, Körperpresse 16–22, Griff und Wurf 16–22 (Workflow) | 90–120, beschlossen (E9); im Vorbild beim Erscheinen nach Rang festgelegt: 90 (Rang 7–8), 100 (9–15), 110 (16–23), 120 (24) (notes.md, „Nachtrag: Boss“); daher nennt grafik/README.md 100 und die Messläufe 110 (notes.md, „Nachtrag: Verhalten der Nahkämpfer“) | „Schaden der Gegner“ |
 
 Wie die LP innerhalb der Spanne vom Rang abhängen, steht nicht in
 `mechanik.md`. Beschlossen (E9): gleichmäßig von der Untergrenze bei
@@ -299,14 +305,14 @@ Vela macht 22 LP und wirft immer um. Angefangene Ketten zählen mit.
 | Rolle | LP | Ketten (22 LP) | Anmerkung |
 |---|---|---|---|
 | Nahkämpfer leicht, vorplatziert | 16 | 1 | fällt im Abschlusstritt |
-| Nahkämpfer leicht, später | 22–34 | 1–2 | mit 22 LP steht er nach einer Kette auf genau 0; ob er fällt, ist offen (M8, O9), weil M1 den Tod nur bei LP unter 0 ausgelöst hat (notes.md, „Nachtrag: Trefferreaktion der Gegner“) |
+| Nahkämpfer leicht, später | 22–34 | 1–2 | mit 22 LP steht er nach einer Kette auf genau 0; er fällt nicht: Mit genau 0 LP reagiert er normal und kämpft weiter, erst der nächste Treffer tötet ihn (notes.md, „Nachtrag: Rest der Spielfigur“) |
 | Nahkämpfer schwer, vorplatziert | 30 | 2 | nach der ersten Kette 8 LP Rest |
 | Nahkämpfer schwer, später | 32–42 | 2 | – |
 | Schneller Messerkämpfer | 34–46 | 2–3 | ab 45 LP reichen zwei Ketten (44 LP) nicht |
 | Fernkämpfer | Richtwert 16–28 | 1–2 | – |
 | Flächenangreifer | 30–60 (Glimmer und Fackel, `docs/design-gegner-stages.md`, Abschnitte 1.5 und 3) | 2–3 | – |
 | Schwerer Gegner (Koloss) | 85–99 (`docs/design-gegner-stages.md`, Abschnitt 1.6) | 4–5 | ab 89 LP reichen vier Ketten (88 LP) nicht |
-| Boss | 90–120 (Ballast 100); Vorbild 100 bis 110 | 5–6 | Super-Armor: nur Ketten mit Umwerfen, Würfe und Sprungangriffe zählen (`docs/design-gegner-stages.md`, Abschnitt 4); mit 100 LP ergeben 4 Ketten und ein Wurf 102 LP; mit 110 LP stehen nach 5 Ketten genau 0 LP, ob der Boss dann fällt, ist offen (M6, O9); mit 120 LP braucht es 6 Ketten |
+| Boss | 90–120 (Ballast 100); Vorbild 90 bis 120 je nach Rang beim Erscheinen (notes.md, „Nachtrag: Boss“) | 5–6 | Super-Armor: nur Ketten mit Umwerfen, Würfe und Sprungangriffe zählen (`docs/design-gegner-stages.md`, Abschnitt 4); mit 100 LP ergeben 4 Ketten und ein Wurf 102 LP; mit 110 LP stehen nach 5 Ketten genau 0 LP, und der Boss kämpft weiter, bis ein Treffer ihn unter 0 bringt (notes.md, „Nachtrag: Boss“); mit 120 LP braucht es 6 Ketten |
 
 Mit Kord und Rin (21 LP je Kette) braucht ein leichter Nahkämpfer mit
 22 LP einen Schlag mehr, mit Ollo (23 LP) fällt er sicher in einer Kette.
@@ -315,8 +321,9 @@ später wieder frei ist (schwerer Nahkämpfer 89 bis 117 Frames); einen
 Schutz danach hat er nicht (notes.md, „Nachtrag: Trefferreaktion der
 Gegner“). Beschlossen (E4): Unsere Gegner haben ebenfalls keinen Schutz
 nach dem Aufstehen; ab dem ersten handlungsfähigen Frame G sind sie
-verwundbar und greifbar, nach einem Wurf greifbar ab G+1 wie im Vorbild
-(`docs/design-gegner-stages.md`, Abschnitt 2).
+verwundbar und greifbar, auch nach einem Wurf; im Vorbild ist ein
+geworfener Gegner erst ab G+1 greifbar (`docs/design-gegner-stages.md`,
+Abschnitt 2).
 
 ## 7. Rahmen
 
@@ -330,7 +337,7 @@ Arbeitsregel gekennzeichnet ist; das Vorbild ist hier nicht untersucht
 | Figurenwahl | vier Helden nebeneinander mit Porträt, Name und drei Kurzangaben (Kette, Wurf, Spezialangriff); Wahl mit Richtung und Angriff; Countdown wie am Automaten; zwei Spieler dürfen denselben Helden in anderer Farbe nehmen | Die Helden unterscheiden sich nur in diesen drei Punkten, also zeigt die Wahl genau diese |
 | Anzeigeleiste | oben je Spieler: Name, Punkte, Leben, LP-Balken mit 1 px je LP (72 px); daneben Name und Balken des Gegners, den die Figur zuletzt getroffen hat, bis sie einen anderen trifft; Boss-Balken in Lagen | Der Gegnerbalken zeigt, ob sich noch eine Kette lohnt; 1 px je LP macht Schaden ablesbar |
 | Zeit | keine Zeitanzeige in normalen Stages, Zeitlimit nur in der Sonderstage | Der Rang steigt schon mit der Spielzeit (Abschnitt 6), ein Zeitlimit würde Zögern doppelt bestrafen |
-| Leben | drei Leben je Spiel; Neueinstieg an derselben Stelle mit 72 LP, Rang −3; Schutzdauer nach dem Neueinstieg offen (M8, O10) | Rang −3 aus „Schaden der Gegner“ fängt eine Pechsträhne ab |
+| Leben | drei Leben je Spiel; Neueinstieg an derselben Stelle mit 72 LP, Rang −3; Schutzdauer nach dem Neueinstieg im Vorbild 252 Frames ab dem Erscheinen, davon 200 nach der Landung; Gegnerangriffe bleiben darin ohne Wirkung (notes.md, „Nachtrag: Rest der Spielfigur“) | Rang −3 aus „Schaden der Gegner“ fängt eine Pechsträhne ab |
 | Continue | nach dem letzten Leben Countdown „Weiter?“; Punkte bleiben, ein Continue-Zähler ist sichtbar; Anzahl offen (Abschnitt 9) | ohne Münzen hält der Zähler den Reiz, ohne Continue durchzukommen |
 | Punkte je Treffer | 10 Punkte je LP Schaden (volle Kette 220, Wurf 140) | Ketten, Würfe und Treffer mit geworfenen Gegnern zählen nach ihrer Wirkung; Richtwert Vorbild: Kette 10/20/30/40 je Stufe (notes.md, „Nachtrag: Gegenstände und Waffen“) |
 | Punkte je Gegner | Bonus nach Rolle: leicht 100, schwer und Fernkämpfer 200, Messerkämpfer und Flächenangreifer 300, schwerer Gegner 1000, Boss 5000 | belohnt das Beenden und schwierige Ziele; Richtwert Vorbild: 80 bzw. 100 je Abschuss eines leichten bzw. schweren Nahkämpfers (ebenda) |
@@ -343,7 +350,7 @@ Zwei Spieler gleichzeitig:
 | Beitritt | jederzeit mit Start | Automatengefühl, kein Neustart nötig |
 | Freundbeschuss | aus: Schläge, Sprungangriffe, Spezialangriffe und geworfene Gegner treffen den Mitspieler nicht | In Gruppen träfen Ketten und Würfe sonst ständig den Partner; das Kampfgefühl soll wie allein bleiben |
 | Griff auf Mitspieler | nicht möglich; Spielfiguren laufen durcheinander hindurch | Der Griff entsteht durch Hineinlaufen (Abschnitt 4.4), mit Mitspieler wäre er ständig ein Versehen |
-| Gegriffener Gegner | der Mitspieler darf ihn schlagen, der Griff bleibt bestehen | Zusammenspiel lohnt sich; Treffer von Gegnern beenden den Griff weiterhin |
+| Gegriffener Gegner | der Mitspieler darf ihn schlagen, der Griff bleibt bestehen | Zusammenspiel lohnt sich; wirksame Treffer von Gegnern beenden den Griff weiterhin |
 | Kamera | scrollt, wenn der vordere Spieler die Haltelinie überschreitet (`design-gegner-stages.md`, Abschnitt 5), aber nur, solange der hintere nicht am linken Rand steht; sonst ist der rechte Rand für den vorderen eine Wand; Sperren gelten für beide | Beide bleiben im Bild, keiner wird hinausgeschoben, der linke Rand bleibt Wand (erkenntnisse.md „Stages als Vorbild“) |
 | Rang | ein gemeinsamer Rang, −3 bei jedem Tod | einfach; wer öfter stirbt, senkt den Druck für beide |
 | Gegner | mehr Gegner je Welle statt mehr LP; im Vorbild greift meist einer an, zwei gleichzeitig in 0,6 bis 9 % der Gruppenframes, mehr als zwei in höchstens 3 % (notes.md, „Nachtrag: Verhalten der Nahkämpfer“) | Mehr LP würden die Rechnung aus Abschnitt 6 verschieben |
@@ -360,7 +367,7 @@ Frame für Frame wie gemessen anfühlt, bevor Inhalte in die Breite gehen.
 | Zwei Nahkämpfer | Nahkämpfer leicht und schwer: Gehen, Angriffsserie, Treffer, Umgeworfen, Liegen, Aufstehen, Gegriffen, Geworfen, Tod | `design-gegner-stages.md`, Abschnitte 1 und 9 |
 | Ein Fernkämpfer | Zünder mit Raketenwerfer: hält Abstand und schießt; seine Waffe bleibt liegen | wie oben |
 | Stage-Abschnitt | Abschnitte A, B und F der ersten Stage mit den Wellen 1, 2 (Sperrwelle), 7 und 9 (nur der Zünder mit Raketenwerfer), Übergang von B nach F mit Blende; Tiefenstreifen, Hintergrund, eine Vordergrundebene. Zuschnitt als Arbeitsregel (Bestätigung des Nutzers offen) in der Tabelle „Zuschnitt der Scheibe“ | `design-gegner-stages.md`, Abschnitte 5 und 7 |
-| Boss | Ballast mit Super-Armor, 100 LP (Spanne 90 bis 120, Abschnitt 6), drei Angriffe: Ansturm, Armschwung, Körperpresse. Arbeitsregel (Bestätigung des Nutzers offen): Der Ansturm wirft bei Kontakt um (12 bis 17 LP), ohne Übergang in den Griff; der Griff kommt erst nach M6 (O17). Super-Armor im Vorbild im Einzelnen offen (M6, O12) | `design-gegner-stages.md`, Abschnitte 4 und 7 |
+| Boss | Ballast mit Super-Armor, 100 LP (Spanne 90 bis 120, Abschnitt 6), drei Angriffe: Ansturm, Armschwung, Körperpresse. Arbeitsregel (Bestätigung des Nutzers offen): Der Ansturm wirft bei Kontakt um (12 bis 17 LP), ohne Übergang in den Griff; ob der Ballast einen Griff bekommt, entscheidet der Nutzer (O17; das Vorbild ist gemessen, notes.md, „Nachtrag: Boss“). Super-Armor im Vorbild: Spezialangriff, Kniestoß, Wurf und Waffen wirken immer; Kettenschläge, Sprung- und Sprintangriff weist er manchmal zurück (die LP kehren in h+1 auf den Wert vor diesem Treffer zurück), danach weicht er 54 Frames und 48 px zurück, ohne Schaden und ohne Umwerfen (notes.md, „Nachtrag: Boss“). Wann er zurückweist, ist unsicher: Der Anteil steigt mit dem Rang (Bot: Messagent 15 bis 39 %, Gegenprüfer 16 bis 36 %), eine Regel fand keine Messung | `design-gegner-stages.md`, Abschnitte 4 und 7 |
 | Zwei Gegenstände | Essen: ein Kometenbraten aus einem Fass in Abschnitt B (heilt voll; Heilwerte je Art beschlossen (E9) wie im Vorbild: voll, +55, +40, +16 oder +12 LP; bei vollen LP Punkte statt LP; Essen läuft nicht ab). Der Raketenwerfer (`mechanik.md`, „Gegenstände und Waffen“: 3 Schuss, 8 LP, wirft um, nur die Explosion trifft) aus zwei Asservatenkisten und vom Zünder, kein Laser; Fass und Kisteninhalt als Arbeitsregel (Bestätigung des Nutzers offen). Waffen liegen 700 Frames ab der Landung L, blinken dann und verschwinden in L+792 (92 Frames ab Liegezeit 0; notes.md, „Nachtrag: Gegenstände und Waffen“) | `design-gegner-stages.md`, Abschnitte 7 und 8 |
 | Rahmen | Anzeigeleiste mit LP-Balken von Figur und Gegner, Leben, Punkte; Rang intern; Tod und Neueinstieg | Abschnitt 7 |
 | Prüfhilfe | Frame-Protokoll (x, Tiefe, Höhe, LP, Aktion, Rang je Frame) und abspielbare Eingabeaufzeichnung | Abnahme |
@@ -407,8 +414,9 @@ Messwerte, die vor der Scheibe gesichert sein müssen:
    offen, bei uns als Arbeitsregel gleichverteilt in Schritten von 4,
    `design-gegner-stages.md`, Abschnitt 2), Aufstehen 18 Frames ohne Schutz
    danach. Die Kette hält, weil der Gegner
-   frühestens in h+45 ausholt. Der Tod bei genau 0 LP ist offen (M8, O9),
-   weil M1 ihn nur unter 0 LP ausgelöst hat.
+   frühestens in h+45 ausholt. Mit genau 0 LP stirbt ein Gegner nicht, er
+   kämpft weiter; erst der nächste Treffer tötet ihn (notes.md, „Nachtrag:
+   Rest der Spielfigur“).
 2. Gegnerverhalten: gesichert (notes.md, „Nachtrag: Verhalten der
    Nahkämpfer“): Anhalten 46 bis 48 px vor der Figur (nach schnellem Gehen
    55 bis 56 px), Pause vor jedem Angriff 29 − 4 · ⌊Rang/4⌋ Frames, selten
@@ -420,7 +428,9 @@ Messwerte, die vor der Scheibe gesichert sein müssen:
    Abbruch, wenn die Figur mehr als 32 px links oder 31 px rechts vom
    Zielpunkt steht (Zielabstand höchstens 48 px) oder die Tiefe −10
    bis +11 px verlässt; Treffer bis 48 px Höhe. Pistole, Rakete und
-   Wurfmesser sind offen (M7, O11), weil sie in keinem Messlauf vorkamen.
+   Wurfmesser: Werte in `design-gegner-stages.md`, Abschnitte 1.3 und 1.4
+   (notes.md, „Nachtrag: Fernangriffe der Gegner“); unsicher bleibt der
+   Rhythmus.
 4. Spezialangriff und Sprint: gesichert (notes.md, „Nachtrag:
    Spezialangriff“ und „Nachtrag: Sprint“), Werte in Abschnitt 4.5.
    Unsicher: Tiefengrenzen der Explosionsform und Reichweite des
@@ -430,8 +440,8 @@ Messwerte, die vor der Scheibe gesichert sein müssen:
    Waffen“), Werte in der Tabelle oben. Unsicher: größte Laserreichweite
    (310, 350 oder unter 275 px) und Aufnahmebereich rechts beim
    Raketenwerfer (35 oder 37 px).
-6. Mit Messpaket 2 beauftragt (Liste „Offen bis Messpaket 2“ am Ende
-   dieses Abschnitts): Nachlauf der Kettenstufen 2 bis 4, Reichweite der
+6. Mit Messpaket 2 gemessen (Liste „Offen bis Messpaket 2“ am Ende
+   dieses Abschnitts, Spalte „Stand nach Messpaket 2“): Nachlauf der Kettenstufen 2 bis 4, Reichweite der
    Sprungangriffe hoch und runter, Tod bei genau 0 LP, Schutzdauer nach
    dem Neueinstieg, Rang beim Stage-Wechsel (M8); Super-Armor des Bosses
    (welche Treffer zählen, wann und auf welchen Wert die LP zurückspringen,
@@ -486,19 +496,19 @@ Abschnitt 10, ab O17 fort. O6 und O13 bis O16 sind nach der Prüfung
 entfallen (O6 ohne Messauftrag, O13 bis O16 in O8, O11 und O12
 zusammengelegt).
 
-| Nr. | Stelle | Was fehlt | Messpaket |
-|---|---|---|---|
-| O1 | 4.2, Kette Stufe 2, Nachlauf | handlungsfähig ab (Laufen, Schlag, Sprung) nach Treffer und Leerschlag, Pose ohne Eingabe | M8 |
-| O2 | 4.2, Kette Stufe 3, Nachlauf | wie O1 | M8 |
-| O3 | 4.2, Kette Stufe 4, Nachlauf | wie O1, dazu der Nachlauf nach dem zweiten aktiven Abschnitt D+17 bis D+20 | M8 |
-| O4 | 4.3, Sprungangriff hoch | Reichweite x und Tiefe | M8 |
-| O5 | 4.3, Sprungangriff runter | Startup, aktive Frames, Reichweite x und Tiefe | M8 |
-| O7 | 6, Rang beim Stage-Wechsel | Verhalten im Vorbild; unsere Regel steht (läuft weiter, E9) | M8 |
-| O8 | 6, Boss (Rollentabelle); `design-gegner-stages.md`, 4, Prinzip 4 | LP des Vorbild-Bosses: 100 oder 110, Abhängigkeit vom Rang | M6 |
-| O9 | 6, Rechnung 2 (leichter Nahkämpfer und Boss); 8, Messwerte Punkt 1 | stirbt ein Gegner bei genau 0 LP? Fällt der Boss bei genau 0 LP? | M8; beim Boss M6 |
-| O10 | 7, Leben | Dauer und Art des Schutzes nach dem Neueinstieg | M8 |
-| O11 | 8, Messwerte Punkt 3; `design-gegner-stages.md`, 1.3 und 1.4 | Pistole, Rakete und Messerwurf: Auslösung, gehaltener Abstand, Startup, Geschoss, Reichweite, Schaden, Rhythmus | M7 |
-| O12 | 8, Tabelle (Boss) und Messwerte Punkt 6; `design-gegner-stages.md`, 4, Prinzip 1 | Super-Armor im Einzelnen: welche Treffer zählen (auch der Spezialangriff), wann und auf welchen Wert die LP zurückspringen, Schaden und Umwerfen des Abbruchstoßes; dazu Trefferreaktion, Angriffe und Rhythmus des Bosses | M6 |
+| Nr. | Stelle | Was fehlt | Messpaket | Stand nach Messpaket 2 |
+|---|---|---|---|---|
+| O1 | 4.2, Kette Stufe 2, Nachlauf | handlungsfähig ab (Laufen, Schlag, Sprung) nach Treffer und Leerschlag, Pose ohne Eingabe | M8 | gefüllt, gesichert |
+| O2 | 4.2, Kette Stufe 3, Nachlauf | wie O1 | M8 | gefüllt, gesichert |
+| O3 | 4.2, Kette Stufe 4, Nachlauf | wie O1, dazu der Nachlauf nach dem zweiten aktiven Abschnitt D+17 bis D+20 | M8 | gefüllt, gesichert |
+| O4 | 4.3, Sprungangriff hoch | Reichweite x und Tiefe | M8 | gefüllt, gesichert |
+| O5 | 4.3, Sprungangriff runter | Startup, aktive Frames, Reichweite x und Tiefe | M8 | gefüllt, gesichert |
+| O7 | 6, Rang beim Stage-Wechsel | Verhalten im Vorbild; unsere Regel steht (läuft weiter, E9) | M8 | gefüllt, gesichert |
+| O8 | 6, Boss (Rollentabelle); `design-gegner-stages.md`, 4, Prinzip 4 | LP des Vorbild-Bosses: 100 oder 110, Abhängigkeit vom Rang | M6 | gefüllt, gesichert |
+| O9 | 6, Rechnung 2 (leichter Nahkämpfer und Boss); 8, Messwerte Punkt 1 | stirbt ein Gegner bei genau 0 LP? Fällt der Boss bei genau 0 LP? | M8; beim Boss M6 | gefüllt, gesichert (Gegner und Boss) |
+| O10 | 7, Leben | Dauer und Art des Schutzes nach dem Neueinstieg | M8 | gefüllt, gesichert |
+| O11 | 8, Messwerte Punkt 3; `design-gegner-stages.md`, 1.3 und 1.4 | Pistole, Rakete und Messerwurf: Auslösung, gehaltener Abstand, Startup, Geschoss, Reichweite, Schaden, Rhythmus | M7 | gefüllt, gesichert; Rhythmus unsicher |
+| O12 | 8, Tabelle (Boss) und Messwerte Punkt 6; `design-gegner-stages.md`, 4, Prinzip 1 | Super-Armor im Einzelnen: welche Treffer zählen (auch der Spezialangriff), wann und auf welchen Wert die LP zurückspringen, Schaden und Umwerfen des Abbruchstoßes; dazu Trefferreaktion, Angriffe und Rhythmus des Bosses | M6 | Super-Armor gefüllt, gesichert; Regel und Anteil der Zurückweisung unsicher. Trefferreaktion, Angriffe und Rhythmus des Bosses stehen in notes.md, „Nachtrag: Boss“; hier nicht eingetragen, weil das Dokument dafür keine offene Stelle hatte |
 
 ## 9. Entscheidungen des Nutzers
 
@@ -508,7 +518,7 @@ zusammengelegt).
 |---|---|---|---|
 | E1 | Welt | Kometenhafen „Perihel“ auf dem Kometen Orrin; Küstenstadt und Zirkusschiff sind verworfen | Abschnitte 1 und 2 |
 | E2 | Schutzfenster der Figur | wie im Vorbild: Gegner greifen in den Schutzfenstern und eine liegende Figur an, ihre Treffer sind wirkungslos; die Angriffserlaubnis nimmt darauf keine Rücksicht. Begründung: so gemessen, einfacher, und die Gegner wirken nicht passiv | Abschnitt 4.7; `design-gegner-stages.md`, Abschnitt 2 |
-| E3 | Rückstoß der Kette | keiner; die Trefferreaktion dauert 23 Frames mit Zittern als Animation, der Gegner bleibt am Ort | Abschnitt 3 (Stillstand h+1 bis h+8 innerhalb der 23 Frames); `design-gegner-stages.md`, Abschnitte 1.6, 2 und 9 (gilt für alle normalen Gegner, geht E9 vor) |
+| E3 | Rückstoß der Kette | keiner; die Trefferreaktion dauert 23 Frames mit Zittern als Animation, der Gegner bleibt am Ort | Abschnitt 3 (Stillstand h+1 bis h+8 innerhalb der 23 Frames); `design-gegner-stages.md`, Abschnitte 1.6, 2 und 9 (gilt für alle Gegner einschließlich Koloss und Bosse, bei Bossen zusätzlich die Super-Armor; geht E9 vor) |
 | E4 | Schutz der Gegner nach dem Aufstehen | keiner; ab dem ersten handlungsfähigen Frame sofort verwundbar und greifbar | Abschnitt 6; `design-gegner-stages.md`, Abschnitt 2 |
 | E5 | Gleichzeitige Angreifer | höchstens zwei, je Seite der Figur höchstens einer; höchstens ein Fernkämpfer zielt gleichzeitig, ab Stage 6 zwei | `design-gegner-stages.md`, Abschnitt 2; Abschnitt 7 (zwei Spieler, Arbeitsregel) |
 | E6 | Spielschritt | 60 Hz fester Schritt; alle Frame-Zahlen bleiben, Sekundenangaben sind Frames ÷ 60 | Abschnitt 3; `design-gegner-stages.md`, Einheiten und Abschnitte 5 und 6 |
@@ -545,7 +555,7 @@ Abschnitt 10.
 | Datei | verwendete Abschnitte |
 |---|---|
 | `docs/mechanik.md` | Konventionen; Bewegung; Angriff (Standardschlag, Kette); Sprung; Sprungangriff; Griff und Wurf; Spezialangriff; Sprint; Trefferreaktion der Gegner; Umgeworfen werden; Schaden der Gegner; Reichweite der Gegnerangriffe; Unverwundbarkeit; Lebenspunkte; Gegenstände und Waffen; Nicht übernommen |
-| `research/captcomm/notes.md` | Nachtrag: Trefferreaktion der Gegner; Nachtrag: Verhalten der Nahkämpfer; Nachtrag: Reichweite der Gegnerangriffe; Nachtrag: Spezialangriff; Nachtrag: Sprint; Nachtrag: Gegenstände und Waffen |
+| `research/captcomm/notes.md` | Nachtrag: Trefferreaktion der Gegner; Nachtrag: Verhalten der Nahkämpfer; Nachtrag: Reichweite der Gegnerangriffe; Nachtrag: Spezialangriff; Nachtrag: Sprint; Nachtrag: Gegenstände und Waffen; aus Messpaket 2: Nachtrag: Boss; Nachtrag: Fernangriffe der Gegner; Nachtrag: Rest der Spielfigur |
 | `docs/erkenntnisse.md` | Haltung: inspiriert, kein Nachbau; Stand der Analyse; Was das Kampfgefühl ausmacht; Spielfiguren; Gegner als Vorbild; Stages als Vorbild; Hinweise für die eigene Grafik; Übernehmen, Richtwert, selbst gestalten |
 | `research/captcomm/grafik/README.md` | Spielfiguren mit „Animationen im Einzelnen“ (Captain Commando, Mack the Knife, Ginzu the Ninja, Baby Head); Gemeinsame Bewegungen; Stage 1 (Dauer des Bot-Laufs, LP des Bosses) |
 | `research/captcomm/grafik/figuren/ablaeufe.csv` | Zeilen `captain_*` für die Animationsliste in Abschnitt 8 |
