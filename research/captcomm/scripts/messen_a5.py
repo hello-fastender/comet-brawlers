@@ -25,6 +25,11 @@ Unterbefehle:
   wurf PREFIX..   Wurf aus dem Griff: Eingabe, Schaden, Loslassen, Scheitel,
                   Landung (ganzzahlige Hoehe 0), Ruheposition; Weiten relativ
                   zur Startposition des Gegners und zur Figur
+  umfallen PREFIX..  jedes Umwerfen der Figur: Flugbeginn, Scheitel, Bodenkontakt,
+                  Ruhelage (dx zum Ort des Umwerfens), Aufstehen, Liegedauer
+  wurfablauf PREFIX..  Ereignisse ab dem Griff: LP-Verluste (Gegner, Figur),
+                  Statuswechsel der Figur, Aktionswechsel und Ruhelage des
+                  gehaltenen Gegners; rel = Frame minus erste Aktionseingabe
   griff PREFIX..  Griffbeginn (Gegner verlaesst Status 1 ohne LP-Verlust und
                   wird gehalten, Aktion 0x02): die Frames davor mit Abstand,
                   Tiefe, Eingaben; danach Treffer im Griff, Wechsel der
@@ -485,8 +490,9 @@ def cmd_wurf(args):
             print(f"{name},-,keine Wurfeingabe")
             continue
         f0, richtung = w
-        # gehaltener Gegner: Slot mit Aktion 0x02 im Frame der Eingabe
-        held = [n for n in range(20) if d.value(f0, SLOT_BASE + n * SLOT_SIZE + 0x0A, 2) == 2
+        # gehaltener Gegner: Slot mit Aktion 0x02 (gehalten) oder 0x04 (nach
+        # einem Kniestoss, noch nicht wieder gehalten) im Frame der Eingabe
+        held = [n for n in range(20) if d.value(f0, SLOT_BASE + n * SLOT_SIZE + 0x0A, 2) in (2, 4)
                 and d.value(f0, SLOT_BASE + n * SLOT_SIZE + 4) in (2, 3)]
         if not held:
             print(f"{name},{f0},{richtung},kein gehaltener Gegner")
@@ -497,7 +503,9 @@ def cmd_wurf(args):
         fr = [f for f in d.frames if f >= f0]
         dmgf = next((f for f in fr[1:] if d.value(f, s + 0x40, 2, True) < d.value(f - 1, s + 0x40, 2, True)), None)
         dmg = d.value(dmgf - 1, s + 0x40, 2, True) - d.value(dmgf, s + 0x40, 2, True) if dmgf else 0
-        rel = next((f for f in fr[1:] if d.value(f, s + 0x0A, 2) != 2), None)
+        # Loslassen: Aktion wechselt von 0x02 weg (nach einem Knie wird der
+        # Gegner erst in Eingabe+1 wieder gehalten)
+        rel = next((f for f in fr[2:] if d.value(f, s + 0x0A, 2) != 2 and d.value(f - 1, s + 0x0A, 2) == 2), None)
         hi = lambda f: d.value(f, s + 0x12, 2, True)
         peak = max((f for f in fr if rel and f >= rel), key=hi, default=f0)
         land = next((f for f in fr if rel and f > rel and hi(f) <= 0 < hi(f - 1)), None)
@@ -514,6 +522,100 @@ def cmd_wurf(args):
               f"{fix(d, end, s + 0x16) - fix(d, end, Z):+g},"
               f"{(fix(d, land, s + 0x0E) - x0) if land else 0:+g},"
               f"{(xend - fix(d, land, s + 0x0E)) if land else 0:+g},{fix(d, end, X) - px0:+g}")
+
+
+def cmd_wurfablauf(args):
+    """Ereignisse ab dem Griff: LP-Verluste aller Gegner und der Figur,
+    Statuswechsel der Figur, Aktionswechsel des gehaltenen Gegners und seine
+    Ruhelage. rel = Frame minus erster Aktionseingabe (Angriff oder Sprung)
+    nach dem Griff."""
+    print("lauf,frame,rel,ereignis,slot,wert,dx,dz,hoehe")
+    for prefix in args.prefix:
+        d = Dump(prefix)
+        inputs = {int(r["frame"]): r["inputs"].split("|") for r in csv.DictReader(open(prefix + "_inputs.csv"))}
+        name = Path(prefix).name
+        grab = None
+        for f in d.frames[1:-1]:
+            for n in range(20):
+                s = SLOT_BASE + n * SLOT_SIZE
+                if (d.value(f - 1, s + 4) == 1 and d.value(f, s + 4) in (2, 3)
+                        and d.value(f, s + 0x40, 2, True) == d.value(f - 1, s + 0x40, 2, True)
+                        and d.value(f + 1, s + 0x0A, 2) == 2):
+                    grab = (f, n)
+                    break
+            if grab:
+                break
+        if not grab:
+            print(f"{name},-,-,kein Griff,,,,,")
+            continue
+        g, n = grab
+        s = SLOT_BASE + n * SLOT_SIZE
+        act = next((f for f in d.frames if f >= g and any(k in inputs.get(f, []) for k in ("P1 Button 1", "P1 Button 2"))), g)
+
+        def row(f, ev, slot="", wert="", base=s):
+            print(f"{name},{f},{f - act:+d},{ev},{slot},{wert},"
+                  f"{fix(d, f, base + 0x0E) - fix(d, f, X):+g},"
+                  f"{d.value(f, base + 0x16, 2) - d.value(f, Z, 2)},{d.value(f, base + 0x12, 2, True)}")
+        row(g, "griff", n)
+        last_x, still, rested = None, 0, False
+        for f0, f in zip(d.frames, d.frames[1:]):
+            if f <= g:
+                continue
+            for k in range(20):
+                b = SLOT_BASE + k * SLOT_SIZE
+                if not d.value(f0, b + 4) or not d.value(f, b + 4):
+                    continue
+                dmg = d.value(f0, b + 0x40, 2, True) - d.value(f, b + 0x40, 2, True)
+                if dmg > 0:
+                    st = d.value(f + 1, b + 4) if f + 1 in d.offsets else d.value(f, b + 4)
+                    row(f, "lp_gegner" + (" (umgeworfen)" if st == 2 else ""), k, dmg, b)
+            dmg = d.value(f0, HP, 2, True) - d.value(f, HP, 2, True)
+            if dmg > 0:
+                row(f, "lp_figur", "P1", dmg)
+            if d.value(f0, STATE) != d.value(f, STATE):
+                row(f, f"figur_status {d.value(f0, STATE)}->{d.value(f, STATE)}")
+            a0, a1 = d.value(f0, s + 0x0A, 2), d.value(f, s + 0x0A, 2)
+            if a0 != a1:
+                row(f, f"gegner_aktion {a0:#x}->{a1:#x}", n)
+            x = fix(d, f, s + 0x0E)
+            still = still + 1 if x == last_x else 0
+            last_x = x
+            if not rested and still == 5 and d.value(f, s + 0x12, 2, True) == 0 and f - 5 > act:
+                rested = True
+                row(f - 5, "gegner_ruhe", n)
+
+
+def cmd_umfallen(args):
+    """Jedes Umwerfen der Figur (Status 1/3 -> 2): Flugbeginn (erste
+    x-Aenderung), hoechster Punkt (16.16), erster Bodenkontakt (ganzzahlige
+    Hoehe 0), Ruhe (x 5 Frames konstant), Aufstehen (Status 2 -> 3); dx relativ
+    zur x-Position beim Umwerfen."""
+    print("lauf,umgeworfen,flug_ab,scheitel_frame,scheitel_hoehe,boden,boden_dx,ruhe,ruhe_dx,aufstehen,"
+          "liegt_frames,vx")
+    for prefix in args.prefix:
+        d = Dump(prefix)
+        name = Path(prefix).name
+        fr = d.frames
+        for f0, f in zip(fr, fr[1:]):
+            if not (d.value(f0, STATE) in (1, 3) and d.value(f, STATE) == 2):
+                continue
+            x0 = fix(d, f, X)
+            nxt = [g for g in fr if g > f]
+            up = next((g for g in nxt if d.value(g, STATE) != 2), None)
+            seg = [g for g in nxt if up is None or g < up]
+            start = next((g for g in seg if fix(d, g, X) != x0), None)
+            if start is None:
+                print(f"{name},{f},keine x-Bewegung,,,,,,,{up or '-'},{(up - f) if up else '-'},")
+                continue
+            h = lambda g: fix(d, g, H)
+            peak = max(seg, key=h)
+            land = next((g for g in seg if g > peak and d.value(g, H, 2, True) <= 0), None)
+            rest = next((g for g in seg if g > (land or start)
+                         and all(g + k in d.offsets and fix(d, g + k, X) == fix(d, g, X) for k in range(1, 6))), None)
+            vx = fix(d, start, X) - fix(d, start - 1, X)
+            print(f"{name},{f},{start},{peak},{h(peak):g},{land or '-'},"
+                  f"{(fix(d, land, X) - x0) if land else 0:+g},{rest or '-'},"
+                  f"{(fix(d, rest, X) - x0) if rest else 0:+g},{up or '-'},{(up - f) if up else '-'},{vx:+g}")
 
 
 def main():
@@ -551,6 +653,12 @@ def main():
     p.add_argument("prefix", nargs="+")
     p.add_argument("--bis", type=int, default=10, help="Frames nach dem Druck (Standard 10)")
     p.set_defaults(fn=cmd_kette)
+    p = sub.add_parser("umfallen")
+    p.add_argument("prefix", nargs="+")
+    p.set_defaults(fn=cmd_umfallen)
+    p = sub.add_parser("wurfablauf")
+    p.add_argument("prefix", nargs="+")
+    p.set_defaults(fn=cmd_wurfablauf)
     p = sub.add_parser("sprungangriff")
     p.add_argument("prefix", nargs="+")
     p.set_defaults(fn=cmd_sprungangriff)

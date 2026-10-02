@@ -28,6 +28,7 @@ Kennzeichnung in diesem Dokument:
 | 6. Übernahme gesicherter Werte nach `docs/mechanik.md` | erledigt: alle gesicherten Messwerte aus Aufgabe 5 sowie Eingabelatenz, Trefferstopp, Kombo-Fenster, Liegedauer und Lebenspunkte; nach dem Nachtrag auch Sprung und Schlagreichweite. Unsichere Punkte stehen dort unter „Nicht übernommen“ |
 | 7. Nachtrag: Sprung und Schlagreichweite | erledigt: Sprungablauf, Höhe, Schwerkraft, Weite und Steuerung sowie x-Reichweite, Tiefentoleranz und aktive Frames des Standardschlags gesichert, siehe „Nachtrag“ |
 | 8. Nachtrag: Reichweite der Kettenstufen 2–4 | erledigt: x-Reichweite, Tiefentoleranz und aktive Frames je Stufe gesichert (per gekennzeichnetem Eingriff, natürlich gegengeprüft), siehe „Nachtrag: Reichweite der Kettenstufen 2–4“ |
+| 9. Nachtrag: Würfe | erledigt: Eingabe, Schaden, Ablauf, Flugbahn und Weite des Wurfs, Kniestoß, Spezialangriff im Griff, geworfener Gegner als Geschoss; Umwerfen der Figur durch Gegner und Verkürzen des Liegens gesichert, siehe „Nachtrag: Würfe“. Griffreichweite folgt |
 
 ### Umgebung
 
@@ -76,6 +77,7 @@ Kennzeichnung in diesem Dokument:
 | `laeufe_a5.sh` | alle MAME-Läufe für Aufgabe 5 (und die Grundläufe aus 3/4) von vorn, ~1 min | ja: zweimal ausgeführt, Ergebnisse identisch |
 | `belege_a5.sh` | erzeugt `logs/a5_*.csv` | ja |
 | `laeufe_a7.sh`, `belege_a7.sh` | Läufe (~1 min) und Logausschnitte `logs/a7_*.csv` für den Nachtrag Sprung und Schlagreichweite; dazu `messen_a5.py sprung` und `aktiv` | ja |
+| `belege_wurf.sh` | 42 Läufe mit `scenarios/griff.lua` (freie Eingaben `CC_IN`, Länge `CC_FRAMES`; Eingriff nur zum Absetzen des Gegners) und Auswertung mit `messen_a5.py wurf`, `wurfablauf`, `umfallen` nach `logs/wurf.csv` (~1 min) | ja: zweimal ausgeführt, Ergebnis identisch |
 | `belege_kette.sh` | 159 Läufe mit `scenarios/kette.lua` (Kette bis Stufe `CC_STUFE`, Eingriffe `CC_DX`, `CC_DZ`, `CC_FERN`, `CC_POKE_BIS`; ohne Eingriff `CC_VERT`, `CC_ABSTAND_LETZT`) und Auswertung mit `messen_a5.py kette` nach `logs/kette_reichweite.csv`; löscht danach die eigenen Rohabzüge (~2 min) | ja: zweimal ausgeführt, Ergebnis identisch |
 
 Ablauf:
@@ -224,13 +226,13 @@ lässt sich so nicht trennen. Der Gegner bleibt in seiner Angriffspose
 (Aktion 0x06) und schlägt sichtbar nicht zu. Für das Spielgefühl ist das
 Ergebnis gleich: kein LP-Verlust im Status 3.
 
-**Zusatzwert** (gesichert, gleiche Belege): Liegen nach einem Wurf bis
+**Zusatzwert** (gesichert, gleiche Belege): Liegen nach dem Umwerfen bis
 zum Aufstehen dauert 121–122 Frames (7 Fälle in `hurt`, `hurt_b`, `hurt_c`).
 
-**Unsicher:** Wenn ein Gegner die Figur gepackt hält, kommen die Schläge im
-Abstand von 58–64 Frames (`hurt`, `hurt_b`) bzw. 73–76 Frames (`hurt_c`,
-anderer Gegner), und nach dem dritten Schlag folgt der Wurf. Aus dem RAM
-allein ist nicht klar, welche Treffer zu einem Griff gehören.
+**Korrigiert** (Nachtrag Würfe): Die Gegner halten die Figur nicht fest. Ihr
+dritter oder vierter Schlag wirft sie um, ohne Griff; dazwischen kann die
+Figur weglaufen. Die Schläge kommen im Abstand von etwa 56–79 Frames. Siehe
+„Nachtrag: Würfe“.
 
 **Figurabhängig** (unsicher, nur Demo): Mack the Knife macht in Stufe 1–3
 ebenfalls 3, 4 und 5 Schaden, mit dem Abschlusstritt aber nur 8. Ab
@@ -353,6 +355,58 @@ Unsicher:
   später. Diese Variante kommt auch in der Demo vor; sie ist nur aus
   einzelnen Läufen bekannt.
 - Reichweite des Sprungangriffs: Messung läuft.
+
+## Nachtrag: Würfe
+
+Belege: `logs/wurf.csv`, erzeugt von `scripts/belege_wurf.sh` (Szenario
+`griff.lua`, Auswertung `messen_a5.py wurf`, `wurfablauf`, `umfallen`). Dazu
+kommt ein Workflow mit vier Messagenten und je zwei Gegenprüfungen. Dessen
+Läufe liegen nur im Scratchpad der Sitzung, die Befehle stehen dort in
+`workflow_wurf/*commands*.txt`. E ist der Frame der Wurfeingabe (Angriff
+plus Richtung im Griff), Captain Commando wirft. „Rückprall“: In
+`messen_a5.py wurf` heißt die Spalte `rutschen_nach_landung`. Der Gegner
+rutscht aber nicht, er springt nach dem ersten Bodenkontakt flach (bis
+3,7 px) wieder ab und landet erst danach endgültig.
+
+### Wurf der Figur
+
+| Größe | Wert | Status |
+|---|---|---|
+| Eingabe | Im Griff Angriff plus Richtung. Vorwärts (über den gehaltenen Gegner hinaus) nur, wenn die Richtung die Blickrichtung enthält, auch diagonal. Alle anderen Richtungen (weg, hoch, runter, diagonal weg) werfen rückwärts über die Figur. Angriff ohne Richtung ist ein Kniestoß. Eine Richtung, die erst nach dem Angriff gedrückt wird, zählt nicht. Links und rechts zugleich ergeben einen Kniestoß | gesichert (`wr_a_dir_*` Blick rechts, `wr_bl_*` Blick links) |
+| Schaden | 14 LP in E+1, unabhängig vom Zeitpunkt und von vorherigen Kniestößen | gesichert (alle 25 Würfe) |
+| Ablauf | Figur gebunden von E+1 bis E+37, frei ab E+38, sie bewegt sich nicht. Gegner losgelassen in E+22 in Höhe 59, erster Bodenkontakt E+59, Ruhe E+71 | gesichert |
+| Flugbahn ab dem Loslassen | x: 5,0 px/Frame, jeden Frame 1/16 weniger. Höhe: +2,0 px/Frame, jeden Frame 13/64 (0,203) weniger; Scheitel 69,86 px nach 10 Frames. Erster Bodenkontakt nach 37 Frames und 143,4 px, dann trägt ein flacher Rückprall noch 28,1 px | gesichert (Workflow Frame für Frame, Eckwerte in `wurf.csv`) |
+| Weite | Ruhelage 183,8 bis 185,2 px von der Figur, vorwärts wie rückwärts (13 px Versatz beim Loslassen plus 171,5 px Flug). Unabhängig von Tiefe, Zeitpunkt und Kniestößen. Ein Bildschirmrand begrenzt die Weite nicht | gesichert für WOOKY (16 LP), den 30-LP-Gegner (EDDY) und zwei weitere Typen (25 Würfe hier, 21 natürliche im Workflow) |
+| Weite je Gegnertyp | SKIP (Typ `0x25086`): 175,6 px ab Loslassen, Ruhe etwa 196 px von der Figur. Typ `0x36fb2` (Stage 2): 163,3 px, Ruhe etwa 181 px. Schaden gleich (14) | gesichert (zwei Agenten unabhängig, nur Workflow-Läufe) |
+| Haltedauer | Ohne Eingabe reißt sich der Gegner 60 Frames nach Griffbeginn los (`wr_a_halten`: Griff 6, los in 67). Wurf frühestens in Griff+1 (`wr_a_zeit7`), spätestens im letzten Halteframe (`wr_a_zeit66`); in Frame 67 kommt nur noch ein Leerschlag | gesichert |
+| Kniestoß | Angriff ohne Richtung im Griff: Treffer K+5 mit 4 LP, Gegner wieder gehalten ab K+23. Die nächste Eingabe (Knie oder Wurf) wird ab K+18 angenommen, in K+2 bis K+17 verworfen und nicht gepuffert (`wr_a_knie1_frueh`). Jeder Kniestoß startet die 60 Frames Haltedauer neu. Der dritte Kniestoß wirft den Gegner um (4 LP, etwa 165 px weit) | gesichert (`wr_a_knie*`, Workflow) |
+| Sprung im Griff | lässt den Gegner ohne Schaden los, danach normaler Sprung (im Stand oder mit Richtung) | gesichert (`wr_a_sprung*`) |
+| Sprung + Angriff im Griff | Spezialangriff (Aktion 0x14): Gegner 6 LP in E+8 und umgeworfen (etwa 158 px), die Figur verliert 9 LP in E+16 und ist ab E+58 frei (beim 30-LP-Gegner E+65) | gesichert (`wr_a_spezial`, Workflow) |
+| Geworfener Gegner als Geschoss | Er trifft andere Gegner auf seiner Bahn: 3 LP und umgeworfen, auch mehrere mit einem Wurf. Seine eigene Bahn ändert sich dadurch nicht. Treffer beim Tragen (ab E+1) und im Flug bis kurz vor dem ersten Bodenkontakt, nicht mehr beim Rückprall. Tiefenfenster \|dz\| ≤ 17 (`wr_b_geschoss21`: Treffer bei dz −7 in E+37; `wr_b_geschoss40`: dz −19, kein Treffer) | gesichert |
+| Reichweite des Geschosses | etwa 52 px in x zwischen den Mittelpunkten bei WOOKY und EDDY; hängt vom Zieltyp und dessen Pose ab | unsicher |
+| Grenzen | Geworfene Gegner bleiben höchstens 96 px außerhalb des Bildes (Kamera −96 bis Kamera +480; Kamera = `FFE99E`). Wände der Stage stoppen sie: in Stage 1 eine diagonale Wand bei x 1008 bis 1021 für Tiefe ≥ 330 (`wr_b_right`: Ruhe 183,0 statt 185,0 px) | gesichert |
+
+Andere Figuren werfen anders (nur Stichproben im Workflow, unsicher): Mack
+lässt in E+27 los und wirft 173 px; Ginzu macht 12 Schaden, lässt in E+17 los
+und wirft bei hoch/runter vorwärts; Baby Head macht 12 Schaden und wirft etwa
+208 px.
+
+### Umwerfen der Figur durch Gegner
+
+Die normalen Gegner der ersten Stages werfen die Figur nicht. Was in
+`hurt`, `hurt_b` und `hurt_c` bisher als „Wurf“ bezeichnet war, ist ein
+Treffer mit Umwerf-Eigenschaft: Die Figur wird dabei nicht gehalten und
+kann zwischen den Schlägen weglaufen. Der WOOKY wirft meist mit seinem
+dritten oder vierten Schlag um, mit mehreren Gegnern auch früher. Nur der
+Boss von Stage 1 (DOLG) packt und wirft die Figur (20–22 LP, 5 px/Frame,
+etwa 180–230 px; unsicher, ein Lauf im Workflow).
+
+| Größe | Wert | Status |
+|---|---|---|
+| Flug | H = Treffer. Die Figur steht H+1 bis H+8 still und fliegt ab H+9 vom Angreifer weg: x 2,875 px/Frame konstant, Höhe +5,0 px/Frame, Schwerkraft 70/256 = 0,273 px/Frame². Scheitel 48,2 bis 48,5 px nach 18 Frames, erster Bodenkontakt nach 37 Frames bei 109,25 px, Ruhe bei 135,125 px (bei manchen Nachkommaständen der Höhe 138,0 px). Die Tiefe bleibt gleich | gesichert (`wr_u_*`, im Workflow etwa 45 Fälle) |
+| Liegen | Vom Umwerfen bis zum Aufstehen 121 Frames (122 nach dem 138-px-Flug), bei beiden Gegnertypen | gesichert (`wr_u_passiv`, `wr_u_b_passiv`) |
+| Aufstehen beschleunigen | Tastendrücke (Angriff oder Sprung) beim Liegen verkürzen die Liegephase: sechs Drücke beenden sie zwei Frames nach dem sechsten. Jeden 2. Frame gedrückt: 93 statt 121 Frames, jeden 4.: 103, Angriff und Sprung abwechselnd in jedem Frame: 88. Jeden 8. Frame gedrückt ändert nichts. Drücke während des Flugs und Richtungen zählen nicht | gesichert (`wr_u_mash*`, unabhängig vom Workflow gemessen) |
+| Wand | Landet die Figur an einer Wand (Stage 1: Bankschalter), fehlt der Rückprall und sie liegt 6 Frames länger | unsicher (ein Agent, 10 Fälle) |
 
 ## Objekt-Slots
 

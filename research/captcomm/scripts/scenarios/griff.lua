@@ -8,9 +8,12 @@
 --   CC_ANGRIFFE Liste von Frames mit Angriffsdruck, z. B. "30,45,60"
 --   CC_WURF     Frame, ab dem eine Richtung (CC_WURF_DIR, Standard
 --               p1_left) zusammen mit dem Angriff gedrueckt wird
--- Optional EINGRIFF (RAM-Schreibzugriffe): bis Frame CC_POKE_BIS (Standard
--- 0 = aus) wird der Gegner vor jedem Frame bei CC_DX/CC_DZ relativ zur
--- Figur gesetzt; danach bewegt er sich frei. Ausgewertet werden die
+--   CC_IN       freie Eingaben "a-b:taste+taste;c:taste" (ohne -b: a bis a+1),
+--               z. B. "15:p1_left+p1_attack;33:p1_jump"
+--   CC_FRAMES   Laenge des Laufs (Standard 120)
+-- Optional EINGRIFF (RAM-Schreibzugriffe): von Frame CC_POKE_VON (Standard 2)
+-- bis CC_POKE_BIS (Standard 0 = aus) wird der Gegner vor jedem Frame bei
+-- CC_DX/CC_DZ relativ zur Figur gesetzt; danach bewegt er sich frei. Ausgewertet werden die
 -- ganzzahligen Positionen am Frame-Ende (messen_a5.py griff).
 local m = tonumber(os.getenv("CC_VERT") or "0")
 local dir = os.getenv("CC_DIR") or "p1_right"
@@ -20,6 +23,9 @@ local diag = os.getenv("CC_DIAG") or ""
 local angriffe = os.getenv("CC_ANGRIFFE") or ""
 local wurf = tonumber(os.getenv("CC_WURF") or "")
 local wurf_dir = os.getenv("CC_WURF_DIR") or "p1_left"
+local spec = os.getenv("CC_IN") or ""
+local frames = tonumber(os.getenv("CC_FRAMES") or "120")
+local poke_von = tonumber(os.getenv("CC_POKE_VON") or "2")
 local dx = tonumber(os.getenv("CC_DX") or "")
 local dz = tonumber(os.getenv("CC_DZ") or "")
 local poke_bis = tonumber(os.getenv("CC_POKE_BIS") or "0")
@@ -38,22 +44,29 @@ for f in angriffe:gmatch("%d+") do
 	inputs[#inputs + 1] = { n, n + 1, { "p1_attack" } }
 end
 if wurf then inputs[#inputs + 1] = { wurf, wurf + 1, { wurf_dir, "p1_attack" } } end
+for item in spec:gmatch("[^;]+") do
+	local a, b, keys = item:match("^(%d+)%-?(%d*):(.+)$")
+	a = tonumber(a)
+	local ks = {}
+	for k in keys:gmatch("[^+]+") do ks[#ks + 1] = k end
+	inputs[#inputs + 1] = { a, tonumber(b) or (a + 1), ks }
+end
 
 local S = 0xFFBC90 + slot * 0xC0
 local P1X, P1Z = 0xFFA99E, 0xFFA9A6
 local pokes = {}
 if poke_bis > 0 and dx then
-	pokes[#pokes + 1] = { 2, poke_bis, S + 0x0E, function(sp) return (sp:read_u16(P1X) + dx) & 0xFFFF end, 2 }
-	pokes[#pokes + 1] = { 2, poke_bis, S + 0x10, 0, 2 }
+	pokes[#pokes + 1] = { poke_von, poke_bis, S + 0x0E, function(sp) return (sp:read_u16(P1X) + dx) & 0xFFFF end, 2 }
+	pokes[#pokes + 1] = { poke_von, poke_bis, S + 0x10, 0, 2 }
 end
 if poke_bis > 0 and dz then
-	pokes[#pokes + 1] = { 2, poke_bis, S + 0x16, function(sp) return (sp:read_u16(P1Z) + dz) & 0xFFFF end, 2 }
-	pokes[#pokes + 1] = { 2, poke_bis, S + 0x18, 0, 2 }
+	pokes[#pokes + 1] = { poke_von, poke_bis, S + 0x16, function(sp) return (sp:read_u16(P1Z) + dz) & 0xFFFF end, 2 }
+	pokes[#pokes + 1] = { poke_von, poke_bis, S + 0x18, 0, 2 }
 end
 
 return {
-	frames = 120,
+	frames = frames,
 	inputs = inputs,
 	pokes = pokes,
-	dump = { start = 0xFF0000, stop = 0xFFFFFF, from = 1, to = 120, every = 1 },
+	dump = { start = 0xFF0000, stop = 0xFFFFFF, from = 1, to = frames, every = 1 },
 }

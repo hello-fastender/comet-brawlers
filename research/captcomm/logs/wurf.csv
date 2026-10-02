@@ -1,0 +1,369 @@
+# Wuerfe der Figur (Captain Commando) aus dem Griff, griff.lua. Laufnamen: wr_a_* ab kontakt
+# (WOOKY, 16 LP, Slot 18, Griff in Frame 6), wr_b_* ab kontakt_b (30 LP, Slot 17), wr_bl_* ab
+# kontakt_b mit Blick nach links (EINGRIFF nur in Frame 2: Gegner links abgesetzt), wr_an_*
+# ab anlauf, wr_ac_* ab anlauf_c. Positionen 16.16; rel = Frame minus Aktionseingabe.
+# Zusammenfassung
+Blick rechts: Down rueckwaerts -184.141; Down+Left rueckwaerts -184.141; Down+Right vorwaerts +184.859; Left rueckwaerts -184.141; Right vorwaerts +184.859; Up rueckwaerts -184.141; Left+Up rueckwaerts -184.141; Right+Up vorwaerts +184.859
+Blick links: Down rueckwaerts +184.500; Left vorwaerts -184.500; Right rueckwaerts +184.500; Up rueckwaerts +184.500
+Wurf (rel zur Eingabe), alle Laeufe ausser wr_b_right, wr_b_geschoss21, wr_b_geschoss40: schaden [1]; loslassen [22]; boden [59]; ruhe [71]; schadenswert [14]; figur_frei [38]
+Ruhelage zur Figur ohne Hindernis: 183.809 bis 185.191 px (25 Wuerfe)
+wr_a_knie: -8 gegner_aktion 0x0->0x2 18; +5 lp_gegner 18 4; +5 gegner_aktion 0x2->0x4 18; +23 gegner_aktion 0x4->0x2 18
+wr_a_knie1_wurf: -8 gegner_aktion 0x0->0x2 18; +5 lp_gegner 18 4; +5 gegner_aktion 0x2->0x4 18; +19 lp_gegner 18 14; +19 figur_status 1->2; +19 gegner_aktion 0x4->0x2 18; +40 gegner_aktion 0x2->0x4 18; +56 figur_status 2->1; +89 gegner_ruhe 18; +98 gegner_aktion 0x4->0x6 18; +99 gegner_aktion 0x6->0xa 18
+wr_a_knie1_frueh: -8 gegner_aktion 0x0->0x2 18; +5 lp_gegner 18 4; +5 gegner_aktion 0x2->0x4 18; +23 gegner_aktion 0x4->0x2 18; +78 gegner_aktion 0x2->0x8 18; +89 gegner_aktion 0x8->0x0 18; +90 gegner_aktion 0x0->0x6 18
+wr_a_knie2_wurf: -8 gegner_aktion 0x0->0x2 18; +5 lp_gegner 18 4; +5 gegner_aktion 0x2->0x4 18; +23 lp_gegner 18 4; +37 lp_gegner 18 14; +37 figur_status 1->2; +37 gegner_aktion 0x4->0x2 18; +58 gegner_aktion 0x2->0x4 18; +74 figur_status 2->1; +107 gegner_ruhe 18; +116 gegner_aktion 0x4->0x6 18; +117 gegner_aktion 0x6->0xa 18
+wr_a_knie3: -8 gegner_aktion 0x0->0x2 18; +5 lp_gegner 18 4; +5 gegner_aktion 0x2->0x4 18; +23 lp_gegner 18 4; +41 lp_gegner (umgeworfen) 18 4; +41 gegner_aktion 0x4->0xc 18; +99 gegner_ruhe 18
+wr_a_halten: +1 gegner_aktion 0x0->0x2 18; +61 gegner_aktion 0x2->0x8 18; +72 gegner_aktion 0x8->0x0 18; +73 gegner_aktion 0x0->0x6 18
+wr_a_zeit67: -60 gegner_aktion 0x0->0x2 18; +0 gegner_aktion 0x2->0x8 18; +11 gegner_aktion 0x8->0x0 18; +12 gegner_aktion 0x0->0x6 18; +42 lp_figur P1 5; +42 figur_status 1->3; +69 figur_status 3->1
+wr_a_sprung: -8 gegner_aktion 0x0->0x2 18; +1 gegner_aktion 0x2->0x8 18; +12 gegner_aktion 0x8->0x0 18; +13 gegner_aktion 0x0->0x6 18; +43 lp_figur P1 5; +43 figur_status 1->3
+wr_a_sprung_rechts: -8 gegner_aktion 0x0->0x2 18; +1 gegner_aktion 0x2->0x8 18; +12 gegner_aktion 0x8->0x0 18; +13 gegner_aktion 0x0->0x6 18; +28 gegner_aktion 0x6->0x0 18; +29 gegner_aktion 0x0->0x6 18; +54 lp_figur P1 5; +54 figur_status 1->3
+wr_a_spezial: -8 gegner_aktion 0x0->0x2 18; +1 figur_status 1->3; +1 gegner_aktion 0x2->0x8 18; +8 lp_gegner (umgeworfen) 18 6; +8 gegner_aktion 0x8->0x12 18; +16 lp_figur P1 9; +58 figur_status 3->1; +58 gegner_ruhe 18; +78 gegner_aktion 0x12->0x0 18
+wr_b_geschoss21: -8 gegner_aktion 0x0->0x2 17; +1 lp_gegner 17 14; +1 figur_status 1->2; +22 gegner_aktion 0x2->0x4 17; +37 lp_gegner (umgeworfen) 16 3; +38 figur_status 2->1; +71 gegner_aktion 0x4->0xc 17; +70 gegner_ruhe 17
+wr_b_geschoss40: -27 gegner_aktion 0x0->0x2 17; +1 lp_gegner 17 14; +1 figur_status 1->2; +22 gegner_aktion 0x2->0x4 17; +38 figur_status 2->1; +71 gegner_aktion 0x4->0xc 17; +70 gegner_ruhe 17
+# Figur umgeworfen (messen_a5.py umfallen): wr_u_*; mashN = Angriff in jedem N-ten Frame ab 210,
+# mash_wechsel = Angriff und Sprung abwechselnd in jedem Frame
+lauf,umgeworfen,flug_ab,scheitel_frame,scheitel_hoehe,boden,boden_dx,ruhe,ruhe_dx,aufstehen,liegt_frames,vx
+wr_u_b_passiv,195,203,221,48.4922,240,-109.25,249,-135.125,316,121,-2.875
+wr_u_mash2,155,163,181,48.4922,200,-109.25,209,-135.125,248,93,-2.875
+wr_u_mash4,155,163,181,48.4922,200,-109.25,209,-135.125,258,103,-2.875
+wr_u_mash8,155,163,181,48.4922,200,-109.25,209,-135.125,276,121,-2.875
+wr_u_mash_wechsel,155,163,181,48.4922,200,-109.25,209,-135.125,243,88,-2.875
+wr_u_passiv,155,163,181,48.4922,200,-109.25,209,-135.125,276,121,-2.875
+# messen_a5.py wurf
+lauf,wurf_eingabe,richtung,schaden_frame,schaden,loslassen,scheitel_frame_nach_loslassen,scheitel_hoehe,landung,ruhe_ab,gegner_start_dx,weite_ab_gegnerstart,ende_dx_zur_figur,ende_dz,flug_x_bis_landung,rutschen_nach_landung,figur_dx_waehrend
+wr_a_dir_down,15,Down,16,14,37,45,69,74,86,+17.3594,-201.5,-184.141,+0.078125,-173.375,-28.125,+0
+wr_a_dir_down+left,15,Down+Left,16,14,37,45,69,74,86,+17.3594,-201.5,-184.141,+0.078125,-173.375,-28.125,+0
+wr_a_dir_down+right,15,Down+Right,16,14,37,45,69,74,86,+17.3594,+167.5,+184.859,+0.078125,+139.375,+28.125,+0
+wr_a_dir_left,15,Left,16,14,37,45,69,74,86,+17.3594,-201.5,-184.141,+0.078125,-173.375,-28.125,+0
+wr_a_dir_right,15,Right,16,14,37,45,69,74,86,+17.3594,+167.5,+184.859,+0.078125,+139.375,+28.125,+0
+wr_a_dir_up,15,Up,16,14,37,45,69,74,86,+17.3594,-201.5,-184.141,+0.078125,-173.375,-28.125,+0
+wr_a_dir_up+left,15,Left+Up,16,14,37,45,69,74,86,+17.3594,-201.5,-184.141,+0.078125,-173.375,-28.125,+0
+wr_a_dir_up+right,15,Right+Up,16,14,37,45,69,74,86,+17.3594,+167.5,+184.859,+0.078125,+139.375,+28.125,+0
+wr_a_halten,-,keine Wurfeingabe
+wr_a_knie,-,keine Wurfeingabe
+wr_a_knie1_frueh,32,Left,-,0,93,93,24,104,105,+21.3594,-4,+17.3594,+0.078125,-4,+0,+0
+wr_a_knie1_wurf,33,Left,34,14,55,63,69,92,104,+21.3594,-205.5,-184.141,+0.078125,-177.375,-28.125,+0
+wr_a_knie2_wurf,51,Left,52,14,73,81,69,110,122,+21.3594,-205.5,-184.141,+0.078125,-177.375,-28.125,+0
+wr_a_knie3,-,keine Wurfeingabe
+wr_a_spezial,-,keine Wurfeingabe
+wr_a_sprung,-,keine Wurfeingabe
+wr_a_sprung_rechts,-,keine Wurfeingabe
+wr_a_zeit11,11,Left,12,14,33,41,69,70,82,+17.3594,-201.5,-184.141,+0.078125,-173.375,-28.125,+0
+wr_a_zeit30,30,Left,31,14,52,60,69,89,101,+17.3594,-201.5,-184.141,+0.078125,-173.375,-28.125,+0
+wr_a_zeit66,66,Left,67,14,88,96,69,125,137,+17.3594,-201.5,-184.141,+0.078125,-173.375,-28.125,+0
+wr_a_zeit67,67,Left,kein gehaltener Gegner
+wr_a_zeit7,7,Left,8,14,29,37,69,66,78,+26.3594,-210.5,-184.141,+0.078125,-182.375,-28.125,+0
+wr_a_zeit8,8,Left,9,14,30,38,69,67,79,+26.3594,-210.5,-184.141,+0.078125,-182.375,-28.125,+0
+wr_a_zeit9,9,Left,10,14,31,39,69,68,80,+19.3594,-203.5,-184.141,+0.078125,-175.375,-28.125,+0
+wr_ac_left,29,Left,30,14,51,59,69,88,100,+19.5,-203.5,-184,+0,-175.375,-28.125,+0
+wr_ac_right,29,Right,30,14,51,59,69,88,100,+19.5,+165.5,+185,+0,+137.375,+28.125,+0
+wr_an_left,30,Left,31,14,52,60,69,89,101,+17.6914,-201.5,-183.809,+0.886719,-173.375,-28.125,+0
+wr_an_right,30,Right,31,14,52,60,69,89,101,+17.6914,+167.5,+185.191,+0.886719,+139.375,+28.125,+0
+wr_b_geschoss21,21,Right,22,14,43,51,69,80,91,+17.5,+165.5,+183,+0,+139.375,+26.125,+0
+wr_b_geschoss40,40,Right,41,14,62,70,69,99,110,+17.5,+165.5,+183,+0,+139.375,+26.125,+0
+wr_b_left,14,Left,15,14,36,44,69,73,85,+26.5,-210.5,-184,+0,-182.375,-28.125,+0
+wr_b_right,14,Right,15,14,36,44,69,73,84,+26.5,+156.5,+183,+0,+130.375,+26.125,+0
+wr_bl_down,10,Down,11,14,32,40,69,69,81,-19,+203.5,+184.5,+0,+175.375,+28.125,+0
+wr_bl_left,10,Left,11,14,32,40,69,69,81,-19,-165.5,-184.5,+0,-137.375,-28.125,+0
+wr_bl_right,10,Right,11,14,32,40,69,69,81,-19,+203.5,+184.5,+0,+175.375,+28.125,+0
+wr_bl_up,10,Up,11,14,32,40,69,69,81,-19,+203.5,+184.5,+0,+175.375,+28.125,+0
+# messen_a5.py wurfablauf
+lauf,frame,rel,ereignis,slot,wert,dx,dz,hoehe
+wr_a_dir_down,6,-9,griff,18,,+39.3594,10,0
+wr_a_dir_down,7,-8,gegner_aktion 0x0->0x2,18,,+26.3594,0,9
+wr_a_dir_down,16,+1,lp_gegner,18,14,-8.64062,0,40
+wr_a_dir_down,16,+1,figur_status 1->2,,,-8.64062,0,40
+wr_a_dir_down,37,+22,gegner_aktion 0x2->0x4,18,,-12.6406,0,59
+wr_a_dir_down,53,+38,figur_status 2->1,,,-85.1406,0,66
+wr_a_dir_down,86,+71,gegner_aktion 0x4->0xc,18,,-184.141,0,0
+wr_a_dir_down,86,+71,gegner_ruhe,18,,-184.141,0,0
+wr_a_dir_down+left,6,-9,griff,18,,+39.3594,10,0
+wr_a_dir_down+left,7,-8,gegner_aktion 0x0->0x2,18,,+26.3594,0,9
+wr_a_dir_down+left,16,+1,lp_gegner,18,14,-8.64062,0,40
+wr_a_dir_down+left,16,+1,figur_status 1->2,,,-8.64062,0,40
+wr_a_dir_down+left,37,+22,gegner_aktion 0x2->0x4,18,,-12.6406,0,59
+wr_a_dir_down+left,53,+38,figur_status 2->1,,,-85.1406,0,66
+wr_a_dir_down+left,86,+71,gegner_aktion 0x4->0xc,18,,-184.141,0,0
+wr_a_dir_down+left,86,+71,gegner_ruhe,18,,-184.141,0,0
+wr_a_dir_down+right,6,-9,griff,18,,+39.3594,10,0
+wr_a_dir_down+right,7,-8,gegner_aktion 0x0->0x2,18,,+26.3594,0,9
+wr_a_dir_down+right,16,+1,lp_gegner,18,14,+9.35938,0,40
+wr_a_dir_down+right,16,+1,figur_status 1->2,,,+9.35938,0,40
+wr_a_dir_down+right,37,+22,gegner_aktion 0x2->0x4,18,,+13.3594,0,59
+wr_a_dir_down+right,53,+38,figur_status 2->1,,,+85.8594,0,66
+wr_a_dir_down+right,86,+71,gegner_aktion 0x4->0xc,18,,+184.859,0,0
+wr_a_dir_down+right,86,+71,gegner_ruhe,18,,+184.859,0,0
+wr_a_dir_left,6,-9,griff,18,,+39.3594,10,0
+wr_a_dir_left,7,-8,gegner_aktion 0x0->0x2,18,,+26.3594,0,9
+wr_a_dir_left,16,+1,lp_gegner,18,14,-8.64062,0,40
+wr_a_dir_left,16,+1,figur_status 1->2,,,-8.64062,0,40
+wr_a_dir_left,37,+22,gegner_aktion 0x2->0x4,18,,-12.6406,0,59
+wr_a_dir_left,53,+38,figur_status 2->1,,,-85.1406,0,66
+wr_a_dir_left,86,+71,gegner_aktion 0x4->0xc,18,,-184.141,0,0
+wr_a_dir_left,86,+71,gegner_ruhe,18,,-184.141,0,0
+wr_a_dir_right,6,-9,griff,18,,+39.3594,10,0
+wr_a_dir_right,7,-8,gegner_aktion 0x0->0x2,18,,+26.3594,0,9
+wr_a_dir_right,16,+1,lp_gegner,18,14,+9.35938,0,40
+wr_a_dir_right,16,+1,figur_status 1->2,,,+9.35938,0,40
+wr_a_dir_right,37,+22,gegner_aktion 0x2->0x4,18,,+13.3594,0,59
+wr_a_dir_right,53,+38,figur_status 2->1,,,+85.8594,0,66
+wr_a_dir_right,86,+71,gegner_aktion 0x4->0xc,18,,+184.859,0,0
+wr_a_dir_right,86,+71,gegner_ruhe,18,,+184.859,0,0
+wr_a_dir_up,6,-9,griff,18,,+39.3594,10,0
+wr_a_dir_up,7,-8,gegner_aktion 0x0->0x2,18,,+26.3594,0,9
+wr_a_dir_up,16,+1,lp_gegner,18,14,-8.64062,0,40
+wr_a_dir_up,16,+1,figur_status 1->2,,,-8.64062,0,40
+wr_a_dir_up,37,+22,gegner_aktion 0x2->0x4,18,,-12.6406,0,59
+wr_a_dir_up,53,+38,figur_status 2->1,,,-85.1406,0,66
+wr_a_dir_up,86,+71,gegner_aktion 0x4->0xc,18,,-184.141,0,0
+wr_a_dir_up,86,+71,gegner_ruhe,18,,-184.141,0,0
+wr_a_dir_up+left,6,-9,griff,18,,+39.3594,10,0
+wr_a_dir_up+left,7,-8,gegner_aktion 0x0->0x2,18,,+26.3594,0,9
+wr_a_dir_up+left,16,+1,lp_gegner,18,14,-8.64062,0,40
+wr_a_dir_up+left,16,+1,figur_status 1->2,,,-8.64062,0,40
+wr_a_dir_up+left,37,+22,gegner_aktion 0x2->0x4,18,,-12.6406,0,59
+wr_a_dir_up+left,53,+38,figur_status 2->1,,,-85.1406,0,66
+wr_a_dir_up+left,86,+71,gegner_aktion 0x4->0xc,18,,-184.141,0,0
+wr_a_dir_up+left,86,+71,gegner_ruhe,18,,-184.141,0,0
+wr_a_dir_up+right,6,-9,griff,18,,+39.3594,10,0
+wr_a_dir_up+right,7,-8,gegner_aktion 0x0->0x2,18,,+26.3594,0,9
+wr_a_dir_up+right,16,+1,lp_gegner,18,14,+9.35938,0,40
+wr_a_dir_up+right,16,+1,figur_status 1->2,,,+9.35938,0,40
+wr_a_dir_up+right,37,+22,gegner_aktion 0x2->0x4,18,,+13.3594,0,59
+wr_a_dir_up+right,53,+38,figur_status 2->1,,,+85.8594,0,66
+wr_a_dir_up+right,86,+71,gegner_aktion 0x4->0xc,18,,+184.859,0,0
+wr_a_dir_up+right,86,+71,gegner_ruhe,18,,+184.859,0,0
+wr_a_halten,6,+0,griff,18,,+39.3594,10,0
+wr_a_halten,7,+1,gegner_aktion 0x0->0x2,18,,+26.3594,0,9
+wr_a_halten,67,+61,gegner_aktion 0x2->0x8,18,,+17.3594,0,24
+wr_a_halten,78,+72,gegner_aktion 0x8->0x0,18,,+17.3594,0,0
+wr_a_halten,79,+73,gegner_aktion 0x0->0x6,18,,+17.3594,0,0
+wr_a_knie,6,-9,griff,18,,+39.3594,10,0
+wr_a_knie,7,-8,gegner_aktion 0x0->0x2,18,,+26.3594,0,9
+wr_a_knie,20,+5,lp_gegner,18,4,+21.3594,0,16
+wr_a_knie,20,+5,gegner_aktion 0x2->0x4,18,,+21.3594,0,16
+wr_a_knie,38,+23,gegner_aktion 0x4->0x2,18,,+17.3594,0,24
+wr_a_knie1_frueh,6,-9,griff,18,,+39.3594,10,0
+wr_a_knie1_frueh,7,-8,gegner_aktion 0x0->0x2,18,,+26.3594,0,9
+wr_a_knie1_frueh,20,+5,lp_gegner,18,4,+21.3594,0,16
+wr_a_knie1_frueh,20,+5,gegner_aktion 0x2->0x4,18,,+21.3594,0,16
+wr_a_knie1_frueh,38,+23,gegner_aktion 0x4->0x2,18,,+17.3594,0,24
+wr_a_knie1_frueh,93,+78,gegner_aktion 0x2->0x8,18,,+17.3594,0,24
+wr_a_knie1_frueh,104,+89,gegner_aktion 0x8->0x0,18,,+17.3594,0,0
+wr_a_knie1_frueh,105,+90,gegner_aktion 0x0->0x6,18,,+17.3594,0,0
+wr_a_knie1_wurf,6,-9,griff,18,,+39.3594,10,0
+wr_a_knie1_wurf,7,-8,gegner_aktion 0x0->0x2,18,,+26.3594,0,9
+wr_a_knie1_wurf,20,+5,lp_gegner,18,4,+21.3594,0,16
+wr_a_knie1_wurf,20,+5,gegner_aktion 0x2->0x4,18,,+21.3594,0,16
+wr_a_knie1_wurf,34,+19,lp_gegner,18,14,-8.64062,0,40
+wr_a_knie1_wurf,34,+19,figur_status 1->2,,,-8.64062,0,40
+wr_a_knie1_wurf,34,+19,gegner_aktion 0x4->0x2,18,,-8.64062,0,40
+wr_a_knie1_wurf,55,+40,gegner_aktion 0x2->0x4,18,,-12.6406,0,59
+wr_a_knie1_wurf,71,+56,figur_status 2->1,,,-85.1406,0,66
+wr_a_knie1_wurf,104,+89,gegner_ruhe,18,,-184.141,0,0
+wr_a_knie1_wurf,113,+98,gegner_aktion 0x4->0x6,18,,-184.141,0,0
+wr_a_knie1_wurf,114,+99,gegner_aktion 0x6->0xa,18,,-184.141,0,0
+wr_a_knie2_wurf,6,-9,griff,18,,+39.3594,10,0
+wr_a_knie2_wurf,7,-8,gegner_aktion 0x0->0x2,18,,+26.3594,0,9
+wr_a_knie2_wurf,20,+5,lp_gegner,18,4,+21.3594,0,16
+wr_a_knie2_wurf,20,+5,gegner_aktion 0x2->0x4,18,,+21.3594,0,16
+wr_a_knie2_wurf,38,+23,lp_gegner,18,4,+21.3594,0,16
+wr_a_knie2_wurf,52,+37,lp_gegner,18,14,-8.64062,0,40
+wr_a_knie2_wurf,52,+37,figur_status 1->2,,,-8.64062,0,40
+wr_a_knie2_wurf,52,+37,gegner_aktion 0x4->0x2,18,,-8.64062,0,40
+wr_a_knie2_wurf,73,+58,gegner_aktion 0x2->0x4,18,,-12.6406,0,59
+wr_a_knie2_wurf,89,+74,figur_status 2->1,,,-85.1406,0,66
+wr_a_knie2_wurf,122,+107,gegner_ruhe,18,,-184.141,0,0
+wr_a_knie2_wurf,131,+116,gegner_aktion 0x4->0x6,18,,-184.141,0,0
+wr_a_knie2_wurf,132,+117,gegner_aktion 0x6->0xa,18,,-184.141,0,0
+wr_a_knie3,6,-9,griff,18,,+39.3594,10,0
+wr_a_knie3,7,-8,gegner_aktion 0x0->0x2,18,,+26.3594,0,9
+wr_a_knie3,20,+5,lp_gegner,18,4,+21.3594,0,16
+wr_a_knie3,20,+5,gegner_aktion 0x2->0x4,18,,+21.3594,0,16
+wr_a_knie3,38,+23,lp_gegner,18,4,+21.3594,0,16
+wr_a_knie3,56,+41,lp_gegner (umgeworfen),18,4,+21.3594,0,16
+wr_a_knie3,56,+41,gegner_aktion 0x4->0xc,18,,+21.3594,0,16
+wr_a_knie3,114,+99,gegner_ruhe,18,,+165.109,0,0
+wr_a_spezial,6,-9,griff,18,,+39.3594,10,0
+wr_a_spezial,7,-8,gegner_aktion 0x0->0x2,18,,+26.3594,0,9
+wr_a_spezial,16,+1,figur_status 1->3,,,+17.3594,0,24
+wr_a_spezial,16,+1,gegner_aktion 0x2->0x8,18,,+17.3594,0,24
+wr_a_spezial,23,+8,lp_gegner (umgeworfen),18,6,+17.3594,0,12
+wr_a_spezial,23,+8,gegner_aktion 0x8->0x12,18,,+17.3594,0,12
+wr_a_spezial,31,+16,lp_figur,P1,9,+37.4844,0,42
+wr_a_spezial,73,+58,figur_status 3->1,,,+158.234,0,0
+wr_a_spezial,73,+58,gegner_ruhe,18,,+158.234,0,0
+wr_a_spezial,93,+78,gegner_aktion 0x12->0x0,18,,+158.234,0,0
+wr_a_sprung,6,-9,griff,18,,+39.3594,10,0
+wr_a_sprung,7,-8,gegner_aktion 0x0->0x2,18,,+26.3594,0,9
+wr_a_sprung,16,+1,gegner_aktion 0x2->0x8,18,,+17.3594,0,24
+wr_a_sprung,27,+12,gegner_aktion 0x8->0x0,18,,+17.3594,0,0
+wr_a_sprung,28,+13,gegner_aktion 0x0->0x6,18,,+17.3594,0,0
+wr_a_sprung,58,+43,lp_figur,P1,5,+17.3594,0,0
+wr_a_sprung,58,+43,figur_status 1->3,,,+17.3594,0,0
+wr_a_sprung_rechts,6,-9,griff,18,,+39.3594,10,0
+wr_a_sprung_rechts,7,-8,gegner_aktion 0x0->0x2,18,,+26.3594,0,9
+wr_a_sprung_rechts,16,+1,gegner_aktion 0x2->0x8,18,,+17.3594,0,24
+wr_a_sprung_rechts,27,+12,gegner_aktion 0x8->0x0,18,,-7.39062,0,0
+wr_a_sprung_rechts,28,+13,gegner_aktion 0x0->0x6,18,,-9.64062,0,0
+wr_a_sprung_rechts,43,+28,gegner_aktion 0x6->0x0,18,,-43.3906,0,0
+wr_a_sprung_rechts,44,+29,gegner_aktion 0x0->0x6,18,,-45.6406,0,0
+wr_a_sprung_rechts,69,+54,lp_figur,P1,5,-74.8906,0,0
+wr_a_sprung_rechts,69,+54,figur_status 1->3,,,-74.8906,0,0
+wr_a_zeit11,6,-5,griff,18,,+39.3594,10,0
+wr_a_zeit11,7,-4,gegner_aktion 0x0->0x2,18,,+26.3594,0,9
+wr_a_zeit11,12,+1,lp_gegner,18,14,-8.64062,0,40
+wr_a_zeit11,12,+1,figur_status 1->2,,,-8.64062,0,40
+wr_a_zeit11,33,+22,gegner_aktion 0x2->0x4,18,,-12.6406,0,59
+wr_a_zeit11,49,+38,figur_status 2->1,,,-85.1406,0,66
+wr_a_zeit11,82,+71,gegner_aktion 0x4->0xc,18,,-184.141,0,0
+wr_a_zeit11,82,+71,gegner_ruhe,18,,-184.141,0,0
+wr_a_zeit30,6,-24,griff,18,,+39.3594,10,0
+wr_a_zeit30,7,-23,gegner_aktion 0x0->0x2,18,,+26.3594,0,9
+wr_a_zeit30,31,+1,lp_gegner,18,14,-8.64062,0,40
+wr_a_zeit30,31,+1,figur_status 1->2,,,-8.64062,0,40
+wr_a_zeit30,52,+22,gegner_aktion 0x2->0x4,18,,-12.6406,0,59
+wr_a_zeit30,68,+38,figur_status 2->1,,,-85.1406,0,66
+wr_a_zeit30,101,+71,gegner_aktion 0x4->0xc,18,,-184.141,0,0
+wr_a_zeit30,101,+71,gegner_ruhe,18,,-184.141,0,0
+wr_a_zeit66,6,-60,griff,18,,+39.3594,10,0
+wr_a_zeit66,7,-59,gegner_aktion 0x0->0x2,18,,+26.3594,0,9
+wr_a_zeit66,67,+1,lp_gegner,18,14,-8.64062,0,40
+wr_a_zeit66,67,+1,figur_status 1->2,,,-8.64062,0,40
+wr_a_zeit66,88,+22,gegner_aktion 0x2->0x4,18,,-12.6406,0,59
+wr_a_zeit66,104,+38,figur_status 2->1,,,-85.1406,0,66
+wr_a_zeit66,137,+71,gegner_aktion 0x4->0xc,18,,-184.141,0,0
+wr_a_zeit66,137,+71,gegner_ruhe,18,,-184.141,0,0
+wr_a_zeit67,6,-61,griff,18,,+39.3594,10,0
+wr_a_zeit67,7,-60,gegner_aktion 0x0->0x2,18,,+26.3594,0,9
+wr_a_zeit67,67,+0,gegner_aktion 0x2->0x8,18,,+17.3594,0,24
+wr_a_zeit67,78,+11,gegner_aktion 0x8->0x0,18,,+17.3594,0,0
+wr_a_zeit67,79,+12,gegner_aktion 0x0->0x6,18,,+17.3594,0,0
+wr_a_zeit67,109,+42,lp_figur,P1,5,+17.3594,0,0
+wr_a_zeit67,109,+42,figur_status 1->3,,,+17.3594,0,0
+wr_a_zeit67,136,+69,figur_status 3->1,,,+17.3594,0,0
+wr_a_zeit7,6,-1,griff,18,,+39.3594,10,0
+wr_a_zeit7,7,+0,gegner_aktion 0x0->0x2,18,,+26.3594,0,9
+wr_a_zeit7,8,+1,lp_gegner,18,14,-8.64062,0,40
+wr_a_zeit7,8,+1,figur_status 1->2,,,-8.64062,0,40
+wr_a_zeit7,29,+22,gegner_aktion 0x2->0x4,18,,-12.6406,0,59
+wr_a_zeit7,45,+38,figur_status 2->1,,,-85.1406,0,66
+wr_a_zeit7,78,+71,gegner_aktion 0x4->0xc,18,,-184.141,0,0
+wr_a_zeit7,78,+71,gegner_ruhe,18,,-184.141,0,0
+wr_a_zeit8,6,-2,griff,18,,+39.3594,10,0
+wr_a_zeit8,7,-1,gegner_aktion 0x0->0x2,18,,+26.3594,0,9
+wr_a_zeit8,9,+1,lp_gegner,18,14,-8.64062,0,40
+wr_a_zeit8,9,+1,figur_status 1->2,,,-8.64062,0,40
+wr_a_zeit8,30,+22,gegner_aktion 0x2->0x4,18,,-12.6406,0,59
+wr_a_zeit8,46,+38,figur_status 2->1,,,-85.1406,0,66
+wr_a_zeit8,79,+71,gegner_aktion 0x4->0xc,18,,-184.141,0,0
+wr_a_zeit8,79,+71,gegner_ruhe,18,,-184.141,0,0
+wr_a_zeit9,6,-3,griff,18,,+39.3594,10,0
+wr_a_zeit9,7,-2,gegner_aktion 0x0->0x2,18,,+26.3594,0,9
+wr_a_zeit9,10,+1,lp_gegner,18,14,-8.64062,0,40
+wr_a_zeit9,10,+1,figur_status 1->2,,,-8.64062,0,40
+wr_a_zeit9,31,+22,gegner_aktion 0x2->0x4,18,,-12.6406,0,59
+wr_a_zeit9,47,+38,figur_status 2->1,,,-85.1406,0,66
+wr_a_zeit9,80,+71,gegner_aktion 0x4->0xc,18,,-184.141,0,0
+wr_a_zeit9,80,+71,gegner_ruhe,18,,-184.141,0,0
+wr_ac_left,25,-4,griff,17,,+38.5,0,0
+wr_ac_left,26,-3,gegner_aktion 0x0->0x2,17,,+26.5,0,9
+wr_ac_left,30,+1,lp_gegner,17,14,-8.5,0,40
+wr_ac_left,30,+1,figur_status 1->2,,,-8.5,0,40
+wr_ac_left,51,+22,gegner_aktion 0x2->0x4,17,,-12.5,0,59
+wr_ac_left,67,+38,figur_status 2->1,,,-85,0,66
+wr_ac_left,100,+71,gegner_aktion 0x4->0xc,17,,-184,0,0
+wr_ac_left,100,+71,gegner_ruhe,17,,-184,0,0
+wr_ac_right,25,-4,griff,17,,+38.5,0,0
+wr_ac_right,26,-3,gegner_aktion 0x0->0x2,17,,+26.5,0,9
+wr_ac_right,30,+1,lp_gegner,17,14,+9.5,0,40
+wr_ac_right,30,+1,figur_status 1->2,,,+9.5,0,40
+wr_ac_right,51,+22,gegner_aktion 0x2->0x4,17,,+13.5,0,59
+wr_ac_right,67,+38,figur_status 2->1,,,+86,0,66
+wr_ac_right,69,+40,lp_gegner (umgeworfen),16,3,+144.75,16,0
+wr_ac_right,100,+71,gegner_aktion 0x4->0xc,17,,+185,0,0
+wr_ac_right,100,+71,gegner_ruhe,17,,+185,0,0
+wr_an_left,25,-5,griff,18,,+38.6914,6,0
+wr_an_left,26,-4,gegner_aktion 0x0->0x2,18,,+26.6914,0,9
+wr_an_left,31,+1,lp_gegner,18,14,-8.30859,0,40
+wr_an_left,31,+1,figur_status 1->2,,,-8.30859,0,40
+wr_an_left,52,+22,gegner_aktion 0x2->0x4,18,,-12.3086,0,59
+wr_an_left,68,+38,figur_status 2->1,,,-84.8086,0,66
+wr_an_left,101,+71,gegner_aktion 0x4->0xc,18,,-183.809,0,0
+wr_an_left,101,+71,gegner_ruhe,18,,-183.809,0,0
+wr_an_right,25,-5,griff,18,,+38.6914,6,0
+wr_an_right,26,-4,gegner_aktion 0x0->0x2,18,,+26.6914,0,9
+wr_an_right,31,+1,lp_gegner,18,14,+9.69141,0,40
+wr_an_right,31,+1,figur_status 1->2,,,+9.69141,0,40
+wr_an_right,52,+22,gegner_aktion 0x2->0x4,18,,+13.6914,0,59
+wr_an_right,68,+38,figur_status 2->1,,,+86.1914,0,66
+wr_an_right,101,+71,gegner_aktion 0x4->0xc,18,,+185.191,0,0
+wr_an_right,101,+71,gegner_ruhe,18,,+185.191,0,0
+wr_b_geschoss21,12,-9,griff,17,,+38.5,2,0
+wr_b_geschoss21,13,-8,gegner_aktion 0x0->0x2,17,,+26.5,0,9
+wr_b_geschoss21,22,+1,lp_gegner,17,14,+9.5,0,40
+wr_b_geschoss21,22,+1,figur_status 1->2,,,+9.5,0,40
+wr_b_geschoss21,43,+22,gegner_aktion 0x2->0x4,17,,+13.5,0,59
+wr_b_geschoss21,58,+37,lp_gegner (umgeworfen),16,3,+123.75,-7,0
+wr_b_geschoss21,59,+38,figur_status 2->1,,,+86,0,66
+wr_b_geschoss21,92,+71,gegner_aktion 0x4->0xc,17,,+183,0,0
+wr_b_geschoss21,91,+70,gegner_ruhe,17,,+183,0,0
+wr_b_geschoss40,12,-28,griff,17,,+38.5,2,0
+wr_b_geschoss40,13,-27,gegner_aktion 0x0->0x2,17,,+26.5,0,9
+wr_b_geschoss40,41,+1,lp_gegner,17,14,+9.5,0,40
+wr_b_geschoss40,41,+1,figur_status 1->2,,,+9.5,0,40
+wr_b_geschoss40,62,+22,gegner_aktion 0x2->0x4,17,,+13.5,0,59
+wr_b_geschoss40,78,+38,figur_status 2->1,,,+86,0,66
+wr_b_geschoss40,111,+71,gegner_aktion 0x4->0xc,17,,+183,0,0
+wr_b_geschoss40,110,+70,gegner_ruhe,17,,+183,0,0
+wr_b_left,12,-2,griff,17,,+38.5,2,0
+wr_b_left,13,-1,gegner_aktion 0x0->0x2,17,,+26.5,0,9
+wr_b_left,15,+1,lp_gegner,17,14,-8.5,0,40
+wr_b_left,15,+1,figur_status 1->2,,,-8.5,0,40
+wr_b_left,36,+22,gegner_aktion 0x2->0x4,17,,-12.5,0,59
+wr_b_left,52,+38,figur_status 2->1,,,-85,0,66
+wr_b_left,85,+71,gegner_aktion 0x4->0xc,17,,-184,0,0
+wr_b_left,85,+71,gegner_ruhe,17,,-184,0,0
+wr_b_right,12,-2,griff,17,,+38.5,2,0
+wr_b_right,13,-1,gegner_aktion 0x0->0x2,17,,+26.5,0,9
+wr_b_right,15,+1,lp_gegner,17,14,+9.5,0,40
+wr_b_right,15,+1,figur_status 1->2,,,+9.5,0,40
+wr_b_right,36,+22,gegner_aktion 0x2->0x4,17,,+13.5,0,59
+wr_b_right,51,+37,lp_gegner (umgeworfen),16,3,+123.75,-1,0
+wr_b_right,52,+38,figur_status 2->1,,,+86,0,66
+wr_b_right,85,+71,gegner_aktion 0x4->0xc,17,,+183,0,0
+wr_b_right,84,+70,gegner_ruhe,17,,+183,0,0
+wr_bl_down,7,-3,griff,17,,-38,2,0
+wr_bl_down,8,-2,gegner_aktion 0x0->0x2,17,,-26,0,9
+wr_bl_down,11,+1,lp_gegner,17,14,+9,0,40
+wr_bl_down,11,+1,figur_status 1->2,,,+9,0,40
+wr_bl_down,32,+22,gegner_aktion 0x2->0x4,17,,+13,0,59
+wr_bl_down,48,+38,figur_status 2->1,,,+85.5,0,66
+wr_bl_down,49,+39,lp_gegner (umgeworfen),16,3,+140.262,2,0
+wr_bl_down,81,+71,gegner_aktion 0x4->0xc,17,,+184.5,0,0
+wr_bl_down,81,+71,gegner_ruhe,17,,+184.5,0,0
+wr_bl_left,7,-3,griff,17,,-38,2,0
+wr_bl_left,8,-2,gegner_aktion 0x0->0x2,17,,-26,0,9
+wr_bl_left,11,+1,lp_gegner,17,14,-9,0,40
+wr_bl_left,11,+1,figur_status 1->2,,,-9,0,40
+wr_bl_left,32,+22,gegner_aktion 0x2->0x4,17,,-13,0,59
+wr_bl_left,48,+38,figur_status 2->1,,,-85.5,0,66
+wr_bl_left,81,+71,gegner_aktion 0x4->0xc,17,,-184.5,0,0
+wr_bl_left,81,+71,gegner_ruhe,17,,-184.5,0,0
+wr_bl_right,7,-3,griff,17,,-38,2,0
+wr_bl_right,8,-2,gegner_aktion 0x0->0x2,17,,-26,0,9
+wr_bl_right,11,+1,lp_gegner,17,14,+9,0,40
+wr_bl_right,11,+1,figur_status 1->2,,,+9,0,40
+wr_bl_right,32,+22,gegner_aktion 0x2->0x4,17,,+13,0,59
+wr_bl_right,48,+38,figur_status 2->1,,,+85.5,0,66
+wr_bl_right,49,+39,lp_gegner (umgeworfen),16,3,+140.262,2,0
+wr_bl_right,81,+71,gegner_aktion 0x4->0xc,17,,+184.5,0,0
+wr_bl_right,81,+71,gegner_ruhe,17,,+184.5,0,0
+wr_bl_up,7,-3,griff,17,,-38,2,0
+wr_bl_up,8,-2,gegner_aktion 0x0->0x2,17,,-26,0,9
+wr_bl_up,11,+1,lp_gegner,17,14,+9,0,40
+wr_bl_up,11,+1,figur_status 1->2,,,+9,0,40
+wr_bl_up,32,+22,gegner_aktion 0x2->0x4,17,,+13,0,59
+wr_bl_up,48,+38,figur_status 2->1,,,+85.5,0,66
+wr_bl_up,49,+39,lp_gegner (umgeworfen),16,3,+140.262,2,0
+wr_bl_up,81,+71,gegner_aktion 0x4->0xc,17,,+184.5,0,0
+wr_bl_up,81,+71,gegner_ruhe,17,,+184.5,0,0
