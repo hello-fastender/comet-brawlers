@@ -32,7 +32,7 @@ Kennzeichnung in diesem Dokument:
 | 9. Nachtrag: Würfe | erledigt: Eingabe, Schaden, Ablauf, Flugbahn und Weite des Wurfs, Kniestoß, Spezialangriff im Griff, geworfener Gegner als Geschoss; Umwerfen der Figur durch Gegner und Verkürzen des Liegens gesichert; dazu Reichweite und Bedingungen des Griffs, siehe „Nachtrag: Griff und Würfe“ |
 | 10. Nachtrag: Schaden der Gegner | erledigt: Zuordnung jedes Treffers zum Angreifer, Schaden je Gegner und Angriff, Abhängigkeit vom Rang (Schwierigkeitswert FFF82A), Regeln für Umwerfen und Tod gesichert, siehe „Nachtrag: Schaden der Gegner“ |
 | 11. Nachtrag: Sprungangriff | erledigt: vier Varianten, Schaden, Umwerfen, aktive Frames, Höhen-, x- und Tiefenreichweite gesichert, siehe „Nachtrag: Sprungangriff“ |
-| 12. Grafik und Animationen | Bilder erledigt: Stage-Starts, Szenen und Panoramen aller 9 Stages, Animationsstreifen der 4 Spielfiguren, Pose-Galerien der Gegner je Stage, siehe `grafik/README.md`. Beschreibungen aus dem Grafik-Workflow, Gegenprüfung läuft |
+| 12. Grafik und Animationen | erledigt: Stage-Starts, Szenen und Panoramen aller 9 Stages, Animationsstreifen der 4 Spielfiguren, Pose-Galerien der Gegner je Stage, Beschreibung aller Stages, Helden und Gegner (Grafik-Workflow, Stichproben gegengeprüft: 115 von 129 bestätigt, Korrekturen eingearbeitet), siehe `grafik/README.md`. Offen: Titel, Figurenwahl, Abspann, Anzeigeleiste, Gegenstände |
 
 ### Umgebung
 
