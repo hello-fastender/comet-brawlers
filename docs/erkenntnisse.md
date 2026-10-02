@@ -61,18 +61,19 @@ stichprobenweise nachgemessen; **offen** heißt nicht untersucht.
 
 | Bereich | Stand |
 |---|---|
-| Steuerung der Spielfigur (Captain Commando): Laufen, Sprung, Schlagkette, Sprungangriff, Griff, Wurf, Umgeworfen werden, Schutz nach Treffern | gesichert, in `mechanik.md` |
+| Steuerung der Spielfigur (Captain Commando): Laufen, Sprung, Schlagkette mit Nachlauf und Reichweite hinter der Figur, Sprungangriff (alle vier Varianten mit Reichweite), Griff, Wurf, Umgeworfen werden, Schutz nach Treffern, Tod und Neueinstieg | gesichert, in `mechanik.md` (Tod und Neueinstieg: „Tod und Neueinstieg der Figur“) |
 | Sprint, Sprintangriff, Sprintsprung | gesichert, in `mechanik.md` („Sprint“) |
 | Spezialangriff | gesichert für alle vier Helden, in `mechanik.md` („Spezialangriff“) |
 | Die anderen drei Helden | Animationen aufgenommen; Spezialangriff gesichert; Schaden der Kette und Würfe Workflow |
-| Schaden und Lebenspunkte der Gegner, Schwierigkeit (Rang) | Rang und Schaden des WOOKY gesichert, übrige Gegner Workflow |
-| Aussehen, Animationen und Angriffe aller Gegner und Bosse | beschrieben |
+| Schaden und Lebenspunkte der Gegner, Schwierigkeit (Rang) | Rang (auch −3 bei Tod und Stage-Wechsel), Schaden des WOOKY, Treffer in der Luft und gleichzeitiger Treffer gesichert, ebenso Schaden der Fernangriffe von SKIP und DICK, die LP des DICK sowie Schaden und Lebenspunkte des Bosses der ersten Stage (`mechanik.md`, „Boss“); übrige Gegner Workflow |
+| Aussehen, Animationen und Angriffe aller Gegner und Bosse | beschrieben; Angriffe des Bosses der ersten Stage gemessen (siehe eigene Zeile) |
 | Trefferreaktion der Gegner (Dauer, Rückstoß, Umwerfen, Aufstehen, Tod) | gesichert für WOOKY und EDDY, in `mechanik.md` („Trefferreaktion der Gegner“) |
-| Verhalten der Gegner (Annähern, Angriffswahl, wie viele gleichzeitig angreifen) | WOOKY und EDDY gesichert als Richtwert (notes.md „Nachtrag: Verhalten der Nahkämpfer“); Angriffsraten, Wahl der Angriffsart und Einzelheiten der Angriffsabläufe unsicher; andere Gegner offen |
-| Reichweite, Startup und Nachlauf der Gegnerangriffe | WOOKY, EDDY und SKIP gesichert, in `mechanik.md` („Reichweite der Gegnerangriffe“); DICK und Messerwurf des SKIP offen |
+| Verhalten der Gegner (Annähern, Angriffswahl, wie viele gleichzeitig angreifen) | WOOKY und EDDY gesichert als Richtwert (notes.md „Nachtrag: Verhalten der Nahkämpfer“); Angriffsraten, Wahl der Angriffsart und Einzelheiten der Angriffsabläufe unsicher. SKIP und DICK: Zielpunkt und Weg dorthin gesichert, beim DICK auch Gehtempo, Pose und Erscheinen (notes.md „Nachtrag: Fernangriffe der Gegner“), Raten und Abstand des DICK außerhalb der Schüsse unsicher; Boss der ersten Stage siehe eigene Zeile; andere Gegner offen |
+| Reichweite, Startup und Nachlauf der Gegnerangriffe | WOOKY, EDDY und SKIP gesichert, in `mechanik.md` („Reichweite der Gegnerangriffe“); Fernangriffe (Messerwurf und Stichserie des SKIP, Pistole und Raketenwerfer des DICK) gesichert, in `mechanik.md` („Fernangriffe der Gegner“); wie oft sie kommen, unsicher |
+| Boss der ersten Stage: Lebenspunkte, Super-Armor, Trefferreaktion, Angriffe, Rhythmus, Verstärkung, Fall | gesichert, in `mechanik.md` („Boss“); unsicher bleiben, wann und wie oft er Treffer zurückweist, die Wurfweite, seine erste Aktion nach dem Aufstehen und die Zeiten bis zum Stagewechsel; Bosse späterer Stages offen |
 | Aufbau der 9 Stages: Länge, Kamera, Sperren, Tiefe, Objekte, Wellen | beschrieben; je Stage 6 bis 9 Angaben gegengeprüft |
 | Gegenstände (Essen, Waffen) und Fahrzeuge | Gegenstände und Waffen gesichert, in `mechanik.md` („Gegenstände und Waffen“); Fahrzeuge nicht untersucht |
-| Titel, Figurenwahl, Anzeigeleiste, Punkte, Leben, Continue | Punkte gemessen (`mechanik.md`, „Gegenstände und Waffen“); übrige offen |
+| Titel, Figurenwahl, Anzeigeleiste, Punkte, Leben, Continue | Punkte gemessen (`mechanik.md`, „Gegenstände und Waffen“); Leben und Neueinstieg gemessen (`mechanik.md`, „Tod und Neueinstieg der Figur“); übrige offen |
 | Mehrspieler | offen |
 | Sound | nicht Teil der Analyse |
 
@@ -108,16 +109,28 @@ Werte und Zeitfenster stehen in `mechanik.md`.
   verkürzt das auf etwa 90. Die Gegner nehmen auf den Schutz keine
   Rücksicht: Sie greifen auch in den Schutzfenstern an, ihre Treffer werden
   ignoriert, und mehrfach trifft ein Gegner genau im ersten Frame nach dem
-  Schutz. Treffen sich Figur und Gegner im selben Frame, gewinnt die Figur
-  (Workflow). Die Figur stirbt erst unter 0 LP.
-- **Verhältnis von Schaden und Lebenspunkten**: Die Figur hat 72 LP,
-  normale Gegner treffen mit 5 bis 10 LP. Sie hält also 8 bis 15 Treffer
-  aus. Ein schwacher Gegner (16 LP) fällt mit einer vollen Kette (22 LP).
+  Schutz. Geschosse sind ausgenommen: Sie treffen auch in den 27 Frames
+  nach einem Treffer, so trifft die zweite Kugel einer Salve des DICK in der
+  Reaktion auf die erste (nach dem Aufstehen nicht gemessen; `mechanik.md`,
+  „Unverwundbarkeit“, Zeile „gegen Geschosse“). In unserem Spiel bleiben
+  nach E2 auch Geschosse im Schutz wirkungslos (`design-gegner-stages.md`,
+  Abschnitt 2). Treffen sich Figur und Gegner im selben Frame, gewinnt die
+  Figur, auch gegen den Boss. Die Figur stirbt erst unter 0 LP. Nach einem
+  Tod fällt sie von oben ins Bild, wirft beim Aufsetzen jeden aktiven Gegner
+  im Bild um und ist ab dem Erscheinen etwa 4,2 s geschützt (252 Frames,
+  davon 200 nach der Landung). Nahangriffe der Gegner bleiben in dieser Zeit
+  ohne Wirkung; ob Geschosse dort treffen, ist nicht gemessen.
+- **Verhältnis von Schaden und Lebenspunkten**: Die Figur hat 72 LP. Die
+  Nahkämpfer WOOKY und EDDY treffen mit 5 bis 11 LP, gegen sie hält die
+  Figur also 7 bis 15 Treffer aus. Fernkämpfer treffen mit 4 bis 15 LP
+  (Kugel 4 bis 7, Messer 10 bis 13, Rakete 12 bis 15). Ein schwacher Gegner
+  (16 LP) fällt mit einer vollen Kette (22 LP).
 - **Schwierigkeit passt sich an**: Ein Rang von 7 bis 24 steigt mit der
   Spielzeit (Start bei 9, erstmals nach 409 Frames um 1, danach alle 600
-  Frames) und sinkt bei jedem Tod der Figur um 3. Schaden und Lebenspunkte
-  später erscheinender Gegner hängen davon ab, ebenso ihre Pause vor jedem
-  Angriff (25 Frames bei Rang 7, 9 Frames bei Rang 20 bis 23).
+  Frames) und sinkt bei jedem Tod der Figur und bei jedem Stage-Wechsel
+  um 3. Schaden und Lebenspunkte später erscheinender Gegner hängen davon
+  ab, ebenso ihre Pause vor jedem Angriff (25 Frames bei Rang 7, 9 Frames
+  bei Rang 20 bis 23).
 - **Gegner halten die Kette zusammen**: Ein getroffener Gegner steht
   23 Frames in der Trefferreaktion, ohne Rückstoß; ein neuer Treffer startet
   sie neu. Beim spätesten erlaubten Kettendruck ist er 6 bis 7 Frames frei,
@@ -149,16 +162,18 @@ in `mechanik.md` gelten dann für alle.
 
 Gegnerverhalten und Wellen entwerfen wir selbst. Als Vorbild dienen die
 Rollen, die das Original verwendet (beschrieben, Einzelheiten in
-`research/captcomm/grafik/README.md`):
+`research/captcomm/grafik/README.md`; die Angaben zu WOOKY, EDDY, SKIP,
+DICK und dem Boss DOLG sind überwiegend gemessen, maßgeblich ist
+`mechanik.md`):
 
 | Rolle | Beispiel im Original | Kennzeichen |
 |---|---|---|
 | Nahkämpfer | WOOKY (16 LP zu Beginn, später 22–34 nach Rang), EDDY (30 LP zu Beginn, später 32–42) | Schlagserien, einzelne Schläge werfen die Figur um; WOOKY geht so schnell wie die Figur (1,75 px/Frame) |
-| Schneller Messerkämpfer | SKIP (34–46 LP) | rennt 2,5 px/Frame, Messerwurf (4 px/Frame), Ausfallstich |
-| Fernkämpfer | DICK (16–28 LP) | hält 100 bis 140 px Abstand, Pistolensalven oder Raketen; seine Waffe bleibt als Gegenstand liegen |
+| Schneller Messerkämpfer | SKIP (34–46 LP) | rennt 2,5 px/Frame, Ausfallstich; wirft aus etwa 150 px ein Messer (4 px/Frame, wirft um; ein Schlag zerschlägt es, Springen hilft nicht) und sticht aus der Nähe in Serien von 1 bis 4 Stichen |
+| Fernkämpfer | DICK (16–28 LP, in Stage 1 19–28 je nach Rang) | hält keinen festen Abstand, geht nur zum Schießen auf 112 bis 136 px vor die Figur; Pistolensalven von 2 bis 8 Kugeln, abwechselnd normal und umwerfend, oder je eine Rakete, deren Explosion etwa 90 bis 200 px vor ihm umwirft; seine Waffe bleibt als Gegenstand liegen (Pistole 5 Schuss, Raketenwerfer 3) |
 | Gegner mit Flächenangriff | CAROL (Elektroschock bis etwa 90 px), MARBIN (Flammen) | zwingen die Figur auf Abstand |
 | Schwerer Gegner | MARDIA (85 LP), Mech mit Fahrer (85 LP) | viel LP und große Reichweite (Schleimspucke bzw. Armschlag um 90 px); MARDIA geht langsam (1,2 px/Frame) |
-| Boss | DOLG (110 LP in den Messläufen) | Super-Armor: Ketten, die ihn nicht umwerfen, bricht er mit einem Stoß ab, und seine LP springen zurück; nur Ketten mit Umwerfen zählen. Greift eine passive Figur alle 170 bis 200 Frames an (Ansturm, dreifacher Armschwung, Sprung-Körperpresse, Griff mit Wurf). Fällt er, brechen alle übrigen Gegner zusammen |
+| Boss | DOLG (LP nach Rang beim Betreten der Arena: 90 bei Rang 7–8, 100 bei 9–15, 110 bei 16–23, 120 bei 24) | Super-Armor: Treffer von Kette, Tritt, Sprung- und Sprintangriff weist er manchmal zurück. Seine LP springen dann im nächsten Frame auf den Wert vor diesem Treffer, und er weicht 54 Frames harmlos zurück; bei umwerfenden Treffern fängt er sich stattdessen auch ab: Etwa die Hälfte des Schadens bleibt, er landet aber auf den Füßen. Spezialangriff, Kniestoß, Wurf, Rakete und Laser zählen immer. Wann er zurückweist, ist nicht geklärt (im Bot-Lauf mit steigendem Rang häufiger, unsicher). Nach dem Aufstehen ist er noch 11 bis 17 Frames geschützt. Greift eine passive Figur 29 bis 39 Mal in 8000 Frames an (Median-Abstand 199 bis 288 Frames), der Rang ändert das nicht deutlich: kurzer Schlag, dreifacher Armschwung, Ansturm, Sprung-Körperpresse, Griff mit Wurf. Fällt er, brechen alle übrigen Gegner zusammen |
 
 **Verhalten der Nahkämpfer** (WOOKY und EDDY in Stage 1, gesichert; Richtwerte
 für unsere Gegnerlogik, Einzelheiten in `research/captcomm/notes.md`,
@@ -198,8 +213,13 @@ für unsere Gegnerlogik, Einzelheiten in `research/captcomm/notes.md`,
 - **Nachschub**: Neue Gegner erscheinen an festen Kamerapositionen. Es
   zählt, wie viele Gegner leben, nicht wie viele gestorben sind: SKIP kommt
   nur bei höchstens 2, der WOOKY im Mech nur bei höchstens 3 lebenden
-  Gegnern. Beim Boss DOLG (110 LP) kommt die letzte Welle, sobald seine LP
-  unter die Hälfte fallen, zwei DICK bei einem Viertel.
+  Gegnern. Beim Boss DOLG kommen zwei EDDY, sobald seine LP auf die Hälfte
+  oder darunter fallen, auch wenn er den Treffer zurückweist; bei einem
+  Viertel kommt ein DICK mit Raketenwerfer. Einen zweiten gibt es nur ab
+  Rang 16: Er kommt 39 bis 40 Frames, nachdem neben dem Boss höchstens
+  drei Gegner leben. Neben dem Boss leben nie mehr als vier Gegner. Ein DICK
+  mit Pistole kommt schon nach dem ersten besiegten WOOKY der Arena, aber
+  nicht bei Rang 16 bis 19.
 - **Kein Griff**: WOOKY und EDDY packen die Figur nie. Je zwei ihrer
   Angriffe werfen um; beim EDDY ist eines davon ein Sprungknie, das auch
   eine Serie eröffnen kann.
@@ -226,8 +246,12 @@ gesichert; Zahlen in `mechanik.md`, „Reichweite der Gegnerangriffe“):
 - **Nachlauf**: Nach dem letzten aktiven Frame folgen 0 bis 8 Frames fester
   Rückzug und eine Wartepose, deren Länge das Spiel wählt. Bis zum nächsten
   Stehen oder Gehen vergehen bei den Schlägen 7 bis 41 Frames. Nach einem
-  Treffer mit Umwerfen geht der WOOKY sofort hinterher. SKIP sticht alle 37
-  bis 49 Frames.
+  Treffer mit Umwerfen geht der WOOKY sofort hinterher. SKIP sticht in einer
+  Serie alle 37 Frames (`mechanik.md`, „Fernangriffe der Gegner“). Zwischen
+  zwei Serien kamen auch 46 bis 53 Frames vor, an einer Begrenzung 30 bis
+  43; die Spanne „37 bis 49 Frames“ unter „Reichweite der
+  Gegnerangriffe“ ist damit vermutlich zu eng (unsicher, `mechanik.md`,
+  „Nicht übernommen“).
 - **Serien**: Vor einem Umwerfangriff schlägt der WOOKY 2 bis 13 Mal normal
   zu (meist 2 bis 5), der EDDY 0 bis 10, der SKIP 0 bis 8 Mal. Eine feste
   Reihenfolge gibt es nicht. Richtwert: nach 2 bis 5 normalen Angriffen ein
@@ -241,8 +265,8 @@ Weitere Beobachtungen:
   Lebenspunkten. Dazu kommt je Stage ein Boss.
 - **Schaden der Gegner**: Die Gegner, die zu Beginn von Stage 1 stehen,
   machen festen Schaden (WOOKY 5, EDDY 6 LP). Später erscheinende machen
-  je nach Rang 7 bis 13 LP, Raketen bis 15 LP, der Boss DOLG 9 bis 22 LP
-  je Angriff.
+  je nach Rang 7 bis 13 LP, eine Kugel des DICK 4 bis 7, eine Rakete 12 bis
+  15 LP, der Boss DOLG 7 bis 22 LP je Angriff.
 - **Gleiches Tempo**: Der WOOKY läuft so schnell wie die Figur. Weglaufen
   schafft trotzdem Abstand: Einer nach links fliehenden Figur folgt er
   höchstens 92 Frames, dann spottet er oder wartet auf Abstand.
@@ -321,31 +345,53 @@ je Stage in `research/captcomm/grafik/README.md`):
 ## Offene Punkte
 
 Die vier offenen Punkte vom Vormittag (Trefferreaktion, Verhalten von WOOKY
-und EDDY, Spezialangriff und Sprint, Gegenstände) sind gemessen und
-gegengeprüft (Nachträge in `research/captcomm/notes.md`). Weiter messen
-lohnt sich nur, wo es beim Gestalten hilft. In dieser Reihenfolge:
+und EDDY, Spezialangriff und Sprint, Gegenstände) und die Fernangriffe von
+SKIP und DICK sind gemessen und gegengeprüft (Nachträge in
+`research/captcomm/notes.md`). Weiter messen lohnt sich nur, wo es beim
+Gestalten hilft. In dieser Reihenfolge:
 
-1. **Fernkämpfer und Messerwurf**: Reichweite, Startup und Nachlauf von
-   Pistole und Rakete des DICK und des Messerwurfs des SKIP. Beide kamen in
-   den Messläufen gegen eine passive Figur nicht vor; nötig ist ein Lauf,
-   der sie gezielt auslöst.
-2. **Boss**: Super-Armor im Einzelnen (wann die LP zurückspringen, welche
-   Treffer zählen), Reichweiten der Bossangriffe, Wirkung des
-   Spezialangriffs gegen den Boss.
-3. **Unsichere Einzelwerte**, die das Design berühren: Wahl zwischen
+1. **Boss**: Der Boss der ersten Stage ist gemessen und gegengeprüft
+   (`mechanik.md`, „Boss“): Welche Treffer zählen, Reichweiten,
+   Spezialangriff und Verstärkung sind gesichert. Offen bleibt, nach welcher
+   Regel er einen Treffer zurückweist und wann er sich stattdessen abfängt;
+   für unser Spiel genügt eine eigene Regel (etwa eine mit dem Rang
+   steigende Wahrscheinlichkeit). Unsicher sind die Wurfweite (die
+   Messungen weichen ab), seine erste Aktion nach dem Aufstehen und die
+   Zeiten bis zum Stagewechsel. Nicht einzeln gemessen sind seine LP bei
+   Rang 10, 13, 14, 17, 18, 21 und 22; ob ein zweiter Spieler oder ein
+   geworfener Gegner ihn trifft, während er die Figur hält, ist nicht
+   gemessen und betrifft den Mehrspieler-Modus. Die Bosse der späteren
+   Stages sind nicht gemessen.
+2. **Unsichere Einzelwerte**, die das Design berühren: Wahl zwischen
    schnellem und langsamem Schlag des WOOKY, Angriffsraten und Länge der
-   Serien, Liegedauer des EDDY im Einzelfall. Sie stehen in `mechanik.md`
-   unter „Nicht übernommen“.
+   Serien, Liegedauer des EDDY im Einzelfall, wie oft SKIP und DICK werfen
+   und schießen und welchen Abstand der DICK zwischen den Schüssen hält. Sie
+   stehen in `mechanik.md` unter „Nicht übernommen“.
+3. **Fernkämpfer**: Wovon die Länge einer Salve des DICK abhängt (Zufall
+   oder Rang), ist nicht gemessen. Dass der DICK mit Pistole in der
+   Bossarena bei Rang 16 bis 19 ausbleibt, ist gemessen, aber nicht
+   erklärt. Die Fernkämpfer anderer Stages (Pistole, M-GUN und Raketen der
+   DICK in Stage 4 bis 8, Messerwurf der SKIP in Stage 2, 3 und 9) sind
+   nicht gemessen.
 4. **Widerspruch zum Eingriff `schutz_eingriff`**: In den natürlichen
-   Schutzfenstern greifen die Gegner an, bei einem künstlich auf 168 Frames
-   verlängerten Schutz schlug der Gegner nicht zu. Für unser Spiel ohne
-   verlängerten Schutz ohne Folgen.
+   Schutzfenstern greifen die Gegner an, auch im 200 Frames langen Schutz
+   nach dem Neueinstieg; bei einem künstlich auf 168 Frames verlängerten
+   Schutz schlug der Gegner nicht zu. Für unser Spiel ohne verlängerten
+   Schutz ohne Folgen.
 5. **Andere Helden**: Kette und Würfe von Mack, Ginzu und Baby Head nur im
    Workflow belegt; Sprint der anderen Helden nicht gemessen.
-6. **Rahmen**: Titel, Figurenwahl, Anzeigeleiste, Leben, Continue,
-   Mehrspieler und Fahrzeuge sind nicht untersucht.
+6. **Rahmen**: Titel, Figurenwahl, Anzeigeleiste, Continue, Mehrspieler und
+   Fahrzeuge sind nicht untersucht; Leben und Neueinstieg sind gemessen
+   (`mechanik.md`, „Tod und Neueinstieg der Figur“).
+7. **Tod und Neueinstieg**: Wie der Tod abläuft, wenn sich zwei Sonderfälle
+   überlagern (Klinge oder Rollen an einer Wand), und ob außer dem Ölfass
+   weitere Untergründe die fallende Figur tragen, ist nicht gemessen. Offen
+   ist auch, ob die Landung nach dem Neueinstieg schwache Gegner (5 LP oder
+   weniger) tötet und Gegner außerhalb des Bildes trifft. Der Schutz nach
+   dem Neueinstieg ist nur für Captain Commando und nur in Stage 1
+   ausgewertet.
 
 Weitere unsichere Einzelheiten stehen in `mechanik.md` unter „Nicht
 übernommen“ und in `research/captcomm/grafik/README.md`, deren Werte zu
-Sprint und Spezialangriff zum Teil überholt sind (maßgeblich ist
-`mechanik.md`).
+Sprint, Spezialangriff, DICK und dem Boss der ersten Stage zum Teil
+überholt sind (maßgeblich ist `mechanik.md`).

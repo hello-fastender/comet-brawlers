@@ -1,0 +1,1861 @@
+# Gegenpruefung V8 "Rest der Spielfigur" (Praefix rest_v), erzeugt von scripts/belege_rest.sh mit scripts/messen_rest_v.py belege; Szenarien scripts/scenarios/rest_v_frei.lua und rest_v_bot.lua.
+
+# Teil A: Nachlauf der Kettenstufen 2-4 (ab anlauf_c: EDDY Slot 17, Stufe 1 in Frame 40, Folgedruecke h+16, h+13, h+20; ab anlauf: WOOKY Slot 18, Stufe 1 in 42, Folgedruecke h+20, h+12, h+15). Werte relativ zu h (Stufe 2, 3 mit Treffer) bzw. D (Stufe 4, Leerschlag). Proben: Angriff (a) bzw. Sprung (j) in genau einem Frame, Richtung (hl, hr, hu, hd) gehalten. EINGRIFF nur in *_l_* (Gegner ab h der Vorstufe +1 um 40 px in die Tiefe versetzt: Leerschlag) und *_s4_z_* (Gegner D+1 bis D+10 um 40 px versetzt, D+11 bis D+24 zurueck: Tritt trifft im zweiten Fenster)
+lauf,stufe,bezug,probe,Q,wirkung,neue_stufe,akt10_bis,ruhe_ab,akt0_ab,h_rel_D,treffer_rel_D_je_stufe,schaden_nach_D
+rest_v_a_e_s2_l_a6,2,D,a,+6,,,+16,+17,,,2/,
+rest_v_a_e_s2_l_a7,2,D,a,+7,+8,1,+23,+24,,,2/,
+rest_v_a_e_s2_l_a8,2,D,a,+8,+9,1,+24,+25,,,2/,
+rest_v_a_e_s2_l_hl,2,D,hl,+2,+9,,+7,+8,+8,,2/,
+rest_v_a_e_s2_l_hr,2,D,hr,+2,+9,,+7,+8,+8,,2/,
+rest_v_a_e_s2_l_hu,2,D,hu,+2,+9,,+7,+8,+8,,2/,
+rest_v_a_e_s2_l_j6,2,D,j,+6,,,+16,+17,,,2/,
+rest_v_a_e_s2_l_j7,2,D,j,+7,+8,,+7,+55,,,2/,
+rest_v_a_e_s2_l_j8,2,D,j,+8,+9,,+8,+56,,,2/,
+rest_v_a_e_s2_l_o,2,D,o,,,,+16,+17,,,2/,
+rest_v_a_e_s2_t_a9,2,h,a,+9,,,+26,+27,,3,2/3,4
+rest_v_a_e_s2_t_a10,2,h,a,+10,,,+26,+27,,3,2/3,4
+rest_v_a_e_s2_t_a11,2,h,a,+11,+12,3,+41,+42,,3,2/3,4/5
+rest_v_a_e_s2_t_a12,2,h,a,+12,+13,3,+42,+43,,3,2/3,4/5
+rest_v_a_e_s2_t_hd,2,h,hd,+2,+28,,+26,+27,+27,3,2/3,4
+rest_v_a_e_s2_t_hl,2,h,hl,+2,+13,,+11,+12,+12,3,2/3,4
+rest_v_a_e_s2_t_j10,2,h,j,+10,,,+26,+27,,3,2/3,4
+rest_v_a_e_s2_t_j11,2,h,j,+11,+12,,+11,+54,,3,2/3,4
+rest_v_a_e_s2_t_j12,2,h,j,+12,+13,,+12,+54,,3,2/3,4
+rest_v_a_e_s2_t_o,2,h,o,,,,+26,+27,,3,2/3,4
+rest_v_a_e_s3_l_a7,3,D,a,+7,,,+17,+18,,,2/3/,
+rest_v_a_e_s3_l_a8,3,D,a,+8,+9,1,+24,+25,,,2/3/,
+rest_v_a_e_s3_l_a9,3,D,a,+9,+10,1,+25,+26,,,2/3/,
+rest_v_a_e_s3_l_hl,3,D,hl,+2,+10,,+8,+9,+9,,2/3/,
+rest_v_a_e_s3_l_hr,3,D,hr,+2,+10,,+8,+9,+9,,2/3/,
+rest_v_a_e_s3_l_hu,3,D,hu,+2,+10,,+8,+9,+9,,2/3/,
+rest_v_a_e_s3_l_j7,3,D,j,+7,,,+17,+18,,,2/3/,
+rest_v_a_e_s3_l_j8,3,D,j,+8,+9,,+8,+56,,,2/3/,
+rest_v_a_e_s3_l_j9,3,D,j,+9,+10,,+9,+57,,,2/3/,
+rest_v_a_e_s3_l_o,3,D,o,,,,+17,+18,,,2/3/,
+rest_v_a_e_s3_t_a9,3,h,a,+9,,,+26,+27,,4,2/3/4,5
+rest_v_a_e_s3_t_a10,3,h,a,+10,,,+26,+27,,4,2/3/4,5
+rest_v_a_e_s3_t_a11,3,h,a,+11,+12,4,+43,+44,,4,2/3/4,5/10
+rest_v_a_e_s3_t_a12,3,h,a,+12,+13,4,+44,+45,,4,2/3/4,5/10
+rest_v_a_e_s3_t_hd,3,h,hd,+2,+28,,+26,+27,+27,4,2/3/4,5
+rest_v_a_e_s3_t_hl,3,h,hl,+2,+13,,+11,+12,+12,4,2/3/4,5
+rest_v_a_e_s3_t_j10,3,h,j,+10,,,+26,+27,,4,2/3/4,5
+rest_v_a_e_s3_t_j11,3,h,j,+11,+12,,+11,+54,,4,2/3/4,5
+rest_v_a_e_s3_t_j12,3,h,j,+12,+13,,+12,+54,,4,2/3/4,5
+rest_v_a_e_s3_t_o,3,h,o,,,,+26,+27,,4,2/3/4,5
+rest_v_a_e_s4_l_a25,4,D,a,+25,,,+25,+26,,,2/3/4/,
+rest_v_a_e_s4_l_a26,4,D,a,+26,+27,1,+25,+26,,,2/3/4/,
+rest_v_a_e_s4_l_a27,4,D,a,+27,+28,1,+25,+26,,,2/3/4/,
+rest_v_a_e_s4_l_hl,4,D,hl,+2,+27,,+25,+26,+26,,2/3/4/,
+rest_v_a_e_s4_l_hr,4,D,hr,+2,+27,,+25,+26,+26,,2/3/4/,
+rest_v_a_e_s4_l_hu,4,D,hu,+2,+27,,+25,+26,+26,,2/3/4/,
+rest_v_a_e_s4_l_j25,4,D,j,+25,,,+25,+26,,,2/3/4/,
+rest_v_a_e_s4_l_j26,4,D,j,+26,+27,,+25,+26,,,2/3/4/,
+rest_v_a_e_s4_l_j27,4,D,j,+27,+28,,+25,+26,,,2/3/4/,
+rest_v_a_e_s4_l_o,4,D,o,,,,+25,+26,,,2/3/4/,
+rest_v_a_e_s4_t_a31,4,D,a,+31,,,+32,+33,,3,2/3/4/3,10
+rest_v_a_e_s4_t_a32,4,D,a,+32,,,+32,+33,,3,2/3/4/3,10
+rest_v_a_e_s4_t_a33,4,D,a,+33,+34,1,+32,+33,,3,2/3/4/3,10
+rest_v_a_e_s4_t_a34,4,D,a,+34,+35,1,+32,+33,,3,2/3/4/3,10
+rest_v_a_e_s4_t_hd,4,D,hd,+2,+34,,+32,+33,+33,3,2/3/4/3,10
+rest_v_a_e_s4_t_hl,4,D,hl,+2,+34,,+32,+33,+33,3,2/3/4/3,10
+rest_v_a_e_s4_t_j32,4,D,j,+32,,,+32,+33,,3,2/3/4/3,10
+rest_v_a_e_s4_t_j33,4,D,j,+33,+34,,+32,+33,,3,2/3/4/3,10
+rest_v_a_e_s4_t_j34,4,D,j,+34,+35,,+32,+33,,3,2/3/4/3,10
+rest_v_a_e_s4_t_o,4,D,o,,,,+32,+33,,3,2/3/4/3,10
+rest_v_a_e_s4_z_a32,4,D,a,+32,,,+32,+33,,17,2/3/4/17,10
+rest_v_a_e_s4_z_a33,4,D,a,+33,+34,1,+32,+33,,17,2/3/4/17,10
+rest_v_a_e_s4_z_a34,4,D,a,+34,+35,1,+32,+33,,17,2/3/4/17,10
+rest_v_a_e_s4_z_j33,4,D,j,+33,+34,,+32,+33,,17,2/3/4/17,10
+rest_v_a_e_s4_z_j34,4,D,j,+34,+35,,+32,+33,,17,2/3/4/17,10
+rest_v_a_e_s4_z_o,4,D,o,,,,+32,+33,,17,2/3/4/17,10
+rest_v_a_w_s2_l_a6,2,D,a,+6,,,+16,+17,,,2/,
+rest_v_a_w_s2_l_a7,2,D,a,+7,+8,1,+23,+24,,,2/,
+rest_v_a_w_s2_l_a8,2,D,a,+8,+9,1,+24,+25,,,2/,
+rest_v_a_w_s2_l_hl,2,D,hl,+2,+9,,+7,+8,+8,,2/,
+rest_v_a_w_s2_l_hr,2,D,hr,+2,+9,,+7,+8,+8,,2/,
+rest_v_a_w_s2_l_hu,2,D,hu,+2,+9,,+7,+8,+8,,2/,
+rest_v_a_w_s2_l_j6,2,D,j,+6,,,+16,+17,,,2/,
+rest_v_a_w_s2_l_j7,2,D,j,+7,+8,,+7,+55,,,2/,
+rest_v_a_w_s2_l_j8,2,D,j,+8,+9,,+8,+56,,,2/,
+rest_v_a_w_s2_l_o,2,D,o,,,,+16,+17,,,2/,
+rest_v_a_w_s2_t_a9,2,h,a,+9,,,+26,+27,,3,2/3,4
+rest_v_a_w_s2_t_a10,2,h,a,+10,,,+26,+27,,3,2/3,4
+rest_v_a_w_s2_t_a11,2,h,a,+11,+12,3,+41,+42,,3,2/3,4/5
+rest_v_a_w_s2_t_a12,2,h,a,+12,+13,3,+42,+43,,3,2/3,4/5
+rest_v_a_w_s2_t_hl,2,h,hl,+2,+13,,+11,+12,+12,3,2/3,4
+rest_v_a_w_s2_t_hu,2,h,hu,+2,+28,,+26,+27,+27,3,2/3,4
+rest_v_a_w_s2_t_j10,2,h,j,+10,,,+26,+27,,3,2/3,4
+rest_v_a_w_s2_t_j11,2,h,j,+11,+12,,+11,+174,,3,2/3,4
+rest_v_a_w_s2_t_j12,2,h,j,+12,+13,,+12,+175,,3,2/3,4
+rest_v_a_w_s2_t_o,2,h,o,,,,+26,+27,,3,2/3,4
+rest_v_a_w_s3_l_a7,3,D,a,+7,,,+17,+18,,,2/3/,
+rest_v_a_w_s3_l_a8,3,D,a,+8,+9,1,+24,+25,,,2/3/,
+rest_v_a_w_s3_l_a9,3,D,a,+9,+10,1,+25,+26,,,2/3/,
+rest_v_a_w_s3_l_hl,3,D,hl,+2,+10,,+8,+9,+9,,2/3/,
+rest_v_a_w_s3_l_hr,3,D,hr,+2,+10,,+8,+9,+9,,2/3/,
+rest_v_a_w_s3_l_hu,3,D,hu,+2,+10,,+8,+9,+9,,2/3/,
+rest_v_a_w_s3_l_j7,3,D,j,+7,,,+17,+18,,,2/3/,
+rest_v_a_w_s3_l_j8,3,D,j,+8,+9,,+8,+56,,,2/3/,
+rest_v_a_w_s3_l_j9,3,D,j,+9,+10,,+9,+57,,,2/3/,
+rest_v_a_w_s3_l_o,3,D,o,,,,+17,+18,,,2/3/,
+rest_v_a_w_s3_t_a9,3,h,a,+9,,,+26,+27,,4,2/3/4,5
+rest_v_a_w_s3_t_a10,3,h,a,+10,,,+26,+27,,4,2/3/4,5
+rest_v_a_w_s3_t_a11,3,h,a,+11,+12,4,+43,+44,,4,2/3/4,5/10
+rest_v_a_w_s3_t_a12,3,h,a,+12,+13,4,+44,+45,,4,2/3/4,5/10
+rest_v_a_w_s3_t_hl,3,h,hl,+2,+13,,+11,+12,+12,4,2/3/4,5
+rest_v_a_w_s3_t_hu,3,h,hu,+2,+28,,+26,+27,+27,4,2/3/4,5
+rest_v_a_w_s3_t_j10,3,h,j,+10,,,+26,+27,,4,2/3/4,5
+rest_v_a_w_s3_t_j11,3,h,j,+11,+12,,+11,+174,,4,2/3/4,5
+rest_v_a_w_s3_t_j12,3,h,j,+12,+13,,+12,+175,,4,2/3/4,5
+rest_v_a_w_s3_t_o,3,h,o,,,,+26,+27,,4,2/3/4,5
+rest_v_a_w_s4_l_a25,4,D,a,+25,,,+25,+26,,,2/3/4/,
+rest_v_a_w_s4_l_a26,4,D,a,+26,+27,1,+25,+26,,,2/3/4/,
+rest_v_a_w_s4_l_a27,4,D,a,+27,+28,1,+25,+26,,,2/3/4/,
+rest_v_a_w_s4_l_hl,4,D,hl,+2,+27,,+25,+26,+26,,2/3/4/,
+rest_v_a_w_s4_l_hr,4,D,hr,+2,+27,,+25,+26,+26,,2/3/4/,
+rest_v_a_w_s4_l_hu,4,D,hu,+2,+27,,+25,+26,+26,,2/3/4/,
+rest_v_a_w_s4_l_j25,4,D,j,+25,,,+25,+26,,,2/3/4/,
+rest_v_a_w_s4_l_j26,4,D,j,+26,+27,,+25,+26,,,2/3/4/,
+rest_v_a_w_s4_l_j27,4,D,j,+27,+28,,+25,+26,,,2/3/4/,
+rest_v_a_w_s4_l_o,4,D,o,,,,+25,+26,,,2/3/4/,
+rest_v_a_w_s4_t_a31,4,D,a,+31,,,+32,+33,,3,2/3/4/3,10
+rest_v_a_w_s4_t_a32,4,D,a,+32,,,+32,+33,,3,2/3/4/3,10
+rest_v_a_w_s4_t_a33,4,D,a,+33,+34,1,+32,+33,,3,2/3/4/3,10
+rest_v_a_w_s4_t_a34,4,D,a,+34,+35,1,+32,+33,,3,2/3/4/3,10
+rest_v_a_w_s4_t_hl,4,D,hl,+2,+34,,+32,+33,+33,3,2/3/4/3,10
+rest_v_a_w_s4_t_hu,4,D,hu,+2,+34,,+32,+33,+33,3,2/3/4/3,10
+rest_v_a_w_s4_t_j32,4,D,j,+32,,,+32,+33,,3,2/3/4/3,10
+rest_v_a_w_s4_t_j33,4,D,j,+33,+34,,+32,+33,,3,2/3/4/3,10
+rest_v_a_w_s4_t_j34,4,D,j,+34,+35,,+32,+33,,3,2/3/4/3,10
+rest_v_a_w_s4_t_o,4,D,o,,,,+32,+33,,3,2/3/4/3,10
+rest_v_a_w_s4_z_a32,4,D,a,+32,,,+32,+33,,17,2/3/4/17,10
+rest_v_a_w_s4_z_a33,4,D,a,+33,+34,1,+32,+33,,17,2/3/4/17,10
+rest_v_a_w_s4_z_a34,4,D,a,+34,+35,1,+32,+33,,17,2/3/4/17,10
+rest_v_a_w_s4_z_j33,4,D,j,+33,+34,,+32,+33,,17,2/3/4/17,10
+rest_v_a_w_s4_z_j34,4,D,j,+34,+35,,+32,+33,,17,2/3/4/17,10
+rest_v_a_w_s4_z_o,4,D,o,,,,+32,+33,,17,2/3/4/17,10
+
+# Teil B: Sprungangriff hoch (Sprung + hoch in J, Angriff in A) und runter (Sprung in J, Angriff + runter in A); Laufname rest_v_b_<g>_<h|r><A-J>_<m>_<dx>_<dz>_<seite>. EINGRIFF: Gegner (WOOKY ab anlauf_b mit J=10, EDDY ab tiefe_b mit J=12) bis F-1 und ab F+1 200 px vor (Seite v) bzw. hinter (Seite h) der Figur, im Probeframe F = A+m bei dx/dz. dx_F, dz_F: Lage am Ende von F (der Gegner geht in F oft 2 px heran)
+lauf,A_rel_J,m,fig_h_F,dx_F,dz_F,blick_fig_gegner_F,treffer_rel_A,schaden,umgeworfen,fig_h_treffer,dx_treffer,dz_treffer,akt0E_bis_rel_A,akt0A_ab_rel_A,ende_rel_J
+rest_v_b_w_h1_5_40_0_v,1,5,18,40,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_w_h1_6_40_0_v,1,6,22,40,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_w_h1_7_40_0_v,1,7,26,40,0,20/0,7,12,ja,26,40,0,+36,+37,+55
+rest_v_b_w_h1_8_40_0_v,1,8,29,40,0,20/0,8,12,ja,29,40,0,+36,+37,+55
+rest_v_b_w_h1_8_40_11_v,1,8,29,40,11,20/0,8,12,ja,29,40,11,+36,+37,+55
+rest_v_b_w_h1_8_40_12_v,1,8,29,38,12,20/0,8,12,ja,29,38,12,+36,+37,+55
+rest_v_b_w_h1_8_40_13_v,1,8,29,38,13,20/0,,,,,,,+29,+30,+48
+rest_v_b_w_h1_8_40_n12_v,1,8,29,38,-12,20/0,8,12,ja,29,38,-12,+36,+37,+55
+rest_v_b_w_h1_8_40_n13_v,1,8,29,38,-13,20/0,,,,,,,+29,+30,+48
+rest_v_b_w_h1_8_84_0_v,1,8,29,82,0,20/0,8,12,ja,29,82,0,+36,+37,+55
+rest_v_b_w_h1_8_85_0_v,1,8,29,83,0,20/0,8,12,ja,29,83,0,+36,+37,+55
+rest_v_b_w_h1_8_86_0_v,1,8,29,84,0,20/0,8,12,ja,29,84,0,+36,+37,+55
+rest_v_b_w_h1_8_87_0_v,1,8,29,85,0,20/0,8,12,ja,29,85,0,+36,+37,+55
+rest_v_b_w_h1_8_88_0_v,1,8,29,86,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_w_h1_8_89_0_v,1,8,29,87,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_w_h1_8_90_0_v,1,8,29,88,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_w_h1_8_n20_12_h,1,8,29,-20,12,20/20,8,12,ja,29,-20,12,+36,+37,+55
+rest_v_b_w_h1_8_n20_13_h,1,8,29,-20,13,20/20,,,,,,,+29,+30,+48
+rest_v_b_w_h1_8_n20_n12_h,1,8,29,-20,-12,20/20,8,12,ja,29,-20,-12,+36,+37,+55
+rest_v_b_w_h1_8_n20_n13_h,1,8,29,-20,-13,20/20,,,,,,,+29,+30,+48
+rest_v_b_w_h1_8_n31_0_h,1,8,29,-31,0,20/20,8,12,ja,29,-31,0,+36,+37,+55
+rest_v_b_w_h1_8_n31_0_v,1,8,29,-31,0,20/20,8,12,ja,29,-31,0,+36,+37,+55
+rest_v_b_w_h1_8_n32_0_h,1,8,29,-32,0,20/20,8,12,ja,29,-32,0,+36,+37,+55
+rest_v_b_w_h1_8_n32_0_v,1,8,29,-32,0,20/20,8,12,ja,29,-32,0,+36,+37,+55
+rest_v_b_w_h1_8_n33_0_h,1,8,29,-33,0,20/20,,,,,,,+29,+30,+48
+rest_v_b_w_h1_8_n33_0_v,1,8,29,-33,0,20/20,,,,,,,+29,+30,+48
+rest_v_b_w_h1_8_n34_0_h,1,8,29,-34,0,20/20,,,,,,,+29,+30,+48
+rest_v_b_w_h1_8_n34_0_v,1,8,29,-34,0,20/20,,,,,,,+29,+30,+48
+rest_v_b_w_h1_9_40_0_v,1,9,32,40,0,20/0,9,12,ja,32,40,0,+36,+37,+55
+rest_v_b_w_h1_10_40_0_v,1,10,35,40,0,20/0,10,12,ja,35,40,0,+36,+37,+55
+rest_v_b_w_h1_11_40_0_v,1,11,38,40,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_w_h1_12_40_0_v,1,12,40,40,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_w_h6_5_40_0_v,6,5,35,40,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_w_h6_6_40_0_v,6,6,38,40,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_w_h6_7_40_0_v,6,7,40,40,0,20/0,7,12,ja,40,40,0,+36,+37,+55
+rest_v_b_w_h6_8_40_0_v,6,8,43,40,0,20/0,8,12,ja,43,40,0,+36,+37,+55
+rest_v_b_w_h6_9_40_0_v,6,9,44,40,0,20/0,9,12,ja,44,40,0,+36,+37,+55
+rest_v_b_w_h6_9_85_0_v,6,9,44,83,0,20/0,9,12,ja,44,83,0,+36,+37,+55
+rest_v_b_w_h6_9_86_0_v,6,9,44,84,0,20/0,9,12,ja,44,84,0,+36,+37,+55
+rest_v_b_w_h6_9_87_0_v,6,9,44,85,0,20/0,9,12,ja,44,85,0,+36,+37,+55
+rest_v_b_w_h6_9_88_0_v,6,9,44,86,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_w_h6_9_89_0_v,6,9,44,87,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_w_h6_9_n32_0_h,6,9,44,-32,0,20/20,9,12,ja,44,-32,0,+36,+37,+55
+rest_v_b_w_h6_9_n33_0_h,6,9,44,-33,0,20/20,,,,,,,+29,+30,+48
+rest_v_b_w_h6_10_40_0_v,6,10,46,40,0,20/0,10,12,ja,46,40,0,+36,+37,+55
+rest_v_b_w_h6_11_40_0_v,6,11,48,40,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_w_h6_12_40_0_v,6,12,49,40,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_w_h10_7_40_0_v,10,7,48,40,0,20/0,7,12,ja,48,40,0,+36,+37,+55
+rest_v_b_w_h10_8_40_0_v,10,8,49,40,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_w_h12_7_40_0_v,12,7,50,40,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_w_h12_8_40_0_v,12,8,50,40,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_w_h12_9_40_0_v,12,9,51,40,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_w_h12_10_40_0_v,12,10,51,40,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_w_h18_8_40_0_v,18,8,49,40,0,20/0,,,,,,,+30,,+48
+rest_v_b_w_h18_9_40_0_v,18,9,48,40,0,20/0,9,12,ja,48,40,0,+37,,+55
+rest_v_b_w_h24_5_40_0_v,24,5,45,40,0,20/0,,,,,,,+24,,+48
+rest_v_b_w_h24_6_40_0_v,24,6,44,40,0,20/0,,,,,,,+24,,+48
+rest_v_b_w_h24_7_40_0_v,24,7,41,40,0,20/0,7,12,ja,41,40,0,+31,,+55
+rest_v_b_w_h24_8_40_0_v,24,8,39,40,0,20/0,8,12,ja,39,40,0,+31,,+55
+rest_v_b_w_h24_9_40_0_v,24,9,37,40,0,20/0,9,12,ja,37,40,0,+31,,+55
+rest_v_b_w_h24_10_40_0_v,24,10,34,40,0,20/0,10,12,ja,34,40,0,+31,,+55
+rest_v_b_w_h24_11_40_0_v,24,11,31,40,0,20/0,,,,,,,+24,,+48
+rest_v_b_w_h24_12_40_0_v,24,12,27,40,0,20/0,,,,,,,+24,,+48
+rest_v_b_w_r3_8_20_0_v,3,8,35,20,0,20/0,,,,,,,+45,,+48
+rest_v_b_w_r3_9_20_0_v,3,9,38,20,0,20/0,9,4,nein,38,20,0,+52,,+55
+rest_v_b_w_r3_9_20_11_v,3,9,38,20,11,20/0,9,4,nein,38,20,11,+52,,+55
+rest_v_b_w_r3_9_20_12_v,3,9,38,18,12,20/0,9,4,nein,38,18,12,+52,,+55
+rest_v_b_w_r3_9_20_13_v,3,9,38,18,13,20/0,,,,,,,+45,,+48
+rest_v_b_w_r3_9_20_n12_v,3,9,38,18,-12,20/0,9,4,nein,38,18,-12,+52,,+55
+rest_v_b_w_r3_9_20_n13_v,3,9,38,18,-13,20/0,,,,,,,+45,,+48
+rest_v_b_w_r3_9_41_0_v,3,9,38,41,0,20/0,9,4,nein,38,41,0,+52,,+55
+rest_v_b_w_r3_9_42_0_v,3,9,38,42,0,20/0,9,4,nein,38,42,0,+52,,+55
+rest_v_b_w_r3_9_43_0_v,3,9,38,43,0,20/0,,,,,,,+45,,+48
+rest_v_b_w_r3_9_44_0_v,3,9,38,44,0,20/0,,,,,,,+45,,+48
+rest_v_b_w_r3_9_n20_12_h,3,9,38,-20,12,20/20,9,4,nein,38,-20,12,+52,,+55
+rest_v_b_w_r3_9_n20_13_h,3,9,38,-20,13,20/20,,,,,,,+45,,+48
+rest_v_b_w_r3_9_n20_n13_h,3,9,38,-20,-13,20/20,,,,,,,+45,,+48
+rest_v_b_w_r3_9_n40_0_h,3,9,38,-40,0,20/20,9,4,nein,38,-40,0,+52,,+55
+rest_v_b_w_r3_9_n40_0_v,3,9,38,-40,0,20/20,9,4,nein,38,-40,0,+52,,+55
+rest_v_b_w_r3_9_n41_0_h,3,9,38,-41,0,20/20,9,4,nein,38,-41,0,+52,,+55
+rest_v_b_w_r3_9_n41_0_v,3,9,38,-41,0,20/20,9,4,nein,38,-41,0,+52,,+55
+rest_v_b_w_r3_9_n42_0_h,3,9,38,-42,0,20/20,,,,,,,+45,,+48
+rest_v_b_w_r3_9_n42_0_v,3,9,38,-42,0,20/20,,,,,,,+45,,+48
+rest_v_b_w_r3_9_n43_0_h,3,9,38,-43,0,20/20,,,,,,,+45,,+48
+rest_v_b_w_r3_9_n43_0_v,3,9,38,-43,0,20/20,,,,,,,+45,,+48
+rest_v_b_w_r3_10_20_0_v,3,10,40,20,0,20/0,10,4,nein,40,20,0,+52,,+55
+rest_v_b_w_r3_11_20_0_v,3,11,43,20,0,20/0,,,,,,,+45,,+48
+rest_v_b_w_r3_28_20_0_v,3,28,41,20,0,20/0,28,4,nein,41,20,0,+52,,+55
+rest_v_b_w_r3_32_20_0_v,3,32,31,20,0,20/0,32,4,nein,31,20,0,+52,,+55
+rest_v_b_w_r3_33_20_0_v,3,33,27,20,0,20/0,,,,,,,+45,,+48
+rest_v_b_w_r20_10_20_0_v,20,10,44,20,0,20/0,,,,,,,+28,,+48
+rest_v_b_w_r20_11_20_0_v,20,11,41,20,0,20/0,11,4,nein,41,20,0,+35,,+55
+rest_v_b_w_r20_18_20_0_v,20,18,20,20,0,20/0,18,4,nein,20,20,0,+35,,+55
+rest_v_b_w_r20_18_42_0_v,20,18,20,42,0,20/0,18,4,nein,20,42,0,+35,,+55
+rest_v_b_w_r20_18_43_0_v,20,18,20,43,0,20/0,,,,,,,+28,,+48
+rest_v_b_w_r20_18_n41_0_h,20,18,20,-41,0,20/20,18,4,nein,20,-41,0,+35,,+55
+rest_v_b_w_r20_18_n42_0_h,20,18,20,-42,0,20/20,,,,,,,+28,,+48
+rest_v_b_w_r20_22_20_0_v,20,22,2,20,0,20/0,22,4,nein,2,20,0,+35,,+55
+rest_v_b_w_r20_23_20_0_v,20,23,0,20,0,20/0,,,,,,,+28,,+48
+rest_v_b_e_h1_5_40_0_v,1,5,18,40,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_e_h1_6_40_0_v,1,6,22,40,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_e_h1_7_40_0_v,1,7,26,40,0,20/0,7,12,ja,26,40,0,+36,+37,+55
+rest_v_b_e_h1_8_40_0_v,1,8,29,40,0,20/0,8,12,ja,29,40,0,+36,+37,+55
+rest_v_b_e_h1_8_40_11_v,1,8,29,40,11,20/0,8,12,ja,29,40,11,+36,+37,+55
+rest_v_b_e_h1_8_40_12_v,1,8,29,38,12,20/0,8,12,ja,29,38,12,+36,+37,+55
+rest_v_b_e_h1_8_40_13_v,1,8,29,38,13,20/0,,,,,,,+29,+30,+48
+rest_v_b_e_h1_8_40_n12_v,1,8,29,38,-12,20/0,8,12,ja,29,38,-12,+36,+37,+55
+rest_v_b_e_h1_8_40_n13_v,1,8,29,38,-13,20/0,,,,,,,+29,+30,+48
+rest_v_b_e_h1_8_84_0_v,1,8,29,82,0,20/0,8,12,ja,29,82,0,+36,+37,+55
+rest_v_b_e_h1_8_85_0_v,1,8,29,83,0,20/0,8,12,ja,29,83,0,+36,+37,+55
+rest_v_b_e_h1_8_86_0_v,1,8,29,84,0,20/0,8,12,ja,29,84,0,+36,+37,+55
+rest_v_b_e_h1_8_87_0_v,1,8,29,85,0,20/0,8,12,ja,29,85,0,+36,+37,+55
+rest_v_b_e_h1_8_88_0_v,1,8,29,86,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_e_h1_8_89_0_v,1,8,29,87,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_e_h1_8_90_0_v,1,8,29,88,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_e_h1_8_n20_12_h,1,8,29,-19,12,20/20,8,12,ja,29,-19,12,+36,+37,+55
+rest_v_b_e_h1_8_n20_13_h,1,8,29,-19,13,20/20,,,,,,,+29,+30,+48
+rest_v_b_e_h1_8_n20_n12_h,1,8,29,-19,-12,20/20,8,12,ja,29,-19,-12,+36,+37,+55
+rest_v_b_e_h1_8_n20_n13_h,1,8,29,-19,-13,20/20,,,,,,,+29,+30,+48
+rest_v_b_e_h1_8_n31_0_h,1,8,29,-31,0,20/20,8,12,ja,29,-31,0,+36,+37,+55
+rest_v_b_e_h1_8_n31_0_v,1,8,29,-31,0,20/20,8,12,ja,29,-31,0,+36,+37,+55
+rest_v_b_e_h1_8_n32_0_h,1,8,29,-32,0,20/20,8,12,ja,29,-32,0,+36,+37,+55
+rest_v_b_e_h1_8_n32_0_v,1,8,29,-32,0,20/20,8,12,ja,29,-32,0,+36,+37,+55
+rest_v_b_e_h1_8_n33_0_h,1,8,29,-33,0,20/20,,,,,,,+29,+30,+48
+rest_v_b_e_h1_8_n33_0_v,1,8,29,-33,0,20/20,,,,,,,+29,+30,+48
+rest_v_b_e_h1_8_n34_0_h,1,8,29,-34,0,20/20,,,,,,,+29,+30,+48
+rest_v_b_e_h1_8_n34_0_v,1,8,29,-34,0,20/20,,,,,,,+29,+30,+48
+rest_v_b_e_h1_9_40_0_v,1,9,32,40,0,20/0,9,12,ja,32,40,0,+36,+37,+55
+rest_v_b_e_h1_10_40_0_v,1,10,35,40,0,20/0,10,12,ja,35,40,0,+36,+37,+55
+rest_v_b_e_h1_11_40_0_v,1,11,38,40,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_e_h1_12_40_0_v,1,12,40,40,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_e_h6_5_40_0_v,6,5,35,40,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_e_h6_6_40_0_v,6,6,38,40,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_e_h6_7_40_0_v,6,7,40,40,0,20/0,7,12,ja,40,40,0,+36,+37,+55
+rest_v_b_e_h6_8_40_0_v,6,8,43,40,0,20/0,8,12,ja,43,40,0,+36,+37,+55
+rest_v_b_e_h6_9_40_0_v,6,9,44,40,0,20/0,9,12,ja,44,40,0,+36,+37,+55
+rest_v_b_e_h6_9_85_0_v,6,9,44,83,0,20/0,9,12,ja,44,83,0,+36,+37,+55
+rest_v_b_e_h6_9_86_0_v,6,9,44,84,0,20/0,9,12,ja,44,84,0,+36,+37,+55
+rest_v_b_e_h6_9_87_0_v,6,9,44,85,0,20/0,9,12,ja,44,85,0,+36,+37,+55
+rest_v_b_e_h6_9_88_0_v,6,9,44,86,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_e_h6_9_89_0_v,6,9,44,87,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_e_h6_9_n32_0_h,6,9,44,-32,0,20/20,9,12,ja,44,-32,0,+36,+37,+55
+rest_v_b_e_h6_9_n33_0_h,6,9,44,-33,0,20/20,,,,,,,+29,+30,+48
+rest_v_b_e_h6_10_40_0_v,6,10,46,40,0,20/0,10,12,ja,46,40,0,+36,+37,+55
+rest_v_b_e_h6_11_40_0_v,6,11,48,40,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_e_h6_12_40_0_v,6,12,49,40,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_e_h10_7_40_0_v,10,7,48,40,0,20/0,7,12,ja,48,40,0,+36,+37,+55
+rest_v_b_e_h10_8_40_0_v,10,8,49,40,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_e_h12_7_40_0_v,12,7,50,40,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_e_h12_8_40_0_v,12,8,50,40,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_e_h12_9_40_0_v,12,9,51,40,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_e_h12_10_40_0_v,12,10,51,40,0,20/0,,,,,,,+29,+30,+48
+rest_v_b_e_h18_8_40_0_v,18,8,49,40,0,20/0,,,,,,,+30,,+48
+rest_v_b_e_h18_9_40_0_v,18,9,48,40,0,20/0,9,12,ja,48,40,0,+37,,+55
+rest_v_b_e_h24_5_40_0_v,24,5,45,40,0,20/0,,,,,,,+24,,+48
+rest_v_b_e_h24_6_40_0_v,24,6,44,40,0,20/0,,,,,,,+24,,+48
+rest_v_b_e_h24_7_40_0_v,24,7,41,40,0,20/0,7,12,ja,41,40,0,+31,,+55
+rest_v_b_e_h24_8_40_0_v,24,8,39,40,0,20/0,8,12,ja,39,40,0,+31,,+55
+rest_v_b_e_h24_9_40_0_v,24,9,37,40,0,20/0,9,12,ja,37,40,0,+31,,+55
+rest_v_b_e_h24_10_40_0_v,24,10,34,40,0,20/0,10,12,ja,34,40,0,+31,,+55
+rest_v_b_e_h24_11_40_0_v,24,11,31,40,0,20/0,,,,,,,+24,,+48
+rest_v_b_e_h24_12_40_0_v,24,12,27,40,0,20/0,,,,,,,+24,,+48
+rest_v_b_e_r3_8_20_0_v,3,8,35,20,0,20/0,,,,,,,+45,,+48
+rest_v_b_e_r3_9_20_0_v,3,9,38,20,0,20/0,9,4,nein,38,20,0,+52,,+55
+rest_v_b_e_r3_9_20_11_v,3,9,38,20,11,20/0,9,4,nein,38,20,11,+52,,+55
+rest_v_b_e_r3_9_20_12_v,3,9,38,18,11,20/0,9,4,nein,38,18,11,+52,,+55
+rest_v_b_e_r3_9_20_13_v,3,9,38,18,12,20/0,9,4,nein,38,18,12,+52,,+55
+rest_v_b_e_r3_9_20_n12_v,3,9,38,18,-12,20/0,9,4,nein,38,18,-12,+52,,+55
+rest_v_b_e_r3_9_20_n13_v,3,9,38,18,-13,20/0,,,,,,,+45,,+48
+rest_v_b_e_r3_9_41_0_v,3,9,38,41,0,20/0,9,4,nein,38,41,0,+52,,+55
+rest_v_b_e_r3_9_42_0_v,3,9,38,42,0,20/0,9,4,nein,38,42,0,+52,,+55
+rest_v_b_e_r3_9_43_0_v,3,9,38,43,0,20/0,,,,,,,+45,,+48
+rest_v_b_e_r3_9_44_0_v,3,9,38,44,0,20/0,,,,,,,+45,,+48
+rest_v_b_e_r3_9_n20_12_h,3,9,38,-19,11,20/20,9,4,nein,38,-19,11,+52,,+55
+rest_v_b_e_r3_9_n20_13_h,3,9,38,-19,12,20/20,9,4,nein,38,-19,12,+52,,+55
+rest_v_b_e_r3_9_n20_n13_h,3,9,38,-19,-13,20/20,,,,,,,+45,,+48
+rest_v_b_e_r3_9_n40_0_h,3,9,38,-40,0,20/20,9,4,nein,38,-40,0,+52,,+55
+rest_v_b_e_r3_9_n40_0_v,3,9,38,-40,0,20/20,9,4,nein,38,-40,0,+52,,+55
+rest_v_b_e_r3_9_n41_0_h,3,9,38,-41,0,20/20,9,4,nein,38,-41,0,+52,,+55
+rest_v_b_e_r3_9_n41_0_v,3,9,38,-41,0,20/20,9,4,nein,38,-41,0,+52,,+55
+rest_v_b_e_r3_9_n42_0_h,3,9,38,-42,0,20/20,,,,,,,+45,,+48
+rest_v_b_e_r3_9_n42_0_v,3,9,38,-42,0,20/20,,,,,,,+45,,+48
+rest_v_b_e_r3_9_n43_0_h,3,9,38,-43,0,20/20,,,,,,,+45,,+48
+rest_v_b_e_r3_9_n43_0_v,3,9,38,-43,0,20/20,,,,,,,+45,,+48
+rest_v_b_e_r3_10_20_0_v,3,10,40,20,0,20/0,10,4,nein,40,20,0,+52,,+55
+rest_v_b_e_r3_11_20_0_v,3,11,43,20,0,20/0,,,,,,,+45,,+48
+rest_v_b_e_r3_28_20_0_v,3,28,41,20,0,20/0,28,4,nein,41,20,0,+52,,+55
+rest_v_b_e_r3_32_20_0_v,3,32,31,20,0,20/0,32,4,nein,31,20,0,+52,,+55
+rest_v_b_e_r3_33_20_0_v,3,33,27,20,0,20/0,,,,,,,+45,,+48
+rest_v_b_e_r20_10_20_0_v,20,10,44,20,0,20/0,,,,,,,+28,,+48
+rest_v_b_e_r20_11_20_0_v,20,11,41,20,0,20/0,11,4,nein,41,20,0,+35,,+55
+rest_v_b_e_r20_18_20_0_v,20,18,20,20,0,20/0,18,4,nein,20,20,0,+35,,+55
+rest_v_b_e_r20_18_42_0_v,20,18,20,42,0,20/0,18,4,nein,20,42,0,+35,,+55
+rest_v_b_e_r20_18_43_0_v,20,18,20,43,0,20/0,,,,,,,+28,,+48
+rest_v_b_e_r20_18_n41_0_h,20,18,20,-41,0,20/20,18,4,nein,20,-41,0,+35,,+55
+rest_v_b_e_r20_18_n42_0_h,20,18,20,-42,0,20/20,,,,,,,+28,,+48
+rest_v_b_e_r20_22_20_0_v,20,22,2,20,0,20/0,22,4,nein,2,20,0,+35,,+55
+rest_v_b_e_r20_23_20_0_v,20,23,0,20,0,20/0,,,,,,,+28,,+48
+
+# Teil B ohne Eingriff (ab anlauf_c: EDDY steht ab Frame 38 bei dx 47; ab anlauf_b: WOOKY ab 40 bei dx 46/dz 10): h hoch in J, hlang hoch 37-43 gehalten, uA hoch nur mit dem Angriff, hdiag Sprung mit hoch+rechts, n neutral, r runter mit dem Angriff, rri dazu Sprung mit Richtung, dJ runter nur mit dem Sprung, rlang runter 43-47 gehalten
+lauf,A_rel_J,m,fig_h_F,dx_F,dz_F,blick_fig_gegner_F,treffer_rel_A,schaden,umgeworfen,fig_h_treffer,dx_treffer,dz_treffer,akt0E_bis_rel_A,akt0A_ab_rel_A,ende_rel_J
+rest_v_b_nat_e_dJ,3,,,,,,5,7,ja,26,40,0,+38,+39,+55
+rest_v_b_nat_e_h,1,,,,,,7,12,ja,26,47,0,+36,+37,+55
+rest_v_b_nat_e_hdiag,1,,,,,,5,7,ja,18,38,0,+38,+39,+55
+rest_v_b_nat_e_hlang,4,,,,,,7,12,ja,35,47,-4,+36,+37,+55
+rest_v_b_nat_e_n,1,,,,,,5,7,ja,18,47,0,+38,+39,+55
+rest_v_b_nat_e_r,3,,,,,,9,4,nein,38,40,0,+52,,+55
+rest_v_b_nat_e_rlang,3,,,,,,9,4,nein,38,40,1,+52,,+55
+rest_v_b_nat_e_rri,3,,,,,,9,4,nein,38,18,0,+52,,+55
+rest_v_b_nat_e_uA,1,,,,,,5,7,ja,18,47,0,+38,+39,+55
+rest_v_b_nat_w_h,1,,,,,,7,12,ja,26,46,10,+36,+37,+55
+rest_v_b_nat_w_r,3,,,,,,9,4,nein,38,41,10,+52,,+55
+rest_v_b_nat_w_rri,3,,,,,,9,4,nein,38,18,10,+52,,+55
+
+# Teil C: Gegner mit genau 0 LP. w_nat 3+3+3+3+4 (Stufe 2), e_nat 3+4+5+3+3+12 (Sprungangriff hoch, umwerfend), e_tod 3+4+5+3+3+3+4+5 (Stufe 3) und naechster Treffer h+30; Vergleich *_vgl mit denselben Treffern bis auf einen (Gegner behaelt LP). EINGRIFF in w_glp (LP 7 in Frame 2, dann Stufe 1+2) und e_glp (LP 22, dann volle Kette, Tritt)
+lauf,lp_verluste_gegner,z0,frei_ab_rel_z0,status3_bis_rel_z0,umgeworfen,lp_bis_t,figur_lp_verluste_durch_ihn_rel_z0,angriffsbeginne_rel_z0,t,slot_frei_rel_t,aktion_t+2
+rest_v_c_e_glp,2:30>22 42:22>19 61:19>15 78:15>10 101:10>0,101,113,0,ja,0,356:-6,356,,,
+rest_v_c_e_nat,42:30>27 61:27>23 78:23>18 110:18>15 142:15>12 180:12>0,180,89,0,ja,0,417:-6 1180:-6,417 1180,,,
+rest_v_c_e_tod,42:30>27 61:27>23 78:23>18 110:18>15 142:15>12 174:12>9 192:9>5 210:5>0 242:0>-3,210,23,22,nein,0,,,242,79,2
+rest_v_c_e_vgl,42:30>27 61:27>23 78:23>18 110:18>15 148:15>3,,,,,,,,,,
+rest_v_c_w_glp,2:16>7 44:7>4 61:4>0 148:0>-3,61,23,22,nein,0,49:-5,49,148,79,2
+rest_v_c_w_nat,44:16>13 76:13>10 108:10>7 140:7>4 157:4>0 402:0>-3,157,23,22,nein,0,55:-5 133:-5 208:-5,55 133 208,402,79,2
+rest_v_c_w_vgl,44:16>13 76:13>10 108:10>7 140:7>4,,,,,,,,,,
+
+# Teil D: Tod und Neueinstieg. Grundlaeufe e (anlauf_c), tb (tiefe_b), boss (item_v_b1_s1_cam02016, rechts 2-40), 1281/1281b (p0_s1_s1_cam01281, rechts bis 200 bzw. 150; Tod durch den Mech) mit EINGRIFF LP der Figur auf 4 in einem Frame; ohne Eingriff 768 (p0_s1_s1_cam00768, zwei Tode) und 1281n (zwei Tode durch den Mech). e2: EINGRIFF LP 2 in E+300 (zweiter Tod). e_r8, e_r22: EINGRIFF Rang in Frame 60 einmal auf 8 bzw. 22. e_schutz: EINGRIFF EDDY von E+92 bis E+312 bei dx 45. Steuerung: Proben e_*, tb_* mit Angriff (a) bzw. Sprung (j) in E+k (ein Frame) bzw. Richtung gehalten E+5 bis E+90 (h*)
+lauf,feld,wert
+rest_v_d_768,tode,1398 2623
+rest_v_d_768,toetender_angreifer,s18
+rest_v_d_768,aktionen_rel_t,0:c 1:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_768,bodenkontakt_rel_t,40
+rest_v_d_768,neueinstieg_rel_t,120
+rest_v_d_768,lp_leben_rang_in_N,"LP -4>72, Leben 2>1, Rang 11>8"
+rest_v_d_768,leben_start,2
+rest_v_d_768,rangwechsel_rel_t,120:11>8
+rest_v_d_768,erscheinen_rel_t,121
+rest_v_d_768,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 768, ky 256)"
+rest_v_d_768,gegneraktionen_t+1_bis_E,0/4/6
+rest_v_d_768,gegnerangriffe_t+1_bis_E,
+rest_v_d_768,L_rel_E,52
+rest_v_d_768,L_rel_t,173
+rest_v_d_768,hoehe_in_L,0
+rest_v_d_768,stand_ab_rel_L,6
+rest_v_d_768,status3_von_bis_rel_L,-52..199
+rest_v_d_768,t69_200_ab_rel_L,-52
+rest_v_d_768,t69_erste_abnahme_rel_L,1
+rest_v_d_768,t69_null_rel_L,200
+rest_v_d_768,gegner_in_L,s18 SKIP st1 s5=1 lp 34>29 umgeworfen dx 87 dz 27; s19 DOLG st1 s5=0 lp 0>0 - dx 1592 dz -96
+rest_v_d_768,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_768,lp_verluste_figur_nach_E_rel_L,472 509 817 854 891 928 977 1014 1052
+rest_v_d_768,t2_neueinstieg,nein
+rest_v_d_768,t2_rangwechsel_rel_t2,107:10>7
+rest_v_d_768,t2_leben,1>0
+rest_v_d_1281,tode,638
+rest_v_d_1281,toetender_angreifer,s16
+rest_v_d_1281,aktionen_rel_t,0:6 1:0 2:2 3:8 40:6 47:a 108:0 109:a
+rest_v_d_1281,bodenkontakt_rel_t,40
+rest_v_d_1281,neueinstieg_rel_t,108
+rest_v_d_1281,lp_leben_rang_in_N,"LP -8>72, Leben 2>1, Rang 11>8"
+rest_v_d_1281,leben_start,2
+rest_v_d_1281,rangwechsel_rel_t,108:11>8 189:8>9
+rest_v_d_1281,erscheinen_rel_t,109
+rest_v_d_1281,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 1412, ky 128)"
+rest_v_d_1281,gegneraktionen_t+1_bis_E,
+rest_v_d_1281,gegnerangriffe_t+1_bis_E,
+rest_v_d_1281,L_rel_E,49
+rest_v_d_1281,L_rel_t,158
+rest_v_d_1281,hoehe_in_L,48
+rest_v_d_1281,stand_ab_rel_L,6
+rest_v_d_1281,status3_von_bis_rel_L,-49..199
+rest_v_d_1281,t69_200_ab_rel_L,-49
+rest_v_d_1281,t69_erste_abnahme_rel_L,1
+rest_v_d_1281,t69_null_rel_L,200
+rest_v_d_1281,gegner_in_L,s16 WOOKY st2 s5=1 lp 24>24 umgeworfen dx 22 dz 124; s19 DOLG st1 s5=0 lp 0>0 - dx 948 dz 32
+rest_v_d_1281,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_1281,lp_verluste_figur_nach_E_rel_L,543
+rest_v_d_1281b,tode,638
+rest_v_d_1281b,toetender_angreifer,s16
+rest_v_d_1281b,aktionen_rel_t,0:6 1:0 2:2 3:8 40:6 47:a 108:0 109:a
+rest_v_d_1281b,bodenkontakt_rel_t,40
+rest_v_d_1281b,neueinstieg_rel_t,108
+rest_v_d_1281b,lp_leben_rang_in_N,"LP -8>72, Leben 2>1, Rang 11>8"
+rest_v_d_1281b,leben_start,2
+rest_v_d_1281b,rangwechsel_rel_t,108:11>8 189:8>9
+rest_v_d_1281b,erscheinen_rel_t,109
+rest_v_d_1281b,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 1412, ky 128)"
+rest_v_d_1281b,gegneraktionen_t+1_bis_E,
+rest_v_d_1281b,gegnerangriffe_t+1_bis_E,
+rest_v_d_1281b,L_rel_E,49
+rest_v_d_1281b,L_rel_t,158
+rest_v_d_1281b,hoehe_in_L,48
+rest_v_d_1281b,stand_ab_rel_L,6
+rest_v_d_1281b,status3_von_bis_rel_L,-49..199
+rest_v_d_1281b,t69_200_ab_rel_L,-49
+rest_v_d_1281b,t69_erste_abnahme_rel_L,1
+rest_v_d_1281b,t69_null_rel_L,200
+rest_v_d_1281b,gegner_in_L,s16 WOOKY st2 s5=1 lp 24>24 umgeworfen dx 22 dz 124; s19 DOLG st1 s5=0 lp 0>0 - dx 948 dz 32
+rest_v_d_1281b,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_1281b,lp_verluste_figur_nach_E_rel_L,543
+rest_v_d_1281n,tode,1796 3583
+rest_v_d_1281n,toetender_angreifer,s16
+rest_v_d_1281n,aktionen_rel_t,0:c 1:0 2:2 3:8 40:6 47:a 108:0 109:a
+rest_v_d_1281n,bodenkontakt_rel_t,40
+rest_v_d_1281n,neueinstieg_rel_t,108
+rest_v_d_1281n,lp_leben_rang_in_N,"LP -10>72, Leben 2>1, Rang 13>10"
+rest_v_d_1281n,leben_start,2
+rest_v_d_1281n,rangwechsel_rel_t,108:13>10
+rest_v_d_1281n,erscheinen_rel_t,109
+rest_v_d_1281n,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 1412, ky 128)"
+rest_v_d_1281n,gegneraktionen_t+1_bis_E,
+rest_v_d_1281n,gegnerangriffe_t+1_bis_E,
+rest_v_d_1281n,L_rel_E,49
+rest_v_d_1281n,L_rel_t,158
+rest_v_d_1281n,hoehe_in_L,48
+rest_v_d_1281n,stand_ab_rel_L,6
+rest_v_d_1281n,status3_von_bis_rel_L,-49..199
+rest_v_d_1281n,t69_200_ab_rel_L,-49
+rest_v_d_1281n,t69_erste_abnahme_rel_L,1
+rest_v_d_1281n,t69_null_rel_L,200
+rest_v_d_1281n,gegner_in_L,s16 WOOKY st2 s5=1 lp 24>24 umgeworfen dx 130 dz 136; s19 DOLG st1 s5=0 lp 0>0 - dx 948 dz 32
+rest_v_d_1281n,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_1281n,lp_verluste_figur_nach_E_rel_L,738 946 1282 1391 1523 1629
+rest_v_d_1281n,t2_neueinstieg,nein
+rest_v_d_1281n,t2_rangwechsel_rel_t2,120:13>10
+rest_v_d_1281n,t2_leben,1>0
+rest_v_d_boss,tode,186
+rest_v_d_boss,toetender_angreifer,s16
+rest_v_d_boss,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_boss,bodenkontakt_rel_t,40
+rest_v_d_boss,neueinstieg_rel_t,120
+rest_v_d_boss,lp_leben_rang_in_N,"LP -5>72, Leben 2>1, Rang 17>14"
+rest_v_d_boss,leben_start,2
+rest_v_d_boss,rangwechsel_rel_t,120:17>14
+rest_v_d_boss,erscheinen_rel_t,121
+rest_v_d_boss,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 2048, ky 128)"
+rest_v_d_boss,gegneraktionen_t+1_bis_E,0/2/4/6
+rest_v_d_boss,gegnerangriffe_t+1_bis_E,
+rest_v_d_boss,L_rel_E,52
+rest_v_d_boss,L_rel_t,173
+rest_v_d_boss,hoehe_in_L,0
+rest_v_d_boss,stand_ab_rel_L,6
+rest_v_d_boss,status3_von_bis_rel_L,-52..199
+rest_v_d_boss,t69_200_ab_rel_L,-52
+rest_v_d_boss,t69_erste_abnahme_rel_L,1
+rest_v_d_boss,t69_null_rel_L,200
+rest_v_d_boss,gegner_in_L,s16 WOOKY st1 s5=1 lp 28>23 umgeworfen dx 162 dz 2; s18 WOOKY st1 s5=1 lp 28>23 umgeworfen dx 187 dz 46; s19 DOLG st1 s5=1 lp 110>100 umgeworfen dx 204 dz 11
+rest_v_d_boss,gegnerangriffe_E_bis_L+200_rel_L,145:s19:dx302/dz11
+rest_v_d_boss,lp_verluste_figur_nach_E_rel_L,314 529
+rest_v_d_e,tode,68
+rest_v_d_e,toetender_angreifer,s17
+rest_v_d_e,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_e,bodenkontakt_rel_t,40
+rest_v_d_e,neueinstieg_rel_t,120
+rest_v_d_e,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_e,leben_start,2
+rest_v_d_e,rangwechsel_rel_t,41:10>11 120:11>8
+rest_v_d_e,erscheinen_rel_t,121
+rest_v_d_e,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 575, ky 256)"
+rest_v_d_e,gegneraktionen_t+1_bis_E,0/4/6
+rest_v_d_e,gegnerangriffe_t+1_bis_E,
+rest_v_d_e,L_rel_E,52
+rest_v_d_e,L_rel_t,173
+rest_v_d_e,hoehe_in_L,0
+rest_v_d_e,stand_ab_rel_L,6
+rest_v_d_e,status3_von_bis_rel_L,-52..199
+rest_v_d_e,t69_200_ab_rel_L,-52
+rest_v_d_e,t69_erste_abnahme_rel_L,1
+rest_v_d_e,t69_null_rel_L,200
+rest_v_d_e,gegner_in_L,s16 WOOKY st2 s5=1 lp 16>16 - dx 321 dz 48; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 47 dz 0; s19 DOLG st1 s5=0 lp 0>0 - dx 1785 dz -96
+rest_v_d_e,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_e,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_e2,tode,68 935
+rest_v_d_e2,toetender_angreifer,s17
+rest_v_d_e2,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_e2,bodenkontakt_rel_t,40
+rest_v_d_e2,neueinstieg_rel_t,120
+rest_v_d_e2,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_e2,leben_start,2
+rest_v_d_e2,rangwechsel_rel_t,41:10>11 120:11>8
+rest_v_d_e2,erscheinen_rel_t,121
+rest_v_d_e2,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 575, ky 256)"
+rest_v_d_e2,gegneraktionen_t+1_bis_E,0/4/6
+rest_v_d_e2,gegnerangriffe_t+1_bis_E,
+rest_v_d_e2,L_rel_E,52
+rest_v_d_e2,L_rel_t,173
+rest_v_d_e2,hoehe_in_L,0
+rest_v_d_e2,stand_ab_rel_L,6
+rest_v_d_e2,status3_von_bis_rel_L,-52..199
+rest_v_d_e2,t69_200_ab_rel_L,-52
+rest_v_d_e2,t69_erste_abnahme_rel_L,1
+rest_v_d_e2,t69_null_rel_L,200
+rest_v_d_e2,gegner_in_L,s16 WOOKY st2 s5=1 lp 16>16 - dx 321 dz 48; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 47 dz 0; s19 DOLG st1 s5=0 lp 0>0 - dx 1785 dz -96
+rest_v_d_e2,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_e2,lp_verluste_figur_nach_E_rel_L,248 694
+rest_v_d_e2,t2_neueinstieg,nein
+rest_v_d_e2,t2_rangwechsel_rel_t2,151:9>7
+rest_v_d_e2,t2_leben,1>0
+rest_v_d_e_a20,tode,68
+rest_v_d_e_a20,toetender_angreifer,s17
+rest_v_d_e_a20,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_e_a20,bodenkontakt_rel_t,40
+rest_v_d_e_a20,neueinstieg_rel_t,120
+rest_v_d_e_a20,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_e_a20,leben_start,2
+rest_v_d_e_a20,rangwechsel_rel_t,41:10>11 120:11>8
+rest_v_d_e_a20,erscheinen_rel_t,121
+rest_v_d_e_a20,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 575, ky 256)"
+rest_v_d_e_a20,gegneraktionen_t+1_bis_E,0/4/6
+rest_v_d_e_a20,gegnerangriffe_t+1_bis_E,
+rest_v_d_e_a20,L_rel_E,52
+rest_v_d_e_a20,L_rel_t,173
+rest_v_d_e_a20,hoehe_in_L,0
+rest_v_d_e_a20,stand_ab_rel_L,6
+rest_v_d_e_a20,status3_von_bis_rel_L,-52..199
+rest_v_d_e_a20,t69_200_ab_rel_L,-52
+rest_v_d_e_a20,t69_erste_abnahme_rel_L,1
+rest_v_d_e_a20,t69_null_rel_L,200
+rest_v_d_e_a20,gegner_in_L,s16 WOOKY st2 s5=1 lp 16>16 - dx 321 dz 48; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 47 dz 0; s19 DOLG st1 s5=0 lp 0>0 - dx 1785 dz -96
+rest_v_d_e_a20,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_e_a20,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_e_a20,angriffsdruck_rel_L,-32
+rest_v_d_e_a20,schlag_ab_rel_L,
+rest_v_d_e_a51,tode,68
+rest_v_d_e_a51,toetender_angreifer,s17
+rest_v_d_e_a51,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_e_a51,bodenkontakt_rel_t,40
+rest_v_d_e_a51,neueinstieg_rel_t,120
+rest_v_d_e_a51,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_e_a51,leben_start,2
+rest_v_d_e_a51,rangwechsel_rel_t,41:10>11 120:11>8
+rest_v_d_e_a51,erscheinen_rel_t,121
+rest_v_d_e_a51,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 575, ky 256)"
+rest_v_d_e_a51,gegneraktionen_t+1_bis_E,0/4/6
+rest_v_d_e_a51,gegnerangriffe_t+1_bis_E,
+rest_v_d_e_a51,L_rel_E,52
+rest_v_d_e_a51,L_rel_t,173
+rest_v_d_e_a51,hoehe_in_L,0
+rest_v_d_e_a51,stand_ab_rel_L,6
+rest_v_d_e_a51,status3_von_bis_rel_L,-52..199
+rest_v_d_e_a51,t69_200_ab_rel_L,-52
+rest_v_d_e_a51,t69_erste_abnahme_rel_L,1
+rest_v_d_e_a51,t69_null_rel_L,200
+rest_v_d_e_a51,gegner_in_L,s16 WOOKY st2 s5=1 lp 16>16 - dx 321 dz 48; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 47 dz 0; s19 DOLG st1 s5=0 lp 0>0 - dx 1785 dz -96
+rest_v_d_e_a51,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_e_a51,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_e_a51,angriffsdruck_rel_L,-1
+rest_v_d_e_a51,schlag_ab_rel_L,
+rest_v_d_e_a52,tode,68
+rest_v_d_e_a52,toetender_angreifer,s17
+rest_v_d_e_a52,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_e_a52,bodenkontakt_rel_t,40
+rest_v_d_e_a52,neueinstieg_rel_t,120
+rest_v_d_e_a52,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_e_a52,leben_start,2
+rest_v_d_e_a52,rangwechsel_rel_t,41:10>11 120:11>8
+rest_v_d_e_a52,erscheinen_rel_t,121
+rest_v_d_e_a52,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 575, ky 256)"
+rest_v_d_e_a52,gegneraktionen_t+1_bis_E,0/4/6
+rest_v_d_e_a52,gegnerangriffe_t+1_bis_E,
+rest_v_d_e_a52,L_rel_E,52
+rest_v_d_e_a52,L_rel_t,173
+rest_v_d_e_a52,hoehe_in_L,0
+rest_v_d_e_a52,stand_ab_rel_L,6
+rest_v_d_e_a52,status3_von_bis_rel_L,-52..199
+rest_v_d_e_a52,t69_200_ab_rel_L,-52
+rest_v_d_e_a52,t69_erste_abnahme_rel_L,1
+rest_v_d_e_a52,t69_null_rel_L,200
+rest_v_d_e_a52,gegner_in_L,s16 WOOKY st2 s5=1 lp 16>16 - dx 321 dz 48; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 47 dz 0; s19 DOLG st1 s5=0 lp 0>0 - dx 1785 dz -96
+rest_v_d_e_a52,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_e_a52,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_e_a52,angriffsdruck_rel_L,0
+rest_v_d_e_a52,schlag_ab_rel_L,
+rest_v_d_e_a56,tode,68
+rest_v_d_e_a56,toetender_angreifer,s17
+rest_v_d_e_a56,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_e_a56,bodenkontakt_rel_t,40
+rest_v_d_e_a56,neueinstieg_rel_t,120
+rest_v_d_e_a56,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_e_a56,leben_start,2
+rest_v_d_e_a56,rangwechsel_rel_t,41:10>11 120:11>8
+rest_v_d_e_a56,erscheinen_rel_t,121
+rest_v_d_e_a56,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 575, ky 256)"
+rest_v_d_e_a56,gegneraktionen_t+1_bis_E,0/4/6
+rest_v_d_e_a56,gegnerangriffe_t+1_bis_E,
+rest_v_d_e_a56,L_rel_E,52
+rest_v_d_e_a56,L_rel_t,173
+rest_v_d_e_a56,hoehe_in_L,0
+rest_v_d_e_a56,stand_ab_rel_L,6
+rest_v_d_e_a56,status3_von_bis_rel_L,-52..199
+rest_v_d_e_a56,t69_200_ab_rel_L,-52
+rest_v_d_e_a56,t69_erste_abnahme_rel_L,1
+rest_v_d_e_a56,t69_null_rel_L,200
+rest_v_d_e_a56,gegner_in_L,s16 WOOKY st2 s5=1 lp 16>16 - dx 321 dz 48; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 47 dz 0; s19 DOLG st1 s5=0 lp 0>0 - dx 1785 dz -96
+rest_v_d_e_a56,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_e_a56,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_e_a56,angriffsdruck_rel_L,4
+rest_v_d_e_a56,schlag_ab_rel_L,
+rest_v_d_e_a57,tode,68
+rest_v_d_e_a57,toetender_angreifer,s17
+rest_v_d_e_a57,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_e_a57,bodenkontakt_rel_t,40
+rest_v_d_e_a57,neueinstieg_rel_t,120
+rest_v_d_e_a57,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_e_a57,leben_start,2
+rest_v_d_e_a57,rangwechsel_rel_t,41:10>11 120:11>8
+rest_v_d_e_a57,erscheinen_rel_t,121
+rest_v_d_e_a57,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 575, ky 256)"
+rest_v_d_e_a57,gegneraktionen_t+1_bis_E,0/4/6
+rest_v_d_e_a57,gegnerangriffe_t+1_bis_E,
+rest_v_d_e_a57,L_rel_E,52
+rest_v_d_e_a57,L_rel_t,173
+rest_v_d_e_a57,hoehe_in_L,0
+rest_v_d_e_a57,stand_ab_rel_L,6
+rest_v_d_e_a57,status3_von_bis_rel_L,-52..199
+rest_v_d_e_a57,t69_200_ab_rel_L,-52
+rest_v_d_e_a57,t69_erste_abnahme_rel_L,1
+rest_v_d_e_a57,t69_null_rel_L,200
+rest_v_d_e_a57,gegner_in_L,s16 WOOKY st2 s5=1 lp 16>16 - dx 321 dz 48; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 47 dz 0; s19 DOLG st1 s5=0 lp 0>0 - dx 1785 dz -96
+rest_v_d_e_a57,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_e_a57,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_e_a57,angriffsdruck_rel_L,5
+rest_v_d_e_a57,schlag_ab_rel_L,
+rest_v_d_e_a58,tode,68
+rest_v_d_e_a58,toetender_angreifer,s17
+rest_v_d_e_a58,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_e_a58,bodenkontakt_rel_t,40
+rest_v_d_e_a58,neueinstieg_rel_t,120
+rest_v_d_e_a58,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_e_a58,leben_start,2
+rest_v_d_e_a58,rangwechsel_rel_t,41:10>11 120:11>8
+rest_v_d_e_a58,erscheinen_rel_t,121
+rest_v_d_e_a58,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 575, ky 256)"
+rest_v_d_e_a58,gegneraktionen_t+1_bis_E,0/4/6
+rest_v_d_e_a58,gegnerangriffe_t+1_bis_E,
+rest_v_d_e_a58,L_rel_E,52
+rest_v_d_e_a58,L_rel_t,173
+rest_v_d_e_a58,hoehe_in_L,0
+rest_v_d_e_a58,stand_ab_rel_L,6
+rest_v_d_e_a58,status3_von_bis_rel_L,-52..199
+rest_v_d_e_a58,t69_200_ab_rel_L,-52
+rest_v_d_e_a58,t69_erste_abnahme_rel_L,1
+rest_v_d_e_a58,t69_null_rel_L,200
+rest_v_d_e_a58,gegner_in_L,s16 WOOKY st2 s5=1 lp 16>16 - dx 321 dz 48; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 47 dz 0; s19 DOLG st1 s5=0 lp 0>0 - dx 1785 dz -96
+rest_v_d_e_a58,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_e_a58,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_e_a58,angriffsdruck_rel_L,6
+rest_v_d_e_a58,schlag_ab_rel_L,7
+rest_v_d_e_a59,tode,68
+rest_v_d_e_a59,toetender_angreifer,s17
+rest_v_d_e_a59,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_e_a59,bodenkontakt_rel_t,40
+rest_v_d_e_a59,neueinstieg_rel_t,120
+rest_v_d_e_a59,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_e_a59,leben_start,2
+rest_v_d_e_a59,rangwechsel_rel_t,41:10>11 120:11>8
+rest_v_d_e_a59,erscheinen_rel_t,121
+rest_v_d_e_a59,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 575, ky 256)"
+rest_v_d_e_a59,gegneraktionen_t+1_bis_E,0/4/6
+rest_v_d_e_a59,gegnerangriffe_t+1_bis_E,
+rest_v_d_e_a59,L_rel_E,52
+rest_v_d_e_a59,L_rel_t,173
+rest_v_d_e_a59,hoehe_in_L,0
+rest_v_d_e_a59,stand_ab_rel_L,6
+rest_v_d_e_a59,status3_von_bis_rel_L,-52..199
+rest_v_d_e_a59,t69_200_ab_rel_L,-52
+rest_v_d_e_a59,t69_erste_abnahme_rel_L,1
+rest_v_d_e_a59,t69_null_rel_L,200
+rest_v_d_e_a59,gegner_in_L,s16 WOOKY st2 s5=1 lp 16>16 - dx 321 dz 48; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 47 dz 0; s19 DOLG st1 s5=0 lp 0>0 - dx 1785 dz -96
+rest_v_d_e_a59,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_e_a59,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_e_a59,angriffsdruck_rel_L,7
+rest_v_d_e_a59,schlag_ab_rel_L,8
+rest_v_d_e_hd,tode,68
+rest_v_d_e_hd,toetender_angreifer,s17
+rest_v_d_e_hd,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_e_hd,bodenkontakt_rel_t,40
+rest_v_d_e_hd,neueinstieg_rel_t,120
+rest_v_d_e_hd,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_e_hd,leben_start,2
+rest_v_d_e_hd,rangwechsel_rel_t,41:10>11 120:11>8
+rest_v_d_e_hd,erscheinen_rel_t,121
+rest_v_d_e_hd,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 575, ky 256)"
+rest_v_d_e_hd,gegneraktionen_t+1_bis_E,0/4/6
+rest_v_d_e_hd,gegnerangriffe_t+1_bis_E,
+rest_v_d_e_hd,L_rel_E,52
+rest_v_d_e_hd,L_rel_t,173
+rest_v_d_e_hd,hoehe_in_L,0
+rest_v_d_e_hd,stand_ab_rel_L,6
+rest_v_d_e_hd,status3_von_bis_rel_L,-52..199
+rest_v_d_e_hd,t69_200_ab_rel_L,-52
+rest_v_d_e_hd,t69_erste_abnahme_rel_L,1
+rest_v_d_e_hd,t69_null_rel_L,200
+rest_v_d_e_hd,gegner_in_L,s16 WOOKY st2 s5=1 lp 16>16 - dx 321 dz 48; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 47 dz 0; s19 DOLG st1 s5=0 lp 0>0 - dx 1785 dz -96
+rest_v_d_e_hd,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_e_hd,lp_verluste_figur_nach_E_rel_L,201
+rest_v_d_e_hd,halten_d_rel_L,-47..38
+rest_v_d_e_hd,bewegung_d_ab_rel_L,7
+rest_v_d_e_hl,tode,68
+rest_v_d_e_hl,toetender_angreifer,s17
+rest_v_d_e_hl,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_e_hl,bodenkontakt_rel_t,40
+rest_v_d_e_hl,neueinstieg_rel_t,120
+rest_v_d_e_hl,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_e_hl,leben_start,2
+rest_v_d_e_hl,rangwechsel_rel_t,41:10>11 120:11>8
+rest_v_d_e_hl,erscheinen_rel_t,121
+rest_v_d_e_hl,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 575, ky 256)"
+rest_v_d_e_hl,gegneraktionen_t+1_bis_E,0/4/6
+rest_v_d_e_hl,gegnerangriffe_t+1_bis_E,
+rest_v_d_e_hl,L_rel_E,52
+rest_v_d_e_hl,L_rel_t,173
+rest_v_d_e_hl,hoehe_in_L,0
+rest_v_d_e_hl,stand_ab_rel_L,6
+rest_v_d_e_hl,status3_von_bis_rel_L,-52..199
+rest_v_d_e_hl,t69_200_ab_rel_L,-52
+rest_v_d_e_hl,t69_erste_abnahme_rel_L,1
+rest_v_d_e_hl,t69_null_rel_L,200
+rest_v_d_e_hl,gegner_in_L,s16 WOOKY st2 s5=1 lp 16>16 - dx 321 dz 48; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 47 dz 0; s19 DOLG st1 s5=0 lp 0>0 - dx 1785 dz -96
+rest_v_d_e_hl,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_e_hl,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_e_hl,halten_l_rel_L,-47..38
+rest_v_d_e_hl,bewegung_l_ab_rel_L,7
+rest_v_d_e_hr,tode,68
+rest_v_d_e_hr,toetender_angreifer,s17
+rest_v_d_e_hr,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_e_hr,bodenkontakt_rel_t,40
+rest_v_d_e_hr,neueinstieg_rel_t,120
+rest_v_d_e_hr,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_e_hr,leben_start,2
+rest_v_d_e_hr,rangwechsel_rel_t,41:10>11 120:11>8
+rest_v_d_e_hr,erscheinen_rel_t,121
+rest_v_d_e_hr,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 575, ky 256)"
+rest_v_d_e_hr,gegneraktionen_t+1_bis_E,0/4/6
+rest_v_d_e_hr,gegnerangriffe_t+1_bis_E,
+rest_v_d_e_hr,L_rel_E,52
+rest_v_d_e_hr,L_rel_t,173
+rest_v_d_e_hr,hoehe_in_L,0
+rest_v_d_e_hr,stand_ab_rel_L,6
+rest_v_d_e_hr,status3_von_bis_rel_L,-52..199
+rest_v_d_e_hr,t69_200_ab_rel_L,-52
+rest_v_d_e_hr,t69_erste_abnahme_rel_L,1
+rest_v_d_e_hr,t69_null_rel_L,200
+rest_v_d_e_hr,gegner_in_L,s16 WOOKY st2 s5=1 lp 16>16 - dx 321 dz 48; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 47 dz 0; s19 DOLG st1 s5=0 lp 0>0 - dx 1785 dz -96
+rest_v_d_e_hr,gegnerangriffe_E_bis_L+200_rel_L,191:s17:dx56/dz3
+rest_v_d_e_hr,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_e_hr,halten_r_rel_L,-47..38
+rest_v_d_e_hr,bewegung_r_ab_rel_L,7
+rest_v_d_e_hu,tode,68
+rest_v_d_e_hu,toetender_angreifer,s17
+rest_v_d_e_hu,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_e_hu,bodenkontakt_rel_t,40
+rest_v_d_e_hu,neueinstieg_rel_t,120
+rest_v_d_e_hu,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_e_hu,leben_start,2
+rest_v_d_e_hu,rangwechsel_rel_t,41:10>11 120:11>8
+rest_v_d_e_hu,erscheinen_rel_t,121
+rest_v_d_e_hu,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 575, ky 256)"
+rest_v_d_e_hu,gegneraktionen_t+1_bis_E,0/4/6
+rest_v_d_e_hu,gegnerangriffe_t+1_bis_E,
+rest_v_d_e_hu,L_rel_E,52
+rest_v_d_e_hu,L_rel_t,173
+rest_v_d_e_hu,hoehe_in_L,0
+rest_v_d_e_hu,stand_ab_rel_L,6
+rest_v_d_e_hu,status3_von_bis_rel_L,-52..199
+rest_v_d_e_hu,t69_200_ab_rel_L,-52
+rest_v_d_e_hu,t69_erste_abnahme_rel_L,1
+rest_v_d_e_hu,t69_null_rel_L,200
+rest_v_d_e_hu,gegner_in_L,s16 WOOKY st2 s5=1 lp 16>16 - dx 321 dz 48; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 47 dz 0; s19 DOLG st1 s5=0 lp 0>0 - dx 1785 dz -96
+rest_v_d_e_hu,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_e_hu,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_e_hu,halten_u_rel_L,-47..38
+rest_v_d_e_hu,bewegung_u_ab_rel_L,7
+rest_v_d_e_j30,tode,68
+rest_v_d_e_j30,toetender_angreifer,s17
+rest_v_d_e_j30,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_e_j30,bodenkontakt_rel_t,40
+rest_v_d_e_j30,neueinstieg_rel_t,120
+rest_v_d_e_j30,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_e_j30,leben_start,2
+rest_v_d_e_j30,rangwechsel_rel_t,41:10>11 120:11>8
+rest_v_d_e_j30,erscheinen_rel_t,121
+rest_v_d_e_j30,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 575, ky 256)"
+rest_v_d_e_j30,gegneraktionen_t+1_bis_E,0/4/6
+rest_v_d_e_j30,gegnerangriffe_t+1_bis_E,
+rest_v_d_e_j30,L_rel_E,52
+rest_v_d_e_j30,L_rel_t,173
+rest_v_d_e_j30,hoehe_in_L,0
+rest_v_d_e_j30,stand_ab_rel_L,6
+rest_v_d_e_j30,status3_von_bis_rel_L,-52..199
+rest_v_d_e_j30,t69_200_ab_rel_L,-52
+rest_v_d_e_j30,t69_erste_abnahme_rel_L,1
+rest_v_d_e_j30,t69_null_rel_L,200
+rest_v_d_e_j30,gegner_in_L,s16 WOOKY st2 s5=1 lp 16>16 - dx 321 dz 48; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 47 dz 0; s19 DOLG st1 s5=0 lp 0>0 - dx 1785 dz -96
+rest_v_d_e_j30,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_e_j30,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_e_j30,sprungdruck_rel_L,-22
+rest_v_d_e_j30,absprung_ab_rel_L,
+rest_v_d_e_j51,tode,68
+rest_v_d_e_j51,toetender_angreifer,s17
+rest_v_d_e_j51,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_e_j51,bodenkontakt_rel_t,40
+rest_v_d_e_j51,neueinstieg_rel_t,120
+rest_v_d_e_j51,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_e_j51,leben_start,2
+rest_v_d_e_j51,rangwechsel_rel_t,41:10>11 120:11>8
+rest_v_d_e_j51,erscheinen_rel_t,121
+rest_v_d_e_j51,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 575, ky 256)"
+rest_v_d_e_j51,gegneraktionen_t+1_bis_E,0/4/6
+rest_v_d_e_j51,gegnerangriffe_t+1_bis_E,
+rest_v_d_e_j51,L_rel_E,52
+rest_v_d_e_j51,L_rel_t,173
+rest_v_d_e_j51,hoehe_in_L,0
+rest_v_d_e_j51,stand_ab_rel_L,6
+rest_v_d_e_j51,status3_von_bis_rel_L,-52..199
+rest_v_d_e_j51,t69_200_ab_rel_L,-52
+rest_v_d_e_j51,t69_erste_abnahme_rel_L,1
+rest_v_d_e_j51,t69_null_rel_L,200
+rest_v_d_e_j51,gegner_in_L,s16 WOOKY st2 s5=1 lp 16>16 - dx 321 dz 48; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 47 dz 0; s19 DOLG st1 s5=0 lp 0>0 - dx 1785 dz -96
+rest_v_d_e_j51,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_e_j51,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_e_j51,sprungdruck_rel_L,-1
+rest_v_d_e_j51,absprung_ab_rel_L,
+rest_v_d_e_j52,tode,68
+rest_v_d_e_j52,toetender_angreifer,s17
+rest_v_d_e_j52,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_e_j52,bodenkontakt_rel_t,40
+rest_v_d_e_j52,neueinstieg_rel_t,120
+rest_v_d_e_j52,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_e_j52,leben_start,2
+rest_v_d_e_j52,rangwechsel_rel_t,41:10>11 120:11>8
+rest_v_d_e_j52,erscheinen_rel_t,121
+rest_v_d_e_j52,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 575, ky 256)"
+rest_v_d_e_j52,gegneraktionen_t+1_bis_E,0/4/6
+rest_v_d_e_j52,gegnerangriffe_t+1_bis_E,
+rest_v_d_e_j52,L_rel_E,52
+rest_v_d_e_j52,L_rel_t,173
+rest_v_d_e_j52,hoehe_in_L,0
+rest_v_d_e_j52,stand_ab_rel_L,48
+rest_v_d_e_j52,status3_von_bis_rel_L,-52..199
+rest_v_d_e_j52,t69_200_ab_rel_L,-52
+rest_v_d_e_j52,t69_erste_abnahme_rel_L,1
+rest_v_d_e_j52,t69_null_rel_L,200
+rest_v_d_e_j52,gegner_in_L,s16 WOOKY st2 s5=1 lp 16>16 - dx 321 dz 48; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 47 dz 0; s19 DOLG st1 s5=0 lp 0>0 - dx 1785 dz -96
+rest_v_d_e_j52,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_e_j52,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_e_j52,sprungdruck_rel_L,0
+rest_v_d_e_j52,absprung_ab_rel_L,2
+rest_v_d_e_j56,tode,68
+rest_v_d_e_j56,toetender_angreifer,s17
+rest_v_d_e_j56,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_e_j56,bodenkontakt_rel_t,40
+rest_v_d_e_j56,neueinstieg_rel_t,120
+rest_v_d_e_j56,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_e_j56,leben_start,2
+rest_v_d_e_j56,rangwechsel_rel_t,41:10>11 120:11>8
+rest_v_d_e_j56,erscheinen_rel_t,121
+rest_v_d_e_j56,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 575, ky 256)"
+rest_v_d_e_j56,gegneraktionen_t+1_bis_E,0/4/6
+rest_v_d_e_j56,gegnerangriffe_t+1_bis_E,
+rest_v_d_e_j56,L_rel_E,52
+rest_v_d_e_j56,L_rel_t,173
+rest_v_d_e_j56,hoehe_in_L,0
+rest_v_d_e_j56,stand_ab_rel_L,52
+rest_v_d_e_j56,status3_von_bis_rel_L,-52..199
+rest_v_d_e_j56,t69_200_ab_rel_L,-52
+rest_v_d_e_j56,t69_erste_abnahme_rel_L,1
+rest_v_d_e_j56,t69_null_rel_L,200
+rest_v_d_e_j56,gegner_in_L,s16 WOOKY st2 s5=1 lp 16>16 - dx 321 dz 48; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 47 dz 0; s19 DOLG st1 s5=0 lp 0>0 - dx 1785 dz -96
+rest_v_d_e_j56,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_e_j56,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_e_j56,sprungdruck_rel_L,4
+rest_v_d_e_j56,absprung_ab_rel_L,6
+rest_v_d_e_j57,tode,68
+rest_v_d_e_j57,toetender_angreifer,s17
+rest_v_d_e_j57,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_e_j57,bodenkontakt_rel_t,40
+rest_v_d_e_j57,neueinstieg_rel_t,120
+rest_v_d_e_j57,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_e_j57,leben_start,2
+rest_v_d_e_j57,rangwechsel_rel_t,41:10>11 120:11>8
+rest_v_d_e_j57,erscheinen_rel_t,121
+rest_v_d_e_j57,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 575, ky 256)"
+rest_v_d_e_j57,gegneraktionen_t+1_bis_E,0/4/6
+rest_v_d_e_j57,gegnerangriffe_t+1_bis_E,
+rest_v_d_e_j57,L_rel_E,52
+rest_v_d_e_j57,L_rel_t,173
+rest_v_d_e_j57,hoehe_in_L,0
+rest_v_d_e_j57,stand_ab_rel_L,6
+rest_v_d_e_j57,status3_von_bis_rel_L,-52..199
+rest_v_d_e_j57,t69_200_ab_rel_L,-52
+rest_v_d_e_j57,t69_erste_abnahme_rel_L,1
+rest_v_d_e_j57,t69_null_rel_L,200
+rest_v_d_e_j57,gegner_in_L,s16 WOOKY st2 s5=1 lp 16>16 - dx 321 dz 48; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 47 dz 0; s19 DOLG st1 s5=0 lp 0>0 - dx 1785 dz -96
+rest_v_d_e_j57,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_e_j57,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_e_j57,sprungdruck_rel_L,5
+rest_v_d_e_j57,absprung_ab_rel_L,
+rest_v_d_e_j58,tode,68
+rest_v_d_e_j58,toetender_angreifer,s17
+rest_v_d_e_j58,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_e_j58,bodenkontakt_rel_t,40
+rest_v_d_e_j58,neueinstieg_rel_t,120
+rest_v_d_e_j58,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_e_j58,leben_start,2
+rest_v_d_e_j58,rangwechsel_rel_t,41:10>11 120:11>8
+rest_v_d_e_j58,erscheinen_rel_t,121
+rest_v_d_e_j58,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 575, ky 256)"
+rest_v_d_e_j58,gegneraktionen_t+1_bis_E,0/4/6
+rest_v_d_e_j58,gegnerangriffe_t+1_bis_E,
+rest_v_d_e_j58,L_rel_E,52
+rest_v_d_e_j58,L_rel_t,173
+rest_v_d_e_j58,hoehe_in_L,0
+rest_v_d_e_j58,stand_ab_rel_L,6
+rest_v_d_e_j58,status3_von_bis_rel_L,-52..199
+rest_v_d_e_j58,t69_200_ab_rel_L,-52
+rest_v_d_e_j58,t69_erste_abnahme_rel_L,1
+rest_v_d_e_j58,t69_null_rel_L,200
+rest_v_d_e_j58,gegner_in_L,s16 WOOKY st2 s5=1 lp 16>16 - dx 321 dz 48; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 47 dz 0; s19 DOLG st1 s5=0 lp 0>0 - dx 1785 dz -96
+rest_v_d_e_j58,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_e_j58,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_e_j58,sprungdruck_rel_L,6
+rest_v_d_e_j58,absprung_ab_rel_L,8
+rest_v_d_e_j59,tode,68
+rest_v_d_e_j59,toetender_angreifer,s17
+rest_v_d_e_j59,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_e_j59,bodenkontakt_rel_t,40
+rest_v_d_e_j59,neueinstieg_rel_t,120
+rest_v_d_e_j59,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_e_j59,leben_start,2
+rest_v_d_e_j59,rangwechsel_rel_t,41:10>11 120:11>8
+rest_v_d_e_j59,erscheinen_rel_t,121
+rest_v_d_e_j59,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 575, ky 256)"
+rest_v_d_e_j59,gegneraktionen_t+1_bis_E,0/4/6
+rest_v_d_e_j59,gegnerangriffe_t+1_bis_E,
+rest_v_d_e_j59,L_rel_E,52
+rest_v_d_e_j59,L_rel_t,173
+rest_v_d_e_j59,hoehe_in_L,0
+rest_v_d_e_j59,stand_ab_rel_L,6
+rest_v_d_e_j59,status3_von_bis_rel_L,-52..199
+rest_v_d_e_j59,t69_200_ab_rel_L,-52
+rest_v_d_e_j59,t69_erste_abnahme_rel_L,1
+rest_v_d_e_j59,t69_null_rel_L,200
+rest_v_d_e_j59,gegner_in_L,s16 WOOKY st2 s5=1 lp 16>16 - dx 321 dz 48; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 47 dz 0; s19 DOLG st1 s5=0 lp 0>0 - dx 1785 dz -96
+rest_v_d_e_j59,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_e_j59,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_e_j59,sprungdruck_rel_L,7
+rest_v_d_e_j59,absprung_ab_rel_L,9
+rest_v_d_e_r8,tode,68
+rest_v_d_e_r8,toetender_angreifer,s17
+rest_v_d_e_r8,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_e_r8,bodenkontakt_rel_t,40
+rest_v_d_e_r8,neueinstieg_rel_t,120
+rest_v_d_e_r8,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 9>7"
+rest_v_d_e_r8,leben_start,2
+rest_v_d_e_r8,rangwechsel_rel_t,41:8>9 120:9>7
+rest_v_d_e_r8,erscheinen_rel_t,121
+rest_v_d_e_r8,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 575, ky 256)"
+rest_v_d_e_r8,gegneraktionen_t+1_bis_E,0/4/6
+rest_v_d_e_r8,gegnerangriffe_t+1_bis_E,
+rest_v_d_e_r8,L_rel_E,52
+rest_v_d_e_r8,L_rel_t,173
+rest_v_d_e_r8,hoehe_in_L,0
+rest_v_d_e_r8,stand_ab_rel_L,6
+rest_v_d_e_r8,status3_von_bis_rel_L,-52..199
+rest_v_d_e_r8,t69_200_ab_rel_L,-52
+rest_v_d_e_r8,t69_erste_abnahme_rel_L,1
+rest_v_d_e_r8,t69_null_rel_L,200
+rest_v_d_e_r8,gegner_in_L,s16 WOOKY st2 s5=1 lp 16>16 - dx 321 dz 48; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 47 dz 0; s19 DOLG st1 s5=0 lp 0>0 - dx 1785 dz -96
+rest_v_d_e_r8,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_e_r8,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_e_r22,tode,68
+rest_v_d_e_r22,toetender_angreifer,s17
+rest_v_d_e_r22,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_e_r22,bodenkontakt_rel_t,40
+rest_v_d_e_r22,neueinstieg_rel_t,120
+rest_v_d_e_r22,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 23>20"
+rest_v_d_e_r22,leben_start,2
+rest_v_d_e_r22,rangwechsel_rel_t,41:22>23 120:23>20
+rest_v_d_e_r22,erscheinen_rel_t,121
+rest_v_d_e_r22,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 575, ky 256)"
+rest_v_d_e_r22,gegneraktionen_t+1_bis_E,0/4/6
+rest_v_d_e_r22,gegnerangriffe_t+1_bis_E,
+rest_v_d_e_r22,L_rel_E,52
+rest_v_d_e_r22,L_rel_t,173
+rest_v_d_e_r22,hoehe_in_L,0
+rest_v_d_e_r22,stand_ab_rel_L,6
+rest_v_d_e_r22,status3_von_bis_rel_L,-52..199
+rest_v_d_e_r22,t69_200_ab_rel_L,-52
+rest_v_d_e_r22,t69_erste_abnahme_rel_L,1
+rest_v_d_e_r22,t69_null_rel_L,200
+rest_v_d_e_r22,gegner_in_L,s16 WOOKY st2 s5=1 lp 16>16 - dx 321 dz 48; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 47 dz 0; s19 DOLG st1 s5=0 lp 0>0 - dx 1785 dz -96
+rest_v_d_e_r22,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_e_r22,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_e_schutz,tode,68
+rest_v_d_e_schutz,toetender_angreifer,s17
+rest_v_d_e_schutz,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_e_schutz,bodenkontakt_rel_t,40
+rest_v_d_e_schutz,neueinstieg_rel_t,120
+rest_v_d_e_schutz,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_e_schutz,leben_start,2
+rest_v_d_e_schutz,rangwechsel_rel_t,41:10>11 120:11>8
+rest_v_d_e_schutz,erscheinen_rel_t,121
+rest_v_d_e_schutz,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 575, ky 256)"
+rest_v_d_e_schutz,gegneraktionen_t+1_bis_E,0/4/6
+rest_v_d_e_schutz,gegnerangriffe_t+1_bis_E,
+rest_v_d_e_schutz,L_rel_E,52
+rest_v_d_e_schutz,L_rel_t,173
+rest_v_d_e_schutz,hoehe_in_L,0
+rest_v_d_e_schutz,stand_ab_rel_L,6
+rest_v_d_e_schutz,status3_von_bis_rel_L,-52..199
+rest_v_d_e_schutz,t69_200_ab_rel_L,-52
+rest_v_d_e_schutz,t69_erste_abnahme_rel_L,1
+rest_v_d_e_schutz,t69_null_rel_L,200
+rest_v_d_e_schutz,gegner_in_L,s16 WOOKY st2 s5=1 lp 16>16 - dx 321 dz 48; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 47 dz 0; s19 DOLG st1 s5=0 lp 0>0 - dx 1785 dz -96
+rest_v_d_e_schutz,gegnerangriffe_E_bis_L+200_rel_L,129:s17:dx42/dz0
+rest_v_d_e_schutz,lp_verluste_figur_nach_E_rel_L,227
+rest_v_d_tb,tode,137
+rest_v_d_tb,toetender_angreifer,s17
+rest_v_d_tb,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_tb,bodenkontakt_rel_t,40
+rest_v_d_tb,neueinstieg_rel_t,120
+rest_v_d_tb,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_tb,leben_start,2
+rest_v_d_tb,rangwechsel_rel_t,120:11>8
+rest_v_d_tb,erscheinen_rel_t,121
+rest_v_d_tb,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 618, ky 256)"
+rest_v_d_tb,gegneraktionen_t+1_bis_E,0/2/6
+rest_v_d_tb,gegnerangriffe_t+1_bis_E,
+rest_v_d_tb,L_rel_E,52
+rest_v_d_tb,L_rel_t,173
+rest_v_d_tb,hoehe_in_L,0
+rest_v_d_tb,stand_ab_rel_L,6
+rest_v_d_tb,status3_von_bis_rel_L,-52..199
+rest_v_d_tb,t69_200_ab_rel_L,-52
+rest_v_d_tb,t69_erste_abnahme_rel_L,1
+rest_v_d_tb,t69_null_rel_L,200
+rest_v_d_tb,gegner_in_L,s16 WOOKY st1 s5=1 lp 16>11 umgeworfen dx 118 dz -19; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 18 dz 13; s19 DOLG st1 s5=0 lp 0>0 - dx 1742 dz -96
+rest_v_d_tb,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_tb,lp_verluste_figur_nach_E_rel_L,517 575
+rest_v_d_tb_a20,tode,137
+rest_v_d_tb_a20,toetender_angreifer,s17
+rest_v_d_tb_a20,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_tb_a20,bodenkontakt_rel_t,40
+rest_v_d_tb_a20,neueinstieg_rel_t,120
+rest_v_d_tb_a20,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_tb_a20,leben_start,2
+rest_v_d_tb_a20,rangwechsel_rel_t,120:11>8
+rest_v_d_tb_a20,erscheinen_rel_t,121
+rest_v_d_tb_a20,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 618, ky 256)"
+rest_v_d_tb_a20,gegneraktionen_t+1_bis_E,0/2/6
+rest_v_d_tb_a20,gegnerangriffe_t+1_bis_E,
+rest_v_d_tb_a20,L_rel_E,52
+rest_v_d_tb_a20,L_rel_t,173
+rest_v_d_tb_a20,hoehe_in_L,0
+rest_v_d_tb_a20,stand_ab_rel_L,6
+rest_v_d_tb_a20,status3_von_bis_rel_L,-52..190 (Laufende)
+rest_v_d_tb_a20,t69_200_ab_rel_L,-52
+rest_v_d_tb_a20,t69_erste_abnahme_rel_L,1
+rest_v_d_tb_a20,t69_null_rel_L,
+rest_v_d_tb_a20,gegner_in_L,s16 WOOKY st1 s5=1 lp 16>11 umgeworfen dx 118 dz -19; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 18 dz 13; s19 DOLG st1 s5=0 lp 0>0 - dx 1742 dz -96
+rest_v_d_tb_a20,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_tb_a20,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_tb_a20,angriffsdruck_rel_L,-32
+rest_v_d_tb_a20,schlag_ab_rel_L,
+rest_v_d_tb_a51,tode,137
+rest_v_d_tb_a51,toetender_angreifer,s17
+rest_v_d_tb_a51,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_tb_a51,bodenkontakt_rel_t,40
+rest_v_d_tb_a51,neueinstieg_rel_t,120
+rest_v_d_tb_a51,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_tb_a51,leben_start,2
+rest_v_d_tb_a51,rangwechsel_rel_t,120:11>8
+rest_v_d_tb_a51,erscheinen_rel_t,121
+rest_v_d_tb_a51,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 618, ky 256)"
+rest_v_d_tb_a51,gegneraktionen_t+1_bis_E,0/2/6
+rest_v_d_tb_a51,gegnerangriffe_t+1_bis_E,
+rest_v_d_tb_a51,L_rel_E,52
+rest_v_d_tb_a51,L_rel_t,173
+rest_v_d_tb_a51,hoehe_in_L,0
+rest_v_d_tb_a51,stand_ab_rel_L,6
+rest_v_d_tb_a51,status3_von_bis_rel_L,-52..190 (Laufende)
+rest_v_d_tb_a51,t69_200_ab_rel_L,-52
+rest_v_d_tb_a51,t69_erste_abnahme_rel_L,1
+rest_v_d_tb_a51,t69_null_rel_L,
+rest_v_d_tb_a51,gegner_in_L,s16 WOOKY st1 s5=1 lp 16>11 umgeworfen dx 118 dz -19; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 18 dz 13; s19 DOLG st1 s5=0 lp 0>0 - dx 1742 dz -96
+rest_v_d_tb_a51,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_tb_a51,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_tb_a51,angriffsdruck_rel_L,-1
+rest_v_d_tb_a51,schlag_ab_rel_L,
+rest_v_d_tb_a52,tode,137
+rest_v_d_tb_a52,toetender_angreifer,s17
+rest_v_d_tb_a52,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_tb_a52,bodenkontakt_rel_t,40
+rest_v_d_tb_a52,neueinstieg_rel_t,120
+rest_v_d_tb_a52,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_tb_a52,leben_start,2
+rest_v_d_tb_a52,rangwechsel_rel_t,120:11>8
+rest_v_d_tb_a52,erscheinen_rel_t,121
+rest_v_d_tb_a52,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 618, ky 256)"
+rest_v_d_tb_a52,gegneraktionen_t+1_bis_E,0/2/6
+rest_v_d_tb_a52,gegnerangriffe_t+1_bis_E,
+rest_v_d_tb_a52,L_rel_E,52
+rest_v_d_tb_a52,L_rel_t,173
+rest_v_d_tb_a52,hoehe_in_L,0
+rest_v_d_tb_a52,stand_ab_rel_L,6
+rest_v_d_tb_a52,status3_von_bis_rel_L,-52..190 (Laufende)
+rest_v_d_tb_a52,t69_200_ab_rel_L,-52
+rest_v_d_tb_a52,t69_erste_abnahme_rel_L,1
+rest_v_d_tb_a52,t69_null_rel_L,
+rest_v_d_tb_a52,gegner_in_L,s16 WOOKY st1 s5=1 lp 16>11 umgeworfen dx 118 dz -19; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 18 dz 13; s19 DOLG st1 s5=0 lp 0>0 - dx 1742 dz -96
+rest_v_d_tb_a52,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_tb_a52,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_tb_a52,angriffsdruck_rel_L,0
+rest_v_d_tb_a52,schlag_ab_rel_L,
+rest_v_d_tb_a56,tode,137
+rest_v_d_tb_a56,toetender_angreifer,s17
+rest_v_d_tb_a56,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_tb_a56,bodenkontakt_rel_t,40
+rest_v_d_tb_a56,neueinstieg_rel_t,120
+rest_v_d_tb_a56,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_tb_a56,leben_start,2
+rest_v_d_tb_a56,rangwechsel_rel_t,120:11>8
+rest_v_d_tb_a56,erscheinen_rel_t,121
+rest_v_d_tb_a56,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 618, ky 256)"
+rest_v_d_tb_a56,gegneraktionen_t+1_bis_E,0/2/6
+rest_v_d_tb_a56,gegnerangriffe_t+1_bis_E,
+rest_v_d_tb_a56,L_rel_E,52
+rest_v_d_tb_a56,L_rel_t,173
+rest_v_d_tb_a56,hoehe_in_L,0
+rest_v_d_tb_a56,stand_ab_rel_L,6
+rest_v_d_tb_a56,status3_von_bis_rel_L,-52..190 (Laufende)
+rest_v_d_tb_a56,t69_200_ab_rel_L,-52
+rest_v_d_tb_a56,t69_erste_abnahme_rel_L,1
+rest_v_d_tb_a56,t69_null_rel_L,
+rest_v_d_tb_a56,gegner_in_L,s16 WOOKY st1 s5=1 lp 16>11 umgeworfen dx 118 dz -19; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 18 dz 13; s19 DOLG st1 s5=0 lp 0>0 - dx 1742 dz -96
+rest_v_d_tb_a56,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_tb_a56,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_tb_a56,angriffsdruck_rel_L,4
+rest_v_d_tb_a56,schlag_ab_rel_L,
+rest_v_d_tb_a57,tode,137
+rest_v_d_tb_a57,toetender_angreifer,s17
+rest_v_d_tb_a57,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_tb_a57,bodenkontakt_rel_t,40
+rest_v_d_tb_a57,neueinstieg_rel_t,120
+rest_v_d_tb_a57,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_tb_a57,leben_start,2
+rest_v_d_tb_a57,rangwechsel_rel_t,120:11>8
+rest_v_d_tb_a57,erscheinen_rel_t,121
+rest_v_d_tb_a57,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 618, ky 256)"
+rest_v_d_tb_a57,gegneraktionen_t+1_bis_E,0/2/6
+rest_v_d_tb_a57,gegnerangriffe_t+1_bis_E,
+rest_v_d_tb_a57,L_rel_E,52
+rest_v_d_tb_a57,L_rel_t,173
+rest_v_d_tb_a57,hoehe_in_L,0
+rest_v_d_tb_a57,stand_ab_rel_L,6
+rest_v_d_tb_a57,status3_von_bis_rel_L,-52..190 (Laufende)
+rest_v_d_tb_a57,t69_200_ab_rel_L,-52
+rest_v_d_tb_a57,t69_erste_abnahme_rel_L,1
+rest_v_d_tb_a57,t69_null_rel_L,
+rest_v_d_tb_a57,gegner_in_L,s16 WOOKY st1 s5=1 lp 16>11 umgeworfen dx 118 dz -19; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 18 dz 13; s19 DOLG st1 s5=0 lp 0>0 - dx 1742 dz -96
+rest_v_d_tb_a57,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_tb_a57,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_tb_a57,angriffsdruck_rel_L,5
+rest_v_d_tb_a57,schlag_ab_rel_L,
+rest_v_d_tb_a58,tode,137
+rest_v_d_tb_a58,toetender_angreifer,s17
+rest_v_d_tb_a58,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_tb_a58,bodenkontakt_rel_t,40
+rest_v_d_tb_a58,neueinstieg_rel_t,120
+rest_v_d_tb_a58,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_tb_a58,leben_start,2
+rest_v_d_tb_a58,rangwechsel_rel_t,120:11>8
+rest_v_d_tb_a58,erscheinen_rel_t,121
+rest_v_d_tb_a58,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 618, ky 256)"
+rest_v_d_tb_a58,gegneraktionen_t+1_bis_E,0/2/6
+rest_v_d_tb_a58,gegnerangriffe_t+1_bis_E,
+rest_v_d_tb_a58,L_rel_E,52
+rest_v_d_tb_a58,L_rel_t,173
+rest_v_d_tb_a58,hoehe_in_L,0
+rest_v_d_tb_a58,stand_ab_rel_L,6
+rest_v_d_tb_a58,status3_von_bis_rel_L,-52..190 (Laufende)
+rest_v_d_tb_a58,t69_200_ab_rel_L,-52
+rest_v_d_tb_a58,t69_erste_abnahme_rel_L,1
+rest_v_d_tb_a58,t69_null_rel_L,
+rest_v_d_tb_a58,gegner_in_L,s16 WOOKY st1 s5=1 lp 16>11 umgeworfen dx 118 dz -19; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 18 dz 13; s19 DOLG st1 s5=0 lp 0>0 - dx 1742 dz -96
+rest_v_d_tb_a58,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_tb_a58,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_tb_a58,angriffsdruck_rel_L,6
+rest_v_d_tb_a58,schlag_ab_rel_L,7
+rest_v_d_tb_a59,tode,137
+rest_v_d_tb_a59,toetender_angreifer,s17
+rest_v_d_tb_a59,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_tb_a59,bodenkontakt_rel_t,40
+rest_v_d_tb_a59,neueinstieg_rel_t,120
+rest_v_d_tb_a59,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_tb_a59,leben_start,2
+rest_v_d_tb_a59,rangwechsel_rel_t,120:11>8
+rest_v_d_tb_a59,erscheinen_rel_t,121
+rest_v_d_tb_a59,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 618, ky 256)"
+rest_v_d_tb_a59,gegneraktionen_t+1_bis_E,0/2/6
+rest_v_d_tb_a59,gegnerangriffe_t+1_bis_E,
+rest_v_d_tb_a59,L_rel_E,52
+rest_v_d_tb_a59,L_rel_t,173
+rest_v_d_tb_a59,hoehe_in_L,0
+rest_v_d_tb_a59,stand_ab_rel_L,6
+rest_v_d_tb_a59,status3_von_bis_rel_L,-52..190 (Laufende)
+rest_v_d_tb_a59,t69_200_ab_rel_L,-52
+rest_v_d_tb_a59,t69_erste_abnahme_rel_L,1
+rest_v_d_tb_a59,t69_null_rel_L,
+rest_v_d_tb_a59,gegner_in_L,s16 WOOKY st1 s5=1 lp 16>11 umgeworfen dx 118 dz -19; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 18 dz 13; s19 DOLG st1 s5=0 lp 0>0 - dx 1742 dz -96
+rest_v_d_tb_a59,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_tb_a59,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_tb_a59,angriffsdruck_rel_L,7
+rest_v_d_tb_a59,schlag_ab_rel_L,8
+rest_v_d_tb_hd,tode,137
+rest_v_d_tb_hd,toetender_angreifer,s17
+rest_v_d_tb_hd,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_tb_hd,bodenkontakt_rel_t,40
+rest_v_d_tb_hd,neueinstieg_rel_t,120
+rest_v_d_tb_hd,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_tb_hd,leben_start,2
+rest_v_d_tb_hd,rangwechsel_rel_t,120:11>8
+rest_v_d_tb_hd,erscheinen_rel_t,121
+rest_v_d_tb_hd,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 618, ky 256)"
+rest_v_d_tb_hd,gegneraktionen_t+1_bis_E,0/2/6
+rest_v_d_tb_hd,gegnerangriffe_t+1_bis_E,
+rest_v_d_tb_hd,L_rel_E,52
+rest_v_d_tb_hd,L_rel_t,173
+rest_v_d_tb_hd,hoehe_in_L,0
+rest_v_d_tb_hd,stand_ab_rel_L,6
+rest_v_d_tb_hd,status3_von_bis_rel_L,-52..190 (Laufende)
+rest_v_d_tb_hd,t69_200_ab_rel_L,-52
+rest_v_d_tb_hd,t69_erste_abnahme_rel_L,1
+rest_v_d_tb_hd,t69_null_rel_L,
+rest_v_d_tb_hd,gegner_in_L,s16 WOOKY st1 s5=1 lp 16>11 umgeworfen dx 118 dz -19; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 18 dz 13; s19 DOLG st1 s5=0 lp 0>0 - dx 1742 dz -96
+rest_v_d_tb_hd,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_tb_hd,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_tb_hd,halten_d_rel_L,-47..38
+rest_v_d_tb_hd,bewegung_d_ab_rel_L,7
+rest_v_d_tb_hl,tode,137
+rest_v_d_tb_hl,toetender_angreifer,s17
+rest_v_d_tb_hl,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_tb_hl,bodenkontakt_rel_t,40
+rest_v_d_tb_hl,neueinstieg_rel_t,120
+rest_v_d_tb_hl,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_tb_hl,leben_start,2
+rest_v_d_tb_hl,rangwechsel_rel_t,120:11>8
+rest_v_d_tb_hl,erscheinen_rel_t,121
+rest_v_d_tb_hl,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 618, ky 256)"
+rest_v_d_tb_hl,gegneraktionen_t+1_bis_E,0/2/6
+rest_v_d_tb_hl,gegnerangriffe_t+1_bis_E,
+rest_v_d_tb_hl,L_rel_E,52
+rest_v_d_tb_hl,L_rel_t,173
+rest_v_d_tb_hl,hoehe_in_L,0
+rest_v_d_tb_hl,stand_ab_rel_L,6
+rest_v_d_tb_hl,status3_von_bis_rel_L,-52..190 (Laufende)
+rest_v_d_tb_hl,t69_200_ab_rel_L,-52
+rest_v_d_tb_hl,t69_erste_abnahme_rel_L,1
+rest_v_d_tb_hl,t69_null_rel_L,
+rest_v_d_tb_hl,gegner_in_L,s16 WOOKY st1 s5=1 lp 16>11 umgeworfen dx 118 dz -19; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 18 dz 13; s19 DOLG st1 s5=0 lp 0>0 - dx 1742 dz -96
+rest_v_d_tb_hl,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_tb_hl,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_tb_hl,halten_l_rel_L,-47..38
+rest_v_d_tb_hl,bewegung_l_ab_rel_L,7
+rest_v_d_tb_hr,tode,137
+rest_v_d_tb_hr,toetender_angreifer,s17
+rest_v_d_tb_hr,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_tb_hr,bodenkontakt_rel_t,40
+rest_v_d_tb_hr,neueinstieg_rel_t,120
+rest_v_d_tb_hr,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_tb_hr,leben_start,2
+rest_v_d_tb_hr,rangwechsel_rel_t,120:11>8
+rest_v_d_tb_hr,erscheinen_rel_t,121
+rest_v_d_tb_hr,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 618, ky 256)"
+rest_v_d_tb_hr,gegneraktionen_t+1_bis_E,0/2/6
+rest_v_d_tb_hr,gegnerangriffe_t+1_bis_E,
+rest_v_d_tb_hr,L_rel_E,52
+rest_v_d_tb_hr,L_rel_t,173
+rest_v_d_tb_hr,hoehe_in_L,0
+rest_v_d_tb_hr,stand_ab_rel_L,6
+rest_v_d_tb_hr,status3_von_bis_rel_L,-52..190 (Laufende)
+rest_v_d_tb_hr,t69_200_ab_rel_L,-52
+rest_v_d_tb_hr,t69_erste_abnahme_rel_L,1
+rest_v_d_tb_hr,t69_null_rel_L,
+rest_v_d_tb_hr,gegner_in_L,s16 WOOKY st1 s5=1 lp 16>11 umgeworfen dx 118 dz -19; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 18 dz 13; s19 DOLG st1 s5=0 lp 0>0 - dx 1742 dz -96
+rest_v_d_tb_hr,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_tb_hr,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_tb_hr,halten_r_rel_L,-47..38
+rest_v_d_tb_hr,bewegung_r_ab_rel_L,7
+rest_v_d_tb_hu,tode,137
+rest_v_d_tb_hu,toetender_angreifer,s17
+rest_v_d_tb_hu,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_tb_hu,bodenkontakt_rel_t,40
+rest_v_d_tb_hu,neueinstieg_rel_t,120
+rest_v_d_tb_hu,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_tb_hu,leben_start,2
+rest_v_d_tb_hu,rangwechsel_rel_t,120:11>8
+rest_v_d_tb_hu,erscheinen_rel_t,121
+rest_v_d_tb_hu,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 618, ky 256)"
+rest_v_d_tb_hu,gegneraktionen_t+1_bis_E,0/2/6
+rest_v_d_tb_hu,gegnerangriffe_t+1_bis_E,
+rest_v_d_tb_hu,L_rel_E,52
+rest_v_d_tb_hu,L_rel_t,173
+rest_v_d_tb_hu,hoehe_in_L,0
+rest_v_d_tb_hu,stand_ab_rel_L,6
+rest_v_d_tb_hu,status3_von_bis_rel_L,-52..190 (Laufende)
+rest_v_d_tb_hu,t69_200_ab_rel_L,-52
+rest_v_d_tb_hu,t69_erste_abnahme_rel_L,1
+rest_v_d_tb_hu,t69_null_rel_L,
+rest_v_d_tb_hu,gegner_in_L,s16 WOOKY st1 s5=1 lp 16>11 umgeworfen dx 118 dz -19; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 18 dz 13; s19 DOLG st1 s5=0 lp 0>0 - dx 1742 dz -96
+rest_v_d_tb_hu,gegnerangriffe_E_bis_L+200_rel_L,190:s17:dx40/dz-3
+rest_v_d_tb_hu,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_tb_hu,halten_u_rel_L,-47..38
+rest_v_d_tb_hu,bewegung_u_ab_rel_L,7
+rest_v_d_tb_j30,tode,137
+rest_v_d_tb_j30,toetender_angreifer,s17
+rest_v_d_tb_j30,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_tb_j30,bodenkontakt_rel_t,40
+rest_v_d_tb_j30,neueinstieg_rel_t,120
+rest_v_d_tb_j30,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_tb_j30,leben_start,2
+rest_v_d_tb_j30,rangwechsel_rel_t,120:11>8
+rest_v_d_tb_j30,erscheinen_rel_t,121
+rest_v_d_tb_j30,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 618, ky 256)"
+rest_v_d_tb_j30,gegneraktionen_t+1_bis_E,0/2/6
+rest_v_d_tb_j30,gegnerangriffe_t+1_bis_E,
+rest_v_d_tb_j30,L_rel_E,52
+rest_v_d_tb_j30,L_rel_t,173
+rest_v_d_tb_j30,hoehe_in_L,0
+rest_v_d_tb_j30,stand_ab_rel_L,6
+rest_v_d_tb_j30,status3_von_bis_rel_L,-52..190 (Laufende)
+rest_v_d_tb_j30,t69_200_ab_rel_L,-52
+rest_v_d_tb_j30,t69_erste_abnahme_rel_L,1
+rest_v_d_tb_j30,t69_null_rel_L,
+rest_v_d_tb_j30,gegner_in_L,s16 WOOKY st1 s5=1 lp 16>11 umgeworfen dx 118 dz -19; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 18 dz 13; s19 DOLG st1 s5=0 lp 0>0 - dx 1742 dz -96
+rest_v_d_tb_j30,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_tb_j30,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_tb_j30,sprungdruck_rel_L,-22
+rest_v_d_tb_j30,absprung_ab_rel_L,
+rest_v_d_tb_j51,tode,137
+rest_v_d_tb_j51,toetender_angreifer,s17
+rest_v_d_tb_j51,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_tb_j51,bodenkontakt_rel_t,40
+rest_v_d_tb_j51,neueinstieg_rel_t,120
+rest_v_d_tb_j51,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_tb_j51,leben_start,2
+rest_v_d_tb_j51,rangwechsel_rel_t,120:11>8
+rest_v_d_tb_j51,erscheinen_rel_t,121
+rest_v_d_tb_j51,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 618, ky 256)"
+rest_v_d_tb_j51,gegneraktionen_t+1_bis_E,0/2/6
+rest_v_d_tb_j51,gegnerangriffe_t+1_bis_E,
+rest_v_d_tb_j51,L_rel_E,52
+rest_v_d_tb_j51,L_rel_t,173
+rest_v_d_tb_j51,hoehe_in_L,0
+rest_v_d_tb_j51,stand_ab_rel_L,6
+rest_v_d_tb_j51,status3_von_bis_rel_L,-52..190 (Laufende)
+rest_v_d_tb_j51,t69_200_ab_rel_L,-52
+rest_v_d_tb_j51,t69_erste_abnahme_rel_L,1
+rest_v_d_tb_j51,t69_null_rel_L,
+rest_v_d_tb_j51,gegner_in_L,s16 WOOKY st1 s5=1 lp 16>11 umgeworfen dx 118 dz -19; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 18 dz 13; s19 DOLG st1 s5=0 lp 0>0 - dx 1742 dz -96
+rest_v_d_tb_j51,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_tb_j51,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_tb_j51,sprungdruck_rel_L,-1
+rest_v_d_tb_j51,absprung_ab_rel_L,
+rest_v_d_tb_j52,tode,137
+rest_v_d_tb_j52,toetender_angreifer,s17
+rest_v_d_tb_j52,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_tb_j52,bodenkontakt_rel_t,40
+rest_v_d_tb_j52,neueinstieg_rel_t,120
+rest_v_d_tb_j52,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_tb_j52,leben_start,2
+rest_v_d_tb_j52,rangwechsel_rel_t,120:11>8
+rest_v_d_tb_j52,erscheinen_rel_t,121
+rest_v_d_tb_j52,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 618, ky 256)"
+rest_v_d_tb_j52,gegneraktionen_t+1_bis_E,0/2/6
+rest_v_d_tb_j52,gegnerangriffe_t+1_bis_E,
+rest_v_d_tb_j52,L_rel_E,52
+rest_v_d_tb_j52,L_rel_t,173
+rest_v_d_tb_j52,hoehe_in_L,0
+rest_v_d_tb_j52,stand_ab_rel_L,48
+rest_v_d_tb_j52,status3_von_bis_rel_L,-52..190 (Laufende)
+rest_v_d_tb_j52,t69_200_ab_rel_L,-52
+rest_v_d_tb_j52,t69_erste_abnahme_rel_L,1
+rest_v_d_tb_j52,t69_null_rel_L,
+rest_v_d_tb_j52,gegner_in_L,s16 WOOKY st1 s5=1 lp 16>11 umgeworfen dx 118 dz -19; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 18 dz 13; s19 DOLG st1 s5=0 lp 0>0 - dx 1742 dz -96
+rest_v_d_tb_j52,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_tb_j52,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_tb_j52,sprungdruck_rel_L,0
+rest_v_d_tb_j52,absprung_ab_rel_L,2
+rest_v_d_tb_j56,tode,137
+rest_v_d_tb_j56,toetender_angreifer,s17
+rest_v_d_tb_j56,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_tb_j56,bodenkontakt_rel_t,40
+rest_v_d_tb_j56,neueinstieg_rel_t,120
+rest_v_d_tb_j56,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_tb_j56,leben_start,2
+rest_v_d_tb_j56,rangwechsel_rel_t,120:11>8
+rest_v_d_tb_j56,erscheinen_rel_t,121
+rest_v_d_tb_j56,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 618, ky 256)"
+rest_v_d_tb_j56,gegneraktionen_t+1_bis_E,0/2/6
+rest_v_d_tb_j56,gegnerangriffe_t+1_bis_E,
+rest_v_d_tb_j56,L_rel_E,52
+rest_v_d_tb_j56,L_rel_t,173
+rest_v_d_tb_j56,hoehe_in_L,0
+rest_v_d_tb_j56,stand_ab_rel_L,52
+rest_v_d_tb_j56,status3_von_bis_rel_L,-52..190 (Laufende)
+rest_v_d_tb_j56,t69_200_ab_rel_L,-52
+rest_v_d_tb_j56,t69_erste_abnahme_rel_L,1
+rest_v_d_tb_j56,t69_null_rel_L,
+rest_v_d_tb_j56,gegner_in_L,s16 WOOKY st1 s5=1 lp 16>11 umgeworfen dx 118 dz -19; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 18 dz 13; s19 DOLG st1 s5=0 lp 0>0 - dx 1742 dz -96
+rest_v_d_tb_j56,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_tb_j56,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_tb_j56,sprungdruck_rel_L,4
+rest_v_d_tb_j56,absprung_ab_rel_L,6
+rest_v_d_tb_j57,tode,137
+rest_v_d_tb_j57,toetender_angreifer,s17
+rest_v_d_tb_j57,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_tb_j57,bodenkontakt_rel_t,40
+rest_v_d_tb_j57,neueinstieg_rel_t,120
+rest_v_d_tb_j57,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_tb_j57,leben_start,2
+rest_v_d_tb_j57,rangwechsel_rel_t,120:11>8
+rest_v_d_tb_j57,erscheinen_rel_t,121
+rest_v_d_tb_j57,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 618, ky 256)"
+rest_v_d_tb_j57,gegneraktionen_t+1_bis_E,0/2/6
+rest_v_d_tb_j57,gegnerangriffe_t+1_bis_E,
+rest_v_d_tb_j57,L_rel_E,52
+rest_v_d_tb_j57,L_rel_t,173
+rest_v_d_tb_j57,hoehe_in_L,0
+rest_v_d_tb_j57,stand_ab_rel_L,6
+rest_v_d_tb_j57,status3_von_bis_rel_L,-52..190 (Laufende)
+rest_v_d_tb_j57,t69_200_ab_rel_L,-52
+rest_v_d_tb_j57,t69_erste_abnahme_rel_L,1
+rest_v_d_tb_j57,t69_null_rel_L,
+rest_v_d_tb_j57,gegner_in_L,s16 WOOKY st1 s5=1 lp 16>11 umgeworfen dx 118 dz -19; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 18 dz 13; s19 DOLG st1 s5=0 lp 0>0 - dx 1742 dz -96
+rest_v_d_tb_j57,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_tb_j57,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_tb_j57,sprungdruck_rel_L,5
+rest_v_d_tb_j57,absprung_ab_rel_L,
+rest_v_d_tb_j58,tode,137
+rest_v_d_tb_j58,toetender_angreifer,s17
+rest_v_d_tb_j58,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_tb_j58,bodenkontakt_rel_t,40
+rest_v_d_tb_j58,neueinstieg_rel_t,120
+rest_v_d_tb_j58,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_tb_j58,leben_start,2
+rest_v_d_tb_j58,rangwechsel_rel_t,120:11>8
+rest_v_d_tb_j58,erscheinen_rel_t,121
+rest_v_d_tb_j58,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 618, ky 256)"
+rest_v_d_tb_j58,gegneraktionen_t+1_bis_E,0/2/6
+rest_v_d_tb_j58,gegnerangriffe_t+1_bis_E,
+rest_v_d_tb_j58,L_rel_E,52
+rest_v_d_tb_j58,L_rel_t,173
+rest_v_d_tb_j58,hoehe_in_L,0
+rest_v_d_tb_j58,stand_ab_rel_L,6
+rest_v_d_tb_j58,status3_von_bis_rel_L,-52..190 (Laufende)
+rest_v_d_tb_j58,t69_200_ab_rel_L,-52
+rest_v_d_tb_j58,t69_erste_abnahme_rel_L,1
+rest_v_d_tb_j58,t69_null_rel_L,
+rest_v_d_tb_j58,gegner_in_L,s16 WOOKY st1 s5=1 lp 16>11 umgeworfen dx 118 dz -19; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 18 dz 13; s19 DOLG st1 s5=0 lp 0>0 - dx 1742 dz -96
+rest_v_d_tb_j58,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_tb_j58,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_tb_j58,sprungdruck_rel_L,6
+rest_v_d_tb_j58,absprung_ab_rel_L,8
+rest_v_d_tb_j59,tode,137
+rest_v_d_tb_j59,toetender_angreifer,s17
+rest_v_d_tb_j59,aktionen_rel_t,0:0 2:2 40:4 49:6 59:a 120:0 121:a
+rest_v_d_tb_j59,bodenkontakt_rel_t,40
+rest_v_d_tb_j59,neueinstieg_rel_t,120
+rest_v_d_tb_j59,lp_leben_rang_in_N,"LP -2>72, Leben 2>1, Rang 11>8"
+rest_v_d_tb_j59,leben_start,2
+rest_v_d_tb_j59,rangwechsel_rel_t,120:11>8
+rest_v_d_tb_j59,erscheinen_rel_t,121
+rest_v_d_tb_j59,lage_E,"x-kx 64, z-ky 48, h 256, blick 20 (kx 618, ky 256)"
+rest_v_d_tb_j59,gegneraktionen_t+1_bis_E,0/2/6
+rest_v_d_tb_j59,gegnerangriffe_t+1_bis_E,
+rest_v_d_tb_j59,L_rel_E,52
+rest_v_d_tb_j59,L_rel_t,173
+rest_v_d_tb_j59,hoehe_in_L,0
+rest_v_d_tb_j59,stand_ab_rel_L,6
+rest_v_d_tb_j59,status3_von_bis_rel_L,-52..190 (Laufende)
+rest_v_d_tb_j59,t69_200_ab_rel_L,-52
+rest_v_d_tb_j59,t69_erste_abnahme_rel_L,1
+rest_v_d_tb_j59,t69_null_rel_L,
+rest_v_d_tb_j59,gegner_in_L,s16 WOOKY st1 s5=1 lp 16>11 umgeworfen dx 118 dz -19; s17 EDDY st1 s5=1 lp 30>25 umgeworfen dx 18 dz 13; s19 DOLG st1 s5=0 lp 0>0 - dx 1742 dz -96
+rest_v_d_tb_j59,gegnerangriffe_E_bis_L+200_rel_L,
+rest_v_d_tb_j59,lp_verluste_figur_nach_E_rel_L,
+rest_v_d_tb_j59,sprungdruck_rel_L,7
+rest_v_d_tb_j59,absprung_ab_rel_L,9
+
+# Teil E: Rang beim Stage-Wechsel. Bot (grafik/bot.lua mit scenarios/rest_v_bot.lua; EINGRIFFE des Bots: LP der Figur aufgefuellt, LP der Gegner nach 900 Frames Stillstand auf 1) ab item_v_b1_s1_cam02016 (Stage 1 -> 2, legt in Frame 1950 den Savestate rest_v_e_vor an), stage3 (Stage 3 -> 4), held0 (Mack, Stage 1 -> 2). rest_v_e_vor_*: ab rest_v_e_vor ohne Eingabe, EINGRIFF Rang in Frame 2 einmal auf 7, 8, 10, 22 (nat: ohne Eingriff)
+lauf,frame,stage,rang,rangzaehler,kamera_x_vorher
+rest_v_e_boss,1,0,16,98,2016
+rest_v_e_boss,99,0>0,16>17,1>600,2105
+rest_v_e_boss,699,0>0,17>18,1>600,2057
+rest_v_e_boss,1299,0>0,18>19,1>600,2054
+rest_v_e_boss,2020,0>1,19>16,14>14,2159
+rest_v_e_boss,2037,1>1,16>17,1>600,256
+rest_v_e_s3,1,2,7,207,256
+rest_v_e_s3,208,2>2,7>8,1>600,358
+rest_v_e_s3,808,2>2,8>9,1>600,358
+rest_v_e_s3,1408,2>2,9>10,1>600,383
+rest_v_e_s3,2008,2>2,10>11,1>600,453
+rest_v_e_s3,2608,2>2,11>12,1>600,666
+rest_v_e_s3,3208,2>2,12>13,1>600,1665
+rest_v_e_s3,3808,2>2,13>14,1>600,1665
+rest_v_e_s3,4408,2>2,14>15,1>600,1665
+rest_v_e_s3,5079,2>2,15>16,1>600,2805
+rest_v_e_s3,5679,2>2,16>17,1>600,2805
+rest_v_e_s3,6279,2>2,17>18,1>600,3078
+rest_v_e_s3,6879,2>2,18>19,1>600,3585
+rest_v_e_s3,7551,2>2,19>20,1>600,4623
+rest_v_e_s3,8151,2>2,20>21,1>600,4608
+rest_v_e_s3,8751,2>2,21>22,1>600,4683
+rest_v_e_s3,9415,2>2,22>23,1>600,4736
+rest_v_e_s3,9899,2>3,23>20,178>178,4736
+rest_v_e_s3,10081,3>3,20>21,1>600,256
+rest_v_e_h0,1,0,9,408,256
+rest_v_e_h0,409,0>0,9>10,1>600,639
+rest_v_e_h0,1009,0>0,10>11,1>600,1012
+rest_v_e_h0,1609,0>0,11>12,1>600,1012
+rest_v_e_h0,2209,0>0,12>13,1>600,1413
+rest_v_e_h0,2809,0>0,13>14,1>600,1599
+rest_v_e_h0,3409,0>0,14>15,1>600,1672
+rest_v_e_h0,4009,0>0,15>16,1>600,1672
+rest_v_e_h0,4609,0>0,16>17,1>600,2176
+rest_v_e_h0,5209,0>0,17>18,1>600,2176
+rest_v_e_h0,5809,0>0,18>19,1>600,2048
+rest_v_e_h0,6472,0>0,19>20,1>600,2074
+rest_v_e_h0,6748,0>1,20>17,385>385,2074
+rest_v_e_vor_nat,1,0,19,22,2159
+rest_v_e_vor_nat,70,0>1,19>16,14>14,2159
+rest_v_e_vor_nat,87,1>1,16>17,1>600,256
+rest_v_e_vor_r7,1,0,19,22,2159
+rest_v_e_vor_r7,2,0>0,19>7,22>21,2159
+rest_v_e_vor_r7,70,0>1,7>7,14>14,2159
+rest_v_e_vor_r7,87,1>1,7>8,1>600,256
+rest_v_e_vor_r8,1,0,19,22,2159
+rest_v_e_vor_r8,2,0>0,19>8,22>21,2159
+rest_v_e_vor_r8,70,0>1,8>7,14>14,2159
+rest_v_e_vor_r8,87,1>1,7>8,1>600,256
+rest_v_e_vor_r10,1,0,19,22,2159
+rest_v_e_vor_r10,2,0>0,19>10,22>21,2159
+rest_v_e_vor_r10,70,0>1,10>7,14>14,2159
+rest_v_e_vor_r10,87,1>1,7>8,1>600,256
+rest_v_e_vor_r22,1,0,19,22,2159
+rest_v_e_vor_r22,2,0>0,19>22,22>21,2159
+rest_v_e_vor_r22,70,0>1,22>19,14>14,2159
+rest_v_e_vor_r22,87,1>1,19>20,1>600,256
+# Ereignisse und EINGRIFFE der Bot-Laeufe (<lauf>_events.txt)
+# rest_v_e_boss: 1 control (Savestate) stage 0 px 2216 pd 175 camx 2016 camy 128
+# rest_v_e_boss: 1012 EINGRIFF clear: 3 Gegner LP -> 1 (camx 2048 seit 901 Frames)
+# rest_v_e_boss: 2020 stage 0 -> 1 (camx 2159)
+# rest_v_e_boss: 2120 control stage 1 px 320 pd 48 camx 256 camy 0
+# rest_v_e_s3: 1 control (Savestate) stage 2 px 320 pd 48 camx 256 camy 0
+# rest_v_e_s3: 1040 EINGRIFF clear: 4 Gegner LP -> 1 (camx 358 seit 901 Frames)
+# rest_v_e_s3: 4079 EINGRIFF clear: 1 Gegner LP -> 1 (camx 1665 seit 901 Frames)
+# rest_v_e_s3: 5770 EINGRIFF clear: 1 Gegner LP -> 1 (camx 2805 seit 901 Frames)
+# rest_v_e_s3: 8567 EINGRIFF clear: 2 Gegner LP -> 1 (camx 4608 seit 901 Frames)
+# rest_v_e_s3: 9899 stage 2 -> 3 (camx 4736)
+# rest_v_e_s3: 10091 control stage 3 px 320 pd 48 camx 256 camy 0
+# rest_v_e_h0: 1 control (Savestate) stage 0 px 320 pd 304 camx 256 camy 256
+# rest_v_e_h0: 5853 EINGRIFF clear: 2 Gegner LP -> 1 (camx 2048 seit 901 Frames)
+# rest_v_e_h0: 6748 stage 0 -> 1 (camx 2074)
+# rest_v_e_h0: 6848 control stage 1 px 320 pd 48 camx 256 camy 0
+
+# Teil F1: Mindestabstand. f1_*_s1_<dx>: EINGRIFF Gegner nur in P+2 (erster aktiver Frame von Stufe 1) bei dx, sonst 200 px vor der Figur. f1_*_s<k>_<dx> (k 2-4): Kette natuerlich, EINGRIFF Gegner fuer Stufe k von D+1 bis D+21 bei dx (Gegner noch in seiner Trefferreaktion, schaut von der Figur weg). f1b_*: Kettendruck spaet (h+25 bzw. h+24), Gegner frei und zur Figur gedreht, EINGRIFF von D+1 bis D+9 (Tritt D+22) bei dx
+lauf,treffer(frame:schaden:dx:dz:fig_h:blick_fig/gegner:kombo),dx_bei_naehe(min..max)
+rest_v_f1_e_s1_0,22:3:0:0:0:20/0:0,0..0
+rest_v_f1_e_s1_84,22:3:82:0:0:20/0:0,82..82
+rest_v_f1_e_s1_85,22:3:83:0:0:20/0:0,83..83
+rest_v_f1_e_s1_86,22:3:84:0:0:20/0:0,84..84
+rest_v_f1_e_s1_87,22:3:85:0:0:20/0:0,85..85
+rest_v_f1_e_s1_88,,86..86
+rest_v_f1_e_s1_n10,22:3:-10:0:0:20/20:0,-10..-10
+rest_v_f1_e_s1_n27,22:3:-27:0:0:20/20:0,-27..-27
+rest_v_f1_e_s1_n28,22:3:-28:0:0:20/20:0,-28..-28
+rest_v_f1_e_s1_n29,,-29..-29
+rest_v_f1_e_s1_n30,,-30..-30
+rest_v_f1_e_s2_0,42:3:47:0:0:20/0:0 60:4:0:0:0:20/0:4,-3..105
+rest_v_f1_e_s2_n20,42:3:47:0:0:20/0:0,-149..105
+rest_v_f1_e_s3_0,42:3:47:0:0:20/0:0 60:4:47:0:0:20/0:4 80:5:0:0:0:20/0:8,-3..105
+rest_v_f1_e_s3_n20,42:3:47:0:0:20/0:0 60:4:47:0:0:20/0:4,-149..105
+rest_v_f1_e_s4_0,42:3:47:0:0:20/0:0 60:4:47:0:0:20/0:4 80:5:47:0:0:20/0:8 97:10:0:0:0:20/0:12,0..109
+rest_v_f1_e_s4_n20,42:3:47:0:0:20/0:0 60:4:47:0:0:20/0:4 80:5:47:0:0:20/0:8 111:10:-20:0:0:20/20:12,-20..115
+rest_v_f1_w_s1_0,22:3:0:0:0:20/0:0,0..0
+rest_v_f1_w_s1_84,22:3:82:0:0:20/0:0,82..82
+rest_v_f1_w_s1_85,22:3:83:0:0:20/0:0,83..83
+rest_v_f1_w_s1_86,22:3:84:0:0:20/0:0,84..84
+rest_v_f1_w_s1_87,22:3:85:0:0:20/0:0,85..85
+rest_v_f1_w_s1_88,,86..86
+rest_v_f1_w_s1_n10,22:3:-10:0:0:20/20:0,-10..-10
+rest_v_f1_w_s1_n27,22:3:-27:0:0:20/20:0,-27..-27
+rest_v_f1_w_s1_n28,22:3:-28:0:0:20/20:0,-28..-28
+rest_v_f1_w_s1_n29,,-29..-29
+rest_v_f1_w_s1_n30,,-30..-30
+rest_v_f1_w_s2_0,44:3:46:10:0:20/0:0 65:4:0:0:0:20/0:4,-3..137
+rest_v_f1_w_s2_n20,44:3:46:10:0:20/0:0 68:4:-20:0:0:20/20:4,-149..108
+rest_v_f1_w_s3_0,44:3:46:10:0:20/0:0 65:4:46:10:0:20/0:4 82:5:0:0:0:20/0:8,-3..117
+rest_v_f1_w_s3_n20,44:3:46:10:0:20/0:0 65:4:46:10:0:20/0:4,-148..108
+rest_v_f1_w_s4_0,44:3:46:10:0:20/0:0 65:4:46:10:0:20/0:4 82:5:46:10:0:20/0:8 102:10:0:0:0:20/0:12,0..108
+rest_v_f1_w_s4_n20,44:3:46:10:0:20/0:0 65:4:46:10:0:20/0:4 82:5:46:10:0:20/0:8 116:10:-20:0:0:20/20:12,-20..112
+rest_v_f1b_e_s2_n20,42:3:47:0:0:20/0:0 70:4:-20:0:0:20/20:4,-20..105
+rest_v_f1b_e_s2_n22,42:3:47:0:0:20/0:0 70:4:-22:0:0:20/20:4,-22..105
+rest_v_f1b_e_s2_n24,42:3:47:0:0:20/0:0 70:4:-24:0:0:20/20:4,-24..105
+rest_v_f1b_e_s2_n25,42:3:47:0:0:20/0:0 70:4:-25:0:0:20/20:4,-25..105
+rest_v_f1b_e_s2_n26,42:3:47:0:0:20/0:0 70:4:-26:0:0:20/20:4,-26..105
+rest_v_f1b_e_s2_n27,42:3:47:0:0:20/0:0,-27..105
+rest_v_f1b_e_s2_n28,42:3:47:0:0:20/0:0,-28..105
+rest_v_f1b_e_s2_n29,42:3:47:0:0:20/0:0,-29..105
+rest_v_f1b_e_s2_n35,42:3:47:0:0:20/0:0,-35..105
+rest_v_f1b_e_s3_n20,42:3:47:0:0:20/0:0 60:4:47:0:0:20/0:4 88:5:-20:0:0:20/20:8,-20..105
+rest_v_f1b_e_s3_n22,42:3:47:0:0:20/0:0 60:4:47:0:0:20/0:4 88:5:-22:0:0:20/20:8,-22..105
+rest_v_f1b_e_s3_n24,42:3:47:0:0:20/0:0 60:4:47:0:0:20/0:4 88:5:-24:0:0:20/20:8,-24..105
+rest_v_f1b_e_s3_n25,42:3:47:0:0:20/0:0 60:4:47:0:0:20/0:4 88:5:-25:0:0:20/20:8,-25..105
+rest_v_f1b_e_s3_n26,42:3:47:0:0:20/0:0 60:4:47:0:0:20/0:4 88:5:-26:0:0:20/20:8,-26..105
+rest_v_f1b_e_s3_n27,42:3:47:0:0:20/0:0 60:4:47:0:0:20/0:4,-27..105
+rest_v_f1b_e_s3_n28,42:3:47:0:0:20/0:0 60:4:47:0:0:20/0:4,-28..105
+rest_v_f1b_e_s3_n29,42:3:47:0:0:20/0:0 60:4:47:0:0:20/0:4,-29..105
+rest_v_f1b_e_s3_n35,42:3:47:0:0:20/0:0 60:4:47:0:0:20/0:4,-35..105
+rest_v_f1b_e_s4_n20,42:3:47:0:0:20/0:0 60:4:47:0:0:20/0:4 80:5:47:0:0:20/0:8 107:10:-20:0:0:20/20:12,-20..105
+rest_v_f1b_e_s4_n22,42:3:47:0:0:20/0:0 60:4:47:0:0:20/0:4 80:5:47:0:0:20/0:8 107:10:-22:0:0:20/20:12,-22..105
+rest_v_f1b_e_s4_n24,42:3:47:0:0:20/0:0 60:4:47:0:0:20/0:4 80:5:47:0:0:20/0:8 107:10:-24:0:0:20/20:12,-24..105
+rest_v_f1b_e_s4_n25,42:3:47:0:0:20/0:0 60:4:47:0:0:20/0:4 80:5:47:0:0:20/0:8 107:10:-25:0:0:20/20:12,-25..105
+rest_v_f1b_e_s4_n26,42:3:47:0:0:20/0:0 60:4:47:0:0:20/0:4 80:5:47:0:0:20/0:8,-26..105
+rest_v_f1b_e_s4_n27,42:3:47:0:0:20/0:0 60:4:47:0:0:20/0:4 80:5:47:0:0:20/0:8,-27..105
+rest_v_f1b_e_s4_n28,42:3:47:0:0:20/0:0 60:4:47:0:0:20/0:4 80:5:47:0:0:20/0:8,-28..105
+rest_v_f1b_e_s4_n29,42:3:47:0:0:20/0:0 60:4:47:0:0:20/0:4 80:5:47:0:0:20/0:8,-29..105
+rest_v_f1b_e_s4_n35,42:3:47:0:0:20/0:0 60:4:47:0:0:20/0:4 80:5:47:0:0:20/0:8,-35..105
+rest_v_f1b_w_s2_n20,44:3:46:10:0:20/0:0 72:4:-20:0:0:20/20:4,-131..108
+rest_v_f1b_w_s2_n22,44:3:46:10:0:20/0:0 72:4:-22:0:0:20/20:4,-133..108
+rest_v_f1b_w_s2_n24,44:3:46:10:0:20/0:0 72:4:-24:0:0:20/20:4,-135..108
+rest_v_f1b_w_s2_n25,44:3:46:10:0:20/0:0 72:4:-25:0:0:20/20:4,-136..108
+rest_v_f1b_w_s2_n26,44:3:46:10:0:20/0:0 72:4:-26:0:0:20/20:4,-137..108
+rest_v_f1b_w_s2_n27,44:3:46:10:0:20/0:0,-149..108
+rest_v_f1b_w_s2_n28,44:3:46:10:0:20/0:0,-149..108
+rest_v_f1b_w_s2_n29,44:3:46:10:0:20/0:0,-149..108
+rest_v_f1b_w_s2_n35,44:3:46:10:0:20/0:0,-148..108
+rest_v_f1b_w_s3_n20,44:3:46:10:0:20/0:0 62:4:46:10:0:20/0:4 90:5:-20:0:0:20/20:8,-108..108
+rest_v_f1b_w_s3_n22,44:3:46:10:0:20/0:0 62:4:46:10:0:20/0:4 90:5:-22:0:0:20/20:8,-110..108
+rest_v_f1b_w_s3_n24,44:3:46:10:0:20/0:0 62:4:46:10:0:20/0:4 90:5:-24:0:0:20/20:8,-112..108
+rest_v_f1b_w_s3_n25,44:3:46:10:0:20/0:0 62:4:46:10:0:20/0:4 90:5:-25:0:0:20/20:8,-113..108
+rest_v_f1b_w_s3_n26,44:3:46:10:0:20/0:0 62:4:46:10:0:20/0:4 90:5:-26:0:0:20/20:8,-114..108
+rest_v_f1b_w_s3_n27,44:3:46:10:0:20/0:0 62:4:46:10:0:20/0:4,-149..108
+rest_v_f1b_w_s3_n28,44:3:46:10:0:20/0:0 62:4:46:10:0:20/0:4,-149..108
+rest_v_f1b_w_s3_n29,44:3:46:10:0:20/0:0 62:4:46:10:0:20/0:4,-149..108
+rest_v_f1b_w_s3_n35,44:3:46:10:0:20/0:0 62:4:46:10:0:20/0:4,-148..108
+rest_v_f1b_w_s4_n20,44:3:46:10:0:20/0:0 62:4:46:10:0:20/0:4 82:5:46:10:0:20/0:8 109:10:-20:0:0:20/20:12,-20..108
+rest_v_f1b_w_s4_n22,44:3:46:10:0:20/0:0 62:4:46:10:0:20/0:4 82:5:46:10:0:20/0:8 109:10:-22:0:0:20/20:12,-22..108
+rest_v_f1b_w_s4_n24,44:3:46:10:0:20/0:0 62:4:46:10:0:20/0:4 82:5:46:10:0:20/0:8 109:10:-24:0:0:20/20:12,-24..108
+rest_v_f1b_w_s4_n25,44:3:46:10:0:20/0:0 62:4:46:10:0:20/0:4 82:5:46:10:0:20/0:8 109:10:-25:0:0:20/20:12,-25..108
+rest_v_f1b_w_s4_n26,44:3:46:10:0:20/0:0 62:4:46:10:0:20/0:4 82:5:46:10:0:20/0:8,-149..108
+rest_v_f1b_w_s4_n27,44:3:46:10:0:20/0:0 62:4:46:10:0:20/0:4 82:5:46:10:0:20/0:8,-149..108
+rest_v_f1b_w_s4_n28,44:3:46:10:0:20/0:0 62:4:46:10:0:20/0:4 82:5:46:10:0:20/0:8,-149..108
+rest_v_f1b_w_s4_n29,44:3:46:10:0:20/0:0 62:4:46:10:0:20/0:4 82:5:46:10:0:20/0:8,-149..108
+rest_v_f1b_w_s4_n35,44:3:46:10:0:20/0:0 62:4:46:10:0:20/0:4 82:5:46:10:0:20/0:8,-148..108
+
+# Teil F2: Blick nach links (Figur dreht sich mit links in Frame 10). EINGRIFF: Gegner links der Figur; f2_*_s1: nur in P+2 bei dx; f2_*_s<k>: bis D bei dx -40, im ersten aktiven Frame der Stufe bei dx; f2j_<g>_<ri|ne>_<m>: Sprungangriff mit Richtung (Sprung + links) bzw. neutral, A = J+3, Gegner nur in A+m bei dx
+lauf,treffer(frame:schaden:dx:dz:fig_h:blick_fig/gegner:kombo),dx_bei_naehe(min..max)
+rest_v_f2_e_s1_n83,22:3:-82:0:0:0/20:0,-82..-82
+rest_v_f2_e_s1_n84,22:3:-83:0:0:0/20:0,-83..-83
+rest_v_f2_e_s1_n85,22:3:-84:0:0:0/20:0,-84..-84
+rest_v_f2_e_s1_n86,,-85..-85
+rest_v_f2_e_s2_n85,22:3:-40:0:0:0/20:0 40:4:-85:0:0:0/20:4,-148..-37
+rest_v_f2_e_s2_n86,22:3:-40:0:0:0/20:0 40:4:-86:0:0:0/20:4,-148..-37
+rest_v_f2_e_s2_n87,22:3:-40:0:0:0/20:0,-148..-37
+rest_v_f2_e_s3_n89,22:3:-40:0:0:0/20:0 40:4:-40:0:0:0/20:4 60:5:-89:0:0:0/20:8,-148..-25
+rest_v_f2_e_s3_n90,22:3:-40:0:0:0/20:0 40:4:-40:0:0:0/20:4 60:5:-90:0:0:0/20:8,-148..-25
+rest_v_f2_e_s3_n91,22:3:-40:0:0:0/20:0 40:4:-40:0:0:0/20:4,-148..-37
+rest_v_f2_e_s4_n98,22:3:-40:0:0:0/20:0 40:4:-40:0:0:0/20:4 60:5:-40:0:0:0/20:8 77:10:-98:0:0:0/20:12,-149..-37
+rest_v_f2_e_s4_n99,22:3:-40:0:0:0/20:0 40:4:-40:0:0:0/20:4 60:5:-40:0:0:0/20:8 77:10:-99:0:0:0/20:12,-149..-37
+rest_v_f2_e_s4_n100,22:3:-40:0:0:0/20:0 40:4:-40:0:0:0/20:4 60:5:-40:0:0:0/20:8,-148..-37
+rest_v_f2_w_s1_n83,22:3:-83:0:0:0/20:0,-83..-83
+rest_v_f2_w_s1_n84,22:3:-84:0:0:0/20:0,-84..-84
+rest_v_f2_w_s1_n85,,-85..-85
+rest_v_f2_w_s1_n86,,-86..-86
+rest_v_f2_w_s2_n85,22:3:-40:0:0:0/20:0 40:4:-85:0:0:0/20:4,-149..-37
+rest_v_f2_w_s2_n86,22:3:-40:0:0:0/20:0 40:4:-86:0:0:0/20:4,-149..-37
+rest_v_f2_w_s2_n87,22:3:-40:0:0:0/20:0,-148..-37
+rest_v_f2_w_s3_n89,22:3:-40:0:0:0/20:0 40:4:-40:0:0:0/20:4 60:5:-89:0:0:0/20:8,-148..-37
+rest_v_f2_w_s3_n90,22:3:-40:0:0:0/20:0 40:4:-40:0:0:0/20:4 60:5:-90:0:0:0/20:8,-148..-37
+rest_v_f2_w_s3_n91,22:3:-40:0:0:0/20:0 40:4:-40:0:0:0/20:4,-148..-37
+rest_v_f2_w_s4_n98,22:3:-40:0:0:0/20:0 40:4:-40:0:0:0/20:4 60:5:-40:0:0:0/20:8 77:10:-98:0:0:0/20:12,-98..-37
+rest_v_f2_w_s4_n99,22:3:-40:0:0:0/20:0 40:4:-40:0:0:0/20:4 60:5:-40:0:0:0/20:8 77:10:-99:0:0:0/20:12,-99..-37
+rest_v_f2_w_s4_n100,22:3:-40:0:0:0/20:0 40:4:-40:0:0:0/20:4 60:5:-40:0:0:0/20:8,-149..-37
+rest_v_f2j_e_ne_5_n74,28:7:-73:0:26:0/20:4,-73..-73
+rest_v_f2j_e_ne_5_n75,28:7:-74:0:26:0/20:4,-74..-74
+rest_v_f2j_e_ne_5_n76,28:7:-75:0:26:0/20:4,-75..-75
+rest_v_f2j_e_ne_5_n77,,-76..-76
+rest_v_f2j_e_ne_9_n74,32:7:-73:0:38:0/20:4,-73..-73
+rest_v_f2j_e_ne_9_n75,32:7:-74:0:38:0/20:4,-74..-74
+rest_v_f2j_e_ne_9_n76,32:7:-75:0:38:0/20:4,-75..-75
+rest_v_f2j_e_ne_9_n77,,-76..-76
+rest_v_f2j_e_ri_5_n97,28:7:-93:0:26:0/20:4,-93..-93
+rest_v_f2j_e_ri_5_n98,28:7:-94:0:26:0/20:4,-94..-94
+rest_v_f2j_e_ri_5_n99,28:7:-95:0:26:0/20:4,-95..-95
+rest_v_f2j_e_ri_5_n100,28:7:-96:0:26:0/20:4,-96..-96
+rest_v_f2j_e_ri_5_n101,28:7:-97:0:26:0/20:4,-97..-97
+rest_v_f2j_e_ri_5_n102,28:7:-98:0:26:0/20:4,-98..-98
+rest_v_f2j_e_ri_5_n103,,-99..-99
+rest_v_f2j_e_ri_5_n104,,-100..-100
+rest_v_f2j_e_ri_5_n105,,-101..-101
+rest_v_f2j_e_ri_9_n97,32:7:-93:0:38:0/20:4,-93..-93
+rest_v_f2j_e_ri_9_n98,32:7:-94:0:38:0/20:4,-94..-94
+rest_v_f2j_e_ri_9_n99,32:7:-95:0:38:0/20:4,-95..-95
+rest_v_f2j_e_ri_9_n100,32:7:-96:0:38:0/20:4,-96..-96
+rest_v_f2j_e_ri_9_n101,32:7:-97:0:38:0/20:4,-97..-97
+rest_v_f2j_e_ri_9_n102,32:7:-98:0:38:0/20:4,-98..-98
+rest_v_f2j_e_ri_9_n103,,-99..-99
+rest_v_f2j_e_ri_9_n104,,-100..-100
+rest_v_f2j_e_ri_9_n105,,-101..-101
+rest_v_f2j_w_ne_5_n74,28:7:-74:-1:26:0/20:4,-74..-74
+rest_v_f2j_w_ne_5_n75,28:7:-75:-1:26:0/20:4,-75..-75
+rest_v_f2j_w_ne_5_n76,,-76..-76
+rest_v_f2j_w_ne_5_n77,,-77..-77
+rest_v_f2j_w_ne_9_n74,32:7:-74:-1:38:0/20:4,-74..-74
+rest_v_f2j_w_ne_9_n75,32:7:-75:-1:38:0/20:4,-75..-75
+rest_v_f2j_w_ne_9_n76,,-76..-76
+rest_v_f2j_w_ne_9_n77,,-77..-77
+rest_v_f2j_w_ri_5_n97,28:7:-95:-1:26:0/20:4,-95..-95
+rest_v_f2j_w_ri_5_n98,28:7:-96:-1:26:0/20:4,-96..-96
+rest_v_f2j_w_ri_5_n99,28:7:-97:-1:26:0/20:4,-97..-97
+rest_v_f2j_w_ri_5_n100,28:7:-98:-1:26:0/20:4,-98..-98
+rest_v_f2j_w_ri_5_n101,,-99..-99
+rest_v_f2j_w_ri_5_n102,,-100..-100
+rest_v_f2j_w_ri_5_n103,,-101..-101
+rest_v_f2j_w_ri_5_n104,,-102..-102
+rest_v_f2j_w_ri_5_n105,,-103..-103
+rest_v_f2j_w_ri_9_n97,32:7:-95:-1:38:0/20:4,-95..-95
+rest_v_f2j_w_ri_9_n98,32:7:-96:-1:38:0/20:4,-96..-96
+rest_v_f2j_w_ri_9_n99,32:7:-97:-1:38:0/20:4,-97..-97
+rest_v_f2j_w_ri_9_n100,32:7:-98:-1:38:0/20:4,-98..-98
+rest_v_f2j_w_ri_9_n101,,-99..-99
+rest_v_f2j_w_ri_9_n102,,-100..-100
+rest_v_f2j_w_ri_9_n103,,-101..-101
+rest_v_f2j_w_ri_9_n104,,-102..-102
+rest_v_f2j_w_ri_9_n105,,-103..-103
+
+# Teil F3/F4: Richtung beim Kettendruck (ohne Eingriff): Stufe k mit Angriff + Richtung in D (ein Frame); *_f mit Folgedruck (nach Treffer h+14, ohne Treffer D+16)
+lauf,stufe,richtung,x_schritte_D+1..D+6,blick_D/D+1,treffer(rel_D:schaden:kombo:dx),folgedruck_rel_D,folge_wirkung_rel_D,folge_stufe_oder_treffer
+rest_v_f3_e_s2_d,2,d,+0 +0 +0 +0 +0 +0,20/20,3:4:4:47,,,
+rest_v_f3_e_s2_l,2,l,-8 -6 -4 -2 +0 +0,20/0,,,,
+rest_v_f3_e_s2_l_f,2,l,-8 -6 -4 -2 +0 +0,20/0,,+16,+17,Stufe 1
+rest_v_f3_e_s2_r,2,r,+8 +6 +4 +2 +0 +0,20/20,9:4:4:27,,,
+rest_v_f3_e_s2_r_f,2,r,+8 +6 +4 +2 +0 +0,20/20,9:4:4:27 27:5:8:27,+23,+24,Stufe 3
+rest_v_f3_e_s2_u,2,u,+0 +0 +0 +0 +0 +0,20/20,3:4:4:47,,,
+rest_v_f3_e_s3_d,3,d,+0 +0 +0 +0 +0 +0,20/20,4:5:8:47,,,
+rest_v_f3_e_s3_l,3,l,-8 -6 -4 -2 +0 +0,20/0,,,,
+rest_v_f3_e_s3_l_f,3,l,-8 -6 -4 -2 +0 +0,20/0,,+16,+17,Stufe 1
+rest_v_f3_e_s3_r,3,r,+8 +6 +4 +2 +0 +0,20/20,8:5:8:27,,,
+rest_v_f3_e_s3_r_f,3,r,+8 +6 +4 +2 +0 +0,20/20,8:5:8:27 26:10:12:27,+22,,Treffer 26:10:12:27
+rest_v_f3_e_s3_u,3,u,+0 +0 +0 +0 +0 +0,20/20,4:5:8:47,,,
+rest_v_f3_e_s4_d,4,d,+0 +0 +0 +0 +0 +0,20/20,3:10:12:47,,,
+rest_v_f3_e_s4_l,4,l,-8 -6 -4 -2 +0 +0,20/0,,,,
+rest_v_f3_e_s4_r,4,r,+8 +6 +4 +2 +0 +0,20/20,9:10:12:27,,,
+rest_v_f3_e_s4_u,4,u,+0 +0 +0 +0 +0 +0,20/20,3:10:12:47,,,
+rest_v_f3_w_s2_d,2,d,+0 +0 +0 +0 +0 +0,20/20,3:4:4:46,,,
+rest_v_f3_w_s2_l,2,l,-8 -6 -4 -2 +0 +0,20/0,,,,
+rest_v_f3_w_s2_l_f,2,l,-8 -6 -4 -2 +0 +0,20/0,,+16,+17,Stufe 1
+rest_v_f3_w_s2_r,2,r,+8 +6 +4 +2 +0 +0,20/20,9:4:4:26,,,
+rest_v_f3_w_s2_r_f,2,r,+8 +6 +4 +2 +0 +0,20/20,9:4:4:26 27:5:8:26,+23,+24,Stufe 3
+rest_v_f3_w_s2_u,2,u,+0 +0 +0 +0 +0 +0,20/20,3:4:4:46,,,
+rest_v_f3_w_s3_d,3,d,+0 +0 +0 +0 +0 +0,20/20,4:5:8:46,,,
+rest_v_f3_w_s3_l,3,l,-8 -6 -4 -2 +0 +0,20/0,,,,
+rest_v_f3_w_s3_l_f,3,l,-8 -6 -4 -2 +0 +0,20/0,,+16,+17,Stufe 1
+rest_v_f3_w_s3_r,3,r,+8 +6 +4 +2 +0 +0,20/20,8:5:8:26,,,
+rest_v_f3_w_s3_r_f,3,r,+8 +6 +4 +2 +0 +0,20/20,8:5:8:26 26:10:12:26,+22,,Treffer 26:10:12:26
+rest_v_f3_w_s3_u,3,u,+0 +0 +0 +0 +0 +0,20/20,4:5:8:46,,,
+rest_v_f3_w_s4_d,4,d,+0 +0 +0 +0 +0 +0,20/20,3:10:12:46,,,
+rest_v_f3_w_s4_l,4,l,-8 -6 -4 -2 +0 +0,20/0,,,,
+rest_v_f3_w_s4_r,4,r,+8 +6 +4 +2 +0 +0,20/20,9:10:12:26,,,
+rest_v_f3_w_s4_u,4,u,+0 +0 +0 +0 +0 +0,20/20,3:10:12:46,,,
+
+# Teil F3: aktive Frames des Ausfallschritts gegen den EDDY (EINGRIFF: Gegner ab D+1 200 px vor der Figur, nur im Probeframe bei dx 30)
+lauf,stufe,probeframe_rel_D,treffer_rel_D,schaden,dx
+rest_v_f3a_e_s2_7,2,7,,,
+rest_v_f3a_e_s2_8,2,8,,,
+rest_v_f3a_e_s2_9,2,9,9,4,30
+rest_v_f3a_e_s2_12,2,12,12,4,30
+rest_v_f3a_e_s2_13,2,13,,,
+rest_v_f3a_e_s3_7,3,7,,,
+rest_v_f3a_e_s3_8,3,8,8,5,30
+rest_v_f3a_e_s3_9,3,9,9,5,30
+rest_v_f3a_e_s3_12,3,12,,,
+rest_v_f3a_e_s3_13,3,13,,,
+rest_v_f3a_e_s4_7,4,7,,,
+rest_v_f3a_e_s4_8,4,8,,,
+rest_v_f3a_e_s4_9,4,9,9,10,30
+rest_v_f3a_e_s4_12,4,12,12,10,30
+rest_v_f3a_e_s4_13,4,13,,,
+
+# Teil F5: Treffer in der Luft (ohne Eingriff): senkrechter Sprung in J (j0: ohne Sprung); EDDY trifft in 68, WOOKY in 70
+lauf,sprung_J,treffer_frame,schaden,fig_h,steigend,status_figur_f..f+3,aktion_figur_f+1
+rest_v_f5_e_j0,,68,6,0,nein,3/3/3/3,0
+rest_v_f5_e_j27,27,68,6,2,nein,3/2/2/2,c
+rest_v_f5_e_j29,29,68,6,12,nein,3/2/2/2,c
+rest_v_f5_e_j33,33,68,6,27,nein,3/2/2/2,c
+rest_v_f5_e_j38,38,68,6,41,nein,3/2/2/2,c
+rest_v_f5_e_j52,52,68,6,48,ja,3/2/2/2,c
+rest_v_f5_e_j54,54,68,6,44,ja,3/2/2/2,c
+rest_v_f5_e_j58,58,68,6,35,ja,3/2/2/2,c
+rest_v_f5_e_j63,63,68,6,18,ja,3/2/2/2,c
+rest_v_f5_e_j66,66,68,6,5,ja,3/2/2/2,c
+rest_v_f5_w_j0,,70,5,0,nein,3/3/3/3,0
+rest_v_f5_w_j31,31,70,5,12,nein,3/2/2/2,c
+rest_v_f5_w_j35,35,70,5,27,nein,3/2/2/2,c
+rest_v_f5_w_j40,40,70,5,41,nein,3/2/2/2,c
+rest_v_f5_w_j56,56,70,5,44,ja,3/2/2/2,c
+rest_v_f5_w_j60,60,70,5,35,ja,3/2/2/2,c
+rest_v_f5_w_j65,65,70,5,18,ja,3/2/2/2,c
+rest_v_f5_w_j68,68,70,5,5,ja,3/2/2/2,c
+
+# Teil F6: Gleichzeitiger Treffer (ohne Eingriff): Schlag in P, Treffer in P+2; anlauf_c (e), anlauf_b (w), tiefe_b (t)
+lauf,P,treffer_P+2,erster_aktiver_frame_gegner,lp_verluste_gegner,lp_verluste_figur
+rest_v_f6_e_p65,65,67,,67:-3,
+rest_v_f6_e_p66,66,68,68,68:-3,
+rest_v_f6_e_p67,67,69,68,,68:-6
+rest_v_f6_t_p72,72,74,,74:-3,
+rest_v_f6_t_p73,73,75,75,75:-3,
+rest_v_f6_t_p74,74,76,75,,75:-6
+rest_v_f6_w_p67,67,69,118,69:-3,
+rest_v_f6_w_p68,68,70,70,70:-3,
+rest_v_f6_w_p69,69,71,70,,70:-5

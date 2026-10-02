@@ -11,11 +11,16 @@ Stand 2026-10-02: Werte aus Aufgabe 4 und 5 sowie aus den Nachträgen
 (Sprung, Schlagreichweite, Reichweite der Kettenstufen 2–4, Sprungangriff,
 Griff und Würfe, Schaden der Gegner) übernommen. Neu am 2026-10-02
 (Nachträge Trefferreaktion der Gegner, Verhalten der Nahkämpfer, Reichweite
-der Gegnerangriffe, Spezialangriff, Sprint, Gegenstände und Waffen):
-Abschnitte „Spezialangriff“, „Sprint“, „Trefferreaktion der Gegner“,
-„Reichweite der Gegnerangriffe“, „Gegenstände und Waffen“ und der
-Mechanismus unter „Unverwundbarkeit“. Diese Werte sind von einem Messagenten
-und einem unabhängigen Gegenprüfer gemessen und per Skript im Repo belegt;
+der Gegnerangriffe, Spezialangriff, Sprint, Gegenstände und Waffen,
+Fernangriffe der Gegner, Boss, Rest der Spielfigur): Abschnitte
+„Spezialangriff“, „Sprint“, „Trefferreaktion der Gegner“, „Reichweite der
+Gegnerangriffe“, „Fernangriffe der Gegner“, „Boss“, „Gegenstände und
+Waffen“, der Unterabschnitt „Tod und Neueinstieg der Figur“, der
+Mechanismus unter „Unverwundbarkeit“ sowie neue und ergänzte Zeilen in
+„Angriff (Standardschlag, Kette)“, „Sprungangriff“, „Spezialangriff“,
+„Schaden der Gegner“, „Unverwundbarkeit“, „Lebenspunkte“ und „Gegenstände
+und Waffen“. Diese Werte sind von einem Messagenten und einem unabhängigen
+Gegenprüfer gemessen und per Skript im Repo belegt;
 wo beide abwichen, hat eine dritte Messung eine gemeinsame Regel ergeben.
 Werte mit „Workflow“ in der Belegspalte sind von mehreren Agenten unabhängig
 gemessen und gegengeprüft, aber nicht mit einem Skript im Repo
@@ -58,6 +63,10 @@ und was wir selbst gestalten: `docs/erkenntnisse.md`.
 | Trefferstopp | 7 Frames (≈ 0,12 s): Die Animation des Angreifers steht still | wie oben |
 | Recovery-Frames Standardschlag (Treffer) | handlungsfähig ab h+13 (Laufen oder nächster Schlag). Ohne Eingabe bleibt die Schlagpose bis h+27, Ruhe ab h+28 | wie oben |
 | Recovery-Frames Standardschlag (Leerschlag) | handlungsfähig ab P+8. Ohne Eingabe Aktion von P+1 bis P+16 (16 Frames), Ruhe ab P+17 | wie oben (`leerschlag`) |
+| Recovery Kettenstufen 2 und 3 (Treffer) | Ohne Eingabe bleibt die Schlagpose bis h+26, Ruhe ab h+27. Ein Angriffsdruck ab h+11 gibt in h+12 die nächste Stufe (Kombo-Fenster), ein Sprungdruck ab h+11 einen Sprung ab h+12. Gehaltenes Laufen zur Seite bricht die Pose ab (Bewegung ab h+13); Laufen in die Tiefe bricht sie nicht ab, die Figur bewegt sich erst ab h+28 | notes.md „Nachtrag: Rest der Spielfigur“, `logs/rest.csv` (`rest_a_*_s{2,3}_t_*`), `logs/rest_v.csv` (`rest_v_a_*_s{2,3}_t_*`) |
+| Recovery Abschlusstritt | D = Frame des Kettendrucks. Nicht abbrechbar. Mit Treffer (in D+3 oder erst im zweiten aktiven Abschnitt in D+17) Aktion bis D+32, Ruhe ab D+33: Ein Angriffs- oder Sprungdruck ab D+33 wirkt in D+34 (Angriff: neue Kette mit Stufe 1), Laufen zur Seite wie in die Tiefe bewegt ab D+34. Ohne Treffer (beide Abschnitte leer) Aktion D+1 bis D+25, Ruhe ab D+26: Druck ab D+26 wirkt in D+27, Laufen ab D+27 | wie oben (`rest_a_*_s4_*`; `rest_v_a_*_s4_*`) |
+| Recovery Kettenstufen 2 und 3 (Leerschlag) | Ohne Eingabe Aktion D+1 bis D+16 (Stufe 2) bzw. D+17 (Stufe 3), Ruhe im Frame danach. Ein Angriffs- oder Sprungdruck ab D+7 (Stufe 2) bzw. D+8 (Stufe 3) wirkt im Frame danach; ein Angriff beginnt dann eine neue Kette mit Stufe 1. Laufen (links, rechts, hoch) bewegt ab D+9 bzw. D+10 | wie oben (`rest_a_*_l_*`; `rest_v_a_*_l_*`) |
+| Puffer im Nachlauf | keiner: Drücke vor der Freigabe werden verworfen und wirken auch später nicht (Stufe 2 bis 4, mit und ohne Treffer) | wie oben |
 | Reichweite Standardschlag (x) | Treffer bei x-Abstand ≤ 85 px zwischen den Positionen von Figur und Gegner, kein Treffer ab 86 px | notes.md „Nachtrag“, `logs/a7_reichweite.csv` |
 | Reichweite Standardschlag (Tiefe) | Treffer bei Tiefenabstand ≤ 11 px, nie ab 13 px. 12 px ist ein Grenzfall (trifft fast immer) | wie oben |
 | Aktive Frames Standardschlag | P+2 bis P+5 (4 Frames): Ein Gegner, der in dieser Zeit in Reichweite kommt, wird getroffen | wie oben |
@@ -65,6 +74,9 @@ und was wir selbst gestalten: `docs/erkenntnisse.md`.
 | Reichweite Kettenstufen 2–4 (Tiefe) | Treffer bei Tiefenabstand ≤ 12 px, nie ab 13 px (ohne Grenzfall) | wie oben |
 | Aktive Frames Kettenstufen 2–4 | D = Frame des Kettendrucks. Stufe 2: D+3 bis D+6, Stufe 3: D+4 bis D+7, Stufe 4: D+3 bis D+6. Trifft der Abschlusstritt dort nichts, ist er von D+17 bis D+20 noch einmal aktiv | wie oben |
 | Kombo-Fenster | Der nächste Kettenschlag wird nur in einem Fenster von 16 Frames (≈ 0,27 s) nach dem Treffer h der Vorstufe angenommen: für Stufe 2 bei einem Druck in h+12 bis h+27, für Stufe 3 und 4 in h+11 bis h+26. Frühere Drücke werden verworfen, nicht gepuffert. Spätere Drücke beginnen eine neue Kette mit Stufe 1 | notes.md „Messungen im Einzelnen“ und „Nachtrag: Reichweite der Kettenstufen 2–4“, `logs/a5_schlag.csv`, `logs/kette_reichweite.csv` |
+| Reichweite bei Blick nach links | alle Reichweiten nach vorn 1 px kürzer als bei Blick nach rechts: Stufe 1 bis 84 px, Stufe 2 bis 86 px, Stufe 3 bis 90 px, Stufe 4 bis 99 px (jeweils 1 px weiter kein Treffer) | notes.md „Nachtrag: Rest der Spielfigur“, `logs/rest.csv` (`rest_f2_*`), `logs/rest_v.csv` (`rest_v_f2_*`), EINGRIFF auf die Gegnerlage |
+| Reichweite hinter der Figur | Es gibt keinen Mindestabstand: Alle Stufen treffen auch bei x-Abstand 0. Hinter der Figur hängt die Reichweite von der Blickrichtung des Gegners ab. Schaut er zur Figur: Stufe 1 bis 28 px, Stufe 2 und 3 bis 26 px, Stufe 4 bis 25 px. Schaut er weg: Stufe 1 bis 4 px, Stufe 2 und 3 bis 2 px, Stufe 4 bis 1 px (jeweils 1 px weiter kein Treffer). Ein Gegner in seiner Trefferreaktion dreht sich nicht um | notes.md „Nachtrag: Rest der Spielfigur“, `logs/rest.csv` (`rest_f1_*`; dritte Messung `rest_m3_f1_*`, `rest_m3_f1z_*`), `logs/rest_v.csv` (`rest_v_f1_*`, `rest_v_f1b_*`), EINGRIFF auf Gegnerlage und Blickrichtung |
+| Richtung beim Kettendruck | Zum Gegner (in Blickrichtung) mit dem Kettendruck gedrückt: Ausfallschritt, die Figur rückt in D+1 bis D+4 um 8, 6, 4 und 2 px vor (20 px). Der Treffer kommt dann erst in D+9 (Stufe 2 und 4) bzw. D+8 (Stufe 3), aktiv D+9 bis D+12 bzw. D+8 bis D+11; Schaden gleich, die Kette läuft weiter. Vom Gegner weg: Die Figur dreht sich um und macht denselben Schritt 20 px weg, ohne Treffer; die Kette ist abgebrochen, der nächste Druck beginnt mit Stufe 1. Hoch oder runter ändern nichts | notes.md „Nachtrag: Rest der Spielfigur“, `logs/rest.csv` (`rest_f3_*`, `rest_f3a_*`), `logs/rest_v.csv` (`rest_v_f3_*`, `rest_v_f3a_*`) |
 
 ## Sprung
 
@@ -83,13 +95,17 @@ A ist der Frame des Angriffsdrucks im Sprung, J der des Sprungdrucks.
 
 | Größe | Wert | Beleg |
 |---|---|---|
-| Varianten | Neutral (Sprung ohne Richtung) und Richtung (Sprung mit links/rechts): je 7 LP und Umwerfen. Hoch im Frame des Sprungdrucks: 12 LP, Umwerfen, Treffer ab A+7. Runter mit dem Angriff: 4 LP ohne Umwerfen | notes.md „Nachtrag: Sprungangriff“, `logs/sprungangriff.csv` |
+| Varianten | Neutral (Sprung ohne Richtung) und Richtung (Sprung mit links/rechts): je 7 LP und Umwerfen. Hoch im Frame des Sprungdrucks: 12 LP, Umwerfen. Runter mit dem Angriff: 4 LP ohne Umwerfen, auch beim Sprung mit Richtung. Aktive Frames und Reichweite von hoch und runter siehe unten | notes.md „Nachtrag: Sprungangriff“, `logs/sprungangriff.csv`; hoch und runter: notes.md „Nachtrag: Rest der Spielfigur“, `logs/rest.csv` (`rest_b_*`), `logs/rest_v.csv` (`rest_v_b_*`) |
 | Umwerfen | Der Gegner fliegt 135 px (135,125 px vom Trefferort) in Blickrichtung der Figur; Ablauf wie unter „Trefferreaktion der Gegner“ | notes.md „Nachtrag: Trefferreaktion der Gegner“, `logs/reaktion.csv` (`b_sprung_*`), `logs/reaktion_v.csv` (`b_sprung_*`) |
-| Aktive Frames | A+5 bis A+28, solange die Figur in der Luft ist; jeder Treffer verlängert um 7 Frames Trefferstopp. Mehrere Gegner pro Sprung möglich, jeder nur einmal | wie oben |
+| Aktive Frames (neutral und Richtung) | A+5 bis A+28, solange die Figur in der Luft ist; jeder Treffer verlängert um 7 Frames Trefferstopp. Mehrere Gegner pro Sprung möglich, jeder nur einmal | notes.md „Nachtrag: Sprungangriff“, `logs/sprungangriff.csv` |
 | Reichweite neutral | x von 27 px hinter bis 76 px vor der Figur, Tiefe ≤ 12 px, Figur höchstens 45 px hoch (am Scheitel des Sprungs trifft der Tritt nicht) | wie oben |
 | Reichweite Richtung | x von 24 px hinter bis 99 px vor der Figur, Tiefe ≤ 12 px, Figur höchstens 41 px hoch | wie oben |
 | Zeitfenster | Angriff ab J+1 (im selben Frame wie der Sprung: Spezialangriff). Ab A = J+38 kommt der Tritt nicht mehr zur Wirkung, bei der Landung gedrückt geht er verloren. Angriff und Sprung zusammen: in J+41 noch Sprungangriff, in der Landung siehe „Spezialangriff“ | wie oben (Workflow); Landung: notes.md „Nachtrag: Spezialangriff“ |
 | Dauer | Der Sprung dauert mit Angriff einen Frame länger (die Höhe steht in A+1 einmal still) | notes.md „Nachtrag: Sprung und Schlagreichweite“ |
+| Hoch: aktive Frames und Reichweite | aktiv A+7 bis A+10 (4 Frames), bei jedem Angriffszeitpunkt, solange die Figur in der Luft und höchstens 48 px hoch ist (ab 49 px nie). x von 32 px hinter bis 85 px vor der Figur, Tiefe ≤ 12 px; die x-Grenzen sind in allen gemessenen Höhen (29 bis 46 px) gleich. Gilt für gehende oder stehende Gegner | notes.md „Nachtrag: Rest der Spielfigur“, `logs/rest.csv` (`rest_b_*_hoch_*`), `logs/rest_v.csv` (`rest_v_b_*_h*`), EINGRIFF auf die Gegnerlage, Schaden natürlich gegengeprüft |
+| Runter: aktive Frames und Reichweite | aktiv A+9 bis A+32, solange die Figur höchstens 41 px hoch ist, steigend wie fallend (ab 43 px und am Boden nie). x von 41 px hinter bis 42 px vor der Figur, Tiefe ≤ 12 px; die x-Grenzen sind in allen gemessenen Höhen (20 bis 41 px) gleich. Gilt für gehende oder stehende Gegner | wie oben (`rest_b_*_runter_*`; `rest_v_b_*_r*`) |
+| Ablauf hoch und runter | Hoch: Aktion bis A+29 (mit Treffer bis A+36), danach Fallpose; landet die Figur vorher, endet die Aktion mit der Landung (J+48, mit Treffer J+55). Runter: Aktion bis zum Ende der Landung, J+48 (mit Treffer J+55) | wie oben |
+| Reichweite bei Blick nach links | nach vorn 1 px kürzer als bei Blick nach rechts: neutral bis 75 px, Richtung bis 98 px (jeweils 1 px weiter kein Treffer) | notes.md „Nachtrag: Rest der Spielfigur“, `logs/rest.csv` (`rest_f2j_*`), `logs/rest_v.csv` (`rest_v_f2j_*`) |
 
 ## Griff und Wurf
 
@@ -130,7 +146,7 @@ Captain Commando; die anderen Figuren in der zweiten Tabelle.
 | Ablauf | 50 Frames (≈ 0,84 s, P+1 bis P+50), die Figur bewegt sich dabei nicht. Jedes Bild der Animation mit Treffer verlängert um 7 Frames Trefferstopp, gleichzeitige Treffer zählen einmal: ein Bild bis P+57, zwei bis P+64, drei bis P+71, vier bis P+78. Handlungsfähig im Frame nach dem Ende (ohne Treffer: ein Druck in P+51 wirkt ab P+52, einer in P+50 geht verloren); Laufen bewegt ab dem zweiten Frame danach (P+52, mit einem Treffer P+59) | wie oben (`ab_*`, `sd_*`; `spezial_v_ab_*`, `spezial_v_viele_*`, `spezial_v_mehr_t`) |
 | Schutz | Während der ganzen Aktion geschützt wie in der Trefferreaktion, ab P+1 (Gegnerangriffe in P+1 bis P+3 bleiben ohne Wirkung). Danach 20 Frames Schutz-Timer (`FFAA69` startet mit 20, wie nach dem Aufstehen mit 35), obwohl die Figur schon handeln kann. Verwundbar ab P+71 (mit einem Treffer ab P+78): zusammen 70 Frames (≈ 1,17 s) | wie oben (`sch_anf_*`, `sch_ende_*`; `spezial_v_anf_*`, `spezial_v_sch_*`; Ende per EINGRIFF auf Höhe bzw. Lage des Gegners und auf den Timer) |
 | Aktive Frames und Fläche | P+8 bis P+43 (36 Frames, ohne Trefferstopp gezählt; jeder Trefferstopp verschiebt die folgenden Frames um 7). Die Fläche wächst in sechs Stufen zu je 6 Frames (Stufe k ab P+2+6k) um je 16 px: vor der Figur bis 43 + 16·(k−1) px (43, 59, 75, 91, 107, 123), hinter ihr bis 42 + 16·(k−1) px (42 bis 122); 1 px weiter kein Treffer in dieser Stufe. Die Fläche ist voll: Nahe Gegner werden in jeder Stufe getroffen. Tiefe ≤ 28 px, nie ab 29 px, vorn wie hinten. Gilt für gehende oder stehende Gegner | wie oben (`rx_*`, `fen_*`, `rz_*`, `sd_*`, `d3_rx_*`; `spezial_v_rx_*`, `spezial_v_fen_*`, `spezial_v_voll_*`, `spezial_v_rz_*`), EINGRIFF auf die Gegnerlage, natürlich gegengeprüft |
-| Schaden und Umwerfen | 6 LP je Gegner (WOOKY und EDDY gleich), jeder Treffer wirft um. Der Gegner fliegt 135,125 px vom Trefferort, immer von der Figur weg: vor ihr nach vorn, hinter ihr nach hinten. Beliebig viele Gegner (bis fünf beobachtet), jeder nur einmal | wie oben (`aus_gleich_*`, `sd_*`; `spezial_v_viele_*`, `spezial_v_flug_*`) |
+| Schaden und Umwerfen | 6 LP je Gegner (WOOKY und EDDY gleich), jeder Treffer wirft um. Der Gegner fliegt 135,125 px vom Trefferort, immer von der Figur weg: vor ihr nach vorn, hinter ihr nach hinten. Beliebig viele Gegner (bis fünf beobachtet), jeder nur einmal. Den Boss der ersten Stage wirft er nicht um: Er nimmt 6 LP (nie zurückgewiesen) und taumelt 78 Frames 135 px weit (siehe „Boss“) | wie oben (`aus_gleich_*`, `sd_*`; `spezial_v_viele_*`, `spezial_v_flug_*`); Boss: notes.md „Nachtrag: Boss“, `logs/boss_v.csv` (`sp_*`, `r24sp_*`) |
 | Kosten | 9 LP einmal je Spezialangriff, nur wenn er etwas trifft (Gegner oder Gegenstand), abgezogen in h+8. Ohne Treffer kostenlos | wie oben (`aus_gleich_k`, `sd_drei_stufen`, `sd_kiste_*`, `ab_leer_*`; `spezial_v_aus_c_1f`, `spezial_v_viele_p5`, `spezial_v_beh_*`) |
 | LP-Untergrenze | Die Kosten senken die LP höchstens auf 0 (auch bei 1 bis 9 LP). Die Figur stirbt dadurch nicht und spielt mit 0 LP weiter; erst ein Gegnertreffer bringt sie unter 0 (siehe „Schaden der Gegner“, Tod). Mit 0 LP gibt es keinen Spezialangriff mehr | wie oben (`lp_nat`, `lp_a*`, `lp_b*`; `spezial_v_lp_nat`, `spezial_v_lp9_c`, `spezial_v_lp5_c`, `spezial_v_lp12_c`, `spezial_v_lp2_t`) |
 
@@ -216,15 +232,37 @@ handeln kann, **t** der Frame, in dem seine LP unter 0 fallen.
 
 | Größe | Wert | Beleg |
 |---|---|---|
-| Schwierigkeit (Rang) | Ein Rang von 7 bis 24 steuert Schaden und LP der Gegner. Start bei 9, +1 nach 409 Frames und danach alle 600 Frames (≈ 10 s), bis 24 (nach ≈ 2,5 min). Jeder Tod der Figur senkt ihn um 3 | notes.md „Nachtrag: Schaden der Gegner“, `logs/gegnerschaden.csv` |
+| Schwierigkeit (Rang) | Ein Rang von 7 bis 24 steuert Schaden und LP der Gegner. Start bei 9, +1 nach 409 Frames und danach alle 600 Frames (≈ 10 s), bis 24 (nach ≈ 2,5 min). Jeder Tod der Figur und jeder Stage-Wechsel senkt ihn um 3, nie unter 7 (siehe Zeile „Rang bei Tod und Stage-Wechsel“) | notes.md „Nachtrag: Schaden der Gegner“, `logs/gegnerschaden.csv` |
 | Fester Schaden | Die Gegner, die zu Beginn der Stage schon stehen, machen immer gleich viel: WOOKY 5, EDDY 6 LP je Treffer | wie oben |
-| Schaden mit Rang | Später erscheinende Gegner: WOOKY 7 / 8 / 9 / 10 LP bei Rang 7 / 8–14 / 15–21 / 22–24; EDDY jeweils 1 mehr; SKIP mit Messer 7 bis 10, sein geworfenes Messer und sein Ausfallstich 10 bis 13. Der Wert wird beim Beginn des Angriffs festgelegt | wie oben (WOOKY Rang 7–12 und SKIP-Stich im Repo, Rest Workflow) |
-| LP der Gegner mit Rang | Später erscheinende Gegner bekommen beim Erscheinen mehr LP: WOOKY 22 bis 34, EDDY 32 bis 42, SKIP 34 bis 46 | wie oben (Workflow) |
-| Fernkampf und Boss | DICK: Pistole 5–7 je Schuss, Raketenwerfer 12–15. Boss DOLG: Schläge 9–12, Ansturm 12–17, Körperpresse 16–22, Griff und Wurf 16–22 (je nach Rang) | notes.md (Workflow) |
-| Zustand der Figur | ändert den Schaden nicht (Stehen, Laufen, Angreifen, Springen, Halten, LP, Blickrichtung, Tiefe). Treffer in der Luft werfen immer um | wie oben (Workflow) |
-| Tod | erst bei LP unter 0; mit genau 0 LP spielt die Figur weiter. Die Kosten des Spezialangriffs senken die LP höchstens auf 0 | wie oben (Workflow); mit Skript bestätigt: notes.md „Nachtrag: Spezialangriff“, `logs/spezial.csv` (`lp_nat`, `lp_a*`), `logs/spezial_v.csv` (`spezial_v_lp_nat`) |
-| Gleichzeitiger Treffer | Wird der Schlag der Figur im selben Frame aktiv wie der Treffer des Gegners, gewinnt die Figur | wie oben (Workflow) |
-| Reichweite der Gegnerschläge | siehe „Reichweite der Gegnerangriffe“: WOOKY und EDDY bei Tiefenabstand −10 bis +11 px (Figur 10 px weiter hinten bzw. 11 px weiter vorn), gegen eine springende Figur bis zu deren Höhe von 48 px | notes.md „Nachtrag: Reichweite der Gegnerangriffe“, `logs/greichweite.csv`, `logs/greichweite_v.csv` |
+| Schaden mit Rang | Später erscheinende Gegner: WOOKY 7 / 8 / 9 / 10 LP bei Rang 7 / 8–14 / 15–21 / 22–24; EDDY jeweils 1 mehr; SKIP mit Messer 7 bis 10 (Rang 8: 7, Rang 9–15: 8, Rang 16–22: 9), sein geworfenes Messer 10 / 11 / 12 / 13 bei Rang 7–11 / 12–16 / 17–21 / 22–24, sein Ausfallstich 10 bis 13. Der Wert wird beim Beginn des Angriffs festgelegt | wie oben (WOOKY Rang 7–12 und SKIP-Stich im Repo, Rest Workflow); geworfenes Messer Rang 7–24 und Stich Rang 8–22: notes.md „Nachtrag: Fernangriffe der Gegner“, `logs/fern.csv` (`d_m_*`, `A angriffe`), `logs/fern_v.csv` (`dm_*`, `stich`) |
+| LP der Gegner mit Rang | Später erscheinende Gegner bekommen beim Erscheinen mehr LP: WOOKY 22 bis 34, EDDY 32 bis 42, SKIP 34 bis 46; DICK 19 bei Rang 7, 20 bis 23 bei Rang 8–15, 26 bis 28 bei Rang 20–24 | notes.md „Nachtrag: Schaden der Gegner“ (Workflow); DICK: notes.md „Nachtrag: Fernangriffe der Gegner“, `logs/fern.csv` (`F erscheinen`), `logs/fern_v.csv` (`erscheinen`) |
+| Fernkampf und Boss | DICK: Pistole 4 / 5 / 6 / 7 LP je Kugel, Raketenwerfer 12 / 13 / 14 / 15 LP bei Rang 7 / 8–14 / 15–21 / 22–24. SKIP: geworfenes Messer 10 / 11 / 12 / 13 LP bei Rang 7–11 / 12–16 / 17–21 / 22–24 (siehe „Fernangriffe der Gegner“). Boss DOLG: kurzer Schlag und Armschwung 7–12, Ansturm 10–17, Körperpresse 13–22, Griff und Wurf 13–22 (Rang 7 bis 24), Einzelwerte unter „Boss“ | Fernkampf: notes.md „Nachtrag: Fernangriffe der Gegner“, `logs/fern.csv` (`d_m_*`, `d_k_*`, `d_r_*`), `logs/fern_v.csv` (`dm_*`, `dk_*`, `dr_*`); Boss: notes.md „Nachtrag: Boss“, `logs/boss.csv` (Abschnitt „# D zusammenfassung“), `logs/boss_v.csv` (Abschnitt „# V d schaden“) |
+| Zustand der Figur | ändert den Schaden nicht (Stehen, Laufen, Angreifen, Springen, Halten, LP, Blickrichtung, Tiefe) | notes.md „Nachtrag: Schaden der Gegner“ (Workflow) |
+| Tod | erst bei LP unter 0; mit genau 0 LP spielt die Figur weiter. Die Kosten des Spezialangriffs senken die LP höchstens auf 0. Ablauf und Neueinstieg siehe „Tod und Neueinstieg der Figur“ | wie oben (Workflow); mit Skript bestätigt: notes.md „Nachtrag: Spezialangriff“, `logs/spezial.csv` (`lp_nat`, `lp_a*`), `logs/spezial_v.csv` (`spezial_v_lp_nat`) |
+| Gleichzeitiger Treffer | Fällt der Treffer des Schlags der Figur (P+2) in den ersten aktiven Frame des Gegnerschlags, verliert nur der Gegner LP; einen Frame später verliert nur die Figur LP. Beim Boss DOLG gemessen: Trifft die Figur ihn von vorn in seinem ersten aktiven Frame, wird er getroffen, ab seinem zweiten aktiven Frame trifft sein Schlag zuerst | notes.md „Nachtrag: Rest der Spielfigur“, `logs/rest.csv` (`rest_f5_*`), `logs/rest_v.csv` (`rest_v_f6_*`); Boss: notes.md „Nachtrag: Boss“, `logs/boss.csv` (`m_z_k47`), `logs/boss_v.csv` (Abschnitt „# V c im angriff“) |
+| Reichweite der Gegnerschläge | siehe „Reichweite der Gegnerangriffe“: WOOKY und EDDY bei Tiefenabstand −10 bis +11 px (Figur 10 px weiter hinten bzw. 11 px weiter vorn), gegen eine springende Figur bis zu deren Höhe von 48 px. Messerwurf, Stichserie, Pistole und Raketenwerfer siehe „Fernangriffe der Gegner“ | notes.md „Nachtrag: Reichweite der Gegnerangriffe“, `logs/greichweite.csv`, `logs/greichweite_v.csv`; notes.md „Nachtrag: Fernangriffe der Gegner“ |
+| Rang bei Tod und Stage-Wechsel | −3 bei jedem Tod der Figur, im Frame des Neueinstiegs (beim letzten Tod zur selben Zeit, obwohl kein Neueinstieg folgt), und bei jedem Stage-Wechsel, im Frame, in dem die nächste Stage beginnt. Nie unter 7. Der Zähler für den 600er-Takt läuft dabei unverändert weiter | notes.md „Nachtrag: Rest der Spielfigur“, `logs/rest.csv` (`rest_d_*`, `rest_e_*`), `logs/rest_v.csv` (`rest_v_d_*`, `rest_v_e_*`); Zähler beim Tod: notes.md „Nachtrag: Schaden der Gegner“, `logs/gegnerschaden.csv` |
+| Treffer in der Luft | Treffer auf die springende Figur werfen sie um, auch normale Schläge und Kugeln, die am Boden nicht umwerfen, in jeder Höhe, steigend und fallend (gemessen mit den Schlägen von WOOKY und EDDY und der normalen Kugel des DICK) | notes.md „Nachtrag: Rest der Spielfigur“, `logs/rest.csv` (`rest_f4_*`), `logs/rest_v.csv` (`rest_v_f5_*`); Kugel: notes.md „Nachtrag: Fernangriffe der Gegner“, `logs/fern.csv` (`c_kj_*`, `c_kj9_*`), `logs/fern_v.csv` (`ckj1_*`) |
+| Tod der Gegner bei genau 0 LP | Ein Treffer, der die LP eines Gegners genau auf 0 senkt, tötet ihn nicht: Er reagiert normal (bzw. wird umgeworfen), lebt mit 0 LP weiter und greift weiter an. Erst der nächste Treffer (LP unter 0) tötet ihn, wie unter „Trefferreaktion der Gegner“ (Tod). Dieselbe Regel wie für die Figur (gemessen an WOOKY und EDDY) | notes.md „Nachtrag: Rest der Spielfigur“, `logs/rest.csv` (`rest_c_*`), `logs/rest_v.csv` (`rest_v_c_*`) |
+
+### Tod und Neueinstieg der Figur
+
+Neue Symbole, nur in diesem Abschnitt: **t** ist der Frame, in dem die LP
+der Figur unter 0 fallen (nicht die des Gegners wie unter „Trefferreaktion
+der Gegner“), **N** der Frame des Neueinstiegs (LP wieder 72), **L** der
+erste Frame der Landung nach dem Neueinstieg (nicht die Landung eines
+Gegenstands wie unter „Gegenstände und Waffen“). Die Figur erscheint in N+1.
+
+| Größe | Wert | Beleg |
+|---|---|---|
+| Tod | Fallen die LP unter 0, beginnt in t+2 der Todesflug (Aktion 2), in t+40 hat die Figur Bodenkontakt (nach Klingentreffern eigener Ablauf). Wann sie wieder einsteigt, hängt von der Todesart ab (nächste Zeile) | notes.md „Nachtrag: Rest der Spielfigur“, `logs/rest.csv` (`rest_d_*`, dritte Messung `rest_m3_d1_*`), `logs/rest_v.csv` (`rest_v_d_*`) |
+| Neueinstieg nach Todesart | Normal: N = t+120 (≈ 2,0 s; t+121, wenn der Rückprall einen Frame länger dauert). Rollen: Zeigt die Figur im Todesframe die Reaktion auf einen Treffer von vorn mit Attribut-Bit 0x0400 (etwa `440C`), rollt sie nach dem Bodenkontakt 32 Frames mit 2 px/Frame weiter, N = t+151 bzw. t+152. Wand: Endet der Flug vor t+40 an einer Begrenzung der Stage oder eines Abschnitts (in Stage 1 die diagonale Wand und die Abschnittsgrenze vor dem Mech bei x = Kamera-Endwert + 200, bei stehender Kamera Bildschirm-x 200; Anfang von Stage 4), fällt sie von dort senkrecht, N = t+108. Die Bildränder zählen nicht als Wand. Klinge: Nach Treffern mit Attribut-Bit 0x8000 (Messerstich und Ausfallstich des SKIP, Gegner in Stage 5; das geworfene Messer trägt dieses Bit nicht) eigener Ablauf, N = t+107 | wie oben (dritte Messung: 23 Tode an Stellen in Stage 1, 4, 5 und 9) |
+| Neueinstieg | In N: LP 72, ein Leben weniger, Rang −3 (Zeile „Rang bei Tod und Stage-Wechsel“ oben). In N+1 erscheint die Figur über dem Bild (Höhe 256 px) bei x = Kamera-x + 64 und Tiefe = Kamera-y + 48, mit Blick nach rechts, an jeder Stelle der Stage | wie oben |
+| Fall und Landung | Im Fall wirkt keine Eingabe. Die Figur fällt bis auf den Untergrund unter ihr: auf den Boden in 52 Frames (L = Erscheinen + 52, nach normalem Tod t+173), auf ein Ölfass (Oberkante 48 px) in 49 Frames. Ein Fass trägt sie, wenn es 1 bis 16 px weiter hinten (Tiefe des Fasses um 1 bis 16 größer) und höchstens 35 px links bzw. 36 px rechts von ihr steht; bei gleicher Tiefe und ab 17 px nicht. Landung 6 Frames (L bis L+5), Stand ab L+6 | wie oben (Ölfass: `rest_m3_d1_item_bot1_s1_cam01344`, `_cam01408`, EINGRIFF `rest_m3_d4_fass_*`; `rest_v_d_1281*`) |
+| Steuerung nach der Landung | Angriff ab L+6 (Schlag ab L+7), frühere Drücke verworfen. Ein Sprungdruck in L bis L+4 startet im nächsten Frame einen neuen Sprung, in L+5 geht er verloren, ab L+6 normal. Gehaltene Richtung (seitlich und in der Tiefe) bewegt ab L+7 | wie oben (`rest_d_{c,h}_*`, `rest_v_d_{e,tb}_*`) |
+| Landung trifft | In L verliert jeder aktive Gegner im Bild LP und wird umgeworfen, unabhängig vom Abstand: WOOKY, EDDY und SKIP 5 LP, der Boss DOLG 10 LP. Wartende Gegner, die noch nicht aufgewacht sind, bleiben unberührt | wie oben (Spalte bzw. Feld `gegner_in_L`) |
+| Schutz | geschützt vom Erscheinen bis L+199 (Schutz-Timer `FFAA69` steht in L auf 200 und erreicht 0 in L+200). Nach einer Landung auf dem Boden sind das 252 Frames ab dem Erscheinen (≈ 4,2 s), davon 200 nach der Landung (≈ 3,4 s). Die Gegner greifen in dieser Zeit an, ihre Schläge bleiben ohne Wirkung. Gemessen in Stage 1 und nur mit Schlägen; ob Geschosse in diesem Schutz treffen, ist nicht gemessen (in der Trefferreaktion treffen sie, siehe „Unverwundbarkeit“, Zeile „gegen Geschosse“) | wie oben (EINGRIFF `rest_d_h_schutz`, `rest_v_d_e_schutz`) |
+| Leben | in der Standardeinstellung 2 je Spiel: ein Neueinstieg, der zweite Tod beendet das Spiel (der Rang sinkt trotzdem um 3) | wie oben |
 
 ## Reichweite der Gegnerangriffe
 
@@ -259,10 +297,202 @@ gegen die passive Figur. Neue Symbole in diesem Abschnitt:
 | EDDY Schlag B | Startup 10, aktiv A+10 bis A+17, wirft nicht um. Nachlauf 20 bis 41 Frames ohne, 20 bis 39 mit Treffer (darin 8 Frames Rückzug) | wie oben (`ES2*`, `E3S2*`) |
 | EDDY Umwerfschlag | Startup 9, aktiv A+9 bis A+13, wirft um. Nachlauf ohne Treffer 30 bis 36 Frames, mit Treffer 5 bis 33 (meist 5 bis 8, dann Gehen) | wie oben (`EK2*`, `E3K2L`) |
 | EDDY Sprungtritt | Startup 9. Der EDDY steigt bis 52 bis 53 px und fliegt ab A+5 mit 3 px/Frame auf die Figur zu, aktiv A+9 bis A+45 in der Luft, bricht nie ab, wirft um. Trifft in A+9 von d 0 bis 59 (Blick rechts: −1 bis 58), Tiefe ±12 px, ab 13 nie. Nachlauf ohne Treffer meist 1 Frame (selten 28), mit Treffer 1 bis 33 | wie oben (`EK1*`, `p_ek1_*`) |
-| SKIP Messerstich | Startup 13, aktiv A+13 bis A+16, wirft nicht um, bricht nie ab. Trifft von 15 px hinter bis 108 px vor ihm (Blick links, Figur schaut bei Angriffsbeginn von ihm weg) bzw. bis 8 px hinter ihm (Blick rechts, Figur schaut zu ihm); andere Blickrichtungen der Figur siehe „Nicht übernommen“. Tiefe ±12 px (ab 13 nie), Figur bis 71 px hoch. Danach 8 Frames Rückzug, dann Gehen oder 11 bis 12 Frames Pause und der nächste Stich; aufeinanderfolgende Stiche alle 37 bis 49 Frames | wie oben (`SMSL`, `SMSR`, `p_sm_l2_*`, `p_sm_r_*`) |
+| SKIP Messerstich | Startup 13, aktiv A+13 bis A+16, wirft nicht um, bricht nie ab. Trifft von 15 px hinter bis 108 px vor ihm (Blick links, Figur schaut bei Angriffsbeginn von ihm weg) bzw. bis 8 px hinter ihm (Blick rechts, Figur schaut zu ihm); andere Blickrichtungen der Figur siehe „Nicht übernommen“. Tiefe ±12 px (ab 13 nie), Figur bis 71 px hoch. Danach 8 Frames Rückzug, dann Gehen oder 11 bis 12 Frames Pause und der nächste Stich; aufeinanderfolgende Stiche alle 37 bis 49 Frames (innerhalb einer Serie immer 37, siehe „Fernangriffe der Gegner“, Messerhagel; die Spanne ist vermutlich zu eng, siehe „Nicht übernommen“, Fernangriffe der Gegner) | wie oben (`SMSL`, `SMSR`, `p_sm_l2_*`, `p_sm_r_*`) |
 | SKIP Ausfallstich | Startup 14, aktiv A+14 bis A+16, wirft um, bricht nie ab. Trifft bei d 0 und nach vorn mindestens 56 px weit; schaut die Figur bei Angriffsbeginn zu ihm, trifft er sie 10 px hinter ihm nicht (andere Blickrichtung der Figur siehe „Nicht übernommen“). Tiefe 12 px, wenn die Figur weiter vorn steht (13 nie) | wie oben (`SASR`, `p_sa_r_*`) |
 | SKIP mit Wirbel | Beide Stiche gibt es auch mit Wirbel davor. Getroffen wird nur im Stich (A+13 bzw. A+14), Schaden und Umwerfen wie ohne Wirbel | wie oben (`SMWL_*`, `p_smw_l_*`, `p_sw_r_*`) |
 | Folge | Vor einem Umwerfangriff stehen beim WOOKY 2 bis 13 normale Angriffe (meist 2 bis 5), beim EDDY 0 bis 10, beim SKIP 0 bis 8. Eine feste Reihenfolge gibt es nicht | wie oben (Teil 1b, 1c; `greichweite_v.csv` Teil 3) |
+
+## Fernangriffe der Gegner
+
+Werte für die Fernkämpfer der ersten Stage (SKIP mit Messer, DICK mit
+Pistole oder Raketenwerfer in der Bossarena) gegen die Figur ohne eigene
+Angriffe. A und d wie in „Reichweite der Gegnerangriffe“ (A erster Frame der
+Angriffsanimation, d Abstand der Figur vor dem Werfer in dessen
+Blickrichtung, dz Tiefenabstand, positiv: Figur weiter vorn), t wie in
+„Trefferreaktion der Gegner“ (Frame des tödlichen Treffers). Neue Symbole in
+diesem Abschnitt:
+
+- **G** ist der erste Frame, in dem ein Geschoss da ist (nicht das G aus
+  „Trefferreaktion der Gegner“).
+- **Zielpunkt**: Stelle relativ zur Figur, die der Werfer vor einem Angriff
+  ansteuert. Er greift an, sobald er nahe genug daran steht.
+- **vorn** ist der Abstand der Figur vor dem Geschoss in dessen
+  Flugrichtung (positiv: das Geschoss hat sie noch nicht erreicht).
+- **Blick** und **Flugrichtung** zählen +1 nach rechts, −1 nach links;
+  x-Lagen sind Weltkoordinaten, ganzzahlig am Ende des Frames.
+
+Eine feste Rate haben die Fernangriffe nicht; wie oft geworfen und
+geschossen wird, war in jedem Lauf anders, vermutlich je nach Lage, anderen
+Gegnern und Umwerfen der Figur (nicht getrennt gemessen, siehe „Nicht
+übernommen“). Gesichert sind die Abläufe unten.
+
+### Gemeinsam
+
+| Größe | Wert | Beleg |
+|---|---|---|
+| Geschosse | Messer, Kugel und Rakete sind eigene Objekte: das Messer in Slot 29, Kugel und Rakete in einem freien der Slots 27–29. Sie fliegen geradeaus in Blickrichtung des Werfers, in seiner Tiefe und fester Höhe (die Rakete sinkt), ohne Nachführung. Gezielt wird nur über die Position vor dem Abschuss | notes.md „Nachtrag: Fernangriffe der Gegner“, `logs/fern.csv` (`A geschosse`, `T slots`), `logs/fern_v.csv` (`wurf`, `angriff_dick`, `rakete`) |
+| Trefferfläche | Ein Geschoss trifft, wenn (x(Figur) + 4·Blick) − (x(Geschoss) + o·Flugrichtung) zwischen −H und H−1 liegt: Messer H 25, o 1 (50 px breit); Kugel H 17, o 0 (34 px); Explosion der Rakete H 52, o 0 mit dem x des Einschlags (104 px). Schaut die Figur zum Werfer, liegt die Fläche deshalb 8 px weiter vorn als wenn sie wegschaut, und je nach Flugrichtung 1 px anders (Werte bei den Angriffen) | wie oben (`b_*`, `T fenster`; `bmx*`, `bkx*`, `brx*`) |
+| Tiefe | Treffer bei Tiefenabstand ≤ 12 px, nie ab 13 px (alle drei Geschosse) | wie oben (`b_mz_*`, `b_kz_*`, `b_rz_*`; `bmz1*`, `bkz*`, `brz1*`) |
+| Gegner und Objekte | Geschosse treffen keine Gegner, sie fliegen durch WOOKY, EDDY und DICK hindurch. Messer und Kugel enden beim ersten Treffer an der Figur oder an einem zerbrechlichen Objekt und zerbrechen es (Glasscheibe; das Messer auch ein Ölfass). Die Rakete fliegt durch Glasscheiben, ihre Explosion zerbricht sie und trifft dabei die Figur im selben Frame | wie oben (`c_mg_*`, `c_kg_*`, `c_ke_*`, `c_rg_*`, `c_re_*`, `c_*glas_*`, `c_mo_-30`; `gegner_auf_bahn`, `cmglas`, `cmfass`, `ckglas`, `crglas_*`) |
+| Schutz nach Treffer | Geschosse treffen auch die Figur in ihrer Trefferreaktion (gemessen an den Geschossen des DICK): Die zweite Kugel einer Salve trifft in der Reaktion auf die erste (siehe „Unverwundbarkeit“) | wie oben (`A geschosse`; `schutz`) |
+
+### Messerwurf (SKIP)
+
+| Größe | Wert | Beleg |
+|---|---|---|
+| Auslösung | Zielpunkt 150 px vor der Figur in ihrer Tiefe. Der SKIP geht mit Blick zur Figur rückwärts dorthin und wirft, sobald sein x und seine Tiefe je höchstens 9 kleiner oder 10 größer sind als die des Zielpunkts (−9 bis +10 in Weltkoordinaten, also nicht spiegelgleich): bei stehender Figur aus 141 bis 160 px, wenn er rechts von ihr steht, aus 140 bis 159 px, wenn er links steht, meist beim Eintritt in dieses Fenster. Bewegt sich die Figur nach der Zielwahl, verschiebt sich der Abstand um ihren Weg; versperrt ein Objekt oder Rand den Weg, wirft er von dort (gemessen 38 bis 123 px). Die Vorbereitung ist der Weg zum Zielpunkt (gemessen 7 bis 37 Frames) | notes.md „Nachtrag: Fernangriffe der Gegner“, `logs/fern.csv` (`A abstand`, `A angriffe`, `T ausloesung`), `logs/fern_v.csv` (`wurf`) |
+| Ablauf | Aktion 42 Frames (Bilder 4/3/1/1/32/1), das Messer erscheint in A+8. Danach 33 Frames Nachlauf (A+9 bis A+41), Gehen ab A+42 | wie oben (`A angriffe`, `A geschosse`; `wurf`) |
+| Messer | erscheint in A+8 80 px vor dem SKIP in seiner Tiefe, 56 px hoch, fliegt 4 px/Frame und ist im ganzen Flug wirksam. Ohne Treffer verschwindet es, sobald es mehr als 20 px links außerhalb des Bildes ist (rechter Rand siehe „Nicht übernommen“) | wie oben (`A geschosse`, `B Messer`, `a_st9`; `wurf`, `bmz1d_7`, `s_r12`) |
+| Trefferfläche | (x(Figur) + 4·Blick) − (x(Messer) + Flugrichtung) zwischen −25 und 24. Als vorn: Messer fliegt nach links, Figur schaut zum SKIP −19 bis 30 px, schaut weg −27 bis 22 px; Messer fliegt nach rechts −20 bis 29 bzw. −28 bis 21 px | wie oben (`b_mx_*`, `b_mx20_*`, `t_bm1`, `t_bm2`; `bmx*`) |
+| Höhe | trifft die Figur bis 59 px Höhe, ab 60 px nie. Ein Sprung (Scheitel 51 px) weicht nicht aus | wie oben (`b_mh_*`, `c_mj_*`; `bmh*`, `cmj1_*`) |
+| Schaden, Umwerfen | 10 / 11 / 12 / 13 LP bei Rang 7–11 / 12–16 / 17–21 / 22–24; jeder Treffer wirft um | wie oben (`d_m_*`, `A geschosse`; `dm_*`, `wurf`) |
+| Abwehr | Ein Schlag zerstört das Messer, wenn seine aktiven Frames (P+2 bis P+5) es in Schlagreichweite erfassen, bevor es trifft: bei 61 px Abstand beim Abwurf ein Druck in G−5 bis G+6 (gemessen mit Blick zum SKIP). Das Messer prallt dann im Bogen zurück und verschwindet nach etwa 40 Frames, ohne zu treffen | wie oben (`c_ms_*`, `c_ms20_*`; `cms1_*`, `cms3_*`) |
+
+### Messerhagel (Stichserie des SKIP)
+
+| Größe | Wert | Beleg |
+|---|---|---|
+| Auslösung | Zielpunkt 64 px vor der Figur in ihrer Tiefe; der SKIP sticht, sobald er höchstens 8 px in x davon entfernt steht, also aus 56 bis 72 px, bei einem Tiefenabstand von −6 bis +8 px. Versperrt eine Begrenzung den Zielpunkt, sticht er von dort | notes.md „Nachtrag: Fernangriffe der Gegner“, `logs/fern.csv` (`A angriffe`, `T ausloesung`), `logs/fern_v.csv` (`stich`) |
+| Serie | 1 bis 4 Messerstiche im Abstand von 37 Frames (Stich 25 Frames mit Treffer in A+13, dann 12 Frames Wartepose), danach Gehen; gilt bei freiem Weg (an einer Begrenzung und zwischen zwei Serien siehe „Nicht übernommen“). Reichweite des einzelnen Stichs unter „Reichweite der Gegnerangriffe“ (SKIP Messerstich) | wie oben (`A rhythmus`; `stich`, `serien`) |
+| Schaden | 7 / 8 / 9 LP bei Rang 8 / 9–15 / 16–22, wirft nicht um | wie oben (`A angriffe`; `stich`) |
+
+### Pistole (DICK)
+
+| Größe | Wert | Beleg |
+|---|---|---|
+| Auslösung | Zielpunkt relativ zur Figur: 128 px links oder rechts von ihr in ihrer Tiefe oder 120 px mit 24 px Tiefenversatz. Der DICK geht dorthin und beginnt den Angriff, sobald er höchstens 8 px in x und 6 px in der Tiefe vom Zielpunkt entfernt steht, also bei 112 bis 136 px. Dann gleicht er die Tiefe an die Figur an (ohne Versatz 1 Frame, sonst bei stehender Figur bis 22 Frames) und schießt; in x folgt er der Figur dabei nur langsam, geht sie auf ihn zu, schießt er aus kürzerem Abstand. Tiefenabstand beim Schuss −6 bis +5 px | notes.md „Nachtrag: Fernangriffe der Gegner“, `logs/fern.csv` (`A abstand`, `A angriffe`, `T ausloesung`), `logs/fern_v.csv` (`angriff_dick`) |
+| Salve | Zu Beginn jeder Salve legt der DICK ein Budget von 20, 40, 60, 80, 100 oder 120 Frames fest. Jeder Schuss dauert 17 Frames (A = Beginn des ersten). Nach dem k-ten Schuss (k ab 0, Ende in A+17k+16) folgt ein weiterer, solange 17k + 16 kleiner als das Budget ist: 2, 3, 4, 5, 6 oder 8 Schüsse (aus dem Budget nie 7). Steht die Figur am Ende eines Schusses zu weit weg (Abbruch bei 188 bis 204 px gemessen, bis 167 px ging es weiter) oder nicht mehr in seiner Tiefe, endet die Salve früher (dann 1 bis 7 Schüsse; verlässt sie nach dem k-ten Schuss die Tiefe, genau k). Nach der letzten Kugel 10 Frames Nachlauf, dann geht er | wie oben (`A angriffe`, `T salve`; `angriff_dick`) |
+| Kugel | erscheint in A+6 (jede weitere 17 Frames später) 34 px vor dem DICK in seiner Tiefe, 58 px hoch, fliegt 8 px/Frame und ist im ganzen Flug wirksam. Ohne Treffer verschwindet sie, sobald sie mehr als 71 px außerhalb des Bildes ist; an der rechten Wand der Bossarena schlägt sie ein (Wand je nach Tiefe bei x ≈ 2540 bis 2544) | wie oben (`A geschosse`, `B Kugel`, `T bahnende`; `angriff_dick`, `kugel_ende`) |
+| Normale und umwerfende Kugeln | Die Kugeln einer Salve sind abwechselnd normal (werfen nicht um) und umwerfend, die erste immer normal, nie zwei umwerfende nacheinander; manchmal folgen zwei normale aufeinander (Regel offen). Gegen eine Figur ohne Gegenwehr trifft meist die erste Kugel, die zweite wirft um, die weiteren gehen über die liegende Figur | wie oben (`A geschosse`; `angriff_dick`) |
+| Trefferfläche | (x(Figur) + 4·Blick) − x(Kugel) zwischen −17 und 16, für normale und umwerfende Kugeln. Als vorn: Kugel fliegt nach rechts, Figur schaut zum DICK −13 bis 20 px, schaut weg −21 bis 12 px; Kugel fliegt nach links −12 bis 21 bzw. −20 bis 13 px | wie oben (`b_kx_*`, `b_kux_*`, `t_bk1`, `t_bk2`; `bkx*`, `bkux*`) |
+| Höhe | trifft die Figur bis 59 px Höhe, ab 60 px nie. Ein Sprung weicht nicht aus, in der Luft wirft auch die normale Kugel um | wie oben (`b_kh_*`, `c_kj_*`, `c_kj9_*`; `bkh1_*`, `ckj1_*`) |
+| Schaden | 4 / 5 / 6 / 7 LP je Kugel bei Rang 7 / 8–14 / 15–21 / 22–24 | wie oben (`d_k_*`, `A geschosse`; `dk_*`) |
+| Abwehr | Ein Schlag hält die Kugel nicht auf | wie oben (`c_ks_*`, `c_ks9_*`; `cks1_*`) |
+
+### Raketenwerfer (DICK)
+
+| Größe | Wert | Beleg |
+|---|---|---|
+| Auslösung | wie bei der Pistole: Zielpunkt 128 px in der Tiefe der Figur oder 120 px mit 24 px Versatz, Abschuss aus 112 bis 136 px bei einem Tiefenabstand von −6 bis +5 px | notes.md „Nachtrag: Fernangriffe der Gegner“, `logs/fern.csv` (`A abstand`, `A angriffe`), `logs/fern_v.csv` (`angriff_dick`) |
+| Ablauf | ein Schuss je Angriff, 17 Frames, die Rakete erscheint in A+6. In A+17 geht er immer zu einem neuen Zielpunkt. Steht er dort schon (höchstens 8 px in x und 6 px in der Tiefe entfernt), steht er, geht weiter oder schießt sofort noch einmal (zweite Rakete 19 Frames nach der ersten) | wie oben (`A angriffe`, `T nachschuss`; `angriff_dick`) |
+| Rakete | erscheint in A+6 45 px vor dem DICK in seiner Tiefe, 44 px hoch, fliegt 5 px/Frame und sinkt. Frei fliegend schlägt sie in G+20 100 px weiter ein (145 px vor dem DICK), an der rechten Wand der Bossarena früher (nach 14 bis 19 Frames). Im Flug trifft sie nichts und fliegt durch Figur, Gegner und Glasscheiben | wie oben (`A geschosse`, `b_rflug*`, `T bahnende`; `rakete`) |
+| Explosion | trifft in G+21 bis G+29 (9 Frames) eine Figur bis 25 px Höhe (ab 27 px nie). Fläche: (x(Figur) + 4·Blick) − x(Einschlag) zwischen −52 und 51, frei fliegend also etwa 89 bis 201 px vor dem DICK. Als vorn ab dem Einschlag: Rakete fliegt nach rechts, Figur schaut zum DICK −48 bis 55 px, schaut weg −56 bis 47 px; Rakete fliegt nach links −47 bis 56 bzw. −55 bis 48 px. Gegner trifft sie nicht | wie oben (`b_ra_*`, `b_rx_*`, `b_rh_*`, `t_br1`, `t_br2`; `brt1_*`, `brx*`, `brh1_*`) |
+| Schaden | 12 / 13 / 14 / 15 LP bei Rang 7 / 8–14 / 15–21 / 22–24, wirft immer um | wie oben (`d_r_*`, `A geschosse`; `dr_*`) |
+| Abwehr | Ein Schlag hält die Rakete nicht auf. Ein Sprung weicht der Explosion aus, wenn die Figur in G+21 bis G+29 höher als 25 px ist: Sprung 8 bis 26 Frames vor G+21; 6 Frames oder weniger davor wird sie getroffen, ebenso nach einem zu frühen Sprung, wenn sie bis G+29 schon wieder auf 25 px oder tiefer ist (Sprung 28 bzw. 30 Frames vor G+21: Treffer in G+29 bzw. G+27 in 25 px Höhe) | wie oben (`c_rs_*`, `c_rj_*`; `crs1_*`, `crj1_*`) |
+
+### DICK: Auftreten, Bewegung, Waffe
+
+| Größe | Wert | Beleg |
+|---|---|---|
+| Varianten und LP | Pistolen-DICK und Raketen-DICK. LP 19 bei Rang 7, 20 bis 23 bei Rang 8–15, 26 bis 28 bei Rang 20–24 | notes.md „Nachtrag: Fernangriffe der Gegner“, `logs/fern.csv` (`F erscheinen`), `logs/fern_v.csv` (`erscheinen`) |
+| Pistolen-DICK | erscheint in der Bossarena von Stage 1 3 Frames nach dem Tod des ersten Arena-WOOKY, von links; bei Rang 16 bis 19 kommt er nicht | wie oben (`f_*`, `a_k*`; `fe_*`) |
+| Raketen-DICK | kommt in der Bossarena, wenn die LP des Boss DOLG auf etwa ein Viertel fallen (Schwelle siehe „Boss“, Verstärkung). Ein zweiter Raketen-DICK kommt 39 bis 40 Frames, nachdem höchstens noch 4 Gegner (der Boss mitgezählt) im Spiel sind (ist das schon beim ersten der Fall, 39 bis 40 Frames nach ihm), wenn am Ende dieser 39 bis 40 Frames Rang 16 oder höher gilt (maßgeblich ist der Rang nach der Wartezeit, nicht beim Freiwerden); bei Rang 15 und darunter nie | wie oben (`a_r*`, `a_z*`, `T welle`; `zweit_*`, `z_r22`, `r_r17`) |
+| Bewegung | geht mit 1,75 px/Frame in x und 0,875 px/Frame in der Tiefe (schräg auf einer Ellipse mit diesen Halbachsen), zeitweise 2,25 und 1,125 px/Frame; von der Figur weg rückwärts mit Blick zu ihr. Einen festen Abstand hält er nicht, auf 112 bis 136 px geht er nur zum Schießen. Zwischen den Angriffen nimmt er oft eine Pose ein (30 bis 120 Frames), an jedem Abstand, auch direkt neben der Figur; sie bereitet keinen Schuss vor. Mehrere DICK schießen selten gleichzeitig | wie oben (`A abstand`, `A angriffe`, `a_z*`; `dick_gehen`, `dick_abstand`, `dick_pose`, `mehrere_dick`) |
+| Waffe beim Tod | Nach dem tödlichen Treffer t fliegt die Waffe im Bogen bis 61 bis 62 px über die Höhe, die der DICK in t hat, und wird nach der Landung zum Gegenstand: in t+44, wenn der DICK am Boden stand, sonst später (bis t+48 gemessen, DICK 20 bis 24 px hoch). Pistolen-DICK: GUN mit 5 Schuss, Raketen-DICK: Raketenwerfer mit 3 Schuss, unabhängig von seinen verschossenen Schüssen; Liegezeit 700 Frames wie unter „Gegenstände und Waffen“ | wie oben (`e_*`, `E Bogen`, `T bogen`; `tod`) |
+
+## Boss
+
+Gemessen am Boss der ersten Stage (DOLG, Gegner-Slot 19) gegen Captain
+Commando, meist mit festgehaltenem Rang. Bezeichnungen wie in
+„Trefferreaktion der Gegner“ und „Reichweite der Gegnerangriffe“: **h** ist
+der Frame, in dem ein Treffer die LP des Bosses senkt, **K** der Frame eines
+Treffers, der ihn umwirft, **G** der erste Frame, in dem er danach wieder
+handeln kann, **t** der Frame, in dem seine LP unter 0 fallen, **A** der
+erste Frame seiner Angriffsanimation. **d** ist der Abstand der Figur vor
+ihm in x (in seiner Blickrichtung, negativ: hinter ihm), **dz** der
+Tiefenabstand (positiv: Figur weiter vorn). Neu in diesem Abschnitt:
+
+- **Zurückweisung**: Die LP des Bosses sinken in h um den vollen Schaden und
+  stehen in h+1 wieder auf dem Wert vor diesem Treffer (nicht auf dem Wert
+  vor der Kette).
+- **Entscheidungsframe**: ein Frame, in dem der Boss einen neuen Angriff
+  wählt, etwa der erste Frame, in dem er nach seinem Auftritt geht.
+
+### Lebenspunkte
+
+| Größe | Wert | Beleg |
+|---|---|---|
+| Lebenspunkte nach Rang | 90 (Rang 7–8), 100 (Rang 9–15), 110 (Rang 16–23), 120 (Rang 24); gemessen bei Rang 7, 8, 9, 11, 12, 15, 16, 19, 20, 23 und 24 | notes.md „Nachtrag: Boss“, `logs/boss.csv` (`a_r*`, `a2_r*`), `logs/boss_v.csv` (`a_r*`, `a2_r*`) |
+| Zeitpunkt | festgelegt, wenn die Figur die Arena erreicht: im Frame nach dem ersten Frame mit Kamera-x ≥ 2048, nach dem Rang in diesem Frame. Ein Rangwechsel danach ändert nichts, die Max-LP bleiben im Kampf gleich | wie oben (`a_wechsel_9_24`, `a_wechsel_24_9`; `a_w8_24_39`, `a_w8_24_40`, `a_w24_9_39`, `a_w24_9_40`) |
+| Lebensleiste | rechnet beim Boss immer mit 72 Einheiten (wie bei der Figur), unabhängig von seinen LP | wie oben (Abschnitte „# A start“, „# V a rang“) |
+
+### Super-Armor
+
+| Größe | Wert | Beleg |
+|---|---|---|
+| Zurückweisbare Treffer | Kettenstufe 1 bis 3, Abschlusstritt, Sprungangriff (neutral und hoch) und Sprintangriff kann der Boss zurückweisen, auch schon einen einzelnen ersten Schlag. Wie oft und wann er es tut, ist nicht geklärt (siehe „Nicht übernommen“) | notes.md „Nachtrag: Boss“, `logs/boss.csv` (`b_t_*`, `b_f*`, `b_e*`, `m_k20_*`, `m_k16_*`, `m_sprn20_*`, `m_sprint20_*`), `logs/boss_v.csv` (`k_*`, `e_*`, `r24jn_*`, `r24jh_*`, `r24sa_*`) |
+| Treffer, die immer zählen | Spezialangriff, Kniestoß, Wurf (nach vorn und rückwärts), Raketenwerfer und Laser weist er nie zurück | wie oben (`b_t_*`; `sp_*`, `gk_*`, `gw_*`, `gr_*`, `m_*`, `l_*`, `r24sp_*`, `r24g_*`, `r24l_*`) |
+| Schaden am Boss | wie gegen normale Gegner und unabhängig vom Rang: Kette 3 / 4 / 5, Tritt 10, Sprungangriff neutral 7, hoch 12, Sprintangriff 9, Spezialangriff 6, Wurf 14, Kniestoß 4 je Stoß, Rakete 8, Laser 6 | wie oben (Abschnitte „# B treffer“, „# B arten“, „# V b arten“) |
+| Rückzug | Nach einer Zurückweisung weicht er ab h+1 54 Frames lang 48 px zurück (an der Arenawand weniger), ohne aktive Frames: Die Figur verliert dabei nichts. Frei ab h+55. Ab h+1 ist er nicht trefferbar, zusammen 60 bis 90 Frames (Median 62); ein gehender Boss wird ab h+63 wieder getroffen | wie oben (Abschnitte „# C reaktion“, „# C schutz“, „# V b rueckzug“; `li_r0`, `li_r2`) |
+| Abfangen | Weist er einen umwerfenden Treffer (Tritt, Sprung- oder Sprintangriff) zurück, kann er sich statt des Rückzugs abfangen: In h+1 kommt die Hälfte des Schadens zurück (10 → 5, 9 → 5, 7 → 4 LP), er fliegt 109,25 px zurück, landet auf den Füßen und ist nach 46 Frames frei und sofort trefferbar. Wann er sich abfängt, ist nicht geklärt | wie oben (`m_k20_5`, `m_k16_3`, `m_sprn20_6`, `m_sprint20_4`; `k_38`, `k_45`, `k_52`) |
+| Griff durch die Figur | Die Figur packt den Boss durch Hineinlaufen von hinten und von vorn, auch während er wartet, zu kurzem Schlag oder Armschwung ausholt und im Frame nach Beginn des kurzen Schlags. Nur in seinem Entscheidungsframe packt er zuerst (siehe „Angriffe“, Griff) | wie oben (`m_gf_*`, `b_griff_*`; `gk_*`, `k20_*`, `r24g_*`) |
+
+### Trefferreaktion und Umwerfen
+
+| Größe | Wert | Beleg |
+|---|---|---|
+| Trefferreaktion | Treffer von vorn oder auf den gehenden Boss (er dreht sich zum Angreifer): 27 Frames (h bis h+26) am Ort, er zittert um 3, 2 und 1 px (h+9, h+11, h+13), kein Rückstoß. Treffer von hinten, während er wartet oder angreift: 15 Frames | notes.md „Nachtrag: Boss“, `logs/boss.csv` (`m_z_*`, `b_k1`), `logs/boss_v.csv` (`e_*`, `r24k_50`) |
+| Nach Kettenstufe 2 | 15 Frames Reaktion, frei ab h+15. Steht die Figur dann höchstens 49 px vor ihm, beginnt er in h+16 den kurzen Schlag, sonst geht er | wie oben (`m_k20_*`, `m_k16_*`; `k_*`) |
+| Erneuter Treffer | Ein Treffer in der laufenden Reaktion trifft (Stufe 2 in h+17) und kann ebenfalls zurückgewiesen werden | wie oben (Abschnitte „# B treffer“, „# V b treffer“) |
+| Umwerfen | Tritt, Sprung- und Sprintangriff, dritter Kniestoß, Wurf und Laser werfen ihn um, wenn er nicht zurückweist oder sich abfängt. Auch die Landung der Figur nach dem Neueinstieg wirft ihn um (10 LP, siehe „Tod und Neueinstieg der Figur“, Landung trifft). Flug: Scheitel 48,24 px in K+27, Bodenkontakt K+46, Ruhe K+55 (nach dem dritten Kniestoß K+57, nach dem Laser K+61 bis K+66), bis G 127,25 px. Danach liegt er unterschiedlich lange: G = K+97 bis K+125 nach Tritt, Sprung- und Sprintangriff (42 bis 70 Frames ab der Ruhe), K+103 bis K+119 nach dem dritten Kniestoß, K+99 bis K+125 nach dem Laser, 116 bis 144 Frames nach dem Wurftreffer | wie oben (`m_k*`, `m_spr*`, `m_uw_*`; Abschnitte „# V c umwerfen“, „# V c wurf“); Landung: notes.md „Nachtrag: Rest der Spielfigur“ (`gegner_in_L`) |
+| Liegen und Aufstehen | Von K bis zum Aufstehen ist er nicht trefferbar. In G steht sein Schutzzähler auf 10; trefferbar wird er mit dem ersten Animationswechsel nach dessen Ablauf (G+11 bis G+17), ein gehender Boss ab G+16 | wie oben (Abschnitte „# C aufstehen“, „# C schutz“; `li_s*`) |
+| Spezialangriff | wirft ihn nicht um: Er taumelt 78 Frames und 135 px weit und ist danach (in G) sofort trefferbar | wie oben (`sp_*`, `r24sp_*`) |
+| Raketenwerfer | wirft ihn 109,25 px weit, an der Arenawand weniger (56 bis 98 px); frei nach 132 bis 152 Frames | wie oben (`m_mis_*`, `b_mis`; `m_70` bis `m_170`) |
+| Trefferbar in seinem Angriff | ja: von hinten in allen aktiven Frames, von vorn nur in seinem ersten aktiven Frame (Gleichstand, die Figur gewinnt), danach trifft sein Schlag zuerst. Ansturm und Körperpresse sind auch von vorn trefferbar | wie oben (`m_z_k47`, `m_z_kh*`; Abschnitt „# V c im angriff“) |
+| Geschützte Körperpresse | Beginnt er die Körperpresse ohne Vorphase (direkt aus der Trefferreaktion oder einen Frame nach dem Gehen, etwa nach dem Aufstehen oder dem kurzen Schlag), ist er bis zur Flugphase 32 bis 38 Frames nicht trefferbar. Mit Vorphase ist er von Anfang an trefferbar | wie oben (Abschnitte „# M presse schutz“, „# C ausbruch“, „# V c ausbruch“) |
+
+### Angriffe
+
+Schaden bei Rang 7 / 9 / 12 / 16 / 20 / 24 (Werte der Zwischenränge aus
+natürlichen Läufen nicht übernommen). Jeder Treffer eines umwerfenden
+Angriffs wirft um.
+
+| Größe | Wert | Beleg |
+|---|---|---|
+| Kurzer Schlag: Auslösung | Steht die Figur höchstens 49 bis 50 px vor ihm und bei dz −7 bis +6, schlägt er sofort, aus der Wartehaltung erst nach deren Ende (siehe „Griff: Auslösung“); bei dz +7 bis +9 bzw. −8 bis −9 rückt er erst in der Tiefe nach und schlägt 2 bis 7 Frames später. Außerdem nach Kettenstufe 2 (siehe oben) und statt eines Griffs außerhalb eines Entscheidungsframes | notes.md „Nachtrag: Boss“, `logs/boss.csv` (`m_dkz_*`), `logs/boss_v.csv` (`dg_31_*`) |
+| Kurzer Schlag: Ablauf | Startup 7, aktiv A+7 bis A+10, mit Treffer 7 Frames länger (bis A+17); Nachlauf 7 bis 10 Frames | wie oben (`d_k_*`; `dk_*`) |
+| Kurzer Schlag: Reichweite | nicht spiegelgleich: Schaut er nach links, trifft er von 16 px hinter bis 105 px vor sich, schaut er nach rechts, von 25 px hinter bis 95 bis 96 px vor sich (±1 px je nach Nachkommastelle). Tiefe ±12 px, Figur bis 66,75 px hoch | wie oben (`m_dk_*`, `d_k_*`; `dk_*`, `dk2_*`, `dk3_*`) |
+| Kurzer Schlag: Schaden | 7 / 8 / 9 / 10 / 11 / 12 LP, wirft immer um | wie oben (Abschnitte „# D zusammenfassung“, „# V d schaden“) |
+| Dreifacher Armschwung: Ablauf | Er geht bis etwa 78 px (72 bis 80) heran; Startup 17, 3 aktive Frames (mit Treffer 7 Frames länger). Nur nach einem Treffer folgt 35 bis 38 Frames später der nächste Schwung, höchstens drei; ohne Treffer bleibt es bei einem | wie oben (Abschnitt „# D angriffe“; `ds_x106`) |
+| Armschwung: Reichweite | Schaut er nach links, trifft er von 16 px hinter bis 105 px vor sich (±1 px); schaut er nach rechts, reicht er 17 px nach hinten (nach vorn nicht gemessen). Tiefe ±12 px, Figur bis 66,25 px hoch | wie oben (`m_ds_*`, `d_s_*`; `ds_*`) |
+| Armschwung: Schaden | je Schwung 7 / 8 / 9 / 10 / 11 / 12 LP; nur der dritte wirft um | wie oben (Abschnitte „# D zusammenfassung“, „# V d schaden“) |
+| Ansturm: Ablauf | Er wählt ihn bei etwa 100 bis 320 px Abstand: 20 Frames Ausholen, dann Lauf mit 4 px/Frame (diagonal 3,92) bis 45 Frames und 176 px weit, im ganzen Lauf aktiv; Auslauf 24 bis 30 px, Nachlauf meist 14 bis 18 Frames | wie oben (Abschnitte „# D zusammenfassung“, „# V d einzelheiten“) |
+| Ansturm: Reichweite | trifft eine Figur bis 90,75 px Höhe und bis 12 px Tiefenabstand im Trefferframe; er lenkt im Lauf 1 px je Frame in der Tiefe nach (eine Figur 13 px versetzt wird noch getroffen) | wie oben (`m_dr_*`, `d_r_*`) |
+| Ansturm: Schaden | 10 / 11 / 12 / 13 / 15 / 17 LP, wirft um | wie oben (Abschnitte „# D zusammenfassung“, „# V d schaden“) |
+| Körperpresse: Ablauf | aktiv ab A+32 bis zur Landung; Scheitel 107,5 px in A+31, Landung A+64 (mit Treffer A+71) auf dem Ort, an dem die Figur in A stand | wie oben (Abschnitte „# D zusammenfassung“, „# V d einzelheiten“) |
+| Körperpresse: Reichweite | Die Trefferfläche hängt am Boss, nicht am Landepunkt: Von A+51 (Boss etwa 70 px hoch) bis A+62 trifft er eine Figur nahe um sich (etwa 23 bis 27 px; die genaue Breite ist unsicher, siehe „Nicht übernommen“), in A+48 und nach der Landung nicht. Den Landepunkt trifft er erst, wenn er darüber ist | wie oben (`m_dp_*`, `d_p_*`; `dp_x*`) |
+| Körperpresse: Schaden | 13 / 14 / 16 / 18 / 20 / 22 LP, wirft um | wie oben (Abschnitte „# D zusammenfassung“, „# V d schaden“) |
+| Griff: Auslösung | nur in einem Entscheidungsframe: Steht die Figur dann höchstens 49 px vor ihm (dz −7 bis +6), packt er sie sofort. Kommt sie ihm sonst im Gehen so nahe, beginnt er den kurzen Schlag, aus der Wartehaltung erst nach deren Ende | wie oben (`m_bg_*`, `d_g_*`; `dg_2_*`, `dg_31_*`) |
+| Griff: Ablauf | Er wirft die Figur 59 Frames nach dem Griff (A+59) hinter sich, nach Tragen in A+67 bis A+74. Die Wurfweite ist nicht übernommen | wie oben (Abschnitte „# M wurf“, „# D zusammenfassung“, „# V d einzelheiten“) |
+| Griff: Schaden | 13 / 14 / 16 / 18 / 20 / 22 LP, wirft um | wie oben (Abschnitte „# D zusammenfassung“, „# V d schaden“; Rang 7 nur in `logs/boss_v.csv`) |
+
+### Rhythmus und Wahl
+
+| Größe | Wert | Beleg |
+|---|---|---|
+| Häufigkeit | Gegen eine passive Figur 29 bis 39 Angriffe in 8000 Frames (≈ 134 s), Median-Abstand der Angriffsbeginne 199 bis 288 Frames (einzelne Abstände 76 bis 450 Frames, direkt nach einem kurzen Schlag einmal 28). Der Rang (7 bis 24) ändert das nicht deutlich | notes.md „Nachtrag: Boss“, `logs/boss.csv` (`m_e_r*`, Abschnitt „# E rhythmus“), `logs/boss_v.csv` (`p_r*`, `q_r*`) |
+| Wahl nach Abstand | Aus jeder Entfernung kommen mehrere Angriffe: nah (unter 80 px) kurzer Schlag oder Griff, auch Körperpresse und Armschwung; mittel (80 bis 160 px) Armschwung, Körperpresse und Ansturm; fern (über 160 px) Ansturm, Körperpresse und Armschwung, selten Griff. Die Anteile wechseln von Lauf zu Lauf | wie oben (Abschnitte „# E rhythmus“, „# M rhythmus“, „# V e wahl nach abstand“) |
+
+### Verstärkung
+
+| Größe | Wert | Beleg |
+|---|---|---|
+| Halbe LP | Fallen seine LP auf die Hälfte der Max-LP oder darunter (55 bei 110, 50 bei 100), erscheinen zwei EDDY, nach einem Treffer in h+1 | notes.md „Nachtrag: Boss“, `logs/boss.csv` (`m_f_h56`, Abschnitt „# F wellen“), `logs/boss_v.csv` (`ws_55`, `ws_56`, `w9s_50`, `w9s_51`, `w_r58_*`) |
+| Viertel der LP | Bei einem Viertel oder darunter (27 bei 110, 25 bei 100) erscheint ein DICK. Ein zweiter kommt nur ab Rang 16 (gemessen bei 16 und 20, bei 12 und 15 nicht; weitere Ränge unter „Fernangriffe der Gegner“, Raketen-DICK), und zwar 39 bis 40 Frames, nachdem neben dem Boss höchstens drei andere Gegner im Spiel sind: nach dem ersten DICK, wenn das mit ihm schon gilt, sonst nach dem Freiwerden eines Platzes. Maßgeblich ist der Rang am Ende dieser Wartezeit | wie oben (`m_f_leer*`, `m_f_ow*`, `m_f_e20`; `ws_27`, `w9s_25`, `w_v28` bis `w_v30*`); notes.md „Nachtrag: Fernangriffe der Gegner“, `logs/fern.csv` (`T welle`) |
+| Höchstzahl | Neben dem Boss leben höchstens vier Gegner: Leben schon vier, kommt kein DICK; es zählt die Gesamtzahl. Sinkt nach der Welle bei halben LP die Zahl lebender WOOKY und EDDY unter zwei, erscheinen sofort zwei WOOKY | wie oben (`m_f_alle20`, `m_f_owe*`; `w_v*_e1`, `w_v*_e2`) |
+| Welcher LP-Wert zählt | auch ein nur einen Frame gesenkter: Ein zurückgewiesener Treffer unter die Schwelle löst die Welle aus | wie oben (`f_rueck*`; `w_h56` bis `w_h59`) |
+
+### Fall und Stage-Ende
+
+| Größe | Wert | Beleg |
+|---|---|---|
+| Tod | erst bei LP unter 0; mit genau 0 LP kämpft der Boss weiter (greift an und trifft) | notes.md „Nachtrag: Boss“, `logs/boss.csv` (`g_lp0*`), `logs/boss_v.csv` (`t_lp0`) |
+| Ablauf | ab t+1 Todesflug. Die übrigen Gegner brechen in t+2 bis t+3 zusammen, ein gerade liegender oder getroffener erst nach seiner Reaktion | wie oben (Abschnitte „# G fall“, „# M fall“; `t_todk`, `t_k1100r`, `t_todsp`) |
+| Treffer im Sterben | Stirbt er im ersten aktiven Frame des Armschwungs, bleibt das Angriffsattribut in t und t+1 gesetzt, die Figur verliert trotzdem nichts | wie oben (`g_s17`; `t_s397`, `t_s398`) |
+
+Zeiten bis zum Schriftzug „STAGE 1 CLEAR“ und zum Stagewechsel stehen unter
+„Nicht übernommen“; Punkte für den Boss und das Verschwinden liegender
+Gegenstände nach seinem Tod unter „Gegenstände und Waffen“.
 
 ## Unverwundbarkeit
 
@@ -271,7 +501,9 @@ gegen die passive Figur. Neue Symbole in diesem Abschnitt:
 | nach erlittenem Treffer | 27 Frames (≈ 0,45 s), solange die Trefferreaktion läuft, unabhängig vom Schaden | notes.md „Messgrößen“, `logs/a5_schutz.csv` (`hurt`, `hurt_b`, `hurt_c`) |
 | nach dem Aufstehen | 35 Frames (≈ 0,59 s), ab dem Aufstehen | wie oben, dazu der gekennzeichnete Eingriff `schutz_eingriff` |
 | nach dem Spezialangriff | während der ganzen Aktion und danach 20 Frames Schutz-Timer `FFAA69`: verwundbar ab P+71, zusammen 70 Frames (≈ 1,17 s), siehe „Spezialangriff“ | notes.md „Nachtrag: Spezialangriff“, `logs/spezial.csv`, `logs/spezial_v.csv` |
+| nach dem Neueinstieg | vom Erscheinen bis L+199 (Schutz-Timer `FFAA69` steht in der Landung L auf 200 und erreicht 0 in L+200): 252 Frames bei einer Landung auf dem Boden (≈ 4,2 s), davon 200 nach der Landung, siehe „Tod und Neueinstieg der Figur“ | notes.md „Nachtrag: Rest der Spielfigur“, `logs/rest.csv` (`rest_d_*`), `logs/rest_v.csv` (`rest_v_d_*`) |
 | Mechanismus | Die Gegner greifen auch während der Schutzfenster nach Treffer und Aufstehen an, ihre Treffer werden ignoriert (kein LP-Verlust). Nach dem Aufstehen beginnt in den meisten Fenstern, in denen ein Gegner in Reichweite steht, ein Angriff im Fenster (43 von 47 bzw. 24 von 31 in zwei Messungen), mit aktiven Frames im Fenster in 42 bzw. 23. Nach einem Treffer seltener: 46 von 333 bzw. 63 von 193 Fenstern mit Gegner in Reichweite mit Angriffsbeginn, 29 bzw. 50 mit aktiven Frames | notes.md „Nachtrag: Verhalten der Nahkämpfer“, `logs/verhalten.csv` (Zusammenfassung „schutz“ der Läufe mit passiver Figur `a_*`, `akt_*`, `r_*`, `c_*`; Einzelfenster unter `schutz`), `logs/verhalten_v.csv` (`schutz`: `v_p_*`, `v_e_*`) |
+| gegen Geschosse | Geschosse treffen auch während der 27 Frames nach einem erlittenen Treffer (gemessen an den Geschossen des DICK): Die zweite Kugel einer Salve trifft in der Trefferreaktion auf die erste. Nach dem Aufstehen, im Spezialangriff und im Schutz nach dem Neueinstieg (Schutz-Timer `FFAA69`) nicht gemessen | notes.md „Nachtrag: Fernangriffe der Gegner“, `logs/fern.csv` (`A geschosse`), `logs/fern_v.csv` (`schutz`) |
 | Liegen nach dem Umwerfen | 121–122 Frames (≈ 2,0 s) vom Umwerfen bis zum Aufstehen, durch Tastendrücke verkürzbar (siehe „Umgeworfen werden“) | notes.md „Messungen im Einzelnen“, „Nachtrag: Griff und Würfe“ |
 
 Im Original nehmen die Gegner auf den Schutz keine Rücksicht: Sie greifen in
@@ -285,7 +517,9 @@ geschützte Figur, sind selten drei oder vier Angriffe zugleich aktiv
 Wirkung. Für unser Spiel heißt das: Der Schutz macht Treffer wirkungslos,
 die Gegner warten nicht darauf, dass er endet. Auch während des
 Spezialangriffs sind Gegnerangriffe nachweislich aktiv und bleiben ohne
-Wirkung („Nachtrag: Spezialangriff“).
+Wirkung („Nachtrag: Spezialangriff“). Geschosse sind vom Schutz nach einem
+Treffer ausgenommen: Sie treffen auch in der Trefferreaktion (siehe
+„Fernangriffe der Gegner“).
 
 ## Lebenspunkte (Referenz für das Verhältnis zum Schaden)
 
@@ -294,6 +528,7 @@ Wirkung („Nachtrag: Spezialangriff“).
 | Spielfigur | 72 LP | notes.md „Gefundene Adressen“ (`FFA9D0`) |
 | erster Gegnertyp in Stage 1 („WOOKY“) | 16 LP (die zu Beginn stehenden; später erscheinende je nach Rang 22–34): eine volle Kette (3 + 4 + 5 + 10 = 22) besiegt ihn | notes.md, `logs/a5_schaden.csv` |
 | zweiter Gegnertyp in Stage 1 (pink, „EDDY“) | 30 LP (später erscheinende 32–42): nach einer vollen Kette liegt er mit 8 LP | wie oben (`combo_c`) |
+| Boss der ersten Stage („DOLG“) | 90 / 100 / 110 / 120 LP bei Rang 7–8 / 9–15 / 16–23 / 24, beim Erreichen der Arena festgelegt (siehe „Boss“). Seine Treffer kosten die Figur 7 bis 22 LP, eine volle Kette ohne Zurückweisung macht 22 | notes.md „Nachtrag: Boss“, `logs/boss.csv` (`a_r*`, `a2_r*`), `logs/boss_v.csv` (`a_r*`, `a2_r*`) |
 
 ## Gegenstände und Waffen
 
@@ -332,6 +567,7 @@ nicht anders genannt. Andere Gegnertypen können andere Reichweiten haben
 | Stage-Ende | Liegende Gegenstände verschwinden etwa 480 Frames nach dem Sieg über den Boss | wie oben (`item_bot1`, Bot `item_v_b1`) |
 | Waffe verlieren | Ein Treffer gegen die Figur lässt die Waffe fallen. Sie liegt mit ihrer Restmunition und neuer Liegezeit (700 Frames) und kann wieder aufgenommen werden | wie oben (`item_f_verlust`, `item_v_mis_auf`) |
 | Munition leer | Die Waffe wird 11 Frames nach dem letzten Abschuss (P+18) bzw. im Frame nach dem Aktionsende weggeworfen und ist nach 61 Frames verschwunden. Sie kann nicht wieder aufgenommen werden | wie oben (`item_f_waffe`, `item_v_mis_leer`) |
+| Waffe eines besiegten DICK | Seine Waffe fliegt im Bogen und liegt 44 Frames nach dem tödlichen Treffer als Gegenstand (stand der DICK höher, bis 4 Frames später): GUN mit 5 Schuss bzw. Raketenwerfer mit 3 Schuss, unabhängig von seinen verschossenen Schüssen, Liegezeit 700 Frames | notes.md „Nachtrag: Fernangriffe der Gegner“, `logs/fern.csv` (`e_*`, `E Bogen`, `T bogen`), `logs/fern_v.csv` (`tod`) |
 
 ### Waffen allgemein
 
@@ -370,17 +606,7 @@ nicht anders genannt. Andere Gegnertypen können andere Reichweiten haben
 
 ## Nicht übernommen (unsicher oder nicht gemessen)
 
-- Mindestabstand des Standardschlags (Treffer bis hinunter zu 41 px
-  beobachtet).
-- Reichweite der Sprungangriff-Varianten „hoch“ und „unten“.
-- Blickrichtung links: Reichweite von Schlag und Sprungangriff vermutlich
-  1 px kürzer (je eine Gegenprüfung; beim Griff gesichert: 38 statt 39 px).
-- Richtung beim Kettendruck: Zum Gegner hin gehalten gibt es einen
-  Ausfallschritt von etwa 20 px mit späterem Treffer, vom Gegner weg bricht
-  die Kette ab (einzelne Läufe).
 - Schaden des Roboters (schwankt auch bei gleichem Rang).
-- Wurfweite der Boss-Würfe (DOLG in Stage 1 packt und wirft; der Schaden
-  steht oben, die Weite nur aus einem Lauf).
 - Reichweite des geworfenen Gegners als Geschoss (hängt vom Zieltyp ab).
 - Werte der anderen Figuren in Kette und Würfen (Mack: Abschlusstritt 8 statt
   10; Würfe der anderen Figuren weichen ab).
@@ -439,7 +665,9 @@ aller Messungen im jeweiligen Nachtrag in notes.md):
 - Wirkung der 20 Frames Schutz-Timer nach dem Spezialangriff bei Mack, Ginzu
   und Baby Head (nur der Timer ist gemessen, seine Wirkung nur beim
   Captain).
-- Spezialangriff gegen Bosse, schwerere und liegende Gegner (nicht gemessen).
+- Spezialangriff gegen schwerere und liegende normale Gegner und gegen die
+  Bosse späterer Stages (nicht gemessen); gegen den Boss der ersten Stage
+  siehe „Boss“.
 
 **Sprint**
 
@@ -543,8 +771,122 @@ aller Messungen im jeweiligen Nachtrag in notes.md):
   Angriffsbeginn, auf 48 px begrenzt (Messagent und Gegenprüfer), aber
   einmal 32 bei 44 px (Gegenprüfer) und einmal 3 bei per Eingriff gehaltenen
   25 px (dritte Messung); wann das Spiel ihn setzt, ist nicht gemessen.
-- Reichweite von SKIP-Messerwurf und DICK (Pistole, Rakete): nicht gemessen
-  (Messerwurf kam nicht vor, DICK schoss auf die passive Figur nicht).
+
+**Fernangriffe der Gegner**
+
+- Wie oft der SKIP sein Messer wirft: Messagent 0,83 bzw. 0,58 Würfe je
+  1000 Frames (Abstände 247 bis 3251 Frames), Gegenprüfer je Lauf 0,12 bis
+  1,5 (206 bis 2860), dritte Messung 0,17 bis 0,67 (365 bis 3903); die Rate
+  hängt vermutlich von Lage, anderen Gegnern und dem Umwerfen der Figur ab
+  (nicht getrennt gemessen).
+- Wie oft der DICK eine Salve schießt: Messagent 0,82 bzw. 1,57 Salven je
+  1000 Frames (Abstände 181 bis 1792), Gegenprüfer je DICK 0,38 bis 1,76
+  (218 bis 4090), dritte Messung 0,50 bis 2,34 (82 bis 1745; zwei ihrer
+  Läufe wiederholen Läufe des Messagenten mit anderem Rang).
+- Wie oft der DICK eine Rakete schießt (Doppelschüsse mitgezählt, Abstände
+  ohne Doppelschuss): Messagent 1,27 bzw. 1,42 je 1000 Frames (Abstände 219
+  bis 2632), Gegenprüfer 1,03 bis 2,05 (207 bis 2204), dritte Messung 1,03
+  bis 2,39 (204 bis 1949).
+- Abstand des DICK zur Figur außerhalb der Schüsse (Anteil der Frames bei
+  100 bis 139 / unter 20 / ab 140 px): Messagent 38 / 20 / 6 %, Gegenprüfer
+  je DICK 28–61 / 6–35 / 0–10 %, dritte Messung 25–54 / 13–43 / 1–10 %;
+  gesichert ist nur, dass er zum Schießen auf 112 bis 136 px geht.
+- Verhalten des DICK, wenn die Figur auf ihn zugeht: Er weicht nicht gezielt
+  aus, sonst aber je Lauf verschieden (Frames, in denen er in x bleibt /
+  zurückweicht / näher kommt: Messagent 217 / 141 / 35 von 393, Gegenprüfer
+  101 / 145 / 0 von 246, dritte Messung 156 / 267 / 83 von 507 und
+  31 / 90 / 1 von 122).
+- Anteil der Doppelschüsse des Raketen-DICK: Messagent 8 von 74,
+  Gegenprüfer 2 von 76, dritte Messung 2 von 108 Raketen (wann ein
+  Doppelschuss möglich ist, ist gesichert).
+- Explosion der Rakete bei genau 26 px Höhe der Figur: beim Messagenten in
+  2 von 3 Proben ein Treffer, beim Gegenprüfer in 3 von 10 Frames, keine
+  dritte Messung (gesichert: bis 25 px Treffer, ab 27 px nie).
+- Messer am rechten Bildrand: nur beim Gegenprüfer gemessen (letzte Lage
+  18 px rechts vom Bild nach 77 Frames, Figur per Eingriff 75 px hoch); der
+  Messagent sah nur Würfe nach links ohne Treffer, keine dritte Messung.
+- Abstände der Messerstiche des SKIP außerhalb einer Serie: Zwischen zwei
+  Serien liegen auch 46 bis 53 Frames (Messagent 46–51, Gegenprüfer 46–51,
+  dritte Messung 47–53), an einer Begrenzung sticht er mehrmals
+  hintereinander im Abstand von 30 bis 43 Frames (Gegenprüfer 6 Stiche,
+  dritte Messung 8 Stiche; Messagent kein Fall). Nur beim Prüfen aus den
+  Belegen gelesen, nicht ausgewertet. Die Angabe „aufeinanderfolgende Stiche
+  alle 37 bis 49 Frames“ unter „Reichweite der Gegnerangriffe“ ist damit
+  vermutlich zu eng (siehe notes.md „Nachtrag: Fernangriffe der Gegner“).
+- Nicht gemessen: Regel für zwei normale Kugeln nacheinander in einer Salve,
+  wovon das Salvenbudget abhängt (dritte Messung: Rang 7 60 und 80, Rang 12
+  40 bis 80, Rang 14 40 bis 100, Rang 22 20 bis 120, Rang 24 20 bis 100
+  Frames), die genaue Abbruchgrenze der Salve (zwischen 167 und 188 px; in
+  der Tiefe), die Bedingung für das schnelle Gehen des DICK, ob eine Sperre
+  gleichzeitige Schüsse mehrerer DICK verhindert, der Messerwurf bei
+  versperrtem Weg, das Messer gegen Wände und die Geschosse des DICK gegen
+  Ölfässer, warum der Pistolen-DICK bei Rang 16 bis 19 ausbleibt, Geschosse
+  im Schutz nach dem Aufstehen, im Spezialangriff und nach dem Neueinstieg
+  und die Fernkämpfer anderer Stages.
+
+**Boss**
+
+- Wie oft der Boss Treffer zurückweist: Im Bot-Lauf steigt der Anteil
+  zurückgewiesener Schlagtreffer mit dem Rang (Messagent 18 / 15 / 19 / 24 /
+  28 / 39 % bei Rang 7 / 9 / 12 / 16 / 20 / 24, Gegenprüfer 16 % bei Rang 7,
+  36 % bei Rang 24 und 34 % bei natürlichem Rang 18–24; bei Kettenstufe 3
+  allein Messagent 0 von 7, Gegenprüfer 18 von 47, dritte Messung 3 von 27).
+  Je Trefferart beim Gegenprüfer (Rang 7 bis 24): Stufe 1 33 von 181, Stufe
+  2 23 von 83, Tritt 8 von 25 (dazu 10 abgefangen), Sprungangriff neutral 5
+  von 9, hoch 5 von 9, Sprintangriff 5 von 22; beim Messagenten (Rang 24)
+  siehe `logs/boss.csv` („# B arten“).
+- Wann der Boss zurückweist und wann er sich statt des Rückzugs abfängt:
+  keine Regel gefunden (Kettenstufe, Zeit seit dem letzten Treffer, LP-Stand
+  und sein Zustand scheiden aus, ein um wenige Frames verschobener Start
+  kehrt das Ergebnis um; ohne Arena-WOOKY nahm er beim Messagenten jeden
+  Treffer an, beim Gegenprüfer wies er auch dann zurück).
+- Neue Kette nach einer Pause gegen den Boss: kein festes Fenster
+  (Messagent: zweiter Schlag bis h+39 zurückgewiesen, Gegenprüfer in einer
+  anderen Lage ab h+30 angenommen; keine dritte Messung).
+- Erste Aktion des Bosses nach dem Aufstehen, wenn die Figur 50 px oder
+  weiter vor ihm steht: Messagent Griff in G+5 (55 px, die Figur schlug
+  gerade), Gegenprüfer kurzer Schlag in G+4 bzw. G+10 (55 bzw. 65 px; gegen
+  eine Figur im Spezialangriff in G+7), dritte Messung kein Angriff, er
+  weicht zurück; bis 49 px schlugen Gegenprüfer und dritte Messung
+  übereinstimmend in G+1 zu.
+- Ob der Boss trefferbar ist, während er die Figur hält: Messagent schloss
+  aus S+4 = 2 auf „nicht trefferbar“, der Gegenprüfer sah die Trefferfläche
+  in allen Halteframes gesetzt, gemessen hat es keiner (kein zweiter
+  Angreifer; dritte Messung nicht gemessen).
+- Wurfweite des Boss-Wurfs: Ruhe 225 bis 230 px nach dem Wurf (Messagent und
+  dritte Messung, freie Arena; in drei Bot-Läufen des Messagenten 166 bis
+  206 px), erster Bodenkontakt 174 bis 196 px vom Griffort (dritte Messung)
+  bzw. 223 bis 301 px (Gegenprüfer, mit Tragen), an der Wand 95 und 151 px
+  (dritte Messung).
+- Rhythmus des Bosses gegen eine angreifende Figur (Bot): kurze Schläge je
+  8000 Frames 4 bis 13 (Messagent), 15 bis 24 (Gegenprüfer) bzw. 1 bis 6
+  (dritte Messung), Median-Abstand der Angriffe 149 bis 185, 122 bis 175
+  bzw. 165 bis 193 Frames.
+- Anteile der Angriffswahl auf große Entfernung (über 160 px): Armschwung
+  38 / 61 / 8, Ansturm 63 / 57 / 16, Körperpresse 50 / 50 / 14, Griff
+  13 / 0 / 3 Fälle (Messagent / Gegenprüfer / dritte Messung).
+- Wie oft die geschützte Körperpresse direkt aus der Trefferreaktion kommt:
+  28 von 414 Trefferreaktionen (Messagent), 0 von 268 (Gegenprüfer), 4 von
+  71 (dritte Messung).
+- Genaue Breite der Trefferfläche der Körperpresse: ±25 px um den Boss
+  (Messagent), etwa 23 px vor ihm (Gegenprüfer), bis 27 px, 35 nie (dritte
+  Messung).
+- Reichweite des Armschwungs nach vorn, wenn der Boss nach rechts schaut
+  (an der Arenawand nicht messbar), Lebenspunkte bei Rang 10, 13, 14, 17,
+  18, 21 und 22 und ein zweiter DICK bei Rang 13 (nicht gemessen). Bei Rang
+  9, 12, 14 und 15 kam in der Messung der Fernangriffe kein zweiter (siehe
+  „Fernangriffe der Gegner“, Raketen-DICK: bei Rang 15 und darunter nie).
+- Tod im ersten aktiven Frame des kurzen Schlags: nur vom Messagenten
+  gemessen (wie beim Armschwung: Attribut bleibt gesetzt, die Figur verliert
+  nichts); Gegenprüfer nicht geprüft.
+- Zeiten bis zum Schriftzug „STAGE 1 CLEAR“ und zum Stagewechsel:
+  Siegerpose t+127 bis t+139 (nach tödlichem Spezialangriff t+97 bzw. t+98),
+  beim Messagenten und in der dritten Messung Schriftzug 105 und
+  Stagewechsel meist 413 Frames nach der Pose (t+232 bzw. t+540 bis t+552;
+  in drei Bot-Läufen 415 bis 453 Frames danach, bis t+581), beim
+  Gegenprüfer Schriftzug t+244 und Stagewechsel t+545 und t+553 (nach
+  Spezialangriff t+211 bzw. t+520); in zwei Bot-Läufen des Messagenten kam
+  die Pose schon in t+55 bzw. t+61.
 
 **Gegenstände und Waffen**
 
@@ -587,3 +929,51 @@ aller Messungen im jeweiligen Nachtrag in notes.md):
 - Liegezeit in der Zeitlupe nach dem Bosstod halb so schnell und
   Verschwinden der Gegenstände beim Kamerasprung in Stage 8: nur vom
   Gegenprüfer beobachtet.
+
+**Rest der Spielfigur**
+
+- Laufen in die Tiefe nach einem Treffer der Stufe 1: Der Messagent misst
+  Bewegung erst ab h+29 (Stufe 2 und 3 gesichert ab h+28), der Gegenprüfer hat
+  Stufe 1 nicht gemessen, eine dritte Messung gab es nicht. Die Zeile
+  „Recovery-Frames Standardschlag (Treffer)“ („Laufen oder nächster Schlag“
+  ab h+13) ist für Laufen zur Seite gemessen.
+- Sprungangriff runter gegen einen Gegner in seinem eigenen Angriff: Der
+  Messagent traf den schlagenden EDDY bei 46 px statt bis 42 px wie gegen
+  gehende Gegner, der Gegenprüfer hat das nicht gemessen, eine dritte Messung
+  gab es nicht.
+- Eingabevarianten beim Sprungangriff, die nur der Gegenprüfer gemessen hat:
+  hoch und rechts zugleich im Sprungdruck gab den Sprungangriff mit Richtung
+  (7 LP) statt „hoch“, runter nur im Sprungdruck den neutralen (7 LP), hoch
+  vor dem Sprungdruck gedrückt und gehalten „hoch“ (12 LP). Der Messagent hat
+  das nicht gemessen, eine dritte Messung gab es nicht.
+- Schutz-Timer vor der Landung nach dem Neueinstieg: Der Gegenprüfer sah den
+  Wert 200 schon ab dem Erscheinen (Abnahme ab L+1), der Messagent hat nur den
+  Wert 200 in L ausgewertet, eine dritte Messung gab es nicht (für den Schutz
+  ohne Folgen, der Status schützt ab dem Erscheinen).
+- Landung nach dem Neueinstieg an der Mech-Stelle: Beim Gegenprüfer verlor der
+  Mech in L 5 LP und der Reiter in L+1 5 LP und wurde abgeworfen. Der
+  Messagent hat dort nicht gemessen, die dritte Messung hat es nicht
+  ausgewertet (nur: der Reiter verliert in L noch keine LP, wie beim
+  Gegenprüfer).
+- Abschnittsgrenze vor dem Mech als Halt auch für die gehende Figur
+  (Bildschirm-x 200): nur eine Erkundung der dritten Messung außerhalb des
+  Belegs, vom Messagenten in der ersten Messung und vom Gegenprüfer nicht
+  gemessen.
+- Flugweite beim Tod durch eine Klinge: nur in der dritten Messung, dort
+  62,375 px dreimal (SKIP), 171,625 px in Stage 5 und 0 px, wenn die Figur an
+  der Bildkante stoppt. Der Messagent hatte keinen Klingentod, der
+  Gegenprüfer hat beim Klingentod nur den Neueinstieg (t+107) ausgewertet.
+- Gegner während Tod und Fall: Bei Messagent und Gegenprüfer begann zwischen
+  t+1 und dem Erscheinen nie ein Gegner einen Angriff. In zwei Läufen der
+  dritten Messung, die dafür nicht ausgewertet wurden, schon (SKIP nach
+  seinem tödlichen Ausfallstich in t+4, ein Gegner in Stage 9 in t+17);
+  die Ursache ist nicht geklärt.
+- Schutz nach dem Neueinstieg außerhalb von Stage 1: Messagent und
+  Gegenprüfer haben nur Stage 1 gemessen. Läufe der dritten Messung in Stage
+  4, 5 und 9 zeigen dieselben Werte (Status 3 bis L+199, Timer 0 in L+200),
+  ausgewertet hat sie niemand.
+- Tod der Figur, wenn sich zwei Sonderfälle überlagern (Klinge oder Rollen an
+  einer Wand), weitere tragende Untergründe außer dem Ölfass (und ein Fass
+  vor der Figur), die Wirkung der Landung auf Gegner mit 5 LP oder weniger
+  und auf Gegner außerhalb des Bildes sowie der Schutz nach dem Neueinstieg
+  bei den anderen Figuren und gegen Geschosse: nicht gemessen.

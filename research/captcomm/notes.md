@@ -40,6 +40,9 @@ Kennzeichnung in diesem Dokument:
 | 16. Nachtrag: Reichweite der Gegnerangriffe | erledigt: Startup, aktive Frames, Trefferstopp, Abbruchfenster um den Zielabstand S+0x96 ([Ziel − 31, Ziel + 32]), Tiefe, Höhe, Umwerfen, Nachlauf und Serien der Angriffe von WOOKY, EDDY und SKIP sind gesichert (Messagent und Gegenprüfer; die 21 Abweichungen hat eine dritte Messung als Regel bzw. Spanne geklärt). Unsicher: Sprungtritt in A+45 und knapp außerhalb seiner Reichweite (d 60 bzw. 59), SKIP-Grenzen je Blickrichtung der Figur, Hinterkante bei einer Figur, die zum Gegner schaut, Wahl des Ziels. Offen: wann S+0x96 gesetzt wird, SKIP-Messerwurf, DICK. Siehe „Nachtrag: Reichweite der Gegnerangriffe“ |
 | 17. Nachtrag: Spezialangriff und Sprint | erledigt, in zwei Nachträgen. Spezialangriff: Auslösung, Ablauf, Schutz (70 Frames: Aktion und danach 20 Frames Timer `FFAA69`), Schaden 6 mit Umwerfen, wachsende Fläche und aktive Frames, Kosten 9 LP nur bei Treffer mit LP-Untergrenze 0 sowie die Unterschiede der vier Helden gesichert (Gegenprüfung V4; drei Abweichungen durch eine dritte Messung als Regeln geklärt). Unsicher bleiben Gegnerpose, Höhe des Gegners, Tiefe der Explosionen von Ginzu und Baby Head, Macks Tiefenbewegung und der Leerschlag, siehe „Nachtrag: Spezialangriff“. Sprint: (Messagent, Gegenprüfer und dritte Messung, `belege_sprint.sh`): Eingabefenster und Dauer, Tempo je Frame (gerade und diagonal, dazu ein Fehler des Spiels diagonal nach rechts; in der Tiefe bis Sprintframe 41), Rand der Tiefe, Lenken und Abbrechen, Sprintangriff (Ablauf, aktive Frames, Schaden, Reichweite, Rutschen), Sprintsprung, Sprint-Sprungangriff (Schaden, aktive Frames, Höhe, Reichweite in A+20) und kein Griff aus dem Sprint. Unsicher bleiben die Reichweite des Sprint-Sprungangriffs nach A+20, der Sprintangriff gegen einen Gegner genau über der Figur und der Flug nach dem Sprint-Sprungangriff. Offen sind das Tiefentempo nach Sprintframe 41, die Reichweite in A+13, die genaue Höhengrenze, Gegner in der Luft und die anderen Figuren, siehe „Nachtrag: Sprint“ |
 | 18. Nachtrag: Gegenstände und Waffen | erledigt: Aufnehmen, Heilwerte der fünf Essen, Liegezeit, Raketenwerfer, Laser, Hammer, GUN, M-GUN, Behälter und Punkte sind gesichert (Messagent, Gegenprüfer und dritte Messung zu den acht Abweichungen, Skript im Repo). Unsicher bleiben u. a. der Aufnahmebereich des Raketenwerfers rechts (35 bzw. 37 px), die größte Laserreichweite (gesichert sind nur mindestens 245 px), der Laser beim Tod des ersten Gegners und der Grundwert der SKIP-Punkte (250 oder 300). Siehe „Nachtrag: Gegenstände und Waffen“ |
+| 19. Nachtrag: Boss | erledigt: Lebenspunkte nach Rang (90 / 100 / 110 / 120, beim Erreichen der Arena festgelegt; S+0x9A ist beim Boss nur die Balkenskala 72, die Max-LP stehen in S+0xB7), Super-Armor (Kettenstufe 1 bis 3, Tritt, Sprung- und Sprintangriff zurückweisbar, LP in h+1 auf den Wert vor dem Treffer, danach harmloser Rückzug oder bei umwerfenden Treffern Abfangen; Spezialangriff, Kniestoß, Wurf, Rakete und Laser zählen immer), Trefferreaktion und Umwerfen, Schutz nach dem Aufstehen und bei der Körperpresse ohne Vorphase, alle fünf Angriffe mit Auslösung, Zeiten, Reichweite und Schaden, Rhythmus, Verstärkung (zwei EDDY bei halben LP, ein DICK bei einem Viertel, ein zweiter nur ab Rang 16, höchstens vier Gegner neben dem Boss) und Fall sind gesichert (Messagent, Gegenprüfer und dritte Messung, Skript im Repo; 30 Zeilen gesichert, 20 gesichert (3. Messung), 8 unsicher). Unsicher bleiben Anteil und Regel der Zurückweisung (auch wann er sich abfängt), die unterbrochene Kette, seine erste Aktion nach dem Aufstehen ab 50 px, das Halten der Figur, die Wurfweite, der Rhythmus gegen eine angreifende Figur und die Zeiten bis „STAGE 1 CLEAR“. Offen sind die LP bei einzelnen Rängen, der zweite DICK bei Rang 13 (bei Rang 14 und 15 keiner, siehe „Nachtrag: Fernangriffe der Gegner“) und die Reichweite des Armschwungs nach vorn bei Blick rechts, siehe „Nachtrag: Boss“ |
+| 20. Nachtrag: Fernangriffe der Gegner | erledigt: Messerwurf und Stichserie des SKIP sowie Pistole und Raketenwerfer des DICK gemessen (Messagent, Gegenprüfer und dritte Messung, `belege_fern.sh`). Gesichert sind die Auslösung über einen Zielpunkt relativ zur Figur (SKIP 150 bzw. 64 px, DICK 128 oder 120 px), Ablauf und Geschosse (Slot, Tempo, gerade Bahn, Ende an Bildrand und Arenawand), die Trefferflächen als Regel in Weltkoordinaten, Tiefe, Höhe, Schaden je Rang, Umwerfen und Abwehr (nur das Messer lässt sich zerschlagen, nur die Explosion überspringen), Treffer auch in der Trefferreaktion der Figur, die Salvenlänge aus dem Budget S+0xAB, Erscheinen, LP und Bewegung des DICK (zweiter Raketen-DICK nur ab Rang 16 bei höchstens 4 belegten Gegnerslots) und seine Waffe beim Tod. Die Gegenprüfung bestätigte 37 von 55 Zeilen; von den 18 Abweichungen hat die dritte Messung 13 durch gemeinsame Regeln geklärt. Unsicher bleiben die Raten der drei Fernangriffe, Abstandsanteile und Rückzug des DICK, der Anteil der Doppelschüsse, die Explosion bei 26 px Höhe, das Messer am rechten Bildrand und die Stichabstände zwischen Serien und an einer Begrenzung (gekennzeichnet als Widerspruch zur gesicherten Spanne „37 bis 49 Frames“ für aufeinanderfolgende Stiche; mechanik.md bleibt dort unverändert). Offen sind u. a. die Regel für zwei normale Kugeln nacheinander, wovon das Salvenbudget abhängt, und die Fernkämpfer anderer Stages, siehe „Nachtrag: Fernangriffe der Gegner“ |
+| 21. Nachtrag: Rest der Spielfigur | erledigt: Gesichert sind der Nachlauf der Kettenstufen 2–4 (Treffer und Leerschlag, Tritt nicht abbrechbar, kein Puffer; nach einem Treffer bricht nur Laufen zur Seite die Pose ab), Sprungangriff hoch und runter (aktive Frames, Höhengrenze, Reichweite, Schaden), Gegner mit genau 0 LP (Tod erst unter 0) und Tod und Neueinstieg der Figur: Ablauf je Todesart, Fall bis auf den Untergrund, Steuerung, Schutz 252 Frames ab dem Erscheinen (Stage 1), die Landung wirft alle Gegner im Bild um, Rang −3, Leben. Gesichert ist auch Rang −3 beim Stage-Wechsel. Ebenso gesichert sind die Reichweite hinter der Figur je Blickrichtung des Gegners, Blick links 1 px kürzer, Richtung beim Kettendruck, Treffer in der Luft und gleichzeitiger Treffer. Gemessen hat Messagent M8, Gegenprüfer V8 bestätigte 37 von 40 Zeilen, die drei Abweichungen D1, D4 und F1 hat eine dritte Messung als Regeln geklärt, Skript im Repo. Unsicher bleiben Laufen in die Tiefe nach Stufe 1, der Sprungangriff runter gegen einen schlagenden Gegner und drei nur vom Gegenprüfer gemessene Eingabevarianten des Sprungangriffs. Ebenso unsicher sind der Timer vor der Landung, die Landung auf dem Mech, die Abschnittsgrenze vor dem Mech für die gehende Figur, die Flugweite beim Klingentod, zwei Gegnerangriffe vor dem Erscheinen in Läufen der dritten Messung und der Schutz außerhalb von Stage 1. Offen sind überlagerte Todesarten, weitere tragende Untergründe, die Landung gegen schwache und ferne Gegner und der Schutz nach dem Neueinstieg bei anderen Figuren, siehe „Nachtrag: Rest der Spielfigur“ |
 
 ### Umgebung
 
@@ -117,6 +120,15 @@ Kennzeichnung in diesem Dokument:
 | `belege_item.sh` | alle 486 Läufe für „Gegenstände und Waffen“ von vorn (etwa 14 min, `ITEM_PARALLEL` Läufe gleichzeitig, Standard 3). Teil A: Bot je Stage (`grafik/bot.lua` mit `scenarios/item_bot.lua`) mit Savestates. B: Waffen in der Bossarena aufnehmen (Savestates `item_hammer`, `item_laser`, `item_missile`). C: Einzelläufe mit `scenarios/item_frei.lua`. D: Auswertung mit `messen_item.py` nach `logs/item.csv`. V: Gegenprüfung (`scenarios/item_v_bot.lua`, `item_v_frei.lua`, Auswertung `messen_item_v.py` nach `logs/item_v.csv`). W: dritte Messung (`item_d_*`, an `logs/item.csv` angehängt). Eingriffe stehen je Lauf (`CC_POKES`, `CC_REL`, `CC_ZU`, `CC_LP`, `CC_ELP`, `CC_SETZE`, `CC_RANG`). Löscht danach die eigenen Rohabzüge, die Savestates `item_*` bleiben. Voraussetzung: Savestates `stage1` bis `stage9`, `ingame`, `anlauf_c` | ja: Teil A–D zweimal beim Messagenten und dreimal beim Gegenprüfer von vorn, `logs/item.csv` jedes Mal bitgleich (MD5 `574147291edef99ae2001c6eedaeefe1`). Letzter ganzer Lauf mit V und W ohne Fehler (14 min): `logs/item.csv` MD5 `f7d18ababf1709e03f7f40a5a4eeb111` (erste 755 Zeilen unverändert), `logs/item_v.csv` bitgleich (MD5 `c739e85610703b8fceda7d2e3f083b35`) |
 | `messen_item.py` | Auswertung des Messagenten (Präfix `item`, auch `item_d`): `objekte` (Belegung der Slots 20–59 mit Gegenständen und Behältern: Art, Landung, Liegezeit, Ende), `nah` (Flag `FFAA08` mit Abstand zum Gegenstand), `aufnahme`, `waffe` (Waffeneinsätze, Geschossblöcke, Treffer, Verlust der Waffe), `punkte` (`FFAA74`), `reichweite` (Treffer je gesetztem Gegner), `nahsweep` (Aufnahmebereich), `griff` (Kniestoß und Wurf mit Waffe, für die dritte Messung ergänzt), `bot` und `botpunkte` (Bot-Protokolle aus `item_bot.lua`) | ja (über `belege_item.sh`) |
 | `messen_item_v.py` | Auswertung des Gegenprüfers (Präfix `item_v`): `katalog` und `botpunkte` (Bot-Protokolle aus `item_v_bot.lua`), `aufnahme`, `behaelter` (Treffer, Angreifer-Slot, Inhalt), `liegen` (Liegezeit, Scrollen, Freigabe), `schuss` (Waffeneinsatz, Geschossblöcke, Treffer), `ziel` (erster Treffer je Zielslot), `griff`, `punkte`, `zeit` (Werte je Frame), `objekte` (belegte Slots in einem Frame) | ja (über `belege_item.sh`) |
+| `belege_boss.sh` | Boss DOLG der Stage 1: 923 Läufe des Messagenten mit `scenarios/boss_frei.lua`, Laufliste als Kopf von `logs/boss.csv`. Teil Q (3 Läufe) legt die Savestates `boss_q_p`, `boss_q_r`, `boss_q_b`, `boss_q_m` an; A Start-LP nach Rang (18), B Treffer und Super-Armor mit Bot-Läufen (366), C Reaktion (37), D Angriffe und Reichweiten (121), E Rhythmus (8), F Wellen (18), G Fall (8), M dritte Messung (344, Abschnitte „# M …“). Auswertung mit `messen_boss.py belege` nach `logs/boss.csv`. Danach Teil V (Gegenprüfer V6, Präfix `boss_v`): 484 Läufe mit `scenarios/boss_v_frei.lua` und `scenarios/boss_v_bot.lua` (5 für Savestates, darunter zwei Bot-Läufe ab `ingame`; Teile A, B, P, D, DG, W, T, TS, TB, LI, U, AU, BOT), Auswertung `messen_boss_v.py belege` nach `logs/boss_v.csv`. Eingriffe stehen je Lauf (`CC_LP`, `CC_WEG`, `CC_RANG`, `CC_BSET`, `CC_FIG`, `CC_SSET`, `CC_BLP`, `CC_ENTF*`; Teil V `CC_SETZ`, `CC_FIGV`, `CC_FIGA`, `CC_FIGH`, `CC_BOSS`, `BV_BLP_MIN`, `BV_RANG`). Braucht die Savestates `p0_s1_s1_cam01536`, `p0_s1_s1_cam01793`, `p0_s1_s1_cam02048` (Phase 0), `item_missile`, `item_laser` (`belege_item.sh`), für Teil V `ingame` und `item_bot1_s1_cam02048`. Löscht am Anfang und am Ende die eigenen Rohdaten (`logs/raw/boss_[abcdefgmq]_*`, `boss_a2_*`, `snap/boss_[gm]_*`; Teil V `boss_v_*`), die Savestates `boss_q_*` und `boss_v_*` bleiben. `BOSS_JOBS` (Standard 8), `BOSS_V_JOBS` (Standard 4), `BOSS_BEHALTEN=1` behält die Rohdaten. Volllauf 21 min 3 s (Teil des Messagenten mit Teil M 801 s, Teil V 458 s). Der Kopfkommentar nennt noch etwa 10 min und rund 580 Läufe (Stand vor Teil M) sowie für Teil V etwa 8 min, der Kopf von Teil V etwa 6 min | ja: vor Teil M vom Gegenprüfer zweimal ganz von vorn (19 min 32 s und 16 min 47 s, Exit 0), `boss.csv` beide Male bitgleich mit dem Stand des Messagenten (MD5 `c4f6c794…`, 3442 Zeilen), `boss_v.csv` bitgleich (`06e9648e…`, 1508 Zeilen), die neu angelegten Savestates `boss_v_*` bitgleich. Dabei behoben: Zwei Savestates im selben Frame (5600) verdrängten sich, `boss_v_allein` kommt jetzt aus einem eigenen Bot-Lauf `boss_v_b1a`; seit dem Hinweis des Gegenprüfers löscht `aufraeumen` auch `boss_a2_*`. Mit Teil M zweimal von vorn, beim Messagenten (21 min 3 s) und in der Gegenprobe der Einarbeitung (`BOSS_JOBS=3`, `BOSS_V_JOBS=2`, 18 min 38 s), beide Male Exit 0: `boss.csv` MD5 `3a051470…` (4422 Zeilen) und `boss_v.csv` (`06e9648e…`) jeweils bitgleich |
+| `messen_boss.py` | Auswertung des Messagenten (nur Standardbibliothek), liest die Watch-CSVs von `boss_frei.lua`: `zeitachse` (Boss-Slot und Figur je Frame, nur Wechsel), `lp` (Treffer, Rücksprung, Reaktion, Rückzug), `angriffe` (Art, A, aktive Frames, Schaden, Treffer, Nachlauf, Abstand), `rhythmus` (Abstände, Wahl nach Abstand und Rang), `wellen` (neue Gegner mit Boss-LP), `fall`, `start` (Start-LP, S+0x9A, S+0xB7 mit Rang), `probe` (Reichweite relativ zu A), `belege` (alle Läufe nach `logs/boss.csv`), `dritte` (nur die Abschnitte „# M …“). Angriffskennungen in `ANIM_*` | ja (über `belege_boss.sh`) |
+| `messen_boss_v.py` | Auswertung des Gegenprüfers V6 (nur Watch-Protokolle von `boss_v_frei.lua` und Bot-Protokolle von `boss_v_bot.lua`): `zeit` (Werte je Frame), `treffer` (Schaden, Zurückweisung, Reaktion), `umwerfen` (Flug, Scheitel, Bodenkontakt, Weite, G, Trefferfläche), `zittern`, `figur` (LP-Verluste der Figur mit Angreifer-Slot und Lage zum Boss), `angriffe` (Beginn, A, Art, aktive Frames, Treffer), `belege` (alle Läufe von Teil V nach `logs/boss_v.csv`) | ja: im Teil V von `belege_boss.sh`, zweimal von vorn mit bitgleichem Ergebnis, in beiden Vollläufen mit Teil M unverändert |
+| `belege_fern.sh` | Fernangriffe der Gegner (Messerwurf und Stichserie des SKIP, Pistole und Raketenwerfer des DICK) in drei Blöcken. Messagent M7 mit `scenarios/fern_frei.lua`, etwa 1100 Läufe: Teil 0 legt die Savestates `fern_sw9`, `fern_sw20`, `fern_sg9`, `fern_pw9`, `fern_pw20`, `fern_rw9`, `fern_rw20`, `fern_pz9` an, A natürliche Läufe (6000 bzw. 4000 Frames), B Trefferflächen (GESCH), C Abwehr (Schlag, Sprung, Gegner und zerbrechliche Objekte auf der Bahn), D Schaden je Rang 7–24, E Waffe des DICK beim Tod, F Erscheinen des Pistolen-DICK je Rang; Auswertung mit `messen_fern.py` nach `logs/fern.csv`. Block „Gegenprüfung V7“: Bot-Lauf `fern_v_bot1` (`scenarios/fern_v_bot.lua`, Savestate `fern_v_skip8`), natürliche Läufe und Proben mit `scenarios/fern_v_frei.lua` (358 Läufe), Auswertung `messen_fern_v.py belege` nach `logs/fern_v.csv`. Block „Dritte Messung M7“ (Präfix `fern_t`, 367 Läufe: 20 natürliche, 276 Proben `t_bm*`, `t_bk*`, `t_br*`, `t_kt_*`, 56 Läufe `t_z*` zur letzten Welle, `t_e_*`, drei Nachläufe von V7-Läufen mit `fern_v_frei.lua`) hängt die Abschnitte `## T …` an `logs/fern.csv` an. EINGRIFFE je Lauf, Kürzel im Skriptkopf (LP, RANG, DOLG, ENTF, LP27, LP25, PISTWEG, FEST, GESCH, TOET, TIEFE, RANGWECHSEL, HÖHE; V7: `CC_E`). Braucht die Savestates `p0_s1_s1_cam00768` und `p0_s1_s1_cam02048` (Bot-Lauf der Phase 0; kein Skript im Repo legt sie an), für V7 dazu `stage1`, für den Lauf `fern_a_gd` (fällt sonst weg) `greichweite_dick`. `FERN_PARALLEL` (Standard 3), `FERN_NUR_V=1` (nur Block V7, die dritte Messung entfällt dann), `FERN_BEHALTEN=1` (Rohdaten behalten, nötig für `messen_fern.py zeitachse`). Löscht danach die Rohdaten `fern_*`; die Savestates `fern_*`, `fern_v_*` und `fern_t_*` bleiben in `logs/raw/sta/captcomm`. Gesamtlauf 13 bis 22 min (je nach Last), bis etwa 3 GB in `logs/raw` (die Dauerangaben im Skript gelten je Block) | ja: nach dem Einbau der dritten Messung zweimal von vorn mit Exit 0 (22 min 23 s; 17 min 50 s, dazu nur der Abschnitt `E Bogen`). `logs/fern.csv` 4315 Zeilen, MD5 `bb1260429a9a366f82b18439017d6e2c`; ohne `E Bogen` bitgleich mit Lauf 1, die ersten 2802 Zeilen ohne `E Bogen` gleich dem Stand vor der dritten Messung (MD5 `7baee55ed275067e3656661114f5b34f`, beim Einarbeiten nachgerechnet). `logs/fern_v.csv` 1281 Zeilen, MD5 `b209e1f2b366e1eb0636a7d02162bc61`, gleich dem Volllauf von V7. Vorher beim Gegenprüfer ein Volllauf von Teil M7 und Block V7 (19 min, Exit 0, `fern.csv` bitgleich `7baee55e…`). Gegenprobe beim Einarbeiten: dritter Volllauf von vorn, Exit 0, 13 min 7 s, beide MD5 gleich |
+| `messen_fern.py` | Auswertung des Messagenten und der dritten Messung (Präfixe `fern`, `fern_t`; nur Standardbibliothek). Liest die Abzüge `0xFFA900`–`0xFFEA00` und das Watch-CSV von `fern_frei.lua`; Geschoss = Objekt in Slot 20–59 mit S+0x6C auf einen SKIP oder DICK (ohne die gehaltene Waffe `0x9A988`), Treffer = P+0x40 < P+0x42 mit P+0x82 auf den Werfer. Unterbefehle: `geschosse` (je Geschoss Werfer, G, Startlage, Tempo, Flugende, Explosion, Ende, Treffer an Figur und Gegnern), `angriffe` (je Angriff von SKIP und DICK Beginn A, Art, Abstand, Schüsse, Ende, Nachlauf), `zeitachse PREFIX --slot N [--von --bis --alle]` (je Frame Animation, Aktion, Lage eines Slots), `abstand`, `rhythmus`, `waffe`, `erscheinen`, `probe` (k-tes Geschoss eines Laufs mit Eingriff, `--k`, `--werfer`), `zusammenfassung`; für die dritte Messung `ausloesung` (Zielpunkt und Abweichung), `salve` (Budget S+0xAB, Schüsse, Abbruch), `nachschuss` (Folgeaktion nach dem Schuss), `slots` (Belegung 27–29 vor G), `bahnende` (letzte Lage ohne Treffer), `welle` (letzte Welle, zweiter Raketen-DICK), `bogen` (Bogen der Waffe beim Tod, auch für `E Bogen`), `fenster` (Trefferfenster je Blick und Flugrichtung mit Prüfung der Regel) | ja (über `belege_fern.sh`; zwei Vollläufe gleich bis auf den neuen Abschnitt `E Bogen`) |
+| `messen_fern_v.py` | Auswertung des Gegenprüfers V7 (Präfix `fern_v`, eigener Code, nur Standardbibliothek, Abzüge von `fern_v_frei.lua`): `skip` (Würfe und Stiche), `dick` (Salven und Raketen mit Abstand, Tiefenangleich, Ablauf, Treffern), `raketen`, `probe` (Einzelframe-Probe im Frame K), `bahn` (je Flugframe Abstand, Tiefe, Höhe der Figur und Treffer), `bahngegner` (Gegner im Trefferbereich), `tod` (Waffe des DICK beim Tod), `geschosse`, `treffer`, `anims`, `slots`, `zeit`; `belege` wertet alle Läufe `fern_v_*` in `logs/raw` aus, schreibt `logs/fern_v.csv` und löscht mit `--loeschen` die Rohdaten je Lauf | ja: im Block V7 von `belege_fern.sh`; `logs/fern_v.csv` im Volllauf von V7 und im letzten Gesamtlauf gleich (MD5 `b209e1f2…`) |
+| `belege_rest.sh` | Rest der Spielfigur: alle MAME-Läufe von vorn und Auswertung nach `logs/rest.csv` und `logs/rest_v.csv`, zusammen 3066 Läufe. Teil A Nachlauf der Kettenstufen 2–4 (1234 Läufe mit `scenarios/rest_kette.lua`), B Sprungangriff hoch und runter (675, `scenarios/rest_sprung.lua`), C Gegner mit genau 0 LP (10, `rest_kette.lua` und `scenarios/rest_frei.lua`), D Tod und Neueinstieg der Figur (50, `rest_frei.lua`, teils als Hülle um `hurt*.lua`), E Rang beim Stage-Wechsel (2 Läufe legen die Savestates `rest_e_r8` und `rest_e_r24` an, dazu 5 Bot-Läufe mit `grafik/bot.sh` und `grafik/durchlauf.lua`), F Nachprüfungen (245: Mindestabstand, Blick links, Richtung beim Kettendruck, Treffer in der Luft, gleichzeitiger Treffer), M3 dritte Messung (201 Läufe `rest_m3_*`, eigene Gruppe am Ende von `rest.csv`), V Gegenprüfung V8 (641 Läufe mit `scenarios/rest_v_frei.lua`, 3 Bot-Läufe mit `scenarios/rest_v_bot.lua`, der Bot-Lauf `rest_v_e_boss` legt den Savestate `rest_v_e_vor` an; Auswertung `messen_rest_v.py belege`). Auswertung von A bis M3 mit `messen_rest.py`. EINGRIFFE stehen je Lauf im Aufruf und im Kopf jeder Tabelle (`CC_LEER`, `CC_DX`, `CC_DZ`, `CC_FERN`, `CC_ELP`, `CC_PLP`, `CC_RANG`, `CC_POKE`, `CC_SETZE`, `CC_VOR_DX`, `CC_WEG`, `CC_GBLICK`; bei V `CC_SETZE`, `CC_GLP`, `CC_PLP`, `CC_POKE`, `CC_RANG`). Braucht die Savestates `kontakt`, `kontakt_b`, `ingame`, `stage1`, `p0_s1_s1_cam02048`, `p0_s1_s2_cam00256` (A bis F), `anlauf`, `anlauf_b`, `anlauf_c`, `tiefe_b`, `stage3`, `held0`, `p0_s1_s1_cam00768`, `p0_s1_s1_cam01281`, `item_v_b1_s1_cam02016` (V) sowie `reaktion_w3`, `stage4`, `stage5`, `stage9`, neun `item_bot1_s1_cam*`, zwei `item_v_b1_s1_cam*` und fünf `greichweite_v_*` (M3); das Skript prüft sie am Anfang. Löscht am Anfang und am Ende `logs/raw/rest_*` (auch `rest_v_*`), die Savestates `rest_*` bleiben. `PAR` parallele Läufe (Standard 3) | ja: Stand des Messagenten vor der dritten Messung (Skript-MD5 `cf09d728…`) beim Gegenprüfer von vorn, Exit 0 in 1251 s, `rest.csv` bitgleich mit der Datei des Messagenten (MD5 `7c4b537127c15678edc3bef80b863031`); mit Teil V von vorn Exit 0 in 1094 s (PAR 3), `rest.csv` wieder bitgleich, `rest_v.csv` 1861 Zeilen (MD5 `793f6f9282995911deb5ddd0b482b688`). Gesamtlauf mit Teil M3 und V von vorn: Exit 0 in 28 min 48 s (PAR 3, Rechner mitbelegt), `rest.csv` MD5 `6b202b9fdd8d460e436cfc593fd05e02` (2617 Zeilen, erst einmal erzeugt), `rest_v.csv` unverändert. Der Kopfkommentar nennt die Liste der M3-Savestates `M3_STATES`, im Skript heißt die Liste der Todesstellen `M3_TOD` (die Prüfliste steht in der Schleife am Anfang); die Dauer im Kopf (etwa 22 min, mit Teil V etwa 30 min) ist eine Schätzung |
+| `messen_rest.py` | Auswertung des Messagenten und der dritten Messung (Präfix `rest`, nur Standardbibliothek). Liest die Abzüge `FFA900`–`FFEA00` von `rest_kette.lua`, `rest_sprung.lua` und `rest_frei.lua` und die Watch-CSV (Rang `FFF82A`, Zähler `FFF82C`, Stage `FFA8CE`, Kamera `FFA82E`/`FFA830`); D aus `<lauf>_meta.txt`. 13 Unterbefehle (`--help`): `zeitachse` (je Frame Figur und ein Gegner, `--slot`, `--von`, `--bis`), `nachlauf` und `nachlauf-zusammenfassung` (A: Treffer der letzten Stufe, Ruhe, Wirkung jeder Folgeeingabe, frühester angenommener Angriff und Sprung, erste Bewegung), `sprung` und `sprung-zusammenfassung` (B, F2: Probeframe, Höhe, Abstand, Treffer, Schaden, Umwerfen; aktive Frames und Grenzen je Gruppe), `nulllp` (C), `tod` (D: Ablauf, Neueinstieg, Lage, Rang, Leben, Landung, Schutz, Treffer der Landung, Eingaben, Gegner bis zum Erscheinen), `stagewechsel` (E: Rang beim Wechsel des Stage-Index aus Bot- oder Watch-CSV), `probe` (F: erster Treffer der letzten Stufe mit dx, dz und Blick, `--bis`), `richtung` (F3), `gegentreffer` (F4, F5), `todesart` (dritte Messung D1: Angreifer, Attribut, Reaktion in t, Todesflug, Stopp an einer Begrenzung außer den Bildkanten, Aktion 8, Rollen, Neueinstieg und Klasse nach der Regel), `grenzen` (dritte Messung F1: `probe`-Ausgabe je Gruppe als Grenzen in dx) | ja (über `belege_rest.sh`) |
+| `messen_rest_v.py` | Auswertung des Gegenprüfers V8 (Präfix `rest_v`, nur Standardbibliothek). Liest nur die Watch-Protokolle von `rest_v_frei.lua` und die Bot-Protokolle von `rest_v_bot.lua`, keinen Abzug. Unterbefehle (`--help`): `zeit` (Zeitachse eines Laufs, Figur und gewählte Slots), `treffer` (alle LP-Verluste eines Laufs mit Abstand und Angreifer), `teil` (CSV je Teil: `a`, `b`, `c`, `d`, `e`, `probe`, `f3`, `f3a`, `f5`, `f6`), `belege` (alle Läufe `rest_v_*` nach `logs/rest_v.csv`) | ja: Teil V allein (Testhülle mit denselben Funktionen) Exit 0 in 361 s, 1845 Zeilen (damals ohne die Ereigniszeilen der Bot-Läufe); im Belegskript `rest_v.csv` bis auf die 16 Ereigniszeilen zeilengleich und im Gesamtlauf mit Teil M3 unverändert (MD5 `793f6f92…`) |
 
 Ablauf:
 
@@ -182,7 +194,7 @@ Nachträgen belegt.
 | `greichweite_angriff` | Angriffe eines Gegners gegen die passive Figur, ab `kontakt` (WOOKY Slot 18, für `WS3R` der zweite WOOKY in Slot 16), `kontakt_b` (EDDY Slot 17, WOOKY Slot 16, SKIP Slot 18), `ingame` (Eingaben wie `hurt_c`, SKIP Slot 18) und für die dritte Messung auch `anlauf`, `anlauf_b`, `anlauf_c`, `tiefe_b`; immer über `rang.lua`. Bis zum Angriffsbeginn A (k-ter Wechsel des Animationszeigers S+0x1C auf die erste Angriffsanimation, `CC_AB`) läuft alles natürlich, der Gegner wählt seinen Angriff selbst. **EINGRIFFE**: LP der Figur vor jedem Frame auf 72 (`CC_LP`), Figur vor dem Angriff relativ zum Gegner (`CC_VOR`, `CC_VOR_DX`, `CC_VOR_DZ`, `CC_VOR_SLOT`), ab A+`CC_VON` Position, Tiefe oder Höhe der Figur (`CC_DX`, `CC_DZ`, `CC_H`), mit `CC_FERN=n` bis A+n 200 px weg (mit `CC_FERN_H`, `CC_FERN_DZ`, `CC_FERN_DX` stattdessen hoch, in der Tiefe versetzt oder an anderer Stelle). Kalibriert (Rang 12, nur `CC_LP`): ab `kontakt` WOOKY-Schlag A in Frame 19 und 77, Umwerfschlag A in 137; ab `kontakt_b` EDDY-Schlag A in 31, Umwerfschlag in 289. Eine Figur außerhalb des Bildes schiebt das Spiel im selben Frame zurück |
 | `greichweite_bot` | Konfiguration für `grafik/bot.lua` (kein Runner-Szenario, Start über `grafik/bot.sh stage1`): Der Durchlauf-Bot spielt Stage 1 bis in die Bossarena. **EINGRIFFE** wie `grafik/durchlauf.lua`: LP der Figur jeden Frame auf 72, nach 900 Frames ohne Kamerafortschritt LP der Gegner im Bild auf 1 (einmal, Frame 6001, ein WOOKY der Bossarena). DICK erscheint in Frame 6002 in Slot 18. Legt die Savestates `greichweite_dick` (Frame 6010) und `greichweite_dick2` (6200) an. Ein Lauf mit passiver Figur ab dort zeigte keinen Schuss, weil DOLG die Figur ständig umwirft |
 | `greichweite_v_frei` | Gegenprüfung: freier Lauf ab beliebigem Savestate, Eingaben über `CC_IN` (Kurzformen l r u d a j), Savestates über `CC_SAVE` (nur Präfix `greichweite_v`). **EINGRIFFE**: LP der Figur vor jedem Frame auf 72 (`CC_LP`, Standard an), Rang (`CC_RANG`), in den Proben die Figur relativ zum Gegner (`CC_POKE`, `CC_DX`, `CC_DZ`, `CC_PH`; `CC_WER=gegner` setzt stattdessen den Gegner; zweites Fenster `CC_POKE2`, `CC_DX2`, `CC_DZ2`, `CC_PH2`). Die natürlichen Läufe `n1`, `n4` bis `n8` ab `ingame` (3000 bis 9000 Frames) legen 32 Savestates `greichweite_v_*` je 3 Frames (`wa_r20`, `eb_r20`: 20 Frames) vor einem natürlich gewählten Angriff an; die Proben setzen die Figur ab A+1 bis A+37 |
-| Savestates `greichweite_dick`, `greichweite_dick2` | aus `greichweite_bot.lua`: Bossarena von Stage 1, DICK (Typ `0x64E7A`) in Slot 18, Frame 6010 bzw. 6200 des Bot-Laufs. Für die noch offene Messung von Pistole und Rakete |
+| Savestates `greichweite_dick`, `greichweite_dick2` | aus `greichweite_bot.lua`: Bossarena von Stage 1, DICK (Typ `0x64E7A`) in Slot 18, Frame 6010 bzw. 6200 des Bot-Laufs. Von `belege_fern.sh` für den Lauf `fern_a_gd` genutzt (4000 Frames, ohne Rang- und DOLG-Eingriff; fehlt der Savestate, entfällt nur dieser Lauf). Die Messung von Pistole und Rakete steht im „Nachtrag: Fernangriffe der Gegner“ |
 | Savestates `greichweite_v_*` (32) | aus Teil V von `belege_greichweite.sh` (`n1`: `w1r`, `w1l`, `wa_r`, `wa_r20`, `wb_l`, `wk2_r`; `n4`: `wa_l`, `wc_l`, `wk2_l`, `wb_r`, `ek2_r`, `eb_l`, `ek1_l`, `sm_l`, `smw_l`; `n5`: `eb_r`, `eb_r20`, `wc_r2`; `n6`: `wk1_l`, `wk1_r`, `ek1_r`, `sm_r`, `sa_r`, `sw_r`, `sm_l2`; `n7`: `wc_r`, `ea_l`, `ek2_l`, `ea_r`, `ek1_l2`; `n8`: `ea_r2`, `ek1_r2`), je 3 bzw. 20 Frames vor einem Angriff von WOOKY, EDDY oder SKIP; Teil V legt sie bei jedem Lauf neu an |
 | `spezial_probe` | ab beliebigem Savestate (`kontakt`, `kontakt_b`, `ingame`, `spezial_*`): freie Eingaben `CC_IN` (ein Eintrag ohne Endframe wie `3:…` gilt für zwei Frames, 3 und 4), Länge `CC_FRAMES`, kleiner RAM-Abzug `CC_KLEIN=1` (`0xFFA900`–`0xFFEA00`), Savestate `CC_SAVE`. **Eingriff** (gekennzeichnet): Gegnerlage relativ zur Figur je Slot `CC_SLOTS`/`CC_DX`/`CC_DZ` (Nachkomma 0), Höhe `CC_DH` (Eingriffe in den Frames `CC_VON` bis `CC_BIS`, danach Höhe 0), Einzelframe-Proben `CC_FERN_BIS`/`CC_NAH_BIS` (sonst 200 px entfernt), andere Gegner 300 px beiseite `CC_WEG`, eigene LP `CC_LP`. Kalibriert: Angriff und Sprung im selben Frame P ergeben ab P+1 die Aktion 0x14; ab `kontakt` schlägt der WOOKY (Slot 18) ohne Eingabe in Frame 28 und 90 zu, ab `kontakt_b` der EDDY (Slot 17) in Frame 44. `sprint_probe.lua` ist dasselbe Szenario für den Sprint |
 | `spezial_v_frei` | Gegenprüfer V4, unabhängig von `spezial_probe.lua` geschrieben: freie Eingaben `CC_IN`, Länge `CC_FRAMES`, protokollierte Slots `CC_SLOTS` (Standard 0–19, für Gegenstände 20–59), nur Watch-Protokoll (Figur, Timer `FFAA69`/`FFAA61`, Figur `FFAA34`, Rang, je Slot Zustand, Lage, LP, Typ S+0x38, Attribut, Aktion), Savestate `CC_SAVE`. **Eingriff** (gekennzeichnet): `CC_SETZE` (Lage eines Slots relativ zur Figur in Frames von..bis), `CC_P_LP` (eigene LP), `CC_G_LP` (LP eines Gegners), `CC_RANG`, `CC_POKE` (beliebige Adresse, hier Timer `FFAA69`). `sprint_v_frei.lua` ist eine Hülle darum |
@@ -198,6 +210,28 @@ Nachträgen belegt.
 | `item_v_bot` | Konfiguration des Gegenprüfers für `grafik/bot.lua`: Stage 1 ab `ingame` (nicht `stage1`), Savestates je 96 px Kamerafortschritt (`item_v_b1_s1_cam*`) und in festen Frames (`IV_SAVES`): `item_v_b1_f2880` (Ausgangslage für Fass 43), `item_v_s2_huhn`, `item_v_s3_shuriken`, `item_v_s5_laser2`, `item_v_s6_tendon`, `item_v_s6_mis_b`, `item_v_s6_24`, `item_v_s7_gun`, `item_v_s7_mgun`, `item_v_s7_hammer`, `item_v_s7_cherry`, `item_v_s8_cherry`, `item_v_s8_2a`. Protokolliert `FFAA08`, `FFAA09`, `FFAA0A`, `FFAA41`, LP, Punkte `FFAA74` (4 Byte), je Slot 20–59 Typ, Art, Zustand, Position, Liegezeit, Munition, je Slot 0–19 Typ und LP. EINGRIFFE: LP der Figur aufgefüllt, Gegner-LP nach 600 Frames ohne Kamerafortschritt auf 1 (`IV_CLEAR`) |
 | `item_v_frei` | freies Szenario des Gegenprüfers (Präfix `item_v`): `CC_IN` („a-b:taste+taste“), Abzug `FFA900`–`FFEA00`, Rang, Kamera und Stage im Watch-CSV. EINGRIFFE `CC_LP` (LP der Figur), `CC_ELP` (LP, Vorframe-LP und Max-LP eines Gegners), `CC_SETZE` (Gegner oder Objekt relativ zur Figur), `CC_XY`, `CC_HALT`, `CC_RANG`. Mit `CC_SAVE` legt es Savestates mit Gegenstand an: `item_v_mis_liegt` (Raketenwerfer aus Fass 43 liegt), `item_v_mis` (Raketenwerfer in der Hand), `item_v_s5_las` (Laser, Stage 5; zwei Gegner während der Aufnahme weggesetzt), `item_v_s7_ham`, `item_v_s7_g`, `item_v_s7_mg` (Hammer, GUN, M-GUN in Stage 7) |
 | Savestates `item_hammer`, `item_laser`, `item_missile` | Bossarena von Stage 1 mit der jeweiligen Waffe in der Hand, angelegt von `item_save_*` mit `item_frei.lua` ab `item_bot1_s1_cam02048` (EINGRIFF: DOLG auf x 2700). Ausgangslage aller Reichweiten des Messagenten und der dritten Messung |
+| Savestates `p0_s1_s1_cam00256` bis `p0_s1_s1_cam02048`, `p0_s1_s2_cam00256` (Phase 0) | Bot-Lauf der Einrichtung (Phase 0) von Auftrag 2 durch Stage 1 ab `stage1` (`CC_NAME=p0_s1 GFA_CFG=scripts/grafik/durchlauf.lua GFA_SAVE_CAM=256 … scripts/grafik/bot.sh stage1`; Laufprotokoll, Eintrag „Einrichtung Auftrag 2“). **EINGRIFF** beim Anlegen: LP der Figur aufgefüllt, bei Stillstand LP der Gegner auf 1. Je 256 px Kamerafortschritt ein Savestate (Namen mit führenden Nullen, z. B. `cam00768`, `cam01281`, `cam01536`, `cam01793`, `cam02048`). `p0_s1_s1_cam00768` liegt laut Name bei Kamera-x 768 (SKIP), `p0_s1_s1_cam02048` ist die Bossarena (DOLG in Slot 19, LP 110, S+0x9A = 72, Rang 16; zwei WOOKY erscheinen in Frame 3 in Slot 16 und 17), `p0_s1_s2_cam00256` der Beginn von Stage 2. Kein Belegskript im Repo legt sie an (beim Einarbeiten geprüft); sie liegen nur lokal in `logs/raw/sta/captcomm`. Gebraucht von `belege_boss.sh` (`p0_s1_s1_cam01536`, `p0_s1_s1_cam01793`, `p0_s1_s1_cam02048`), `belege_fern.sh` (`p0_s1_s1_cam00768`, `p0_s1_s1_cam02048`; der Kopf von `logs/fern.csv` nennt sie) und `belege_rest.sh` (`p0_s1_s1_cam00768`, `p0_s1_s1_cam01281`, `p0_s1_s1_cam02048`, `p0_s1_s2_cam00256`); Grundlage der Nachträge „Boss“, „Fernangriffe der Gegner“ und „Rest der Spielfigur“ |
+| `boss_frei` | Boss DOLG der Stage 1, Messagent und dritte Messung (Präfix `boss`; nie `boss_v`). Ab Savestates der Bossarena (`p0_s1_s1_cam02048`, `boss_q_b`, `boss_q_p`, `boss_q_r`, Teil M meist `boss_q_m`), für Teil A auch ab `p0_s1_s1_cam01536` und `p0_s1_s1_cam01793`, für Rakete und Laser ab `item_missile` und `item_laser`. Freie Eingaben `CC_IN`, einfacher Angreifer-Bot `CC_BOT=angriff` (`CC_BOT_AB`, `CC_BOT_TAKT`, `CC_BOT_KETTE`), Bezugsframe A über `CC_AB` (n-ter Wechsel des Animationszeigers S+0x1C des Bosses), Savestates `CC_SAVE` (nur `boss_*`), Aufnahmen `CC_SNAPS`. Protokoll nur über das Watch-CSV (Figur, Boss-Slot 19 mit Trefferfläche S+0x28, Schutzzähler S+0xAE und S+0xB7, alle Gegnerslots kurz). **EINGRIFFE**: `CC_LP` (LP der Figur vor jedem Frame auf 72, Standard an), `CC_RANG`/`CC_RANG2`, `CC_WEG` (Slots ab Frame 2 bei Kamera-x − 250 gehalten, mit `neu` auch jeder später erscheinende Gegner), `CC_ENTF`/`CC_ENTF2` (S+4 := 0), `CC_BLP` (LP des Bosses), `CC_GLP`, `CC_FIG` (Figur relativ zum Boss), `CC_BSET` (Boss relativ zur Figur), `CC_SSET` (anderer Slot), `CC_BX`. Kalibriert (ab `p0_s1_s1_cam02048`, Figur passiv, `CC_WEG=16,17,neu`): Der Boss bricht in Frame 1–61 aus dem Tresor und geht ab 62; erster Armschwung A = 157 (Treffer auf die Figur in 174, 212, 249). Mit dem Boss 50 px vor der Figur (`CC_BSET="62-63:50:0"`) beginnt er in 66 den kurzen Schlag, bei 49 px und weniger packt er die Figur in 63 |
+| `boss_v_frei` | Gegenprüfer V6 (Präfix `boss_v`), unabhängig von `boss_frei.lua` geschrieben: freie Eingaben `CC_IN`, Bezugsframe A über `CC_A` (k-ter Wechsel eines Felds des Bosses, A in `<CC_NAME>_a.txt`), Savestates `CC_SAVE` (nur `boss_v_*`), Bildschirmfotos `CC_SNAP`; nur Watch-CSV (RAM-Abzug mit `CC_DUMP=1`). **EINGRIFFE** nur wenn gesetzt, außer `CC_LP` (Standard an): `CC_LP`, `CC_RANG`, `CC_BLP`, `CC_FIG`, `CC_FIGV` (in Blickrichtung des Bosses), `CC_FIGA` (relativ zur Lage der Figur in A), `CC_FIGH` (Höhe), `CC_BOSS` (Boss relativ zur Figur), `CC_SETZ` (absolute Lage), `CC_ENTF`, `CC_POKE`. Kalibriert: ab `boss_v_b1_s1_cam01984` mit Rechtslauf ab Frame 2 erreicht die Kamera 2048 in Frame 39, LP und Max-LP des Bosses stehen ab 40 (ab `boss_v_b1_s1_cam01920` mit hoch 2–20 und rechts ab 21: 95 bzw. 96). Ab `boss_v_allein` mit der Figur bei x 2250 (Frame 2, Rang 12): erster Ansturm in 57 (Lauf ab 77), erster Armschwung in 381, erste Körperpresse in 1474 |
+| `boss_v_bot` | Gegenprüfer V6: Konfiguration für `grafik/bot.lua` (Start über `grafik/bot.sh`, nicht über `runner.lua`). Der Durchlauf-Bot spielt Stage 1 bis in die Bossarena bzw. kämpft dort gegen den Boss. `BV_FRAMES` (Standard 9000), `BV_SAVE_CAM` (Savestate je N px Kamerafortschritt, Name `<CC_NAME>_s<Stage>_cam<x>`), `BV_SAVE_AT` (feste Savestates, nur `boss_v_*`). **EINGRIFFE**: LP der Figur immer aufgefüllt, `BV_CLEAR` (LP der Gegner im Bild nach so vielen Frames Stillstand auf 1, Standard 0), `BV_RANG`, `BV_BLP_MIN`/`BV_BLP` (LP des Bosses unter dem Grenzwert zurückgesetzt), `BV_WEG` (andere Gegner entfernt). Watch-Spalten: Rang, Figur, Boss in Slot 19 (Zustand, Aktion, Phase, Lage, LP, Animation, Attribut, S+0x28, S+0xAE, S+0xB7, S+0x9A, Typ) und je Slot 0–18 Zustand, Typ und LP |
+| Savestates `boss_q_p`, `boss_q_r` | legt `belege_boss.sh` (Lauf `q_quelle`, passiv ab `p0_s1_s1_cam02048`, EINGRIFF `CC_WEG=16,17,neu`) in Frame 800 bzw. 1240 an: kurz vor einer Körperpresse (A in Frame 8) bzw. einem Ansturm (Ausholen in 10, Lauf ab 30) |
+| Savestate `boss_q_b` | zweite Arena-Ausgangslage des Messagenten: ab `p0_s1_s1_cam01793` 40 Frames hoch (2–41), warten, dann rechts (250–600), gespeichert in Frame 620. Der Boss erwacht dort in Frame 397, Rang 16, 110 LP |
+| Savestate `boss_q_m` | Ausgangslage der dritten Messung: ab `p0_s1_s1_cam01536` mit Rang 20 (EINGRIFF `CC_RANG`), 23 Frames runter (2–24), dann rechts (25–330), gespeichert in Frame 371. Der Boss erwacht in Frame 311 mit 110 LP, steht in Tiefe 208 (sonst 156), schaut nach links und geht ab 372 |
+| Savestates `boss_v_b1_s1_cam*`, `boss_v_allein` | Gegenprüfer V6, aus `boss_v_bot.lua`: Bot-Lauf `boss_v_b1` ab `ingame` (5605 Frames, `BV_CLEAR=900`, hier nicht ausgelöst; LP der Figur aufgefüllt) mit Savestates je 64 px Kamerafortschritt (`boss_v_b1_s1_cam00256` bis `boss_v_b1_s1_cam02112`); er erreicht die Arena bei Rang 16 (110 LP). `boss_v_allein` aus dem gleichen zweiten Bot-Lauf `boss_v_b1a` in Frame 5600: beide Arena-WOOKY besiegt, Boss 97 von 110 LP, Kamera 2112. Teil V legt alle bei jedem Lauf neu an (im zweiten Lauf bitgleich) |
+| Savestates `boss_v_rakete`, `boss_v_laser`, `boss_v_r9` | Gegenprüfer V6, mit `boss_v_frei.lua`: `boss_v_rakete` ab `boss_v_b1_s1_cam01984` (Raketenwerfer aus der Arena aufgenommen, Frame 148); `boss_v_laser` ab `item_bot1_s1_cam02048` (Arena-WOOKY entfernt, EINGRIFF; Laser selbst aufgenommen, Frame 108); `boss_v_r9` ab `boss_v_b1_s1_cam01984` (Rang 9 und Arena-WOOKY entfernt, EINGRIFF; Boss 100 LP, Frame 300). Teil V legt sie bei jedem Lauf neu an (im zweiten Lauf bitgleich) |
+| `fern_frei` | Freies Szenario des Messagenten und der dritten Messung (Präfixe `fern`, `fern_t`) ab beliebigem Savestate; die Läufe stehen in `belege_fern.sh`. Eingaben `CC_IN` („von-bis:taste\|taste;…“), Länge `CC_FRAMES`, Abzug `FFA900`–`FFEA00` je Frame (`CC_DUMP`, `CC_DUMP_AB`), Kamera, Rang, Rangzähler und Stage im Watch-CSV, Savestates `CC_SAVE`, Snapshots `CC_SNAPS`, Eingabe-Bot `CC_HIN` (die Figur geht periodisch auf einen Slot zu; Eingabe, kein Eingriff). **EINGRIFFE**: `CC_LP` (LP der Figur 72), `CC_RANG`, `CC_POKES` (Adresse, Spieler- oder Slot-Offset), `CC_REL` (Slot relativ zur Figur), `CC_ZU` (Figur relativ zu einem Slot), `CC_FEST` (Figur auf Welt-x und Tiefe), `CC_HOEHE`, `CC_ENTF` (Gegner eines Typs per S+4 := 0 entfernen), `CC_ENTF_SLOT`; ausgelöst: `CC_AB`/`CC_AB_ZU` (Figur relativ zum Gegner ab Angriffsbeginn), `CC_GESCH` (Figur ab dem Erscheinen eines Geschosses G relativ zu ihm), `CC_GESCH_GEGNER` (Gegner oder Objekt relativ zum Geschoss) |
+| Savestates `fern_sw9`, `fern_sw20`, `fern_sg9`, `fern_pw9`, `fern_pw20`, `fern_rw9`, `fern_rw20`, `fern_pz9` | legt Teil 0 von `belege_fern.sh` mit `fern_frei.lua` an (SKIP ab `p0_s1_s1_cam00768`, DICK ab `p0_s1_s1_cam02048`, mit den Eingriffen des jeweiligen Laufs `fern_0_*`). Kalibriert (Frames ab Savestate): `fern_sw9`/`fern_sw20` SKIP wirft in A 36 bzw. 46, Messer G 44 bzw. 54 bei x 961, fliegt nach links, Figur bei x 900 (FEST bis zum Speichern); `fern_sg9` Gruppe (2 WOOKY, 2 EDDY, SKIP), Messer G 45 bei x 1235 (nach links); `fern_pw9`/`fern_pw20` Pistolen-DICK in Slot 18, Salve ab A 14 bzw. 22, Kugeln G 20, 37, 54, 71 bzw. 28, 45, 62, 79 ab x 2162 (nach rechts); `fern_rw9`/`fern_rw20` Raketen-DICK in Slot 13 bzw. 10 (bei Rang 20 ein zweiter in Slot 13), Rakete G 19 bzw. 17 ab x 2172 (nach rechts); `fern_pz9` Pistolen-DICK (18) und Raketen-DICK (13), Kugeln G 30, 47, 64, 81 |
+| Savestates `fern_t_sw`, `fern_t_sw2`, `fern_t_pw`, `fern_t_pw2`, `fern_t_pw3`, `fern_t_rw`, `fern_t_rw2` | dritte Messung, angelegt im Block „Dritte Messung M7“ von den natürlichen Läufen `t_sf1000`, `t_sf880`, `t_pl22`, `t_p14`, `t_m22`, `t_rr14`, `t_r24`: `fern_t_sw` SKIP links, Messer nach rechts (A 10, G 18), Figur fest auf x 1000, Rang 14; `fern_t_sw2` SKIP rechts, Messer nach links (A 10, G 18), Figur x 880, Rang 17; `fern_t_pw` Pistolen-DICK rechts, Kugel nach links (A 18, G 24), Figur x 2110, Rang 22; `fern_t_pw2` Pistolen-DICK links, Kugel nach rechts (A 16, G 22), Rang 14; `fern_t_pw3` Salve mit Budget S+0xAB = 120 (A 13, 8 Schüsse nach rechts), Rang 22, EDDY der letzten Welle leben; `fern_t_rw` Raketen-DICK rechts, Rakete nach links (A 13, G 19), Figur x 2330, Rang 14; `fern_t_rw2` Raketen-DICK links, Rakete nach rechts (A 14, G 20), Rang 24 |
+| `fern_v_frei` | Gegenprüfer V7 (Präfix `fern_v`), unabhängig von `fern_frei.lua` geschrieben: freier Lauf ab beliebigem Savestate, Eingaben `CC_IN` („namen:von-bis,…“, Kurzformen l r u d a j), Länge `CC_FRAMES`, Savestates `CC_SAVE` (nur Präfix `fern_v`), Abzug `0xFFA900`–`0xFFEA00` (`CC_DUMP`, `CC_EVERY`), Rang, Rangzähler, Kamera und Stage im Watch-CSV. **EINGRIFFE**: `CC_LP` (Standard an), `CC_RANG`, `CC_E` mit `fig` (Figur relativ zu einem Slot oder zum jüngsten Geschoss `g`), `obj` (Slot relativ zur Figur), `pos`, `spos`, `entf`, `glp`, `hoch`, `frac0`. Ein Geschoss außerhalb der begehbaren Tiefe prallt ab, deshalb liegt es in den Proben vor dem Probeframe 40 px in der Tiefe versetzt. Auch für die drei Nachläufe `fern_t_v7_*` der dritten Messung |
+| Savestates `fern_v_m1a`, `fern_v_m1`, `fern_v_m2`, `fern_v_m3a`, `fern_v_m3`, `fern_v_k1`, `fern_v_k2`, `fern_v_k3`, `fern_v_r1a`, `fern_v_r1`, `fern_v_r2` | legt der Block V7 aus seinen natürlichen Läufen an (`s_nat`, `s_mov`, `s_r12`, `p_r12`, `p_r22`, `z_r12`). Kalibriert: `fern_v_m1a` SKIP (Slot 18, Rang 11) wirft in A 12, Messer G 20 bei x 853 nach links, Figur x 792 schaut zum SKIP, Treffer G+8 (vorn 29); `fern_v_m1` dasselbe 18 Frames später (Messer G 2); `fern_v_m2` Messer G 2 bei x 1277 nach links (Rang 21), Figur x 1215 schaut weg; `fern_v_m3a`/`fern_v_m3` SKIP links (Rang 12), Messer G 20 bzw. 2 bei x 1104 nach rechts; `fern_v_k1` Pistolen-DICK (Slot 18, Rang 12), Salve ab A 10, Kugeln G 16, 33, 50, 67 nach links (NNUN), Figur x 2110 schaut zum DICK; `fern_v_k3` wie `k1` (NUNU), Figur schaut weg; `fern_v_k2` DICK links (Rang 22), Salve A 10 nach rechts (NNUN), Figur x 2245; `fern_v_r1a` Raketen-DICK (Slot 13, Rang 12) A 10, Rakete G 16 nach links, Einschlag x 2353 in G+20; `fern_v_r1` Rakete G 2; `fern_v_r2` Rakete G 2 nach rechts (Einschlag x 2269) |
+| `fern_v_bot` (Savestate `fern_v_skip8`) | Gegenprüfer V7: Konfiguration für `grafik/bot.lua` (Start über `grafik/bot.sh stage1`, Lauf `fern_v_bot1`, nicht über `runner.lua`). Der Durchlauf-Bot spielt Stage 1 bis zum SKIP; der SKIP erscheint in Frame 637 in Slot 18 (Kamera 770). `fern_v_skip8` (Frame 700, Rang 8): Figur x 1027, SKIP x 1074, zwei WOOKY (24 LP) in Slot 16/17. `FV_FRAMES`, `FV_SAVES` (nur Präfix `fern_v`), `FV_CAM`; Watch je Slot 10–19 Typ (unteres Wort), Zustand, LP. **EINGRIFFE** wie `grafik/durchlauf.lua`: LP der Figur aufgefüllt, nach 900 Frames ohne Kamerafortschritt LP der Gegner im Bild auf 1 |
+| `rest_kette` | Kette des Messagenten (Präfix `rest`, Grundlage `kette.lua`) bis Stufe `CC_STUFE` mit Folgeeingaben relativ zum letzten Kettendruck D (`CC_NACH`, Tasten l r u d a j, z. B. „a:20“), dazu `CC_IN` (absolute Frames), erster Druck `CC_P1` (Standard 3), Druckabstand nach dem Treffer der Vorstufe `CC_ABSTAND` (Standard 14, `CC_ABSTAND_LETZT` nur für den letzten Druck), Richtung mit dem letzten Kettendruck `CC_DRUCKDIR`. Ab `kontakt` (WOOKY, Slot 18) bzw. `kontakt_b` (EDDY, `CC_SLOT=17`), in der dritten Messung ab `reaktion_w3` und `tiefe_b`. **EINGRIFFE**: `CC_LEER` (Gegner ab dem Treffer der Vorstufe 200 px rechts der Figur: Leerschlag), `CC_DX`, `CC_DZ`, `CC_FERN`, `CC_POKE_BIS`, `CC_POKE_VON`, `CC_VOR_DX` (Lage des Gegners wie in `kette.lua`), `CC_GBLICK` (Blickrichtung des Gegners, S+0x5E Bit 0x20), `CC_ELP` (LP und Vorframe-LP des Gegners). Schreibt `<CC_NAME>_meta.txt` (Druckframes, D, Stufe, Slot); Abzug nur `FFA900`–`FFEA00`. Kalibriert: mit `CC_P1=3` und `CC_ABSTAND=14` ist D = 3, 19, 36, 54 für Stufe 1 bis 4 (Treffer 5, 22, 40, 57) |
+| `rest_sprung` | Sprungangriff des Messagenten mit Einzelframe-Proben (Grundlage `sprungangriff.lua`, kleiner Abzug): Sprungdruck `CC_J`, Angriffsdruck `CC_A`, Richtung nur im Frame des Sprungdrucks `CC_DIR` (u = hoch, l/r = Richtung), Richtung mit dem Angriff `CC_ADIR` (d = runter), weitere Eingaben `CC_IN` (z. B. „l:2“ dreht die Figur nach links). **EINGRIFF**: Gegner vor jedem Frame relativ zur Figur (`CC_DX`, `CC_DZ`, Zeitraum `CC_VON`/`CC_BIS`), nur im Probeframe T in Reichweite (`CC_FERN_BIS` = T−1, `CC_NAH_BIS` = T, sonst 200 px), weitere Slots 300 px rechts (`CC_WEG`), `CC_ELP`. Kalibriert: Ab `kontakt` schlägt der WOOKY ohne Eingriff in Frame 28 zu (bei J = 4 ist die Figur dann in der Luft), ab `kontakt_b` wird der WOOKY aus Slot 16 in Frame 13 aktiv (daher `CC_WEG=16`). Im Probeframe geht der Gegner weiter, vorn liegt er am Frame-Ende etwa 2 px näher als gesetzt |
+| `rest_frei` | freie Eingaben (`CC_IN`) oder Hülle um ein anderes Szenario (`CC_BASIS`, z. B. `hurt_c.lua`; dessen Eingaben bleiben, Snapshots und Vollabzug entfallen), Laufzeit `CC_FRAMES`, Savestate `CC_SAVE` (nur Präfix `rest_`), Abzug `FFA900`–`FFEA00` (ab `CC_DUMP_AB`), Watch-CSV mit Rang `FFF82A`, Zähler `FFF82C`, Stage `FFA8CE`, Kamera `FFA82E`/`FFA830`. **EINGRIFFE** nur wenn gesetzt: `CC_SETZE` (Gegner relativ zur Figur), `CC_ELP`, `CC_PLP` (LP der Figur), `CC_RANG`, `CC_POKE` (beliebige Adresse). Kalibriert: ab `ingame` stirbt die Figur ohne Eingriff mit `hurt.lua` in Frame 1508 (Landung nach dem Neueinstieg L = 1681) und 2608, mit `hurt_b.lua` in 1855 und 3623, mit `hurt_c.lua` in 1741 (L = 1946) und 3063; mit `hurt_b.lua` erscheint die Figur nach dem ersten Tod in Frame 1976 bei x 914, Tiefe 304. Ab `kontakt` ist der WOOKY-Schlag in Frame 28 und 90 aktiv, ab `kontakt_b` der EDDY-Schlag in 44 und 121 (Figur passiv). Ab `tiefe_b` mit der Figur per EINGRIFF bei x 930 bzw. 960 und Tiefe 340 endet der Todesflug an der Stage-1-Wand bei x um 1016, in Tiefe 320 nicht |
+| `rest_v_frei` | Gegenprüfer V8 (Präfix `rest_v`), unabhängig von den Szenarien des Messagenten geschrieben: freier Lauf ab beliebigem Savestate, Protokoll nur über das Watch-Feld (Figur mit Zustand, Aktion, Unterphase, Lage, Animation, LP, Blick, Angreiferzeiger P+0x82, Kombostufe, Timer `FFAA61`/`FFAA69`, Leben `FFAA7C`, Rang, Rangzähler, Stage, Kamera; je Slot aus `CC_SLOTS` Zustand, Aktion, Phase, Lage, Animation, Attribut, Typ, LP, Blick), kein Abzug. Zeitangaben absolut oder relativ zu Ereignissen im selben Lauf („EREIGNIS#k+n“: `lpN` LP-Verlust von Slot N, `plp` LP-Verlust der Figur, `tot` LP der Figur unter 0, `land` Landung, `hoch` Erscheinen nach dem Neueinstieg, `stage` Stage-Wechsel). Eingaben `CC_IN` („VON[..BIS]:tasten“), Laufzeit `CC_FRAMES`, Savestate `CC_SAVE` (nur Präfix `rest_v`). **EINGRIFFE** nur wenn gesetzt: `CC_SETZE` (Slot relativ zur Figur), `CC_GLP` (LP und Vorframe-LP eines Slots, nur unter den Max-LP: ein Eingriff auf S+0x9A = 7 ließ das Spiel beim nächsten Treffer stehen), `CC_PLP`, `CC_RANG`, `CC_POKE`. Läufe ab `anlauf`, `anlauf_b`, `anlauf_c`, `tiefe_b`, `p0_s1_s1_cam00768`, `p0_s1_s1_cam01281`, `item_v_b1_s1_cam02016` und `rest_v_e_vor` |
+| `rest_v_bot` | Gegenprüfer V8: Konfiguration für `grafik/bot.lua` (Start über `grafik/bot.sh`, nicht über `runner.lua`). Der Durchlauf-Bot spielt eine Stage bis zum Stage-Wechsel und endet 60 Frames nach der Steuerbarkeit in der nächsten Stage. `RV_FRAMES` (Obergrenze, Standard 20000), `RV_SAVE` („frame:name“, nur Präfix `rest_v`). Zusätzliche Spalten im Bot-Protokoll: Rang `FFF82A`, Rangzähler `FFF82C`, Leben `FFAA7C`. **EINGRIFFE** von `bot.lua` (in `<CC_NAME>_events.txt`): LP der Figur jeden Frame auf 72, nach 900 Frames ohne Kamerafortschritt LP der Gegner im Bild auf 1. Läufe ab `item_v_b1_s1_cam02016`, `stage3` und `held0` |
+| Savestates `rest_e_r8`, `rest_e_r24` | legt `belege_rest.sh` (Teil E, Läufe `rest_e_setz8`, `rest_e_setz24` mit `rest_frei.lua`) ab `p0_s1_s1_cam02048` an: **EINGRIFF** Rang 8 bzw. 24 und Rangzähler `FFF82C` = 3000 in Frame 2 bis 5, gespeichert in Frame 8 (Bossarena von Stage 1). Von dort spielt der Bot bis zum Stage-Wechsel |
+| Savestate `rest_v_e_vor` | legt der Bot-Lauf `rest_v_e_boss` (Teil V, ab `item_v_b1_s1_cam02016`) in Frame 1950 an: Bossarena von Stage 1 kurz vor dem Stage-Wechsel, der von dort ohne Eingabe in Frame 70 kommt. Teil V legt ihn bei jedem Lauf neu an |
 | `kontakt`, `kontakt_b` | legen die Savestates `kontakt` (Frame 612 der `attack`-Annäherung ohne Schläge: Gegner mit 16 LP steht 46 px entfernt und trifft sonst bei Frame 28) und `kontakt_b` (Frame 900 von `combo_c`: Gegner mit 30 LP läuft heran) an. |
 | `schlag` | ab `kontakt`/`kontakt_b` (bzw. `anlauf`, `anlauf_b`, `anlauf_c`, `tiefe_b`): Einzelschlag ab `CC_PRESS`, optional zweiter Druck `CC_PRESS2`, Laufen (links) ab `CC_WALK` und vor dem Schlag `CC_VERT` Frames hoch (> 0) bzw. runter (< 0). |
 | `sprung_c`, `sprung_d` | ab `ingame`: je 6–7 Sprünge ohne Gegner, mit Rückwärtssprung, Richtung nur vor bzw. nur nach dem Sprungdruck, Richtung in der Luft, Tiefe in der Luft (auch erst nach dem Scheitel), Tastendauer 1 und 40 Frames. |
@@ -443,8 +477,8 @@ Es gibt vier Varianten, alle mit Aktion 0x0E:
 |---|---|---|---|
 | neutral | Sprung ohne Richtung, Angriff ohne Richtung (oder hoch/links/rechts beim Angriff) | 7, wirft um | gesichert |
 | Richtung | links oder rechts im Frame des Sprungdrucks (Vorwärts- und Rückwärtssprung; die Figur dreht sich dabei nicht) | 7, wirft um | gesichert |
-| hoch | hoch genau im Frame des Sprungdrucks (senkrechter Sprung) | 12, wirft um, erster Treffer A+7, trifft auch in 46 px Höhe | gesichert (`sa_nat_*_hoch_*`, ein Gegenprüfer); Reichweite nicht gemessen |
-| unten | runter zusammen mit dem Angriffsdruck | 4, wirft nicht um | gesichert (`sa_nat_kb_unten_*`, ein Gegenprüfer); Reichweite nicht gemessen |
+| hoch | hoch genau im Frame des Sprungdrucks (senkrechter Sprung) | 12, wirft um, erster Treffer A+7, trifft auch in 46 px Höhe | gesichert (`sa_nat_*_hoch_*`, ein Gegenprüfer); Reichweite gemessen im „Nachtrag: Rest der Spielfigur“ (B) |
+| unten | runter zusammen mit dem Angriffsdruck | 4, wirft nicht um | gesichert (`sa_nat_kb_unten_*`, ein Gegenprüfer); Reichweite gemessen im „Nachtrag: Rest der Spielfigur“ (B) |
 
 Neutral und Richtung im Einzelnen:
 
@@ -470,7 +504,9 @@ Unsicher bzw. nur im Workflow:
   einzelnen Angriffsposen des Gegners verschiebt sich die Grenze um 1 bis
   10 px, und die Höhengrenze sinkt auf etwa 41 px.
 - Mit Blick nach links ist die Reichweite 1 px kürzer (−75 bzw. −98), wie
-  bei der Kette (eine Gegenprüfung).
+  bei der Kette (eine Gegenprüfung). Gesichert im „Nachtrag: Rest der
+  Spielfigur“ (F): neutral ≤ 75, Richtung ≤ 98 (Messagent und
+  Gegenprüfer).
 
 ## Nachtrag: Griff und Würfe
 
@@ -577,7 +613,9 @@ der 8er in 1741 ein WOOKY mit 26 LP.
 (Zähler `FFF82C`) bis höchstens 24. Bei jedem Tod der Figur fällt es beim
 Wiedereinstieg um 3 (`gs_hurt_c_lang`: Tod 1741, 12 → 9 in 1893). Der Zähler
 läuft im 600er-Takt weiter. Das Spiel hält den Wert zwischen 7 und 24. Laut
-Workflow fällt er auch zu Beginn von Stage 2 um 3.
+Workflow fällt er auch zu Beginn von Stage 2 um 3. Bestätigt im „Nachtrag:
+Rest der Spielfigur“ (E): −3 im Frame, in dem der Stage-Index wechselt,
+gemessen bei Stage 1 → 2, 2 → 3 und 3 → 4, nie unter 7.
 
 | Gegner | Schaden je Treffer | Status |
 |---|---|---|
@@ -606,12 +644,16 @@ Weitere Regeln (gesichert, Workflow):
 
 - **Umwerfen**: Die Figur fällt nur, wenn das Attribut das Bit 0x0800 hat,
   wenn sie in der Luft getroffen wird oder wenn ihre LP unter 0 fallen.
-  Jeder Treffer in der Luft wirft um.
+  Jeder Treffer in der Luft wirft um. Mit Skript bestätigt für die Schläge
+  von WOOKY und EDDY im „Nachtrag: Rest der Spielfigur“ (F).
 - **Tod**: Genau 0 LP überlebt die Figur (normale Trefferreaktion). Erst
   unter 0 stirbt sie; etwa 120 Frames später geht es mit 72 LP weiter.
+  Präzisiert im „Nachtrag: Rest der Spielfigur“ (D): normal t+120, je nach
+  Todesart t+107, t+108 oder t+151/152.
 - **Gleichzeitiger Treffer**: Wird der Schlag der Figur im ersten aktiven
   Frame des Gegners aktiv, verliert nur der Gegner LP. Einen Frame später
-  trifft der Gegner zuerst.
+  trifft der Gegner zuerst. Mit Skript bestätigt im „Nachtrag: Rest der
+  Spielfigur“ (F).
 - **Schutz nach Treffer**: Die 27 Frames schützen vor Schlägen, nicht vor
   Geschossen und Griffen.
 - **Reichweite der Gegner** (Stage-1-Fußvolk): WOOKY trifft bis zu einem
@@ -630,7 +672,9 @@ Weitere Regeln (gesichert, Workflow):
   (EDDY 0 bis 10).
 - **Trefferreaktion**: Von hinten getroffen eine eigene Animation, von
   vorn je nach Attribut zwei verschiedene (Bit 0x0400 wählt nur die
-  Animation).
+  Animation). Beim Tod entscheidet die Reaktion mit Bit 0x0400 (Aktion 4
+  in t), ob die Figur rollt und erst in t+151/152 statt t+120 wieder einsteigt
+  (gesichert, 3. Messung, „Nachtrag: Rest der Spielfigur“).
 
 ## Nachtrag: Trefferreaktion der Gegner
 
@@ -2142,6 +2186,1054 @@ Offen:
 - Regel für die Punkte je Waffentreffer und für den Grundwert von SKIP
   (250 oder 300).
 
+## Nachtrag: Boss
+
+Belege: `logs/boss.csv` (Messagent M6 und dritte Messung, 4422 Zeilen, am
+Kopf die Laufliste) und `logs/boss_v.csv` (Gegenprüfer V6, 1508 Zeilen),
+beide erzeugt von `scripts/belege_boss.sh`. Szenarien:
+`scenarios/boss_frei.lua` (Messagent und dritte Messung), beim Gegenprüfer
+`scenarios/boss_v_frei.lua` und `scenarios/boss_v_bot.lua` (Konfiguration für
+`grafik/bot.lua`). Auswertung: `scripts/messen_boss.py belege` (`dritte`
+schreibt nur die Abschnitte „# M …“) bzw. `scripts/messen_boss_v.py belege`.
+Das Skript macht 923 Läufe des Messagenten (laut Laufliste: 3 für die
+Savestates `boss_q_*`, 576 in Teil A bis G, 344 in Teil M der dritten
+Messung) und 484 des Gegenprüfers (Teil V, davon 5 für Savestates und 3
+Bot-Kämpfe gegen den Boss). Der Volllauf von vorn mit Teil M dauerte beim
+Messagenten 21 min 3 s mit Exit 0 (Teil des Messagenten mit Teil M 801 s,
+Teil V 458 s).
+Reproduzierbar: Vor der dritten Messung lief das Skript beim Gegenprüfer
+zweimal ganz von vorn (19 min 32 s und 16 min 47 s, Exit 0). `boss.csv` war
+beide Male bitgleich mit dem Stand des Messagenten (3442 Zeilen, MD5
+`c4f6c79446356103a3c65372ca32e37a`), `boss_v.csv` beide Male bitgleich (MD5
+`06e9648e3d91b068a8ba4bfabd02be66`). Nach dem Anhängen von Teil M lief das
+ganze Skript noch zweimal von vorn, beim Messagenten (siehe oben) und in der
+Gegenprobe der Einarbeitung (`BOSS_JOBS=3`, `BOSS_V_JOBS=2`: 18 min 38 s,
+Exit 0, Teil des Messagenten 718 s, Teil V 398 s): `boss.csv` beide Male
+MD5 `3a051470fa672c786c5635677ec5c8f6` (4422 Zeilen), `boss_v.csv` beide
+Male unverändert (`06e9648e…`). Die Endfassung beider CSV ist damit
+zweimal identisch erzeugt. Das
+Skript löscht danach die Rohdaten beider Teile (seit der Gegenprüfung auch
+`boss_a2_*`); in `logs/raw/` bleiben nur Savestates (`boss_q_p`, `boss_q_r`,
+`boss_q_b`, `boss_q_m` und die des Gegenprüfers, siehe „Szenarien“).
+Voraussetzung sind die Savestates `p0_s1_s1_cam01536`, `p0_s1_s1_cam01793`,
+`p0_s1_s1_cam02048` (Phase 0), `item_missile`, `item_laser`,
+`item_bot1_s1_cam02048` (`belege_item.sh`) und `ingame`.
+
+**Methode.** Der Messagent (M) misst ab Savestates der Bossarena
+(`p0_s1_s1_cam02048`, eigene `boss_q_b`, `boss_q_p`, `boss_q_r`) bzw. kurz
+davor (`p0_s1_s1_cam01536`, `p0_s1_s1_cam01793`). `boss_frei.lua`
+protokolliert je Frame Figur, Boss-Slot 19 (`FFCAD0`) und alle Gegnerslots,
+dazu Trefferfläche S+0x28 und Schutzzähler S+0xAE. Für Zeiten und
+Reichweiten werden Boss oder Figur per Eingriff relativ zueinander gesetzt,
+den Angriff wählt der Boss selbst; Häufigkeiten stammen aus passiven Läufen
+und einem einfachen Angreifer-Bot über je 8000 Frames bei festgehaltenem
+Rang. Variiert sind Startframes, Ausgangslagen, Rang und die Arena-WOOKY
+(mit und ohne). Der Gegenprüfer (V) hat eigene Ausgangslagen angelegt
+(Bot-Lauf ab `ingame`; `boss_v_allein` mit beiden Arena-WOOKY besiegt, Boss
+97 von 110 LP), misst meist bei Rang 12 (M meist 24), lässt die Figur nach
+links in die freie Arena angreifen und wertet nur das Watch-Protokoll aus.
+Von 57 Zeilen bestätigte er 33, 22 wichen ab, 2 waren nicht prüfbar
+(Gepackt halten; Reichweite des Ansturms). Diese 24 Zeilen hat M in einer
+dritten Messung behandelt (Teil M, Läufe `m_*`; gemessen 23, „Gepackt
+halten“ mangels zweitem Angreifer nicht): aus dem eigenen Savestate `boss_q_m`
+(Boss in Tiefe 208 statt 156, Blick links), meist bei Rang 20 (sonst 9, 12,
+15, 16, 24), mit anderen Startframes und beiden Blickrichtungen; Warten und
+Körperpresse aus `boss_q_b` und `p0_s1_s1_cam02048`, Rakete und Laser aus
+`item_missile` und `item_laser`. 20 der 24 erklärt eine gemeinsame Regel, 4
+bleiben unsicher. Drei bestätigte Zeilen bleiben ebenfalls unsicher, weil
+beide Agenten nur das Fehlen einer Regel bestätigen und die Werte abweichen.
+Die Zeile Griff ist in Griff und Wurfweite geteilt; die Tabellen haben 58
+gemessene Zeilen (30 gesichert, 20 gesichert (3. Messung), 8 unsicher) und 3
+offene.
+
+Bezeichnungen: h = Frame, in dem die LP des Bosses sinken; A = erster Frame
+einer Angriffsanimation des Bosses (Wechsel von S+0x1C); K = Frame eines
+umwerfenden Treffers; G = erster Frame mit S+4 = 1 danach; t = erster Frame
+mit LP < 0; d = Abstand der Figur vor dem Boss in seiner Blickrichtung
+(negativ: hinter ihm); dz = Tiefe des Bosses minus Tiefe der Figur (wie in
+`docs/mechanik.md`; V zählt Figur minus Boss, seine Werte sind hier
+umgerechnet). Rang = `FFF82A`. Die Angriffe heißen in den Entwürfen K, S, R,
+P, G; hier stehen sie ausgeschrieben (kurzer Schlag, Armschwung, Ansturm,
+Körperpresse, Griff), weil K und G Frames bezeichnen. In der Belegspalte
+steht M für `logs/boss.csv` (Abschnitte „# A …“ bis „# G …“, dritte Messung
+„# M …“; Läufe `boss_*` ohne Vorsatz, `m_*` = dritte Messung) und V für
+`logs/boss_v.csv` (Abschnitte „# V …“, Läufe `boss_v_*` ohne Vorsatz).
+
+**EINGRIFFE**:
+
+- M, `CC_LP` (alle Läufe): LP der Figur vor jedem Frame auf 72; ein Treffer
+  auf die Figur ist ein Frame mit weniger als 72.
+- M, `CC_WEG=16,17,neu`: beide Arena-WOOKY und jeder später erscheinende
+  Gegner 250 px links der Kamera festgehalten (sie leben weiter). Nach 2224
+  bis 2454 Frames entfernt das Spiel die festgehaltenen WOOKY; in drei
+  Bot-Läufen erschien danach ein DICK (auch er festgehalten). In Teil B, C,
+  D, E, `f_dick_alle`, `g_lp0*`, `g_k*`, `g_s*` und den meisten Läufen von
+  Teil M; in Teil F sonst nur die Arena-WOOKY (`CC_WEG=16,17`); nicht in
+  Teil A, `g_tod_*`, `b_e*`, `m_f_*` (außer `m_f_h*`), `m_t_tod`,
+  `m_t_todsp`.
+- M, `CC_RANG`: Rang ab Frame 2 festgehalten in Teil A (bis zum Erwachen,
+  mit Wechsel in `a_wechsel_*`), E, B6 (`b_t_*`, Rang 24), den Bot-Läufen
+  und Teil M (meist 20); `boss_q_m` ist mit Rang 20 angelegt.
+- M, `CC_BSET`, `CC_FIG`, `CC_SSET`: Boss, Figur bzw. ein WOOKY für einzelne
+  Frames relativ zueinander gesetzt (Teil B, C, D, M).
+- M, `CC_BLP`: LP des Bosses einmalig gesetzt (Teil F, G, `m_f_*`, `m_t_*`).
+- M, `CC_ENTF`, `CC_ENTF2`: Gegner entfernt (S+4 := 0, ohne Tod) in `b_e*`,
+  Teil F, `m_f_*`.
+- V: LP der Figur 72 (alle Läufe, Bot `hp_refill`); Rang festgehalten in
+  Teil A, B (12 bzw. 24, `k20_*` 20), D, P, W, T, LI, U, AU und in
+  `bot_r7`, `bot_r24`; Lage von Figur bzw. Boss gesetzt (`CC_SETZ`,
+  `CC_FIG`, `CC_FIGV`, `CC_FIGA`, `CC_FIGH`, `CC_BOSS`) in B, D, DG, W, T,
+  LI, U, AU; LP des Bosses gesetzt in W, T (`CC_BLP`), im Bot unter 30 bzw.
+  60 zurück auf 97 bzw. 100 (`BV_BLP_MIN`); Gegner entfernt: Arena-WOOKY in
+  `q_r*`, `k20_*`, `boss_v_r9`, `boss_v_laser`, EDDY in `w_v*_e1`,
+  `w_v*_e2`; Bot: LP der Gegner nach 900 Frames Stillstand auf 1, nur beim
+  Anlegen von `boss_v_b1_s1_cam*` und `boss_v_allein` (dort nicht
+  ausgelöst).
+- Die Phase-0-Savestates `p0_s1_s1_cam*` stammen aus einem Bot-Lauf mit
+  aufgefüllten LP der Figur und LP der Gegner auf 1 bei Stillstand.
+
+### A. Lebenspunkte
+
+| Größe | Wert | Beleg | Status |
+|---|---|---|---|
+| Start-LP nach Rang | Rang 7–8: 90, Rang 9–15: 100, Rang 16–23: 110, Rang 24: 120; gemessen bei Rang 7, 8, 9, 11, 12, 15, 16, 19, 20, 23, 24 | M „# A rang“ (`a_r*`, `a2_r*`); V „# V a rang“ (`a_r*`, LP ab Frame 40; `a2_r*`, ab Frame 96; zwei eigene Savestates, anderer Weg in die Arena) | gesichert |
+| Zeitpunkt | Die LP (und S+0xB7) werden im Frame nach dem ersten Frame mit Kamera ≥ 2048 geschrieben (Erreichen der Arena); es zählt der Rang in diesem Frame, ein Rangwechsel danach ändert nichts | M „# A start“, `a_wechsel_9_24`, `a_wechsel_24_9`; V `a_w8_24_40` (90), `a_w8_24_39` (120), `a_w24_9_40` (120), `a_w24_9_39` (100), Kamera 2048 in Frame 39, LP ab 40 | gesichert |
+| S+0x9A | beim Boss immer 72: Maßstab der Lebensleiste (wie bei der Figur), nicht die LP | M „# A start“; V „# V a rang“ (alle Läufe) | gesichert |
+| S+0xB7 | die echten Max-LP (90 / 100 / 110 / 120), bleiben im Kampf stehen | M „# A start“; V „# V a rang“, „# V f wellen“ (Spalte `max_lp`) | gesichert |
+| 100 oder 110 | Beides stimmt: Die Phase-0-Savestates und der eigene Bot-Lauf von V erreichen die Arena bei Rang 16 und haben daher 110; bei Rang 9–15 sind es 100 | M „# A start“, `a_nat`, `a2_nat`; V `a_nat`, `a2_nat` (Rang 16, 110), Bot `b1` Frame 4536 | gesichert |
+| LP bei Rang 10, 13, 14, 17, 18, 21, 22 | nicht einzeln gemessen | – | offen |
+
+### B. Super-Armor
+
+Zurückweisung heißt: Die LP sinken in h um den vollen Schaden und stehen in
+h+1 wieder auf dem Wert vor diesem Treffer (nicht vor der Kette). Danach
+folgt der Rückzug oder, bei umwerfenden Treffern, auch das Abfangen.
+
+| Größe | Wert | Beleg | Status |
+|---|---|---|---|
+| Nie zurückgewiesen | Spezialangriff, Kniestoß, Wurf (nach vorn und rückwärts), Raketenwerfer, Laser | M „# B arten“ (Rang 24, je 16 Läufe), „# M treffer summe“; V „# V b arten gesamt“: Spezial 19/19, Knie 42/42, Wurf 13/13, Rakete 5/5, Laser 13/13 dauerhaft (Rang 12–24) | gesichert |
+| Zurückweisbar | Kettenstufe 1, 2, 3, Tritt, Sprungangriff neutral und hoch, Sprintangriff | M „# B arten“, „# M treffer summe“; V „# V b arten“ (Stufe 1 33/181, Stufe 2 23/83, Tritt 8/25 und 10 abgefangen, Sprung neutral 5/9, hoch 5/9, Sprint 5/22) | gesichert (Art); Anteile unsicher |
+| Stufe 3 | zurückweisbar. M 0 von 7 (Rang 24, Frage offen gelassen), V 18 von 47 (Rang 7: 2/16, 12: 5/14, 24: 8/13, dazu Bot bei Rang 19–23), dritte Messung 3 von 27 (Rang 16 und 20). Regel: Stufe 3 ist zurückweisbar, der Anteil schwankt je Lage und Rang | dritte Messung `m_k20_6` h 79, `m_k20_16` h 129, `m_k16_4` h 79, „# M treffer summe“; M „# B arten“; V „# V b arten“, „# V bot“ | gesichert (3. Messung); Anteil unsicher |
+| Schaden am Boss | unabhängig vom Rang: Stufe 1: 3, Stufe 2: 4, Stufe 3: 5, Tritt 10, Sprungangriff neutral 7, hoch 12, Sprintangriff 9, Spezialangriff 6, Wurf 14, Kniestoß 4 je Stoß, Rakete 8, Laser 6 | M „# B treffer“, „# B arten“; V „# V b arten“ (Spalte `schaden`, Rang 7–24) | gesichert |
+| Rückzug nach Zurückweisung | Aktion 8 ab h+1, 54 Frames, 48 px rückwärts (an der Arenawand weniger); keine aktiven Frames (S+0x24 = 0), die Figur verliert nichts: der „Abbruchstoß“ ist harmlos. Frei ab h+55 | M „# C reaktion“; V „# V b rueckzug“ (54 Frames in 95 von 97 Fällen, 48 px in 77, die übrigen an der Wand; frei ab h+55 in 95/95) | gesichert |
+| Trefferbar im Rückzug | nein: S+0x28 leer ab h+1 bis zum ersten Zellenwechsel der Animation nach Ablauf des Schutzzählers (S+0xAE = 5 in h+55), zusammen 60 bis 90 Frames (Median 62; V 60 bis 71, Median 62, n = 94); erster Treffer beim Gehen in h+63 | M „# C schutz“; V „# V b rueckzug“, `li_r0`, `li_r2` | gesichert |
+| Abfangen (Aktion 0x1E) | zweite Art der Zurückweisung, nur bei umwerfenden Treffern (Tritt, Sprung- und Sprintangriff): In h+1 kommt die Hälfte des Schadens zurück (10 → 5, 9 → 5, 7 → 4), der Boss fliegt zurück, landet auf den Füßen, ist nach 46 Frames frei und sofort trefferbar. 109,25 px bis G und 106,38 px bis G−1 sind dieselbe Flugbahn. M: 106 px, auch Sprung- und Sprintangriff (3 Fälle); V: 109,25 px, nur Tritt (10 Fälle); dritte Messung: Tritt 2, Sprungangriff 3, Sprintangriff 4 Fälle (laut `boss.csv`; der Entwurf nennt 5), alle mit derselben Bahn. Ob Rückzug oder Abfangen folgt, ist offen | dritte Messung `m_k20_5` h 91, `m_k16_3`, `m_sprn20_6` h 47, `m_sprint20_4` h 45, „# M treffer summe“; V „# V c umwerfen“ (`k_38`, `k_45`, `k_52`: G = K+46), „# V b arten“ | gesichert (3. Messung) |
+| Anteil zurückgewiesener Schlagtreffer (Bot) | steigt mit dem Rang, Werte siehe „Unsicher“ | M „# B bot“, „# B bot gruppen“; V „# V bot“ | unsicher |
+| Regel der Zurückweisung | nicht gefunden, siehe „Unsicher“ | M „# B zweittreffer“ (`b_d*`, `b_e*`); V „# V b treffer“ (`e_*`) | unsicher |
+| Erster Treffer | einzelner Schlag zu verschiedenen Zeitpunkten: M 89 Zeitpunkte, 37 dauerhaft, 6 zurückgewiesen, 46 ohne Treffer; V 16 Schläge: 5 / 2 / 9 (ohne Treffer: der Boss griff zuerst an) | M „# B einzelzeit“; V „# V b treffer“ (`e_*`) | gesichert |
+| Unterbrochene Kette | zweiter Schlag nach Pause (neue Kette): kein festes Fenster, Werte siehe „Unsicher“ | M „# B zweittreffer“; V `u45_*` | unsicher |
+| Griff durch die Figur | Die Figur packt den Boss von hinten und von vorn: beim Warten, beim Ausholen von kurzem Schlag und Armschwung und einen Frame nach Beginn des kurzen Schlags. Nur in seinem Entscheidungsframe packt er sie zuerst (siehe D, Griff). M: nur von hinten (`b_griff_vorn` lag in Frame 62/63, dem ersten Frame des Gehens); V: auch von vorn beim Ausholen zum kurzen Schlag (16 Griffe bei d 29 bis 35); dritte Messung: von vorn beim Ausholen von kurzem Schlag (`m_gf_k43/45/47`) und Armschwung (`m_gf_s*`), beim Warten (`m_gf_w*`), einen Frame nach Beginn des kurzen Schlags (`m_gf_g*`) | dritte Messung „# M griff“; M „# B treffer“ (`b_griff_*`); V „# V b griff“ | gesichert (3. Messung) |
+
+### C. Reaktion des Bosses
+
+| Größe | Wert | Beleg | Status |
+|---|---|---|---|
+| Zuck-Reaktion (S+4 = 3) | Treffer von vorn oder auf den gehenden Boss (er dreht sich zum Angreifer): Aktion 0, 27 Frames (h bis h+26) am Ort, Zittern +3 / +2 / +1 px in h+9 / h+11 / h+13, kein Rückstoß. Treffer von hinten, während er wartet oder angreift: Aktion 6, 15 Frames (V sah danach 3 bis 8 px Versatz). M: immer 27; V: 27 nur in Aktion 0, sonst 15 (er traf den wartenden und den angreifenden Boss von hinten); dritte Messung: von vorn 27 (29 Fälle, vorher Aktion 0, 4 oder 6), von hinten auf den gehenden Boss 27, beim Warten und Ausholen 15 | dritte Messung „# M zucken“, „# M zucken summe“ (`m_z_wph*`, `m_z_wbh*`, `m_z_sh*`); M „# C zittern“; V „# V c zittern“ (`e_38`, `e_45`: 27; `e_24`, `e_31`, `e_52`, `r24k_50`: 15) | gesichert (3. Messung) |
+| Reaktion auf Stufe 2 | 15 Frames (Aktion 4 von vorn), frei ab h+15. Steht die Figur dann höchstens 49 px vor ihm, beginnt er in h+16 den kurzen Schlag, sonst geht er. M: Aktion 4, kurzer Schlag ab h+16; V: Aktion 4 oder 6, kurzer Schlag nicht immer; dritte Messung: 28 Fälle Aktion 4, kurzer Schlag in h+16 genau bei d ≤ 49 in h+15 (Aktion 6 bei V passt zu Treffern von hinten) | dritte Messung „# M stufe2“ (`m_k20_*`, `m_k16_*`); M „# C reaktion“; V „# V b treffer“ (Spalte `folge`) | gesichert (3. Messung) |
+| Erneuter Treffer im Zucken | trifft (Stufe 2 in h+17); Zurückweisung wie immer möglich (V: Stufe 2 in 23 von 83 Fällen zurückgewiesen) | M „# B treffer“; V „# V b treffer“ (`k_*`), „# V b arten“ | gesichert |
+| Umwerfen | Flug fest: Scheitel 48,24 px in K+27, Boden K+46, Ruhe K+55 (dritter Kniestoß K+57, Laser K+61 bis K+66), 127,25 px bis G. Danach liegt er unterschiedlich lange, nach Tritt, Sprung- und Sprintangriff 42 bis 70 Frames (bei M in Schritten von 4): G = K+97 bis K+125 nach Sprung-, Sprintangriff und Tritt, K+103 bis K+119 nach dem dritten Kniestoß, K+99 bis K+125 nach dem Laser, 116 bis 144 Frames nach dem Wurftreffer. M: G fest (K+105 / 109 / 99, Wurf 120); V: K+103 bis K+125, Wurf 116–144; dritte Messung: K+97 bis K+125, Knie K+107, Laser K+99/100, Wurf 120–140. Regel: Flug fest bis K+55, Liegezeit variabel | dritte Messung „# M umwerfen“ (`m_k*`, `m_spr*`, `m_uw_*`); M „# C aufstehen“; V „# V c umwerfen“, „# V c wurf“ | gesichert (3. Messung) |
+| Spezialangriff (Aktion 0x12) | kein Liegen: 78 Frames Taumeln (S+4 = 3), 135 px (V 135,125), danach in G sofort trefferbar | M „# C reaktion“, „# C schutz“; V „# V c umwerfen“ (`sp_*`, `r24sp_*`) | gesichert |
+| Rakete (Aktion 0x14) | Flug 109,25 px, an der Arenawand kürzer (56 bis 98 px); frei nach 132 bis 152 Frames. M: 152 Frames, 59 px; V: 132 bis 140 Frames (in einer Erkundung 152), 109,25 px, an der Wand 98 und 78 px; dritte Messung: 140 Frames und 109,25 px nach links (`m_mis_l*`), 140 bzw. 152 Frames und 56–59 px an der rechten Wand (`m_mis_r*`). Regel: 109,25 px frei, an der Wand kürzer, Liegezeit variabel | dritte Messung „# M umwerfen“; M `b_mis`; V „# V c umwerfen“ (`m_70`, `m_90`, `m_110`, `m_150`, `m_170`) | gesichert (3. Messung) |
+| Trefferbar beim Liegen | nein, von K bis zum Aufstehen (V: kein Treffer zwischen K und G bei Schlägen alle 8 Frames) | M „# C aufstehen“; V `li_s0` bis `li_s6` | gesichert |
+| Schutz nach dem Aufstehen | in G Schutzzähler S+0xAE = 10, Trefferfläche leer; sie kommt mit dem ersten Zellenwechsel nach Ablauf des Zählers zurück (G+11 bis G+17): beim Gehen erster Treffer in G+16 | M „# C aufstehen“, „# C schutz“; V „# V c umwerfen“ (Spalte `flaeche_ab_G+`), `li_s4`, `li_s6` | gesichert |
+| Was er nach dem Aufstehen tut | gemeinsam nur: Figur höchstens 49 px vor ihm, kurzer Schlag in G+1; Werte siehe „Unsicher“ | dritte Messung „# M aufstehen“ (`m_au_*`); M „# C aufstehen“; V „# V c nach dem aufstehen“ (`au_*`) | unsicher |
+| Trefferfläche als Regel | getroffen wird er nur in Frames mit gesetzter Trefferfläche S+0x28: M 1063 von 1063, V 468 von 468 Treffern (einige erst im Trefferframe gesetzt, bei V 33) | M „# C schutz Treffer“; V „# V c flaeche“ | gesichert |
+| Trefferbar im eigenen Angriff | ja, die Fläche bleibt gesetzt: von hinten in allen aktiven Frames, von vorn nur im ersten aktiven Frame (Gleichstand, die Figur gewinnt), danach trifft sein Schlag die Figur zuerst. Ansturm und Körperpresse auch von vorn. M: in aktiven Frames von kurzem Schlag und Armschwung nie getroffen; V: 17 Treffer in aktiven Frames des kurzen Schlags (von hinten, mit dem Spezialangriff, im ersten aktiven Frame von vorn) und 4 im ersten aktiven Frame des Armschwungs (d 53 bis 54); dritte Messung: von vorn im ersten aktiven Frame (`m_z_k47`, h = A+7), von hinten in A+8 bis A+11 (`m_z_kh50` bis `m_z_kh53`) | dritte Messung „# M zucken“; M „# C im angriff“; V „# V c im angriff“ | gesichert (3. Messung) |
+| Geschützte Körperpresse („Ausbruch“) | Beginnt die Körperpresse ohne Vorphase (direkt aus der Zuck-Reaktion oder einen Frame nach dem Gehen, etwa nach Aufstehen oder kurzem Schlag), steht der Schutzzähler in A auf 32 (direkt aus der Zuck-Reaktion) bzw. 31 (einen Frame nach dem Gehen, so auch bei V; „# M presse schutz“, Spalte `schutz_A`) und die Fläche bleibt bis zur Flugphase leer (32 bis 38 Frames). Mit Vorphase (Aktion 6, Phase 0/2) kein Schutz. M: 28 Pressen aus Zuck-Reaktionen; V: keine aus der Zuck-Reaktion, aber drei geschützte nach dem kurzen Schlag bzw. dem Aufstehen; dritte Messung: 8 Pressen ohne Vorphase alle geschützt (4 aus der Zuck-Reaktion, 4 einen Frame nach dem Gehen), 68 mit Vorphase alle ohne Schutz. Häufigkeit siehe „Unsicher“ | dritte Messung „# M presse schutz“ (Summe), `m_bot_*`, `m_e_*`; M „# C ausbruch“; V „# V c ausbruch“, „# V c zucken danach“ | gesichert (3. Messung); Häufigkeit unsicher |
+| Gepackt halten | Während er die Figur hält, ist S+4 = 2; Werte siehe „Unsicher“ | M „# C schutz“; V „# V d einzelheiten“ (Griff) | unsicher |
+
+### D. Angriffe
+
+Schaden bei Rang 7 / 9 / 12 / 16 / 20 / 24. Alle umwerfenden Angriffe werfen
+bei jedem Treffer um.
+
+| Größe | Wert | Beleg | Status |
+|---|---|---|---|
+| Kurzer Schlag: Auslöser | Figur höchstens 49–50 px vor ihm; sofort bei dz −7 bis +6, bei +7, ±8, ±9 rückt er erst in der Tiefe nach und schlägt 2 bis 7 Frames später. M: −7 bis +6; V: Abstand ≤ 50 bestätigt (bei 50 und 51 in Wartehaltung stattdessen Körperpresse), in der Tiefe bei ±7, bei ±8 nicht; dritte Messung: sofort bei −7 bis +6, sonst nach dem Nachrücken | dritte Messung „# M ausloeser“ (`m_dkz_*`); M „# D zusammenfassung“; V „# V d griffweite“ (`dg_31_*`) | gesichert (3. Messung) |
+| Kurzer Schlag: Zeiten | Startup 7, aktiv A+7 bis A+10, mit Treffer 7 Frames Trefferstopp (bis A+17); Nachlauf 7 bis 10 Frames (V 9) | M „# D proben“ (`d_k_*`); V „# V d proben“ (`dk_*`) | gesichert |
+| Kurzer Schlag: Reichweite | nicht spiegelgleich: Blick links 16 px hinter bis 105 px vor ihm, Blick rechts 25 px hinter bis 95–96 px vor ihm (±1 px je nach Nachkommastelle); Tiefe ±12, Figur bis 66,75 px hoch. M: −15 bis 105; V: −16 bzw. −17 bis 105, am linken Arenarand (Blick rechts) bis 96; dritte Messung: Blick links −16 bis 105, Blick rechts −25 bis 95 | dritte Messung „# M proben“ (`m_dk_*`); M „# D proben“ (`d_k_*`); V „# V d proben“ (`dk_*`, `dk2_*`, `dk3_*`) | gesichert (3. Messung) |
+| Kurzer Schlag: Schaden | 7 / 8 / 9 / 10 / 11 / 12, wirft immer um (V: 158 von 158; 10 bei Rang 17–19) | M „# D zusammenfassung“; V „# V d schaden“ | gesichert |
+| Armschwung: Ablauf | heran bis etwa 78 px (72–80 laut „# D zusammenfassung“, Spalte `vorn_A`, der Entwurf nennt 73–80; V 76–80), Startup 17, 3 aktive Frames (+7 Trefferstopp); nur nach einem Treffer folgt 35–38 Frames später der nächste Schwung, höchstens drei; ohne Treffer ein Schwung (aktiv A+17 bis A+19) | M „# D angriffe“; V „# V d einzelheiten“, „# V d proben“ (`ds_x106`) | gesichert |
+| Armschwung: Reichweite | Blick links 16 px hinter bis 105 px vor ihm (±1 px), Blick rechts nach hinten 17 px; Tiefe ±12, Figur bis 66,25 px hoch. M: −15 bis 104; V: −16 bis 105; dritte Messung: Blick links −16 bis 105, Blick rechts hinten −17 | dritte Messung „# M proben“ (`m_ds_*`); M „# D proben“ (`d_s_*`); V „# V d proben“ (`ds_*`) | gesichert (3. Messung) |
+| Armschwung: Reichweite vorn bei Blick rechts | an der Wand nicht messbar | – | offen |
+| Armschwung: Schaden | je Schwung 7 / 8 / 9 / 10 / 11 / 12; nur der dritte wirft um (V: Attribut `4002` beim ersten und zweiten, `4C02` beim dritten) | M „# D zusammenfassung“; V „# V d schaden“ | gesichert |
+| Ansturm: Ablauf | Entscheidung bei etwa 100–320 px (V 104–306, Median 189), Ausholen 20 Frames, Lauf mit 4 px/Frame (diagonal 3,92) bis 45 Frames und 176 px, aktiv im ganzen Lauf; Auslauf 24–30 px; Nachlauf meist 14–18 Frames | M „# D zusammenfassung“; V „# V d einzelheiten“ | gesichert |
+| Ansturm: Reichweite | Figur bis 90,75 px hoch im Trefferframe (Vorgabe 100 getroffen, 105 bis 115 nie); Tiefe bis 12 im Trefferframe, der Boss lenkt im Lauf 1 px je Frame nach (Figur in 13 px Tiefe wird noch getroffen, im Trefferframe 12). M und dritte Messung gleich; V nicht prüfbar (Tiefe im Trefferframe nie über 12, keine saubere Probe für 13/14 und die Höhe) | dritte Messung „# M proben“ (`m_dr_*`); M „# D proben“ (`d_r_*`) | gesichert (3. Messung) |
+| Ansturm: Schaden | 10 / 11 / 12 / 13 / 15 / 17, wirft um | M „# D zusammenfassung“; V „# V d schaden“ | gesichert |
+| Körperpresse: Ablauf | aktiv ab A+32 bis zur Landung, Scheitel 107,5 px in A+31 (V 107,53), Landung A+64 (mit Treffer A+71); Ziel ist der Ort der Figur in A | M „# D zusammenfassung“; V „# V d einzelheiten“ | gesichert |
+| Körperpresse: Reichweite | Die Trefferfläche hängt am Boss, nicht am Landepunkt: von A+51 (Boss etwa 70 px hoch) bis A+62 trifft er eine Figur bis etwa 23–27 px um sich, in A+48 und nach der Landung nicht; den Landepunkt trifft er erst, wenn er darüber ist. M: ±25 um den Landepunkt (Figur ab A+45 mitgeführt, also um den Boss); V: bis etwa 23 px vor dem Boss ab A+51 (Boss etwa 69 px hoch), Landepunkt erst ab A+58; dritte Messung (Figur nur in A+F gesetzt): A+48 nie, A+51 bis A+62 bis 27 px (35 nie), A+66 nie, Landepunkt ab A+51 | dritte Messung „# M presse“ (`m_dp_*`); M „# D proben“ (`d_p_*`); V „# V d proben“ (`dp_x*`) | gesichert (3. Messung); Breite unsicher |
+| Körperpresse: Schaden | 13 / 14 / 16 / 18 / 20 / 22, wirft um | M „# D zusammenfassung“; V „# V d schaden“ | gesichert |
+| Griff | Er packt nur in einem Entscheidungsframe (erster Frame des Gehens nach Auftritt bzw. Savestate, Wahl eines neuen Angriffs): Steht die Figur dann höchstens 49 px vor ihm (dz −7 bis +6), packt er sofort. Kommt sie ihm sonst im Gehen so nahe, beginnt er den kurzen Schlag, aus dem Warten erst nach dessen Ende. Wurf nach 59 Frames (mit Tragen 67–74), hinter sich. M: sofort bis 49 px; V: aus dem Gehen bei d 46–49 (51 und 52 nicht), aus der Wartehaltung stattdessen kurzer Schlag nach 5 Frames; dritte Messung: Griff nur in Entscheidungsframes (`m_bg_c2`, `m_bg_c51`), sonst kurzer Schlag (`m_bg_g*`, `m_bg_h*`), aus dem Warten 13 Frames später (`m_bg_w*`) | dritte Messung „# M griff“; M „# D griff“ (`d_g_*`); V „# V d griffweite“ (`dg_2_*`, `dg_31_*`), „# V d einzelheiten“ | gesichert (3. Messung) |
+| Griff: Wurfweite | hängt von Maß, Tragen und Wand ab, Werte siehe „Unsicher“ | dritte Messung „# M wurf“; M „# D zusammenfassung“; V „# V d einzelheiten“ | unsicher |
+| Griff: Schaden | 13 / 14 / 16 / 18 / 20 / 22 (Rang 7 nur V), wirft um | M „# D zusammenfassung“; V „# V d schaden“ | gesichert |
+
+### E. Rhythmus und Wahl
+
+| Größe | Wert | Beleg | Status |
+|---|---|---|---|
+| Häufigkeit (Figur passiv) | 29–39 Angriffe in 8000 Frames, Median-Abstand der Angriffsbeginne 199–288 Frames; einzelne Abstände 76 bis 450 Frames (direkt nach einem kurzen Schlag einmal 28). M: 29–39, Median 199–288, Minimum 79, Maximum 426; V: 29–37, Median 221–276, Minimum 79 (einmal 28 nach einem kurzen Schlag), Maximum 409; dritte Messung: 34–38, Median 206–221,5, Minimum 76, Maximum 450 (der Entwurf nennt zusammengefasst „Minimum 79, Maximum 450“) | M „# E rhythmus“, „# M rhythmus“; V „# V e rhythmus“ (`p_r*`, `q_r*`) | gesichert |
+| Rang | kein deutlicher Unterschied (29–39 Angriffe je 8000 Frames bei jedem Rang): Rang 7: 32 (V); Rang 9: 29, 35, 31 (M), 32, 34 (V), 35 (dritte Messung); Rang 12: 33 (V); Rang 16: 29 (V), 34 (dritte Messung), dazu natürlicher Rang ab 16: 35, 35 (M); Rang 20: 38, 39, 35 (M), 35, 33 (V); Rang 24: 37 (V), 38 (dritte Messung). M hatte Rang 20 für häufiger gehalten; V sah keinen Unterschied; dritte Messung 35 / 34 / 38 bei Rang 9 / 16 / 24 (der Entwurf zählt für Rang 16 die beiden Läufe mit natürlichem Rang und lässt V `p_r16` mit 29 weg) | dritte Messung „# M rhythmus“ (`m_e_r*`); M „# E rhythmus“; V „# V e rhythmus“ | gesichert (3. Messung) |
+| Wahl nach Abstand | nah (< 80 px) kurzer Schlag oder Griff, auch Körperpresse und Armschwung; mittel (80–160 px) Armschwung, Körperpresse, Ansturm; fern (> 160 px) Ansturm, Körperpresse und Armschwung, selten Griff. M sah fern seltener Armschwung, V nicht; gemeinsam: fern alle drei, Anteile je Lauf verschieden (siehe „Unsicher“) | dritte Messung „# M rhythmus“; M „# E rhythmus“; V „# V e wahl nach abstand“ | gesichert (3. Messung); Anteile unsicher |
+| Figur greift an (Bot) | hängt vom Angreifer ab, Werte siehe „Unsicher“ | dritte Messung „# M rhythmus“ (`m_bot_*`); M „# E rhythmus“; V „# V e rhythmus“ (`bot_*`) | unsicher |
+
+### F. Verstärkung
+
+| Größe | Wert | Beleg | Status |
+|---|---|---|---|
+| Halbe LP | Sinken die LP auf höchstens die Hälfte der Max-LP (55 bei 110, 50 bei 100; V: 56 bzw. 51 nicht), erscheinen zwei EDDY: nach einem Treffer in h+1, bei gesetzten LP im Frame des Eingriffs, in die freien Gegnerslots (15/18, 16/18 oder 14/15 je nach Belegung). M: im selben Frame, Slots 15/18; V: h+1 nach Treffer, Slots 16/18 bzw. 14/15; dritte Messung: h+1 nach Treffer (`m_f_h56`: h 43, EDDY 44), im Eingriffsframe bei gesetzten LP, Slots 15/18 bzw. 14/15 | dritte Messung „# M wellen“; M „# F wellen“; V „# V f wellen“ (`ws_55/56`, `w9s_50/51`, `w_r58_*`) | gesichert (3. Messung) |
+| Viertel der LP | bei höchstens einem Viertel (27 bei 110, 25 bei 100) ein DICK; ein zweiter 40 Frames später nur ab Rang 16 (gemessen 16 und 20; nicht bei 12 und 15) und nur, wenn dann höchstens drei andere Gegner leben (wird später ein Gegnerslot frei, kommt er 39 Frames danach; maßgeblich ist der Rang nach der Wartezeit, siehe „Nachtrag: Fernangriffe der Gegner“, Zeile „Erscheinen Raketen-DICK“, `t_z22_e`, `t_z22_f`, `t_z15_f`). M: zweiter DICK nach 40 Frames; V: nie ein zweiter (Rang 12, bis 336 Frames danach); dritte Messung: zweiter bei Rang 16 und 20 (`m_f_leer16/20`, `m_f_ow16`, `m_f_e20`), nicht bei 12 und 15 (`m_f_leer12/15`) und nicht bei drei lebenden Gegnern (`m_f_ow20`) | dritte Messung „# M wellen“; M „# F wellen“; V „# V f wellen“ (`ws_27`, `w9s_25`, `w_v28` bis `w_v30*`) | gesichert (3. Messung) |
+| Zweiter DICK bei Rang 13 | nicht gemessen. Bei Rang 14 kam keiner (dritte Messung im „Nachtrag: Fernangriffe der Gegner“, `t_z14_a` bis `t_z14_d`, 2 bis 5 belegte Gegnerslots samt DOLG); dort gesichert (3. Messung): bei Rang 15 und darunter nie (laut Entwurf M6 sah der Gegenprüfer des Fernkampfs bei Rang 17 und 18 einen zweiten) | `logs/fern.csv` (`T welle`), nur Rang 14 | offen |
+| Begrenzung | Neben dem Boss leben höchstens vier Gegner: Leben schon vier (zwei WOOKY, zwei EDDY), kommt kein DICK; es zählt die Gesamtzahl, nicht ob die EDDY leben. Sinkt nach der Welle bei halben LP die Zahl lebender WOOKY und EDDY unter zwei (hier: EDDY entfernt), erscheinen sofort zwei WOOKY. M: kein DICK, solange beide EDDY leben (Gegner außerhalb des Bildes festgehalten); V: DICK trotz zwei lebender EDDY (WOOKY tot), nach Entfernen der EDDY zwei WOOKY und trotzdem ein DICK; dritte Messung: kein DICK bei zwei WOOKY und zwei EDDY (`m_f_alle20`), einer bei drei Gegnern (`m_f_ow20`, `m_f_owe12/20`) | dritte Messung „# M wellen“ (`m_f_alle20`, `m_f_owe*`); M „# F wellen“; V „# V f wellen“ | gesichert (3. Messung) |
+| Welcher LP-Wert zählt | auch der vorübergehend gesenkte: Ein zurückgewiesener Treffer unter die Schwelle löst die Welle aus (V: 56 → 53, 57 → 54, 58 → 55, jeweils sofort zurück, lösen die EDDY aus, 59 → 56 nicht) | M „# F wellen“ (`f_rueck*`); V `w_h56` bis `w_h59` | gesichert |
+
+### G. Fall
+
+| Größe | Wert | Beleg | Status |
+|---|---|---|---|
+| Tod | erst bei LP unter 0; mit genau 0 LP kämpft der Boss weiter, greift an und trifft (V: 1300 Frames, 6 Angriffe, 7 Treffer auf die Figur) | M „# G fall“ (`g_lp0*`); V `t_lp0` | gesichert |
+| Ablauf | ab t+1 Todesflug (S+4 = 2); die übrigen Gegner brechen in t+2 bis t+3 zusammen, ein gerade liegender oder getroffener erst nach seiner Reaktion (V: ein DICK in t+47). Der Boss-Slot ist 2 Frames nach dem Stagewechsel frei | M „# G fall“, „# M fall“; V „# V g fall“ (`t_todk`, `t_k1100r`, `t_todsp`) | gesichert |
+| Bis „STAGE 1 CLEAR“ | Siegerpose, Schriftzug und Stagewechsel: Werte siehe „Unsicher“ | M „# G fall“, „# M fall“ (`m_t_*`); V „# V g fall“, „# V g schriftzug“ | unsicher |
+| Treffer im Sterben | Stirbt er im ersten aktiven Frame des Armschwungs, bleibt das Attribut zwei Frames gesetzt (V: `4002` in t und t+1, bei Tod einen Frame vorher nur `8000`), die Figur verliert nichts. Beim kurzen Schlag nur M | M „# G fall“ (`g_s17`, `g_k7`); V „# V g sterben im angriff“ (`t_s397`, `t_s398`) | gesichert (Armschwung) |
+
+Unsicher (Werte von Messagent M, Gegenprüfer V und dritter Messung):
+
+- Anteil zurückgewiesener Schlagtreffer im Bot: M 18 / 15 / 19 / 24 / 28 /
+  39 % bei Rang 7 / 9 / 12 / 16 / 20 / 24; V 16 % bei Rang 7 (82
+  Schlagtreffer), 36 % bei Rang 24 (59), 34 % bei natürlichem Rang 18–24
+  (53); dritte Messung entfällt. Steigt mit dem Rang, hängt aber auch von
+  Lage und Angreifer ab.
+- Anteil bei Stufe 3: M 0 von 7 (Rang 24), V 18 von 47 (Rang 7–24), dritte
+  Messung 3 von 27 (Rang 16 und 20).
+- Regel der Zurückweisung: M fand keine; Kettenstufe, Zeit seit dem letzten
+  dauerhaften Treffer, LP-Stand und Zustand des Bosses scheiden aus, ein um
+  wenige Frames verschobener Start kehrt das Ergebnis um, ohne Arena-WOOKY
+  nahm der Boss jeden Treffer an. V fand ebenfalls keine (dieselbe Lage, 7
+  Frames später gestartet: `e_10`, `e_17` zurückgewiesen, `e_24` bis `e_52`
+  angenommen) und sah Zurückweisungen auch ohne Arena-WOOKY (beide tot).
+  Dritte Messung: ebenso offen, wann statt des Rückzugs das Abfangen folgt.
+- Unterbrochene Kette (zweiter Schlag nach Pause): M zurückgewiesen bis
+  h+39 in einer Lage (Schwelle h+39/h+40); V angenommen ab h+30 bis h+36 in
+  einer anderen (4 von 4, `u45_*`, h = 48; in `u31_*` griff der Boss vorher
+  an); dritte Messung entfällt.
+- Erste Aktion nach dem Aufstehen bei 50 px und mehr: M Griff in G+5 (Figur
+  in 55 px, schlug gerade); V kurzer Schlag in G+1 / G+4 / G+10 bei d 45 /
+  55 / 65 (Figur im Spezialangriff: G+7); dritte Messung kurzer Schlag in
+  G+1 bei 45 px, bei 55 und 65 px kein Angriff, er weicht zurück (`m_au_*`).
+  Gemeinsam nur: bis 49 px kurzer Schlag in G+1.
+- Gepackt halten: M hielt den Boss für nicht trefferbar (S+4 = 2); V nicht
+  prüfbar, S+0x28 bleibt in allen Halteframes gesetzt (Dauer 125 Frames bei
+  Wurf in A+59, 80 bis 87 bei Wurf nach dem Tragen); dritte Messung nicht gemessen
+  (kein zweiter Angreifer).
+- Wurfweite des Bosses: M Ruhe 225–230 px nach dem Wurf (frei; laut
+  „# D angriffe“ in drei Bot-Läufen auch 166, 166,25 und 206,38 px,
+  `b_bot_q16`, `b_bot_kette`, `b_bot_p20`); V erster Bodenkontakt 223–301 px
+  vom Griffort (mit Tragen); dritte Messung Ruhe 225–230 px, erster
+  Bodenkontakt 174–196 px vom Griffort, an der Wand 95 und 151 px
+  (`m_wurf_2`, `m_wurf_51`).
+- Figur greift an (Bot): kurze Schläge je 8000 Frames M 4–13, V 15–24,
+  dritte Messung 1–6; Median-Abstand der Angriffe 149–185, 122–175 bzw.
+  165–193 Frames.
+- Bis „STAGE 1 CLEAR“: Siegerpose nach tödlichem Spezialangriff t+98 (M,
+  `g_tod_sp`) bzw. t+97 (V, dritte Messung), sonst t+127 bis t+139. M und
+  dritte Messung: Schriftzug 105 Frames nach der Pose (t+232 bzw. t+231/232,
+  nach Spezial t+203 bzw. t+202), Stagewechsel meist 413 Frames nach der
+  Pose (t+540 bis t+552, nach Spezial t+511 bzw. t+510). V: Pose t+132 und
+  t+128, Stagewechsel t+545 und t+553 (413 bzw. 425 Frames nach der Pose),
+  Schriftzug t+244 (Pose t+128); nach Spezial Pose t+97, Schriftzug t+211,
+  Stagewechsel t+520. Hinweise aus `logs/boss.csv` („# G fall“), im Entwurf
+  nicht genannt: In zwei Bot-Läufen von M kam die Pose schon in t+55 bzw.
+  t+61 (`b_bot_p16`, `b_bot_kette`), der Stagewechsel 413 Frames danach; in
+  `b_bot_q16`, `b_bot_p20` und `b_bot_p24` kam der Stagewechsel 415, 418
+  bzw. 453 Frames nach der Pose (t+543, t+546, t+581).
+- Häufigkeit der geschützten Körperpresse direkt aus der Zuck-Reaktion: M
+  28 von 414, V 0 von 268, dritte Messung 4 von 71 Zuck-Reaktionen
+  (Bot-Läufe).
+- Breite der Pressen-Trefferfläche: M ±25 px (um den Boss), V etwa 23 px vor
+  dem Boss, dritte Messung bis 27 px (35 nie).
+- Anteile der Wahl nach Abstand, fern (> 160 px): Armschwung 38 / 61 / 8,
+  Ansturm 63 / 57 / 16, Körperpresse 50 / 50 / 14, Griff 13 / 0 / 3 (M / V /
+  dritte Messung; passive Läufe, M-Griff aus „# E rhythmus“ gezählt).
+- Treffer im Sterben beim kurzen Schlag: nur M (`g_k7`), V nicht geprüft,
+  dritte Messung entfällt.
+
+Offen:
+
+- LP bei Rang 10, 13, 14, 17, 18, 21 und 22 (nicht einzeln gemessen).
+- Zweiter DICK bei Rang 13 (bei Rang 14 und 15 kam in der dritten Messung
+  des „Nachtrag: Fernangriffe der Gegner“ keiner, Zeile „Erscheinen
+  Raketen-DICK“).
+- Reichweite des Armschwungs nach vorn bei Blick rechts (an der Wand nicht
+  messbar).
+- Warum der kurze Schlag bei Blick rechts weiter nach hinten reicht als bei
+  Blick links.
+- Ob ein zweiter Angreifer (zweiter Spieler, geworfener Gegner) den Boss
+  trifft, während er die Figur hält.
+- Wann der Boss zurückweist und wann er sich statt des Rückzugs abfängt.
+
+Abgleich mit bestehenden Werten:
+
+- „Nachtrag: Schaden der Gegner“, Zeile DOLG (gesichert (Workflow): Schläge
+  9–12, Ansturm 12–17, Sprung/Körperpresse 16–22, Griff und Wurf 16–22) und
+  der Satz „Der Wurf des DOLG macht je nach Rang 16–22 LP“ in „Umwerfen der
+  Figur durch Gegner“: für Rang 12 bis 24 bestätigt, jetzt mit Skript. Bei
+  Rang 7 und 9 weniger: kurzer Schlag und Armschwung 7 bzw. 8, Ansturm 10
+  bzw. 11, Körperpresse und Griff 13 bzw. 14. Der Zusatz „(Workflow)“ kann
+  dort entfallen; die Spanne wird 7–12, 10–17, 13–22, 13–22.
+- „Umwerfen der Figur durch Gegner“: „Die Figur fliegt dabei mit 5 px/Frame
+  etwa 180–230 px weit (unsicher, ein Lauf)“ ist jetzt dreimal gemessen,
+  bleibt aber unsicher (Werte oben).
+- „Nachtrag: Schaden der Gegner“, Gleichzeitiger Treffer (Workflow): für den
+  Boss bestätigt. Im ersten aktiven Frame des kurzen Schlags gewinnt die
+  Figur, danach trifft er zuerst (`m_z_k47`; V „# V c im angriff“).
+- „Nachtrag: Verhalten der Nahkämpfer“, D: Wellen in Stage 1. Zeile DOLG:
+  Die LP stehen nicht schon ab der Sichtbarkeit (K 1994–1996) fest, sondern
+  werden im Frame nach dem ersten Frame mit Kamera ≥ 2048 geschrieben; 110
+  gilt nur bei Rang 16–23. Zeile EDDY 4 und 5: Die offene Grenze „55 oder
+  56“ ist geklärt (55 löst aus, 56 nicht; bei 100 LP 50 bzw. 51). Zeile DICK
+  (zwei): Der zweite DICK kommt nur ab Rang 16 und nur bei höchstens drei
+  anderen lebenden Gegnern. Zeile „zwei WOOKY von links (Arena)“
+  (unsicher): Die Regel „Sinkt nach der Welle bei halben LP die Zahl
+  lebender WOOKY und EDDY unter zwei, erscheinen sofort zwei WOOKY“ passt zur
+  Beobachtung des Gegenprüfers dort (nach dem Tod der EDDY 4/5); ob sie auch
+  den Lauf `m3_bot_h3` (bei LP 44) erklärt, ist nicht nachgeprüft.
+- „Gefundene Adressen“, Gegner S+0x40 (DOLG): „stehen, sobald er sichtbar
+  ist“ gilt nicht (geschrieben im Frame nach dem ersten Frame mit Kamera
+  ≥ 2048, wie bei der Wellen-Zeile oben); „Höchstwert 110“ ist Rang 16
+  beim Erreichen der Arena; der Rücksprung (dort unsicher) ist jetzt
+  gesichert. Gegner S+0x9A („Start- bzw. Maximal-LP“) gilt beim Boss nicht,
+  dort ist es die Balkenskala 72. Neue Zeilen siehe „Gefundene Adressen“.
+- „Objekt-Slots“: „Was in Slot 19 liegt, ist offen.“ Laut Gegenprüfer trägt
+  Slot 19 den Typ DOLG schon ab Stage-Beginn (`0100`); beim Erreichen der
+  Arena werden nur die LP geschrieben (nur V, unsicher).
+- „Nachtrag: Spezialangriff“, Zeile „Bosse, schwerere und liegende Gegner“
+  (offen): für den Boss gemessen (6 LP, nie zurückgewiesen, 78 Frames
+  Taumeln, 135 px, kein Liegen).
+- `grafik/README.md`, Beschreibung des DOLG (beschrieben): „100 LP“ gilt nur
+  bei Rang 9–15. „danach springen seine LP auf den Wert vor der Kombo
+  zurück; nur Kombos mit Niederschlag zählen“ ist widerlegt: Zurück geht es
+  auf den Wert vor dem jeweiligen Treffer, auch Tritt, Sprung- und
+  Sprintangriff werden zurückgewiesen oder abgefangen, und der Stoß danach
+  ist harmlos. „etwa alle 170–200 Frames“ ist zu kurz (Median 199–288). Die
+  dort genannten Schadenswerte (Armschwung 9–10, Ansturm 12–14, Körperpresse
+  und Griff 17–19) und die Reichweite des Armschwungs (77–79 px) gelten nur
+  für einzelne Ränge bzw. Abstände; maßgeblich sind die Werte hier. „Mit
+  seinem Sturz brechen alle übrigen Gegner im selben Frame zusammen“: gemessen
+  t+2 bis t+3, ein gerade liegender oder getroffener Gegner erst nach seiner
+  Reaktion.
+- `docs/mechanik.md`, „Trefferreaktion der Gegner“ (gesichert für WOOKY und
+  EDDY): kein Widerspruch, aber der Boss verhält sich anders (Reaktion 27
+  bzw. 15 statt 23 Frames, Schutzzähler 10 und Trefferfläche erst ab G+11
+  bis G+17 statt „ab G sofort verwundbar“). Der Abschnitt „Boss“ in `docs/mechanik.md` führt diese
+  Werte getrennt; die Zeilen für WOOKY und EDDY bleiben unverändert.
+- Bezeichnungen: In den Entwürfen ist K auch die Abkürzung des kurzen
+  Schlags und G die des Griffs; in `docs/mechanik.md` sind K und G Frames
+  (umwerfender Treffer, wieder frei). Der Gegenprüfer zählt dz als Figur
+  minus Boss; seine „−6 bis +7“ entsprechen „−7 bis +6“.
+
+## Nachtrag: Fernangriffe der Gegner
+
+Belege: `logs/fern.csv` (Messagent M7, Teile 0–F, und am Ende die
+Abschnitte `## T …` der dritten Messung; 4315 Zeilen) und `logs/fern_v.csv`
+(Gegenprüfer V7, 1281 Zeilen), beide erzeugt von `scripts/belege_fern.sh`.
+Szenarien: `scenarios/fern_frei.lua` (Messagent und dritte Messung), beim
+Gegenprüfer `scenarios/fern_v_frei.lua` und `scenarios/fern_v_bot.lua`
+(Konfiguration für `grafik/bot.lua`, Savestate `fern_v_skip8`). Auswertung:
+`scripts/messen_fern.py` (für die dritte Messung die Unterbefehle
+`ausloesung`, `salve`, `nachschuss`, `slots`, `bahnende`, `welle`, `bogen`,
+`fenster`) bzw. `scripts/messen_fern_v.py belege`. Das Skript hat drei
+Blöcke: Messagent (Teile 0–F, etwa 1100 MAME-Läufe), Gegenprüfung V7 (358
+Läufe) und dritte Messung (Präfix `fern_t`, 367 Läufe: 20 natürliche, 276
+Proben in 12 Trefferfenstern, `t_kt_*`, 56 Läufe zur letzten Welle, 4 Tode
+`t_e_*`, 3 Nachläufe von V7-Läufen; Zahl beim Einarbeiten aus dem Skript
+gezählt). `FERN_NUR_V=1` führt nur den Block V7 aus (die dritte Messung
+entfällt dann), `FERN_BEHALTEN=1` behält die Rohdaten (nötig für
+`messen_fern.py zeitachse`). Voraussetzung sind die Savestates
+`p0_s1_s1_cam00768` (SKIP) und `p0_s1_s1_cam02048` (Bossarena) aus dem
+Bot-Lauf der Phase 0, für V7 dazu `stage1`; `greichweite_dick` braucht nur
+der Lauf `a_gd`. Nach dem Einbau der dritten Messung lief das ganze Skript
+zweimal von vorn mit Exit 0, in 22 min 23 s und 17 min 50 s (im zweiten Lauf
+kam nur der Abschnitt `E Bogen` dazu). Reproduzierbar: `logs/fern.csv` hat
+danach die MD5 `bb1260429a9a366f82b18439017d6e2c`; ohne `E Bogen` ist sie
+bitgleich mit Lauf 1, und ihre ersten 2802 Zeilen (ohne die 12 Zeilen von
+`E Bogen`) gleichen dem Stand vor der dritten Messung (MD5
+`7baee55ed275067e3656661114f5b34f`, beim Einarbeiten nachgerechnet). Diesen
+Stand hatte schon der Gegenprüfer in einem Volllauf von Teil M7 und Block V7
+(19 min, Exit 0) bitgleich erhalten. `logs/fern_v.csv` (MD5
+`b209e1f2b366e1eb0636a7d02162bc61`) ist gleich dem Volllauf von V7. Bei der
+Gegenprobe beim Einarbeiten lief das ganze Skript ein drittes Mal von vorn
+(Exit 0, 13 min 7 s) und ergab für beide Dateien wieder dieselben MD5. Das
+Skript löscht danach die Rohdaten; die Savestates `fern_*` (Teil 0),
+`fern_v_*` und `fern_t_*` bleiben lokal in `logs/raw/sta/captcomm`.
+
+**Methode.** Der Messagent (M) schreibt ab den Phase-0-Savestates je Frame
+den Speicher `FFA900`–`FFEA00`, dazu Kamera, Rang und Stage im Watch-CSV.
+Ein Geschoss ist ein Objekt in Slot 20–59, dessen Zeigerwort S+0x6C auf den
+Werfer zeigt (Messer Typ `0x85B42`, Kugel und Rakete `0x86022`). Ein Treffer
+ist ein LP-Verlust der Figur (P+0x40 < P+0x42), zugeordnet über P+0x82;
+der Schaden steht im Geschoss (S+0x8B). Natürliche Läufe (6000 bzw. 4000
+Frames, Figur passiv, fest oder bewegt, Rang 9 und 20) liefern Auslösung,
+Ablauf, Flug, Schaden und Rhythmus. Trefferfläche und Abwehr sind mit Proben
+gemessen: Ab G setzt ein Eingriff die Figur relativ zum Geschoss bzw. ein
+Objekt auf seine Bahn, oder die Figur schlägt bzw. springt in variierten
+Frames; jede Probenreihe aus zwei Savestates mit anderem Rang und anderer
+Lage. Der Gegenprüfer (V) hat eigenes Szenario, eigene Auswertung und einen
+eigenen Bot-Savestate, andere Ränge (vor allem 12, 17, 22), DOLG auf
+x 2600/Tiefe 300 statt 2900, Arena-WOOKY besiegt statt entfernt, EDDY teils
+lebend. Er prüft die Trefferflächen umgekehrt (Geschoss relativ zur Figur
+gesetzt, alle vier Kombinationen aus Flugrichtung und Blick), Tiefe und
+Sprung ohne Eingriff. Natürlich: 10 SKIP-Läufe (54 Würfe, 250 Stiche),
+8 DICK-Läufe (68 Salven mit 285 Kugeln, 76 Raketen). V bestätigte 37 von
+55 Zeilen, 18 wichen ab (6 nur im Randwert), keine war nicht prüfbar. Die 18
+hat M ein drittes Mal gemessen (T): Ränge 7, 12, 14, 17, 22, 24, andere
+Savestates und Lagen (Figur fest auf x 880, 1000, 1560, 2110, 2180, 2330;
+Gruppen-Savestate `fern_sg9`), beide Flugrichtungen, EDDY der letzten Welle
+lebend, eine per Eingabe-Bot (`CC_HIN`, kein Eingriff) periodisch auf den
+Gegner zugehende Figur, gezielte Eingriffe an Budget, Tiefe und Höhe und
+drei Nachläufe von V-Läufen mit Abzug. „gesichert (3. Messung)“: Eine
+gemeinsame Regel erklärt die Werte aller drei Messungen; ein reiner Bereich
+gilt als Regel, wenn der dritte Wert in der Vereinigung der beiden ersten
+liegt oder eine benannte Abhängigkeit ihn erklärt.
+
+Bezeichnungen: A = erster Frame der Angriffsanimation des Werfers
+(S+0x1C), G = erster Frame des Geschosses (nicht das G aus „Trefferreaktion
+der Gegner“), t = Frame des tödlichen Treffers. d = Abstand der Figur vor dem
+Werfer in dessen Blickrichtung, dz = z(Werfer) − z(Figur). vorn = Abstand
+der Figur vor dem Geschoss in Flugrichtung (positiv: noch nicht erreicht).
+b = Blick der Figur, s = Flugrichtung (je +1 rechts, −1 links); „zum“ bzw.
+„weg“: Die Figur schaut zum Werfer bzw. von ihm weg. Lagen ganzzahlig am
+Frame-Ende, Welt-x. Belegspalte: M = Läufe und Abschnitte von `fern.csv`
+ohne Vorsatz `fern_`, T = deren dritte Messung (`t_*`, Abschnitte `T …`),
+V = Läufe und Abschnitte von `fern_v.csv` ohne `fern_v_`.
+
+**Eingriffe (EINGRIFF).**
+
+- M, alle Läufe: LP der Figur vor jedem Frame auf 72 (LP); Rang `FFF82A`
+  festgehalten (RANG: 9, 20, Teil D 7–24), außer `a_snat` und `a_gd`.
+- M, DICK-Läufe: DOLG (Slot 19) vor jedem Frame auf x 2900 (DOLG; außer
+  `a_k*`, `a_gd`). WOOKY und EDDY der Bossarena ab Frame 4 entfernt (ENTF,
+  ohne Tod; der Pistolen-DICK erscheint dann in Frame 11; `a_p*`, `a_r*`,
+  `a_z*`, Savestates `pw*`, `rw*`, `pz9`). DOLG-LP in Frame 100–101 auf 27
+  (LP27; `a_r*`, `a_z*`, `rw*`, `pz9`, `c_ke_*`, `c_re_*`): Der Sprung von
+  110 auf 27 unterschreitet die Hälfte und das Viertel zugleich, deshalb
+  kommen im selben Frame die 2 EDDY (sofort entfernt; vermutlich die Welle
+  der Hälfte) und der Raketen-DICK (Schwelle Viertel), siehe „Nachtrag:
+  Verhalten der Nahkämpfer“, Tabelle D. V (LP 26) und T (LP 25) setzen die
+  LP ebenso in einem Schritt. Pistolen-DICK samt Waffe (Slot 18 und 58)
+  in Frame 12 entfernt (PISTWEG; `a_r9`, `a_r20`, `a_rf20`, `rw*`).
+- M, Lage: Figur auf feste Welt-x bzw. Tiefe (FEST; `a_sf9`, `a_sf20`
+  x 900; `a_pf9`, `a_rf20` x 2248, Tiefe 156; `sw9`, `sw20` bis zum
+  Speichern; Raketenproben x 2420 in G+1..G+20). Figur bzw. Gegner oder
+  Objekt ab G relativ zum Geschoss (GESCH; Teil B, `c_*g_*`, `c_*glas_*`,
+  `c_mo_*`, `c_ke_*`, `c_re_*`). Gegner-LP auf 1, Figur 50 px daneben, ein
+  Schlag (TOET; Teil E, `a_k*`).
+- T, zusätzlich: DOLG-LP in Frame 150 auf 25 (LP25; `t_m22`, `t_r*`,
+  `t_rr*`, `t_z*`); ENTF nur der WOOKY, die EDDY der Welle leben (`t_m22`,
+  `t_r17`, `t_z*_a`, `t_z*_b`, `t_z22_e`, `t_z22_f`); Figur ab A+17k−4 auf
+  Tiefe 200 (TIEFE; `t_kt_*`); Rang in Frame 160 umgestellt (RANGWECHSEL;
+  `t_z15_f`, `t_z20_f`); Höhe des DICK in Frame 2–7 auf 0, 12, 24 bzw. 20
+  (HÖHE; `t_e_*`); FEST in `t_sf880`, `t_sf1000`, `t_sr1560`, `t_pf12`,
+  `t_pl22`, `t_rr14`, `t_rr17`; GESCH in `t_bm*`, `t_bk*`, `t_br*`.
+- V: LP 72 (alle), Rang (außer `s_nat`, `s_mov`), DOLG auf x 2600/Tiefe 300
+  (Bossarena), `glp`/`entf` (Arena-WOOKY LP 1 bzw. entfernt, EDDY der Welle
+  entfernt, DOLG-LP 26, TOET, frühere Kugeln einer Salve entfernt), `pos`
+  (Figur fest auf x 910, 900, 895), `obj:g`/`fig:g` (Geschoss relativ zur
+  Figur bzw. Figur in die Explosion), `hoch`, `frac0`, `spos` (Glas, Fass).
+- Alle Savestates stammen aus Bot-Läufen mit LP-Auffüllung (Phase 0 und
+  `fern_v_skip8`: nach Stillstand LP der Gegner im Bild auf 1).
+
+**Abweichungen und dritte Messung** (Ergebnis in den Tabellen):
+
+- Trefferflächen: M probte das Messer nur im Flug nach links, Kugel und
+  Explosion nur nach rechts (die Explosion nur mit Blick weg); in der
+  Gegenrichtung liegt das Fenster 1 px anders. Eine Regel in Welt-x deckt
+  alle Fenster.
+- Messerwurf, Stich und Pistole lösen über einen Zielpunkt aus
+  (S+0x96/S+0x98); Sonderwerte kommen von einer bewegten Figur oder einer
+  Sperre.
+- Salve: Die Länge folgt aus einem Budget S+0xAB (2–6 oder 8 Schüsse, früher
+  Abbruch 1–7).
+- Raketenwerfer: Nach dem Schuss geht der DICK immer erst los; „Aktion 4“
+  im Entwurf von M war die Phase 4.
+- Zweiter Raketen-DICK: hängt vom Rang und von der Zahl belegter
+  Gegnerslots ab.
+- Waffe beim Tod: Der Bogen hängt von der Höhe des DICK beim Tod ab.
+- Unsicher blieben die Raten der drei Fernangriffe sowie Abstandsanteile und
+  Rückzug des DICK.
+
+### Gemeinsame Befunde
+
+| Größe | Wert | Beleg | Status |
+|---|---|---|---|
+| Geschossblock | Messer immer Slot 29; Kugel und Rakete in einem der Slots 27–29, der im Frame vor G frei ist (welcher, hängt von Belegung und voriger Vergabe ab; Kugeln meist 27, wenn 28 belegt ist). S+0x6C = Zeigerwort auf den Werfer, S+0x8B = Schaden; P+0x82 der Figur zeigt beim Treffer auf den Werfer. Raketen: M Slot 28–29 (74), V 27–29 (11 von 76 in 27), T 27/28/29 = 1/39/68 (108); Kugeln T 30/121/105 (256); Messer T 18 von 18 in 29; der Slot war in allen 382 Fällen vorher frei | M `A geschosse` (306 Geschosse); V `wurf`, `angriff_dick`, `rakete`; T `T slots` (Rakete in 27: `t_m22` G 4510) | gesichert (3. Messung) |
+| Flugbahn | geradeaus in x in Blickrichtung des Werfers, Tiefe und Höhe fest (die Rakete sinkt), keine Nachführung; Messer 4,0, Kugel 8,0, Rakete 5,0 px/Frame. Gezielt wird nur vor dem Schuss über die eigene Position | M `A geschosse` (Spalten `vx`, `z_flug`, `h_verlauf`); V `wurf`, `bmz1*`, `bkz*`, `brz1*` | gesichert |
+| Gegner auf der Bahn | werden nie getroffen: Messer, Kugel, Rakete und Explosion gehen durch WOOKY, EDDY und DICK hindurch | M `c_mg_*`, `c_kg_*`, `c_ke_*`, `c_rg_*`, `c_re_*` (GESCH), `A geschosse` (0 Treffer an Gegnern); V ohne Eingriff `gegner_auf_bahn` (z. B. Raketenflug durch DICK/EDDY/WOOKY 756/439/554 Frames im Trefferbereich, nie ein LP-Verlust) | gesichert |
+| Zerbrechliche Objekte | Messer und Kugel enden an einer Glasscheibe (LP 1) und zerbrechen sie, das Messer auch an einem Ölfass (LP 777 → 0). Die Rakete fliegt durch die Scheibe, ihre Explosion zerbricht sie | M `c_mglas_*`, `c_mo_-30`, `c_kglas_*`, `c_rglas_*`; V `cmglas`, `cmfass`, `ckglas`, `crglas_flug`, `crglas_ex` | gesichert |
+| Mehrere Ziele | Messer und Kugel enden beim ersten Treffer (Trefferfunke `0x95B5C`, 12 Frames). Die Explosion trifft die Figur und zerbricht im selben Frame Objekte, Gegner nie | M `c_rg_beide`; V `s_nat` 1399–1410, `crglas_ex` | gesichert |
+| Schutz nach Treffer | Geschosse treffen auch die Figur in ihrer Trefferreaktion (Zustand 3; gemessen an den Geschossen des DICK): Die zweite Kugel einer Salve trifft in der Reaktion auf die erste | M `A geschosse`; V `schutz` (82 von 193 Treffern durch DICK-Geschosse bei Zustand 3 im Vorframe) | gesichert |
+
+### Messerwurf (SKIP)
+
+| Größe | Wert | Beleg | Status |
+|---|---|---|---|
+| Auslösung | Zielpunkt 150 px vor der Figur in ihrer Tiefe (S+0x96 = Welt-x, S+0x98 = Tiefe; Aktion 6, Phase 0x0A). Der SKIP geht mit Blick zur Figur rückwärts dorthin und wirft, sobald x(SKIP) − x(Ziel) und Tiefe(SKIP) − Tiefe(Ziel) je in [−9, +10] liegen. Das Fenster ist in Welt-x unsymmetrisch: bei stehender Figur d 141–160, wenn er rechts von ihr steht, d 140–159 links, meist beim Eintritt ins Fenster (141/142 bzw. 140). Hat sich die Figur seit der Zielwahl bewegt, verschiebt sich d um ihren Weg (126–178 gemessen); versperrt ein Objekt oder Rand den Weg in x, wirft er von dort (d 38–123). Vorbereitung = Weg zum Zielpunkt (7–37 Frames). M: d 141–143 bzw. 146–156, Rand 114–116, Vorbereitung 7–31. V: d 140 sechsmal (SKIP links), sonst 141–142 bzw. 145–160, 178 nach bewegter Figur, Rand 111/114/123, Vorbereitung 7–37. T: Abweichung bei freiem Weg x −9..+10, Tiefe −9..+5; d 141–152 rechts, 140 dreimal links (je Abweichung +10), 126/136/138 bei bewegter Figur, 38 an einer Sperre (Ziel 112 px entfernt), Vorbereitung 11–30 | M `A abstand`, `A angriffe`; V `wurf` (d 140: `s_r12` A 4839, 5349, `s_fest12` A 5743, 5959, 7422, `s_mov` A 3743; Rand: `s_fest900` A 1210, 5971, `s_fest895` A 5268); T `T ausloesung` (`t_sf1000` A 4665, `t_s22h` A 5680, 1455, 5305, `t_sr1560` A 692, 1389, `t_s14r` A 777) | gesichert (3. Messung) |
+| Ablauf | Animationen 4/3/1/1/32/1 = 42 Frames (`289F2`, `28A2E`, `28A64` mit Attribut 0xFF00, `28A9E`, `28AD8`, `28B12`); Messer in A+8, Nachlauf 33 Frames (A+9 bis A+41), Gehen ab A+42 | M `A angriffe` (32 von 32), `A geschosse` (G − A = 8); V `wurf` (54 von 54) | gesichert |
+| Messer | Slot 29, erscheint 80 px vor dem SKIP in seiner Tiefe, 56 px hoch, 4,0 px/Frame, im ganzen Flug wirksam (Attribut 0x0C08) | M `A geschosse` (32); V `wurf` (54) | gesichert |
+| Reichweite, linker Bildrand | bis zum Treffer; sonst verschwindet das Messer, sobald es mehr als 20 px links vom Bildrand ist (letzte Lage x − Kamera-x −17 bis −20). Natürlicher Fehlwurf: 27 Frames, 104 px | M `B Messer` (Proben ohne Treffer), `a_st9`; V `bmz1d_7` (−19, 27 Frames, 104 px), `s_r12` A 934 (−17, 36 Frames, 140 px) | gesichert |
+| Reichweite, rechter Bildrand | M nicht gemessen (nur Würfe nach links ohne Treffer). V: letzte Lage 402 (18 px rechts vom Bild) nach 77 Frames, Figur per Eingriff 75 px hoch | V `bmrand3` | unsicher |
+| Trefferfläche x | Treffer, wenn (x(Figur) + 4·b) − (x(Messer) + s) in [−25, 24]: 50 px breit, um 8 px zur Blickrichtung der Figur verschoben, in der Gegenrichtung 1 px anders. In vorn: Flug nach links zum −19..30, weg −27..22; Flug nach rechts zum −20..29, weg −28..21. Natürlicher Treffer (Flug nach links) bei vorn 29 bzw. 21 in A+16. M maß nur den Flug nach links; V maß alle vier Fälle aus Flugrichtung und Blick, nach links wie M, nach rechts 1 px versetzt (natürlich nach rechts nie über vorn 29); T alle vier (je 23 Proben, 0 Widersprüche) | M `b_mx_r*`, `b_mx_l*` (Rang 9), `b_mx20_*`; V `bmx1_*`, `bmx2_*`, `bmx3_*`, `bmx3w_*`; T `T fenster` (`t_bm1` Flug rechts, Rang 14; `t_bm2` Flug links, Rang 17) | gesichert (3. Messung) |
+| Tiefe | \|dz\| ≤ 12 trifft, 13 nie | M `b_mz_*`, `b_mz20_*`; V ohne Eingriff `bmz1d_5..8`, `bmz1u_17..20` | gesichert |
+| Höhe | trifft die Figur bis 59 px Höhe (Frame-Ende), ab 60 nie; ein Sprung (Scheitel 51) weicht nicht aus | M `b_mh_*`, `b_mh20_*`, `c_mj_*`, `c_mj20_*`; V `bmh3_57..66`, `bmh2_57..62`, `cmj1_*` | gesichert |
+| Schaden | Rang 7–11: 10, 12–16: 11, 17–21: 12, 22–24: 13 | M `d_m_*`, `A geschosse` (Rang 9: 19, Rang 20: 7 Treffer); V `dm_*` (Rang 7, 8, 11, 12, 16, 17, 21, 22, 24), `wurf` | gesichert |
+| Umwerfen | jeder Treffer wirft um | M `A geschosse` (31 von 31); V `wurf` (53 von 53), `bahn` | gesichert |
+| Abwehr Schlag | Ein Schlag zerstört das Messer, wenn seine aktiven Frames (P+2 bis P+5) es in Schlagreichweite erfassen, bevor es trifft (V: P+5 ≥ G und P+2 ≤ Trefferframe). Bei 61 px Abstand beim Abwurf: Druck in G−5 bis G+6 (M Rang 20: G−4 bis G+6 in 2-Frame-Schritten; V bei 62 px, Flug nach rechts: G−5 bis G+7). Das Messer geht in Zustand 3, prallt mit etwa 1 px/Frame im Bogen (bis 66 px hoch) zurück und ist nach etwa 40 Frames (V 39–40) weg, ohne zu treffen | M `c_ms_*` (G 44), `c_ms20_*` (G 54); V `cms1_-8..9` (Rang 11), `cms3_-7..13` | gesichert |
+| Abwehr Sprung | weicht nicht aus: Treffer in jeder Sprunghöhe (M 10–51 px, V 18–51 px), die Figur fällt | M `c_mj_*`, `c_mj20_*`; V `cmj1_*` (Sprung in A−10 bis A+12) | gesichert |
+| Rhythmus | keine feste Rate: M 0,83 bzw. 0,58 Würfe je 1000 Frames, Abstände 247–3251; V je Lauf 0,12–1,5, Abstände 206–2860; T 0,17–0,67, Abstände 365–3903. Hängt von Lage, anderen Gegnern und dem Umwerfen der Figur ab | M `A rhythmus`; V `rhythmus_skip`; T `T rhythmus` | unsicher |
+
+### Messerhagel (Stichserie des SKIP)
+
+Der „Messerhagel“ aus `grafik/README.md` ist kein Wurf, sondern die Serie
+des Messerstichs (`287E0`, siehe „Nachtrag: Reichweite der
+Gegnerangriffe“).
+
+| Größe | Wert | Beleg | Status |
+|---|---|---|---|
+| Ablauf | Stich 25 Frames, Treffer in A+13, danach 12 Frames Wartepose (`2849E`) und der nächste Stich: Abstand 37 Frames innerhalb einer Serie (bei freiem Weg); nach der Serie Gehen | M `A angriffe`, `A rhythmus` (84 von 84); V `stich` (Treffer A+13 in 226 von 229, A+14/15 nur bei bewegter Figur), `serien` (133 von 133) | gesichert |
+| Serie | 1–4 Stiche bei freiem Weg (M 2: 36-mal, 4: 14, 1: 13, 3: 3; V 1: 36, 2: 55, 4: 26, keine 3er-Serie) | M `A rhythmus` (Spalte `salven_bzw_serien`); V `serien` | gesichert |
+| Stichabstände zwischen Serien und an einer Begrenzung | Lesart beim Prüfen, von keinem Agenten ausgewertet. Zwischen zwei Serien auch 46–53 Frames: M 46, 48, 49, 51 (`a_sg9`, `a_s20`, `a_sf20`, `a_s9`, `a_snat`), V 46, 48, 49, 51 (`s_fest12`, `s_fest895`, `s_fest900`, `s_r22`, `s_nat` A 1801/1852, `s_rand14`, `s_rand20`), T 47, 49, 51, 53 (`t_sf1000`, `t_s14l`, `t_sf880`, `t_s17g`). An einer Begrenzung sticht der SKIP mehrmals hintereinander mit je 4–10 Frames Vorbereitung statt der Wartepose: V 6 Stiche bei d 2 im Abstand 43, 39, 39, 30, 39 (`s_r12` A 6080–6270), T 8 Stiche bei d 43 im Abstand 39, 39, 39, 33, 30, 39, 39 (`t_sr1560` A 3705–3963; `T rhythmus` zählt sie als Serie von 8, weil es Abstände bis 40 Frames zu einer Serie fasst); M sah keinen solchen Fall | M `A rhythmus`; V `stich`; T `T rhythmus`, `T ausloesung` | unsicher |
+| Auslösung | Zielpunkt 64 px vor der Figur in ihrer Tiefe (S+0x96 = ±64, S+0x98 = 0, relativ zur Figur). Stich, sobald der SKIP höchstens 8 px in x daneben steht: d 56–72 (meist beim Eintritt ins Fenster, 56–59 von innen, 70–72 von außen), dz −6 bis +8. Versperrt eine Begrenzung den Zielpunkt, sticht er von dort. M: d 56–72, dz −5..+8. V: dazu d 2 (6 Stiche an der Begrenzung x 1605) und dz −6. T (151 Stiche: 121 Messer- und 30 Ausfallstiche, beide mit Zielpunkt ±64): d 56–72, Abweichung vom Zielpunkt −7..+8, d 43 achtmal an der Begrenzung (SKIP bei x 1603, Figur fest auf x 1560), dz −5..+5 | M `A angriffe`; V `stich` (d 2: `s_r12` A 6080–6270; dz −6: `s_fest900` A 6215, 6252); T `T ausloesung` (`t_sr1560` A 3705–3963) | gesichert (3. Messung) |
+| Schaden | Rang 8: 7, 9–15: 8, 16–22: 9 (M Rang 8: 7, 9: 8, 17 und 20: 9); wirft nicht um | M `A angriffe` (Spalte `treffer`); V `stich` | gesichert |
+
+### Pistole (DICK)
+
+| Größe | Wert | Beleg | Status |
+|---|---|---|---|
+| Auslösung | Zielpunkt relativ zur Figur (S+0x96 = dx, S+0x98 = dz): ±128 px in ihrer Tiefe oder ±120 px mit ±24 px Tiefenversatz. Der Angriff (Aktion 6, Phase 2) beginnt, sobald der DICK höchstens 8 px in x und 6 px in der Tiefe vom Zielpunkt entfernt steht, also bei d 112–136. Dann gleicht er die Tiefe an (1 Frame ohne Versatz, sonst bis 22 Frames mit 0,875 bzw. 1,125 px/Frame) und schießt; x folgt der Figur dabei nur langsam. Bei stehender Figur d 112–136, geht sie auf ihn zu, kleiner; dz −6 bis +5. M: d 112–136, Angleich 1 bzw. 12–18 Frames. V: Zielpunkte genau diese sechs, Angleich 1 (36-mal) bzw. 12–16 Frames, d 105 zweimal bei einer Figur auf dem Weg zu ihm (Angleich dann 25 und 38 Frames). T (63 Salven): Beginn bei Abweichung x −8..+8, Tiefe −6..+5, d dort 112–136, beim Schuss 111–136 (111 einmal, Figur per Eingabe-Bot 2 px näher), Angleich 1–22 | M `A abstand`, `A angriffe`; V `angriff_dick` (d 105: `p_mov` A 1237, 4865); T `T ausloesung` (`t_ph14` A 3465) | gesichert (3. Messung) |
+| Salve | Budget B = S+0xAB in A: 20, 40, 60, 80, 100 oder 120 Frames. Je Schuss 17 Frames (`68528` 5, `6855C` 1 mit Attribut 0xFF00, `68590` 10 mit Kugel in A+6, `685C4` 1). Nach dem k-ten Zyklus (Ende A+17k+16, k ab 0) folgt der nächste, solange 17k + 16 < B: 2, 3, 4, 5, 6 bzw. 8 Schüsse, 7 nie. Früher endet die Salve, wenn die Figur am Ende eines Zyklus außer Reichweite (Abbruch bei d 188–204, weiter bei d bis 167) oder aus der Tiefe ist: dann 1–7, mit Tiefenwechsel nach dem k-ten Schuss genau k. Danach Gehen (Aktion 0, Phase 4), 10 Frames Nachlauf nach der letzten Kugel. M: 2–6 Schüsse. V: 1–8 (8 zweimal; 1, wenn die Figur nach dem ersten Schuss die Tiefe verließ). T: 63 natürliche Salven mit 2 (3-mal), 3 (15), 4 (25), 5 (17), 6 (2), 8 (1) Schüssen, alle nach dem Budget außer 7 Abbrüchen nach 4 statt 5 Schüssen (d 188–204); die 8er-Salven von V hatten Budget 120. Budget je Rang in T: 7: 60/80, 12: 40–80, 14: 40–100, 22: 20–120, 24: 20–100 | M `A angriffe`; V `angriff_dick` (8 Schüsse: `g_r20` A 4917, `z_r22` A 7112), `bkz1u_*`; T `T salve` (`t_m22` A 4998, `t_kt_1` … `t_kt_7`, `t_v7_g_r20`, `t_v7_z_r22`) | gesichert (3. Messung) |
+| Kugel | Slot 27–29, erscheint in A+6 34 px vor dem DICK in seiner Tiefe, 58 px hoch, 8,0 px/Frame, im ganzen Flug wirksam | M `A geschosse` (200 Kugeln); V `angriff_dick` (285 von 285) | gesichert |
+| Normale und umwerfende Kugel | Die Kugeln einer Salve haben abwechselnd Attribut 0x0002 (wirft nicht um, Animation `863D8`) und 0x0C02 (wirft um, `863F0`); immer zuerst normal, nie zwei umwerfende nacheinander. M 48 Salven: 35 streng abwechselnd, 13 mit zwei normalen nacheinander; V 68 Salven: 43 bzw. 25. Gegen die passive Figur trifft deshalb meist die erste Kugel, die zweite wirft um, die weiteren gehen über die liegende Figur | M `A geschosse` (Spalte `art`); V `angriff_dick` (Spalte Muster) | gesichert |
+| Regel für zwei normale Kugeln nacheinander | nicht gefunden (M NN… 11-mal, NUNN 2-mal; V auch NNUNN, NUNNU, NUNUNN, NUNUNUNN) | M `A geschosse`; V `angriff_dick` | offen |
+| Reichweite | bis zum Treffer; sonst verschwindet die Kugel, sobald sie mehr als 71 px außerhalb des 384 px breiten Bildes ist (letzte Lage x − Kamera-x −71..−64 bzw. 447..454). An der rechten Arenawand Einschlag (`0x95Exx`, 5–6 Frames); die Wand liegt je nach Tiefe bei x ≈ 2540 (Tiefe 161) bis ≈ 2544 (Tiefe 150), die letzte Lage davor bei 2531–2543. M: Wand 2538–2541, Bildrand −64..−66 bzw. 449–450. V: Wand 2531–2543, −64..−68, 451–452. T: −71..−64 (37 Kugeln), 447..454 (11), Wand 2532–2542 (69; Tiefe 150: 2536–2542, Tiefe 161: 2532–2538) | M `A geschosse` (101 Kugeln ohne Treffer), `B Kugel`; V `kugel_ende` (154 Kugeln); T `T bahnende` (`t_pl22`, `t_ph14`, `t_pf12`) | gesichert (3. Messung) |
+| Trefferfläche x | Treffer, wenn (x(Figur) + 4·b) − x(Kugel) in [−17, 16]: 34 px breit, um 8 px zur Blickrichtung verschoben. In vorn: Flug nach rechts zum −13..20, weg −21..12; Flug nach links zum −12..21, weg −20..13. M maß nur den Flug nach rechts; V alle vier Fälle, nach rechts wie M, nach links 1 px versetzt; T alle vier (0 Widersprüche) | M `b_kx_*` (Rang 20), `b_kx9_*`; V `bkx1_*`, `bkx2_*`, `bkx2w_*`, `bkx3_*`; T `T fenster` (`t_bk1` Flug links, Rang 22; `t_bk2` Flug rechts, Rang 14) | gesichert (3. Messung) |
+| Trefferfläche zweite Kugel | wie die erste (umwerfende Kugel, beide Flugrichtungen) | M `b_kux_*`; V `bkux2_*`, `bkux3_*` | gesichert |
+| Tiefe | \|dz\| ≤ 12 trifft, 13 nie | M `b_kz_*`, `b_kz9_*`; V ohne Eingriff `bkz1u_5..8`, `bkz3d_6..9` | gesichert |
+| Höhe | trifft die Figur bis 59 px Höhe, ab 60 nie; ein Sprung weicht nicht aus (Treffer bei 52 px). In der Luft wirft auch die normale Kugel um | M `b_kh_*`, `b_kh9_*`, `c_kj_*`, `c_kj9_*` (Umwerfen: Spalte `umgeworfen` in `C Abwehr`, im Entwurf nicht ausgewertet); V `bkh1_61..65`, `ckj1_*` (Sprünge in 19, 33, 43, 49, 52 px getroffen und umgeworfen) | gesichert |
+| Schaden | je Kugel Rang 7: 4, 8–14: 5, 15–21: 6, 22–24: 7 | M `d_k_*`, `A geschosse` (99 bzw. 100 Kugeln); V `dk_*`, `angriff_dick` | gesichert |
+| Abwehr Schlag | zerstört die Kugel nicht, auch wenn die aktiven Frames des Schlags sie in 38–62 px Abstand erfassen | M `c_ks_*`, `c_ks9_*`; V `cks1_*` (Druck G−6 bis G+8, Treffer immer in G+9) | gesichert |
+| Rhythmus | M 0,82 bzw. 1,57 Salven je 1000 Frames, Abstände 181–1792; V je DICK 0,38–1,76, Abstände 218–4090; T je DICK 0,50–2,34, Abstände 82–1745. `t_p7` und `t_p24` starten wie `a_p9` bzw. `a_p20` ohne Eingabe vom selben Savestate, nur mit anderem Rang, und wiederholen deren Abstände fast genau (672/943 bzw. 181 391 787 …); sie sind keine unabhängige Stichprobe | M `A rhythmus`; V `rhythmus_dick`; T `T rhythmus` | unsicher |
+
+### Raketenwerfer (DICK)
+
+| Größe | Wert | Beleg | Status |
+|---|---|---|---|
+| Auslösung | wie bei der Pistole (Zielpunkt ±128/0 oder ±120/±24, Tiefe angleichen bis höchstens 6 px): d 112–136, dz −6 bis +5 | M `A abstand`, `A angriffe` (74 Raketen); V `angriff_dick` (76 Raketen) | gesichert |
+| Ablauf und Folgeaktion | ein Schuss je Angriff, 17 Frames: `685F8` (5), `6862A` (1, 0xFF00), `6865C` (10, Rakete in A+6), `68690` (1). In A+17 immer Aktion 0, Phase 4, Animation `67806` (Gehen) mit neuem Zielpunkt. Steht er dort noch nicht, geht er hin; steht er schon dort (höchstens 8 px in x, 6 in der Tiefe), steht er (Aktion 4, `677CE`), geht weiter oder greift sofort wieder an: Doppelschuss, 19 Frames nach dem ersten. M: „danach meist Stehen (Aktion 4)“; das war die Phase 4 (S+0x0C), auch bei M in 74 von 74 Fällen `67806`. V: immer sofort Gehen, Doppelschüsse im schon erreichten Zielpunkt (−128/0 bei d 120/121). T: in A+17 bei 108 von 108 Raketen und 63 von 63 Salven `67806`; danach bei nicht erreichtem Zielpunkt Gehen (90 von 90), bei erreichtem (18) Stehen 8-mal, Gehen 8-mal, Doppelschuss 2-mal | M `A angriffe`; V `angriff_dick`, `rhythmus_dick`; T `T nachschuss` (Doppelschuss `t_rr17` A 2419/2438, `t_r17` A 3632/3651, beide Rang 17) | gesichert (3. Messung) |
+| Anteil der Doppelschüsse | M 8 von 74, V 2 von 76, T 2 von 108 Raketen | M `A angriffe`; V `angriff_dick` (`g_r12`); T `T nachschuss` | unsicher |
+| Rakete | Slot 27–29 (wie die Kugel), erscheint in A+6 45 px vor dem DICK in seiner Tiefe, 44 px hoch, 5,0 px/Frame, sinkt (Höhe 44 → 1) und landet frei in G+20 100 px weiter (145 px vor dem DICK). Im Flug kein Attribut, trifft nicht (Figur an der Rakete in G+1..G+19 nicht getroffen, auch in Höhe 44) und durchfliegt Figur, Gegner und Glas. An der rechten Arenawand explodiert sie früher: Flug 14–19 Frames, letzte Lage x 2534–2543 (Wand je nach Tiefe wie bei der Kugel). M: Slot 28–29, Wand x 2543 nach 15–19 Frames. V: Slot 27–29, Wand 2538–2543 nach 16–19. T: Slot 27/28/29 = 1/39/68, Wand nach 14–18 Frames bei 2534–2542 (9 Raketen; Tiefe 150: 2540–2542, Tiefe 161: 2534) | M `A geschosse`, `b_rflug`, `b_rflug0`, `c_rglas_flug`; V `rakete` (76); T `T slots`, `T bahnende` | gesichert (3. Messung) |
+| Explosion | Attribut 0x1402 in G+20 bis G+29, trifft in G+21 bis G+29 (9 Frames; ab G+30 nie); Animation bis etwa G+113, dann Block frei (V: G+115) | M `b_ra_*` (Rang 20), `b_ra9_*`, `A geschosse`; V `brt1_22..33`, `rakete` | gesichert |
+| Explosion x | Treffer, wenn (x(Figur) + 4·b) − x(Einschlag) in [−52, 51]: 104 px breit, um 8 px zur Blickrichtung verschoben, in der Gegenrichtung 1 px anders. In vorn vom Einschlag: Flug nach rechts weg −56..47, zum −48..55; Flug nach links weg −55..48, zum −47..56; frei fliegend (Einschlag 145 px vor dem DICK) also etwa 89 bis 201 px vor dem DICK (89–192 nur bei Flug nach rechts und Blick weg, dem Fall von M; der Entwurf von M nennt nur diesen Bereich). M maß nur Flug nach rechts mit Blick weg; V und T alle vier Fälle (V bestätigt dabei den Fall von M, T 0 Widersprüche) | M `b_rx_*` (Rang 20), `b_rx9_*`; V `brx2t_*`, `brx2_*`, `brx1_*`, `brx1t_*`; T `T fenster` (`t_br1` Flug links, Rang 14, Einschlag x ≈ 2308; `t_br2` Flug rechts, Rang 24) | gesichert (3. Messung) |
+| Explosion Tiefe | \|dz\| ≤ 12 trifft, 13 nie | M `b_rz_*`, `b_rz9_*`; V ohne Eingriff `brz1u_6..9`, `brz1d_16..19` | gesichert |
+| Explosion Höhe | trifft die Figur bis 25 px Höhe, ab 27 nie | M `b_rh_*`, `b_rh9_*`; V `brh1_24..28` | gesichert |
+| Explosion bei 26 px Höhe | M Treffer in 2 von 3 Proben, V in 3 von 10 Frames (Höhe am Frame-Ende, die Figur fällt im Frame) | M `b_rh_*`; V `brh1_26` | unsicher |
+| Schaden | Rang 7: 12, 8–14: 13, 15–21: 14, 22–24: 15; wirft immer um | M `d_r_*`, `A geschosse` (64 Treffer); V `dr_*`, `rakete` | gesichert |
+| Abwehr Schlag | zerstört die Rakete nicht (kein Schlagframe verhindert die Explosion) | M `c_rs_*`, `c_rs9_*`; V `crs1_*` (Druck G bis G+18) | gesichert |
+| Abwehr Sprung | weicht aus, wenn die Figur in G+21..G+29 höher als 25 px ist: Sprung 8 bis 26 Frames vor G+21 ohne Treffer; 6 Frames oder weniger davor getroffen (M in 24, 15, 6 px Höhe; V 4 bzw. 6 Frames davor in 15 bzw. 23 px); V auch 28 und 30 Frames davor getroffen (in 25 px, G+29 bzw. G+27) | M `c_rj_*`, `c_rj9_*`; V `crj1_*` | gesichert |
+| Rhythmus | M 1,27 bzw. 1,42 Raketen je 1000 Frames, Abstände 219–2632; V je DICK 1,03–2,05, Abstände 207–2204; T je DICK 1,03–2,39, Abstände 204–1949. Die Raten zählen Doppelschüsse mit, die Abstände nicht (ohne den 19-Frame-Abstand) | M `A rhythmus`; V `rhythmus_dick`; T `T rhythmus` | unsicher |
+
+### DICK: Auftreten, Abstand und Bewegung
+
+| Größe | Wert | Beleg | Status |
+|---|---|---|---|
+| Varianten und LP | Pistolen-DICK (gehaltenes Objekt `0x9A988` mit Art S+0x3D = 0) und Raketen-DICK (Art 4). Max-LP 19 bei Rang 7, 20–23 bei 8–15, 26–28 bei 20–24 (V dazu Rang 17: 24, 18: 25) | M `F erscheinen`, alle DICK-Läufe; V `erscheinen` | gesichert |
+| Erscheinen Pistolen-DICK | 3 Frames nach dem Tod (LP < 0) des ersten Arena-WOOKY, in Slot 18 von links (M Tod 57, DICK 60; V Tod 42, DICK 45); nach Entfernen der WOOKY in Frame 4 bzw. 10 in Frame 11. Nur bei Rang 7–15 und 20–24; bei 16–19 kam er nicht (M Rang 16, 1500 Frames, auch nach dem Tod beider WOOKY; V 400 Frames) | M `F erscheinen` (`f_r7`–`f_r24`, `f_k12`, `f_k16`, `a_k9`, `a_k20`); V `fe_*`, `zweit_e*`, `g_*`, `z_*` | gesichert |
+| Erscheinen Raketen-DICK | in Slot 13 bzw. 14, sobald die DOLG-LP auf etwa ein Viertel fallen (Schwelle 26–27 gesichert im „Nachtrag: Verhalten der Nahkämpfer“, Tabelle D; hier auch nach 25). Alle drei Messungen setzen die LP in einem Schritt (M 27, V 26, T 25) und unterschreiten dabei auch die Hälfte; die 2 EDDY im selben Frame gehören deshalb vermutlich zur Welle der Hälfte (EDDY 4 und 5); welche Gegner allein beim Viertel kommen, können diese Läufe nicht trennen (Lesart beim Prüfen). Ein zweiter Raketen-DICK erscheint 39–40 Frames, nachdem höchstens 4 Gegnerslots (0–19, DOLG mitgezählt) belegt sind (sind es mit der Welle schon höchstens 4, 39–40 Frames nach ihr), wenn dann Rang ≥ 16 gilt; maßgeblich ist der Rang nach der Wartezeit, nicht beim Freiwerden (`t_z15_f`); bei Rang ≤ 15 nie, auch nicht mit nur 2 Gegnern. M: bei Rang 20 (EDDY und Pistolen-DICK entfernt), nicht bei 9. V: bei 17 und 18 (ohne Pistolen-DICK, EDDY leben, 4 Gegner; `zweit_e17`, `zweit_e18`) und bei 22 (`z_r22`: EDDY in Frame 202 entfernt, DICK in 241), nicht bei 9 und 12, nicht bei 20 und 22, solange Pistolen-DICK und beide EDDY leben (`zweit_e20`, `zweit_e22`), und nicht bei 17, 18, 20 mit beiden Arena-WOOKY (`zweit_a*`). T (Rang 9, 12, 14–24, je vier Varianten): 9–15 nie, 16–19 immer (4 bzw. 2 Gegner), 20–24 mit 2–4 belegten Gegnerslots ja, mit 5 nein; wird dann ein Slot frei, kommt er 39 Frames später (`t_z22_e`: EDDY in 260 entfernt, DICK in 299; `t_z22_f`: Pistolen-DICK in 185 entfernt, DICK in 224); maßgeblich ist der Rang in diesem Moment (`t_z15_f`: 15 → 20 in Frame 160, DICK in 190; `t_z20_f`: 20 → 9, keiner) | M `a_r*`, `a_z*`, `F erscheinen`; V `zweit_e9..22`, `zweit_a17..20`, `z_r22`, `z_r12`, `r_r17`; T `T welle` (`t_z9_*` … `t_z24_*`) | gesichert (3. Messung) |
+| Gehen | Vektor mit 1,75 px/Frame in x und 0,875 px/Frame in der Tiefe (Ellipse, z. B. 1,6133/0,332 oder 0,3398/0,8555), zeitweise 2,25/1,125. Weg von der Figur geht er rückwärts mit Blick zu ihr (M 99 % der Frames, V 98,8 %, je DICK 97,6–99,6 %) | M `A abstand`; V `dick_gehen` (14 DICK) | gesichert |
+| Bedingung für schnelles Gehen (2,25/1,125) | nicht bestimmt | M `A abstand`; V `dick_gehen` | offen |
+| Abstand beim Schuss | Er geht nur zum Schießen auf 112–136 px (siehe Auslösung); die README-Angabe „hält Abstand 100–140 px“ gilt nur für die Schüsse | M `A abstand`; V `dick_abstand`; T `T abstand` | gesichert |
+| Abstand sonst (Anteile der Frames, Figur steht frei) | schwanken stark je DICK: 100–139 px M 38 %, V 28–61 %, T 25–54 %; näher als 20 px M 20 %, V 6–35 %, T 13–43 %; ab 140 px M 6 %, V 0–10 %, T 1–10 % (`t_p7` hat dieselbe Verteilung wie `a_p9`, siehe Rhythmus der Pistole) | M `A abstand`; V `dick_abstand`; T `T abstand` | unsicher |
+| Rückzug | Geht die Figur auf ihn zu, weicht er nicht gezielt aus, er setzt sein Vorhaben fort (Zielpunkt, Pose, Stehen, Angriff). Frames, in denen sie auf ihn zugeht (er bleibt in x / weicht zurück / kommt näher): M 393 (217 / 141 / 35), V 246 (101 / 145 / 0), T 507 (156 / 267 / 83) bzw. 122 (31 / 90 / 1) | M `A abstand` (`a_pg9`); V `dick_annaeherung` (`p_mov`); T `T abstand` (`t_ph14`, `t_r22h`) | unsicher |
+| Pose (Aktion 2) | `686C4` (10, gehalten bis 120 Frames), `686FE`, `68730`, `68760` (je 8), `6878E` (7), `687B8` (1), dann Stehen (V: `67760`). Dauer M 30, 42, 60, 74, 90 oder 120 Frames; V: Aktion 2 dauert 30, 60, 90 oder 120, die Bildfolge einmal oder zweimal gespielt 42 bzw. 74. An jedem Abstand (V 0–229 px, oft direkt neben der Figur), danach Gehen. Kein Angriff, keine Vorbereitung eines Schusses; die README nennt sie „Zielen 60–120“ | M `A angriffe` (Art „Haltung“, 368-mal); V `dick_pose`, `dick_pose_folge` (318 Posen) | gesichert |
+| Mehrere DICK | schießen selten gleichzeitig: M 3 überlappende bei 70 Angriffen in 4 Läufen mit 2–3 DICK, V 9 bei 113 in 5 Läufen | M `a_z9`, `a_z20`, `a_rf20`, `a_gd`; V `mehrere_dick` (`z_r22` 6 von 39, `z_r12` 2 von 24, `g_r12` 1 von 14) | gesichert |
+
+### Waffe des DICK beim Tod
+
+| Größe | Wert | Beleg | Status |
+|---|---|---|---|
+| Pistolen-DICK | Die gehaltene Waffe fliegt nach dem tödlichen Treffer t im Bogen (2 px/Frame in x) bis 61–62 px über die Höhe, die der DICK in t hat (Nachkomma der Starthöhe), landet in t+34 (DICK 12–24 px hoch: t+36 bis t+38) und wird 10 Frames nach der Landung zum Gegenstand: GUN (Art 0x00) mit 5 Schuss, Liegezeit 700, unabhängig von den verschossenen Kugeln (M 0, 4, 8, 11; V 0, 0, 4, 13, 15). M (`E Bogen`): neunmal DICK am Boden, Bogen 61, Gegenstand t+44 (auch bei Haltehöhe 56 in der Schusspose, `e_p9_4`), `e_p20_11` DICK 16 px hoch, Bogen 77, Gegenstand t+47. V: bis 62 px (4-mal), Gegenstand nach 44 Frames, einmal 78 px und 47 Frames (`e_p0`). T: DICK 0/12/24 px hoch: höchster Punkt 61/73/85, Landung t+34/36/38, Gegenstand t+44/46/48; Nachlauf `e_p0`: DICK 16 px hoch (Trefferreaktion), 78, Landung t+37, Gegenstand t+47 | M `e_p9_0`, `e_p9_4`, `e_p20_0`, `e_p20_8`, `e_p20_11`, `E Bogen`; V `tod` (`e_p0`, `e_p0b`, `e_p4`, `e_p13`, `e_p15`); T `T bogen` (`t_e_h0`, `t_e_h12`, `t_e_h24`, `t_v7e_p0`) | gesichert (3. Messung) |
+| Raketen-DICK | ebenso Raketenwerfer (MISSILE, Art 0x08) mit 3 Schuss, unabhängig von 0, 1 oder 2 (M) bzw. 0, 1, 6 (V) verschossenen Raketen; V: Bogen bis 61 px, Gegenstand nach 44 Frames, Liegezeit 700. T: DICK 20 px hoch, höchster Punkt 81, Landung t+37, Gegenstand t+48 (11 Frames nach der Landung) | M `e_r9_0`, `e_r9_1`, `e_r20_0`, `e_r20_1`, `e_r20_2`, `E Bogen`; V `tod` (`e_r0`, `e_r1b`, `e_r6`); T `T bogen` (`t_e_r0h`) | gesichert |
+
+Unsicher (alle Werte; „dritte Messung“ nur, wo es eine gab):
+
+- Rate des Messerwurfs: M 0,83 bzw. 0,58 Würfe je 1000 Frames (Abstände
+  247–3251), V je Lauf 0,12–1,5 (206–2860), dritte Messung 0,17–0,67
+  (365–3903). Keine gemeinsame Regel (Lage, andere Gegner, Umwerfen).
+- Rate der Pistolensalven: M 0,82 bzw. 1,57 je 1000 Frames (181–1792),
+  V je DICK 0,38–1,76 (218–4090), dritte Messung 0,50–2,34 (82–1745;
+  `t_p7` und `t_p24` wiederholen `a_p9` bzw. `a_p20` mit anderem Rang).
+- Rate der Raketen (Doppelschüsse mitgezählt; Abstände ohne Doppelschuss):
+  M 1,27 bzw. 1,42 (219–2632), V 1,03–2,05 (207–2204), dritte Messung
+  1,03–2,39 (204–1949).
+- Abstand des DICK außerhalb der Schüsse (Anteile der Frames bei 100–139 /
+  unter 20 / ab 140 px): M 38 / 20 / 6 %, V je DICK 28–61 / 6–35 / 0–10 %,
+  dritte Messung 25–54 / 13–43 / 1–10 %. Gesichert ist nur 112–136 px beim
+  Schuss.
+- Rückzug des DICK vor einer herankommenden Figur (Frames gesamt: bleibt /
+  zurück / näher): M 393: 217 / 141 / 35, V 246: 101 / 145 / 0, dritte
+  Messung 507: 156 / 267 / 83 (`t_ph14`) und 122: 31 / 90 / 1 (`t_r22h`).
+  Gemeinsam nur: kein gezieltes Ausweichen.
+- Anteil der Doppelschüsse des Raketen-DICK: M 8 von 74, V 2 von 76, dritte
+  Messung 2 von 108 (die Regel, wann er möglich ist, ist gesichert).
+- Explosion bei genau 26 px Höhe der Figur: M 2 von 3 Proben getroffen,
+  V 3 von 10 Frames; dritte Messung entfällt.
+- Messer am rechten Bildrand: M nicht gemessen; V letzte Lage 402 (18 px
+  rechts vom Bild) nach 77 Frames, Figur per Eingriff 75 px hoch; dritte
+  Messung entfällt.
+- Stichabstände des SKIP zwischen zwei Serien und an einer Begrenzung
+  (Lesart beim Prüfen, von keinem Agenten ausgewertet): zwischen Serien
+  M 46–51, V 46–51, dritte Messung 47–53 Frames; an einer Begrenzung
+  mehrere Stiche hintereinander, M kein Fall, V 30–43 (`s_r12`, 6 Stiche
+  bei d 2), dritte Messung 30–39 (`t_sr1560`, 8 Stiche bei d 43, in
+  `T rhythmus` als Serie von 8 gezählt).
+- Nur beim Gegenprüfer (ohne eigene Zeile): Funke an Glas und Fass
+  `95B06`, `95B20`, `95B3E` (9 Frames); die Explosion zerbricht Glas auch
+  67 px vom Einschlag; 2–21 % der Gehframes des DICK sind Übergänge mit
+  kleinerem Tempo; Tiefenangleich 25 und 38 Frames, wenn die Figur auf den
+  DICK zugeht.
+- Methode: Die Höhenproben setzen die Figur in die Luft (Aktion Sprung), die
+  Grenze 59/60 gilt für eine springende Figur. Der Schlag gegen das Messer
+  ist nur mit Blick zum SKIP geprüft.
+
+Offen:
+
+- Regel, wann eine Salve zwei normale Kugeln nacheinander enthält.
+- Wovon das Salvenbudget S+0xAB abhängt (Zufall oder Rang) und ob es mehr
+  als 120 Frames gibt.
+- Genaue Abbruchgrenze der Salve in x (zwischen d 167 und 188) und in der
+  Tiefe.
+- Auslösung des Messerwurfs bei versperrtem Weg (beobachtet: Wurf, wenn die
+  Tiefe bis auf 5–6 px heran ist und x nicht mehr wächst) und Form der Sperre
+  bei x ≈ 1006–1052 in Tiefe 320–345 (Bereich der Glasscheibe).
+- Reihenfolge, in der Kugel und Rakete die Slots 27–29 vergeben.
+- Bedingung für das schnelle Gehen des DICK (2,25 px/Frame).
+- Warum der Pistolen-DICK bei Rang 16–19 ausbleibt (gemessen, nicht
+  erklärt; gehört zu den Wellen der Bossarena).
+- Ob eine Sperre gleichzeitige Schüsse mehrerer DICK verhindert.
+- Messer gegen Wände (in Stage 1 keine im Bereich des SKIP), DICK-Geschosse
+  gegen Ölfässer (in der Bossarena keine), Geschosse im Schutz nach dem
+  Aufstehen (nicht gemessen).
+- Andere Stages: Pistole, M-GUN und Raketen der DICK in Stage 4–8, Messer
+  der SKIP in Stage 2, 3, 9.
+
+Abgleich mit älteren Abschnitten:
+
+- `grafik/README.md`, DICK: „Salven zu 3 Kugeln, 8 px/Frame, 6 LP“:
+  gemessen 2–6 und 8 Kugeln (Budget, meist 4–5), 8 px/Frame bestätigt, 6 LP
+  gilt bei Rang 15–21. „Zielen 60–120“ ist die Pose (Aktion 2), kein Zielen.
+  „hält Abstand 100–140 px“ gilt nur beim Schießen (112–136). „#1 nach dem
+  Tod eines Arena-WOOKY“ (#1 ist der DICK mit Pistole) bestätigt (3 Frames
+  danach), aber nur bei Rang 7–15 und 20–24. „Gehen 8×4 (ca. 1,6 px/Frame)“:
+  gemessen 1,75 px/Frame in x (Ellipse mit 0,875 in der Tiefe).
+- `grafik/README.md`, SKIP: „Messerwurf 4/3/1/1/32, Messer 4 px/Frame
+  (10 LP)“ bestätigt (dazu 1 Frame `28B12`; 10 LP bei Rang 7–11).
+  „Messerhagel 25 + 12 Pause“ ist die Stichserie.
+- „Nachtrag: Schaden der Gegner“, Tabelle (Workflow): geworfenes Messer
+  „10 bis 13 je nach Rang (11 bei Rang 12–16, 13 ab 22)“ bestätigt, jetzt
+  mit Skript. Pistole „zwei Schüsse im Abstand von 17 Frames, der zweite
+  wirft um“, „5 bis 7 je Schuss“: Takt 17 und Wechsel normal/umwerfend
+  bestätigt, aber Salven von 1 bis 8 Schüssen und Schaden 4–7 (4 bei
+  Rang 7). Raketenwerfer 12–15 bestätigt.
+  SKIP-Messerstich „Rang 7: 7, 11: 8, 16: 9, 24: 10 (Stufen bei etwa 9,
+  16/17, 23)“: hier Rang 8: 7, 9–15: 8, 16–22: 9, also Stufen bei 9 und 16.
+- „Nachtrag: Schaden der Gegner“, Schutz nach Treffer (Workflow: „schützen
+  vor Schlägen, nicht vor Geschossen“): für Geschosse jetzt mit Skript
+  belegt (Zeile „Schutz nach Treffer“). Damit gilt die gesicherte Zeile
+  „nach erlittenem Treffer“ (27 Frames) in mechanik.md, „Unverwundbarkeit“,
+  nur gegen Schläge; die Zeile bleibt, mechanik.md bekommt dazu eine Zeile
+  „gegen Geschosse“.
+- „Nachtrag: Reichweite der Gegnerangriffe“: Die offenen Punkte
+  SKIP-Messerwurf und DICK (Tabelle „Weitere Aussagen“, Liste „Offen“) sind
+  hier gemessen. Das Ziel ±64 des SKIP in S+0x96 („Gefundene Adressen“,
+  Bedeutung bisher unsicher) ist der Zielpunkt der Stich-Auslösung.
+  **Widerspruch** zur gesicherten Zeile „SKIP Messerstich“ (dort
+  „Aufeinanderfolgende Stiche kommen alle 37 bis 49 Frames (beobachtet 37,
+  42, 49)“, gesichert (3. Messung); in mechanik.md „Reichweite der
+  Gegnerangriffe“ „aufeinanderfolgende Stiche alle 37 bis 49 Frames“):
+  Innerhalb einer Serie sind es hier immer 37 Frames (M 84 von 84, V 133
+  von 133). Zwischen zwei Serien zeigen die Belege dieser Messung auch 51
+  und 53 Frames, an einer Begrenzung 30 bis 43 (Zeile „Stichabstände
+  zwischen Serien und an einer Begrenzung“, unsicher). Die Spanne 37–49 ist
+  damit zu eng; mechanik.md bleibt bis zu einer Prüfung unverändert.
+- „Nachtrag: Gegenstände und Waffen“, Zeile „Waffe eines besiegten DICK“
+  (unsicher, ein Fall: unteres Typwort `0xA988`, Raketenwerfer mit 3 Schuss)
+  und die Zeile S+0x3A unter „Objekte in Slot 20–59“: jetzt gesichert, Typ
+  `0x9A988`, GUN mit 5 bzw. Raketenwerfer mit 3 Schuss (Tabelle „Waffe des
+  DICK beim Tod“). mechanik.md „Waffen je Art“: GUN 5 Schuss bestätigt; die
+  Waffe des Raketen-DICK hat 3 Schuss wie die Raketenwerfer aus Behältern.
+- „Gefundene Adressen“, Gegner S+0x40 (DOLG: „DICK bei etwa einem Viertel
+  (ausgelöst bei 26–27)“) und „Nachtrag: Verhalten der Nahkämpfer“,
+  Tabelle D, Zeile „DICK (zwei)“ (gesichert: „Der zweite 40 F nach dem
+  ersten“): Der Raketen-DICK kam auch nach einem Eingriff auf 25 (dritte
+  Messung). **Einschränkung** der gesicherten Zeile: Einen zweiten
+  Raketen-DICK gibt es nur ab Rang 16 und bei höchstens 4 belegten
+  Gegnerslots (Zeile „Erscheinen Raketen-DICK“); die Bot-Läufe jener
+  Messung erfüllten das vermutlich (später Rang). Ob beim Viertel außer dem
+  DICK weitere Gegner kommen, können die Fern-Läufe nicht zeigen (LP in
+  einem Schritt unter die Hälfte und das Viertel).
+- „Nachtrag: Boss“, Tabelle F, Zeile „Viertel der LP“ (zweiter DICK 40
+  Frames später nur ab Rang 16 und nur, wenn dann höchstens drei andere
+  Gegner leben): stimmt mit der Zeile „Erscheinen Raketen-DICK“ überein
+  (höchstens 4 belegte Gegnerslots samt DOLG, also höchstens drei andere
+  Gegner). Hier kommt hinzu, dass er 39 Frames nach dem Freiwerden eines
+  Slots doch noch erscheint (`t_z22_e`, `t_z22_f`); die Zeile verweist jetzt
+  darauf. Den dortigen offenen Punkt „Zweiter DICK bei Rang 13 und 14“
+  (Tabelle F und Liste „Offen“) beantwortet `T welle` für Rang 14: kein
+  zweiter Raketen-DICK, auch mit nur 2 belegten Gegnerslots (`t_z14_a` bis
+  `t_z14_d`). Rang 13 ist nicht gemessen und bleibt dort offen.
+
+## Nachtrag: Rest der Spielfigur
+
+Belege: `logs/rest.csv` (Messagent M8, Teile A–F, am Ende die dritte Messung
+Teil M3 als eigene Gruppe; 2617 Zeilen) und `logs/rest_v.csv` (Gegenprüfer
+V8, Teil V; 1861 Zeilen), beide erzeugt von `scripts/belege_rest.sh`.
+Szenarien des Messagenten und der dritten Messung: `scenarios/rest_kette.lua`
+(Kette mit Folgeeingaben relativ zu D), `scenarios/rest_sprung.lua`
+(Sprungangriff mit Einzelframe-Proben), `scenarios/rest_frei.lua` (freie
+Eingaben oder Hülle um `hurt*.lua`); Teil E mit dem Durchlauf-Bot
+(`grafik/bot.sh`, `grafik/durchlauf.lua`). Gegenprüfer:
+`scenarios/rest_v_frei.lua` (nur Watch-Protokoll) und
+`scenarios/rest_v_bot.lua` (Konfiguration für `grafik/bot.lua`). Auswertung:
+`scripts/messen_rest.py` (13 Unterbefehle) bzw. `scripts/messen_rest_v.py`
+(`belege`). Laut den Aufrufen in `belege_rest.sh` sind es 3066 MAME-Läufe:
+Messagent 2221 (A 1234, B 675, C 10, D 50, E 2 und 5 Bot-Läufe, F 245),
+dritte Messung 201 (D1 23, D4 24, F1 154), Gegenprüfer 644 (641 und 3
+Bot-Läufe). Der Gesamtlauf mit allen Teilen lief von vorn in 28 min 48 s mit
+Exit 0 (PAR 3, Rechner von anderen Agenten mitbelegt). Reproduzierbar: Den
+Stand des Messagenten vor der dritten Messung (Skript-MD5 `cf09d728…`) hat
+der Gegenprüfer von vorn wiederholt (Exit 0 in 1251 s), `logs/rest.csv` war
+bitgleich (MD5 `7c4b537127c15678edc3bef80b863031`); mit Teil V von vorn
+(1094 s) wieder dieselbe MD5, dazu `logs/rest_v.csv` mit MD5
+`793f6f9282995911deb5ddd0b482b688`, bis auf die 16 Ereigniszeilen der
+Bot-Läufe zeilengleich mit dem Einzellauf von Teil V (361 s). Die Endfassung
+von `logs/rest.csv` mit Teil M3 (MD5 `6b202b9fdd8d460e436cfc593fd05e02`)
+stammt aus einem Durchlauf; `logs/rest_v.csv` blieb dabei unverändert. Das
+Skript löscht danach `logs/raw/rest_*`; die Savestates `rest_e_r8`,
+`rest_e_r24` und `rest_v_e_vor` bleiben.
+
+**Methode.** Der Messagent (M) startet ab `kontakt` (WOOKY, 16 LP, Slot 18)
+und `kontakt_b` (EDDY, 30 LP, Slot 17), für Tod und Rang ab `ingame` (Hüllen
+um `hurt`, `hurt_b`, `hurt_c`), `stage1` und den Phase-0-Savestates
+`p0_s1_s1_cam02048` (Bossarena) und `p0_s1_s2_cam00256` (Stage 2). Er
+schreibt je Frame `FFA900`–`FFEA00`, Rang, Stage und Kamera mit. Zeitgrenzen
+misst er mit Einzeldrücken Frame für Frame über den ganzen Bereich (Teil A:
+35 bzw. 45 Drücke je Gruppe), damit ist auch geprüft, dass frühere Drücke
+verworfen werden. Reichweiten messen Einzelframe-Proben; gewertet wird die
+ganzzahlige Lage am Frame-Ende. Der Gegenprüfer (V) kannte zuerst nur die
+Ergebnistabelle (40 Zeilen). Er misst nur über das Watch-Protokoll, ab
+anderen Savestates (`anlauf`, `anlauf_b`, `anlauf_c`, `tiefe_b`, `held0`,
+`stage3`, `p0_s1_s1_cam00768`, `p0_s1_s1_cam01281`,
+`item_v_b1_s1_cam02016`), mit anderen Druckabständen, Sprungzeiten und
+Eingriffen und mit Eingaben relativ zu Ereignissen im selben Lauf (k-ter
+LP-Verlust, Erscheinen). Er bestätigte 37 von 40 Zeilen. D1, D4 und F1 wichen
+ab, weil er Fälle hatte, die beim Messagenten nicht vorkamen (Tod durch den
+Mech, Landung auf einem Ölfass, Gegner hinter der Figur, der zu ihr schaut).
+Diese drei hat der Messagent ein drittes Mal gemessen (Teil M3, Präfix
+`rest_m3`): 23 Tode, davon 19 an Stellen in Stage 1, 4, 5 und 9 (Savestates
+`item_bot1_s1_cam*`, `item_v_b1_s1_cam*`, `greichweite_v_*`, `stage4`,
+`stage5`, `stage9`) und 4 an der Stage-1-Wand mit gesetzter Lage, dazu ein
+versetztes Ölfass (Slot 43) und Kettenschläge hinter der Figur mit gesetzter
+Blickrichtung des Gegners ab `reaktion_w3` (WOOKY) und `tiefe_b` (EDDY).
+„gesichert (3. Messung)“ heißt: Nach der Abweichung erklärt eine gemeinsame
+Regel die Werte aller drei Messungen.
+
+Bezeichnungen: D = Frame des Kettendrucks der geprüften Stufe, h = Frame, in
+dem die LP des Gegners sinken, P = Druck eines Einzelschlags, J = Sprungdruck,
+A = Angriffsdruck im Sprung, t = Frame, in dem die LP der Figur unter 0
+fallen (in Teil C die des Gegners), z0 = Frame, in dem die LP des Gegners
+genau 0 werden, N = Neueinstieg (LP wieder 72), E = Erscheinen (N+1, Höhe
+256), L = erster Frame der Landephase nach dem Neueinstieg (Aktion 0x0A,
+Unterphase 2). Ein Druck in F wirkt in F+1 (Eingabelatenz). In der
+Belegspalte steht M für Läufe `rest_*` in `logs/rest.csv` (Namen ohne
+Vorsatz `rest_`, `m3_*` = dritte Messung) und V für Läufe `rest_v_*` in
+`logs/rest_v.csv` (ohne Vorsatz `rest_v_`); `w` = WOOKY, `e` = EDDY.
+
+**EINGRIFFE**:
+
+- M, Teil A: `CC_LEER` (Gegner ab dem Treffer der Vorstufe 200 px rechts der
+  Figur, die geprüfte Stufe geht ins Leere; Kombostufe und Animation der
+  Kette bleiben unverändert); `CC_DX=60`, `CC_FERN=16`, `CC_POKE_BIS=24`
+  (Tritt trifft erst im zweiten aktiven Abschnitt).
+- M, Teil B und F2: Einzelframe-Proben `CC_FERN_BIS`/`CC_NAH_BIS` (Gegner nur
+  im Probeframe am Abstand, sonst 200 px entfernt; er geht im Probeframe vorn
+  etwa 2 px heran), `CC_WEG=16` (WOOKY ab `kontakt_b` 300 px entfernt).
+- M, Teil C: `CC_ELP` (LP des Gegners so gesetzt, dass ein Treffer genau 0
+  ergibt), natürlich gegengeprüft mit `c_nat_w` und `c_nat_e`.
+- M, Teil D: `CC_PLP` (LP der Figur in Frame 2 auf 1; der Tod kommt vom
+  nächsten Gegnertreffer, der Ablauf danach ist natürlich), `CC_RANG` (Rang
+  bis Frame 870 gehalten: `d_rang7`, `d_rang9`, `d_rang24`), `CC_SETZE`
+  (Gegner ab L+110 bei dx 40 gehalten: `d_c_schutz`, `d_h_schutz`).
+- M, Teil E: Bot (LP der Figur aufgefüllt, LP der Gegner nach 300 bzw. 900
+  Frames Stillstand auf 1); `e_r8`, `e_r24`: Rang 8 bzw. 24 und Rangzähler
+  `FFF82C` = 3000 in der Bossarena gesetzt.
+- M, Teil F: `CC_DX`, `CC_DZ` (F1); Gegner links der Figur mit `CC_VOR_DX`
+  (F2; die Figur dreht sich per Eingabe in Frame 2 nach links); `CC_DX=26`,
+  `CC_FERN` (`f3a_*`); `CC_SETZE` (F5 `*dx*`: Lage vor dem Gegnerangriff).
+- Dritte Messung: `CC_PLP` an allen 23 Todesstellen; `CC_POKE` auf x und
+  Tiefe der Figur (`FFA99E`, `FFA9A6`) und `CC_SETZE` für den EDDY an der
+  Stage-1-Wand; `CC_POKE` auf x und Tiefe des Ölfasses in Slot 43 (`FFDCDE`,
+  `FFDCE6`) ab dem Erscheinen; `CC_GBLICK` (Blickrichtung des Gegners, Bit
+  0x20 in S+0x5E) zusammen mit `CC_VOR_DX`, `CC_DX`, `CC_DZ`.
+- V: `CC_SETZE` (A-Leerschlag: Gegner 40 px in die Tiefe statt 200 px in x;
+  Proben in B, D, F), `CC_GLP` (C: LP und Vorframe-LP unter den Max-LP; ein
+  Eingriff, der auch S+0x9A auf 7 setzte, ließ das Spiel beim nächsten Treffer
+  stehen), `CC_PLP` bzw. `CC_POKE` auf `FFA9D0`/`FFA9D2` (D: LP der Figur in
+  einem Frame auf 4 bzw. 2), `CC_RANG` (D, E: in einem Frame gesetzt, nicht
+  gehalten), Bot (LP der Figur aufgefüllt, LP der Gegner nach 900 Frames
+  Stillstand auf 1). Jeder Eingriffswert hat einen natürlichen Gegenlauf (A
+  und B die natürlichen Treffer bzw. `b_nat_*`, C `c_w_nat`, `c_e_nat`,
+  `c_e_tod`, D `d_768`, `d_1281n`, E die Bot-Läufe, F `f3_*`, `f5_*`, `f6_*`).
+
+**Abweichungen und dritte Messung** (Ergebnis in den Tabellen):
+
+- D1 Ablauf des Todes: M sah nach Schlägen t+120 (in `d_hurt_c` t+152,
+  Ursache offen), V nach dem Tod durch den Mech t+108. Regel: Der Neueinstieg
+  hängt von der Todesart ab (normal, Rollen, Wand, Klinge). Der Mech ist nicht
+  die Ursache: Die Figur stand bei V schon an der Abschnittsgrenze, deshalb
+  Aktion 8 ab t+3. Alle 23 Tode der dritten Messung passen, ebenso die Werte
+  von M und V (bei V auch die letzten Tode t2+107, t2+120 und t2+151).
+- D4 Fall und Landung: M sah 52 Frames Fall am Boden, V auf dem Ölfass 49.
+  Regel: Die Figur fällt bis auf den Untergrund unter ihr.
+- F1 Mindestabstand: M sah Stufe 2 bis 4 bei dx −20 ohne Treffer, V mit
+  Treffer. Regel: Die Blickrichtung des Gegners entscheidet; ein Gegner in
+  seiner Trefferreaktion dreht sich nicht um.
+
+### A. Nachlauf der Kettenstufen 2 bis 4
+
+M: Folgedrücke 14 (WOOKY, `kontakt`) bzw. 18 Frames (EDDY, `kontakt_b`) nach
+dem Treffer der Vorstufe, Gruppen `a_<g>_s<k>_<fall>` mit `t` Treffer, `l`
+Leerschlag, `z` Tritt erst im zweiten Fenster. V: ab `anlauf_c` (EDDY,
+Folgedrücke h+16, h+13, h+20) und `anlauf` (WOOKY, h+20, h+12, h+15). Beide
+Gegner geben in jeder Zeile dieselben Werte.
+
+| Größe | Stufe 2 | Stufe 3 | Stufe 4 (Tritt) | Beleg | Status |
+|---|---|---|---|---|---|
+| Treffer | h = D+3 | h = D+4 | h = D+3; trifft er erst im zweiten Fenster, D+17 | M `a_*_t_o`, `a_*_s4_z_o`; V `a_{e,w}_s{2,3,4}_t_o`, `a_*_s4_z_o` | gesichert |
+| Pose ohne Eingabe nach Treffer | Aktion bis h+26, Ruhe ab h+27 | Aktion bis h+26, Ruhe ab h+27 | Aktion bis D+32 (h+29), Ruhe ab D+33, auch mit Treffer erst im zweiten Fenster | M `a_{w,e}_s{2,3,4}_{t,z}_o`; V `a_*_s{2,3}_t_o`, `a_*_s4_t_o`, `a_*_s4_z_o` | gesichert |
+| Angriff nach Treffer | Druck ab h+11 gibt in h+12 Stufe 3 (h+9, h+10 ohne Wirkung) | Druck ab h+11 gibt in h+12 den Tritt | nicht abbrechbar: Druck in D+31, D+32 ohne Wirkung, ab D+33 (Ruhe) neuer Schlag Stufe 1 in D+34 | M `a_*_t_a*`, `a_*_s4_z_a*`; V `a_*_s{2,3}_t_a{9..12}`, `a_*_s4_t_a{31..34}`, `a_*_s4_z_a{32..34}` | gesichert |
+| Sprung nach Treffer | Druck ab h+11, Sprung ab h+12 | Druck ab h+11, Sprung ab h+12 | Druck ab D+33, Sprung ab D+34 | M `a_*_t_j*`, `a_*_s4_z_j*`; V `a_*_s{2,3}_t_j{10..12}`, `a_*_s4_t_j{32..34}`, `a_*_s4_z_j{33,34}` | gesichert |
+| Laufen zur Seite (gehalten) nach Treffer | Aktion 0 in h+12, Bewegung ab h+13 | Bewegung ab h+13 | Bewegung ab D+34 | M `a_*_t_hl`, `a_*_s4_z_hl`; V `a_*_s{2,3,4}_t_hl` | gesichert |
+| Laufen in die Tiefe (gehalten) nach Treffer | bricht die Pose nicht ab: Bewegung erst ab h+28 (Frame nach Beginn der Ruhe) | ab h+28 | ab D+34 | M `a_*_t_hu`; V `a_e_s*_t_hd`, `a_w_s*_t_hu` | gesichert |
+| Leerschlag ohne Eingabe | Aktion D+1 bis D+16, Ruhe ab D+17 | D+1 bis D+17, Ruhe ab D+18 | D+1 bis D+25 (beide Fenster leer), Ruhe ab D+26 | M `a_*_l_o`; V `a_*_s{2,3,4}_l_o` | gesichert |
+| Leerschlag: Angriff oder Sprung | Druck ab D+7 wirkt in D+8 (D+6 ohne Wirkung); der Angriff beginnt eine neue Kette (Stufe 1) | Druck ab D+8 wirkt in D+9; Stufe 1 | Druck ab D+26 wirkt in D+27; Stufe 1 | M `a_*_l_a*`, `a_*_l_j*`; V `a_*_s*_l_a*`, `a_*_s*_l_j*` | gesichert |
+| Leerschlag: Laufen (links, rechts, hoch) | Bewegung ab D+9 | ab D+10 | ab D+27 | M `a_*_l_h{l,r,u}`; V `a_*_s*_l_h{l,r,u}` | gesichert |
+| Puffer | keiner: Drücke vor der Freigabe werden verworfen und wirken auch später nicht | wie Stufe 2 | wie Stufe 2 | M alle Sweeps (Spalten `angriff_regel`, `sprung_regel`); V `*_a9`, `*_a10`, `*_j10`, `*_l_a6`, `*_l_a25`, `*_t_a31`, `*_t_a32` | gesichert |
+
+Zusammengefasst: Stufe 2 und 3 sind nach einem Treffer ab dem Kombo-Fenster
+frei (Druck ab h+11; Stufe 1: h+12), der Tritt ist nie abbrechbar und dauert
+25 Frames plus 7 je Treffer. Neu gegenüber „handlungsfähig ab h+13 (Laufen
+oder nächster Schlag)“: Nach einem Treffer bricht bei Stufe 2 und 3 nur
+Laufen zur Seite die Schlagpose ab, Laufen in die Tiefe wartet das Posenende
+ab. Nach einem Leerschlag bricht jede gemessene Richtung (links, rechts,
+hoch) ab. Kontrolle Stufe 1 (M `a_{w,e}_s1_*`, Drücke bis D+20): Die Methode
+trifft die bekannten Werte genau (Treffer P+2, Druck ab h+12 wirkt in h+13,
+Laufen zur Seite ab h+14, Pose bis h+27, Ruhe ab h+28; Leerschlag: Druck ab
+P+7 wirkt in P+8, Bewegung ab P+9, Ruhe ab P+17). Laufen in die Tiefe nach
+einem Treffer der Stufe 1 bewegt dort erst ab h+29 (M `a_{w,e}_s1_t_hu`; nur
+M, **unsicher**, siehe unten). Ein Angriffsdruck in D+2 ist mit
+`rest_kette.lua` nicht prüfbar (der Kettendruck liegt in D und D+1, D+2 ist
+keine neue Kante).
+
+### B. Sprungangriff hoch und runter
+
+M: J = 4 ab `kontakt` (Probe bei dx 30) und J = 3 ab `kontakt_b` (dx 25),
+Fenster bei A = J+1 bis J+33 (hoch) bzw. J+1 bis J+28 (runter). V: J = 10 ab
+`anlauf_b` (WOOKY), J = 12 ab `tiefe_b` (EDDY), Probeframe F = A+m;
+natürliche Läufe `b_nat_*` ab `anlauf_c` und `anlauf_b`. Hoch heißt hoch im
+Frame des Sprungdrucks, runter heißt runter mit dem Angriffsdruck.
+
+| Größe | Wert | Beleg | Status |
+|---|---|---|---|
+| Auslöser | hoch: hoch im Frame des Sprungdrucks (senkrechter Sprung); hoch nur mit dem Angriff gibt den neutralen Tritt (7 LP, wie in „Nachtrag: Sprungangriff“). Runter: runter mit dem Angriffsdruck, auch beim Sprung mit Richtung (4 LP, kein Umwerfen) | M `b_nat_*` (Richtung und runter: `b_nat_w_richtungrunter_a20`); V `b_nat_e_{h,uA,r,rlang,rri}`, `b_nat_w_{h,r,rri}` | gesichert (runter mit Richtung: ein Lauf bei M, zwei bei V) |
+| Aktive Frames | hoch: A+7 bis A+10 (4 Frames) bei jedem Angriffszeitpunkt, solange die Figur in der Luft und höchstens 48 px hoch ist (A+5, A+6, A+11, A+12 nie). Runter: A+9 bis A+32, solange die Figur höchstens 41 px hoch ist, steigend wie fallend (A+8, A+33 nie); am Boden nie | M `b_*_hoch_a*`, `b_*_runter_a*`; V `b_*_h{1,6,24}_*`, `b_*_r3_*`, `b_*_r20_*` | gesichert |
+| Höhengrenze | hoch trifft bis 48 px, ab 49 nie (M: 49 in A+7 bei A = J+11 und J+19; V: 48 in A+7 bei A = J+10 und in A+9 bei J+18, 49 in A+8, 50 und 51 bei A = J+12 nie). Runter bis 41 px, ab 43 nie (42 kommt im Sprung nicht vor) | M wie oben; V `b_*_h10_*`, `b_*_h18_*`, `b_*_h12_*`, `b_*_r3_11`, `b_*_r3_28`, `b_*_r20_{10,11}` | gesichert |
+| x vorn | hoch bis 85 px, ab 86 nie; runter bis 42 px, ab 43 nie | M `b_*_hoch_x*`, `b_*_runter_x*`, `b_w_*_xg*`; V `b_*_h1_8_{84..90}_0_v`, `b_*_h6_9_{85..89}_0_v`, `b_*_r3_9_{41..44}_0_v`, `b_*_r20_18_{42,43}_0_v` | gesichert |
+| x hinten | hoch bis 32 px hinter der Figur, ab 33 nie; runter bis 41 px, ab 42 nie; gleich, ob der Gegner vorher vor oder hinter der Figur stand | M wie oben; V `b_*_h1_8_n{31..34}_0_{v,h}`, `b_*_h6_9_n{32,33}_0_h`, `b_*_r3_9_n{40..43}_0_{v,h}`, `b_*_r20_18_n{41,42}_0_h` | gesichert |
+| x je Höhe | gleich: hoch in A+7 (40 px) und A+10 (46 px), bei V in 29 px (A+8) und 44 px (A+9); runter in A+11 (41 px) und A+18 (20 px), bei V in 38 px (A+9) und 20 px (A+18) | wie x vorn und hinten | gesichert |
+| Tiefe | \|dz\| ≤ 12 px, ab 13 nie, vor wie hinter der Figur, beide Varianten | M `b_*_z*`, `b_w_*_zh*`; V `b_*_h1_8_{40,n20}_*`, `b_*_r3_9_{20,n20}_*` | gesichert |
+| Schaden, Umwerfen | hoch 12 LP, wirft um; runter 4 LP, wirft nicht um (WOOKY und EDDY, mit und ohne Eingriff) | M alle Treffer in `b_*`, ohne Eingriff `b_nat_*`; V alle `b_*` | gesichert |
+| Ablauf | hoch: Aktion 0x0E bis A+29 (mit Treffer A+36), dann Fallpose (0x0A); landet die Figur vorher, endet die Aktion mit der Landung (J+48 ohne Treffer, J+55 mit). Runter: 0x0E bis zum Ende der Landung, J+48, mit Treffer 7 Frames später (J+55) | M Spalte `aktion0e_bis_rel` in Teil B; V Spalten `akt0E_bis_rel_A`, `akt0A_ab_rel_A`, `ende_rel_J` | gesichert |
+| Reichweite gegen einen Gegner in seinem Angriff (runter) | M: runter traf den EDDY in seinem eigenen Schlag (Frame 44 ab `kontakt_b`) bei dx 46, also weiter als die 42 px gegen gehende Gegner; V nicht gemessen | M `b_nat_e_runter_a18`, `b_nat_e_runter_a22` | unsicher |
+| Eingabevarianten, die nur V gemessen hat | V: hoch und rechts zugleich im Sprungdruck gibt den Tritt mit Richtung (7 LP), nicht hoch; runter nur im Sprungdruck gibt den neutralen Tritt (7 LP); hoch vor dem Sprungdruck gedrückt und darüber gehalten gibt hoch (12 LP). M nicht gemessen (hoch nur im Frame des Sprungdrucks) | V `b_nat_e_hdiag`, `b_nat_e_dJ`, `b_nat_e_hlang` | unsicher |
+
+Alle Proben beider Agenten liefen gegen gehende oder stehende Gegner; dass
+die Trefferfläche des Gegners von seiner Pose abhängt, ist schon aus
+„Nachtrag: Sprungangriff“ bekannt.
+
+### C. Gegner mit genau 0 LP
+
+| Größe | Wert | Beleg | Status |
+|---|---|---|---|
+| Treffer, der die LP genau auf 0 senkt | Der Gegner stirbt nicht: normale Trefferreaktion (h bis h+22, frei ab h+23; Stufe 1 bis 3) bzw. Umwerfen, Liegen und Aufstehen (Tritt, Sprungangriff; V frei ab z0+89 bzw. z0+113), danach frei mit 0 LP | M EINGRIFF `c_s1_w`, `c_s1_e`, `c_s2_w`, `c_s3_e`, `c_tritt_w`, `c_tritt_e`; ohne Eingriff `c_nat_w` (3 + 3 + 3 + 7), `c_nat_e` (3 + 4 + 5 + 3 + 4 + 5 + 3 + 3); V `c_w_nat` (3 + 3 + 3 + 3 + 4), `c_e_tod` (3 + 4 + 5 + 3 + 3 + 3 + 4 + 5), `c_e_nat` (3 + 4 + 5 + 3 + 3 + 12), EINGRIFF `c_w_glp`, `c_e_glp` | gesichert |
+| Verhalten mit 0 LP | greift weiter an wie mit LP über 0. M: WOOKY dreimal 5 LP, EDDY dreimal 6 LP in rund 200 Frames. V: WOOKY 5 LP in z0+55, +133, +208, genau wie ein WOOKY mit 4 LP nach denselben Treffern; EDDY 6 LP in z0+356 bzw. +417, so selten wie ein EDDY mit 3 LP | M wie oben (Spalte `figur_lp_verluste_durch_ihn`); V `c_w_nat`, `c_w_glp`, `c_e_nat`, `c_e_glp`, Vergleich `c_w_vgl`, `c_e_vgl` | gesichert |
+| Tod | erst beim nächsten Treffer (LP unter 0, V: 0 → −3 durch Stufe 1). Ablauf wie in „Trefferreaktion der Gegner“ (Tod): Aktion 2 in t+2, Slot frei in t+79 | M `c_danach_w`, `c_danach_e`; V `c_w_nat` (t = 402), `c_w_glp` (148), `c_e_tod` (242) | gesichert |
+
+Damit gilt für die Gegner dieselbe Regel wie für die Figur: Tod erst unter
+0 LP.
+
+### D. Tod und Neueinstieg der Figur
+
+M ohne Eingriff: `d_hurt`, `d_hurt_b`, `d_hurt_c` (verlängert, die Figur ist
+passiv und stirbt zweimal); mit EINGRIFF `CC_PLP`: Bossarena (`d_boss`),
+Stage-Anfang (`d_anfang`), Rang gehalten (`d_rang*`). Eingaben: Richtung ab
+t+4 gehalten, einzelne Drücke in L−1 bis L+7 (`d_c_*` ab `hurt_c`, `d_h_*`
+ab `hurt`). V ohne Eingriff: `d_768` (SKIP, zwei Tode), `d_1281n` (Mech, zwei
+Tode); mit EINGRIFF LP auf 4: `d_e`, `d_tb`, `d_boss`, `d_1281`, `d_1281b`.
+
+| Größe | Wert | Beleg | Status |
+|---|---|---|---|
+| Ablauf des Todes (D1) | Flug ab t+2 (Aktion 2), Bodenkontakt t+40. N hängt von der Todesart ab. **Normal**: Aktion 4, 6, 0x0A ab t+40, t+49, t+59, N = t+120 (t+121, wenn der Rückprall einen Frame länger dauert). **Rollen**: Zeigt die Figur in t die Reaktion 4 (Treffer von vorn mit Attribut-Bit 0x0400, etwa `440C`), rollt sie nach dem Bodenkontakt 32 Frames mit 2 px/Frame weiter, N = t+151 bzw. t+152. **Wand**: Endet der Flug vor t+40 an einer Begrenzung der Stage oder des Abschnitts (diagonale Stage-1-Wand; Abschnittsgrenze vor dem Mech bei x = Kamera-Endwert + 200, bei stehender Kamera Bildschirm-x 200; Anfang von Stage 4), folgt ab dort Aktion 8 und ein senkrechter Fall, Bodenkontakt t+40 mit Aktion 6, 0x0A ab t+47, N = t+108. **Klinge**: Treffer mit Attribut-Bit 0x8000 (Messerstich `8402` und Ausfallstich `8A02` des SKIP, Gegner in Stage 5 `8002`; nicht das geworfene Messer, siehe „Gefundene Adressen“, Gegner S+0x24) geben einen eigenen Ablauf (Aktion 2, 4, 6, 8, 0x0A, 0x0C ab t+2, t+3, t+11, t+39, t+49, t+87), N = t+107; die Flugweite ist nicht einheitlich (unsicher, siehe unten). Die Bildkanten (Bildschirm-x 24 und 360) zählen nicht als Wand | M Spalte `aktionen_rel_t` aller `d_*` (t+120 in allen Toden außer denen ab `hurt_c`: t+152 in `d_hurt_c` zweimal und in den Eingabeläufen `d_c_*` beim selben ersten Tod); V `d_e`, `d_tb`, `d_boss`, `d_768`, `d_e2`, `d_e_r8`, `d_e_r22` (t+120), Mech `d_1281`, `d_1281b`, `d_1281n` (Aktion 8 ab t+3, t+108); dritte Messung 23 Tode `m3_d1_*` (`messen_rest.py todesart`): normal sieben, Rollen fünf (z. B. `m3_d1_item_bot1_s1_cam00832`, auch an den Bildkanten: `m3_d1_greichweite_v_eb_l`, `_wc_r`), Wand sechs (`m3_d1_wand_930_340` Stopp in t+33, `_960_340` in t+22, in Tiefe 320 ohne Wand t+120; vor dem Mech `m3_d1_item_bot1_s1_cam01408` Stopp in t+9 bei Bildschirm-x 200, `_cam01344` in t+26 bei 209,5 (Kamera noch nicht am Endwert), `m3_d1_item_v_b1_s1_cam01440` in t+37 nach einem WOOKY-Schlag `400C`, ohne Mech; `m3_d1_stage4` Stopp in t+3), Klinge fünf (SKIP `8402`, `8A02`, Stage-5-Gegner `8002`) | gesichert (3. Messung) |
+| Neueinstieg | in N (t+120, je nach Todesart t+107, t+108, t+151/152): LP 72, Leben −1, Rang −3 | M `d_hurt`, `d_hurt_b`, `d_hurt_c`, `d_boss`, `d_anfang`; V Feld `lp_leben_rang_in_N` aller `d_*` | gesichert |
+| Position | in E = N+1: x = Kamera-x + 64, Tiefe = Kamera-y + 48, Höhe 256, Blick rechts, an jeder Stelle (M Kamera-x 465, 849, 850, 2128; V 575, 618, 768, 1412, 2048) | M Spalten `x_minus_kx`, `z_minus_ky`; V Feld `lage_E` | gesichert |
+| Fall und Landung (D4) | Die Figur fällt ab E bis auf den Untergrund unter ihr: Boden (Höhe 0) nach 52 Frames (L = E+52, nach normalem Tod t+173), Oberkante eines Ölfasses (Höhe 48) nach 49 Frames (L = E+49, an der Mech-Stelle t+158). Das Fass trägt sie, wenn es 1 bis 16 px weiter hinten liegt (Tiefe des Fasses um 1 bis 16 größer als die der Figur) und höchstens 35 px links bzw. 36 px rechts von ihr steht (dz 0, 17 und 20 sowie dx −36 bis −40 und +37 bis +40: Boden; geprüft dz 0 bis 20 bei dx 0 und dx −40 bis +40 bei dz 8, ein Fass vor der Figur nicht). Landung 6 Frames (L bis L+5), Stand ab L+6; alle Zeiten danach gelten ab L | M Spalten `landung_rel_t`, `landung_rel_erscheinen`, `hoehe_L`, `stand_rel_t` (Boden, 8 Tode an 5 Orten); V `d_e`, `d_tb`, `d_boss`, `d_768` (Boden), `d_1281`, `d_1281b`, `d_1281n` (Fass 44 bei x 1480, Feld `hoehe_in_L` 48); dritte Messung natürlich auf Fass 44 `m3_d1_item_bot1_s1_cam01344`, `_cam01408` (Erscheinen bei x 1476 bzw. 1489), EINGRIFF Fass 43 `m3_d4_fass_<dx>_<dz>` | gesichert (3. Messung) |
+| Steuerbar | Im Fall wirkt keine Eingabe. Angriff: Druck ab L+6, Schlag ab L+7 (Drücke in L−1 bis L+5 verworfen). Sprung: Druck in L bis L+4 startet im nächsten Frame einen neuen Sprung (Absprung L+2 bzw. L+6), in L−1 und L+5 geht er verloren, ab L+6 normal (Sprung ab L+7, Absprung L+8). Gehaltene Richtung (seitlich und Tiefe) bewegt ab L+7 | M `d_{c,h}_{a,j}*`, `d_{c,h}_h{r,u}`; V `d_{e,tb}_a{20,51,52,56..59}`, `d_{e,tb}_j{30,51,52,56..59}`, `d_{e,tb}_h{r,l,u,d}` | gesichert |
+| Schutz | S+4 = 3 von E bis L+199; Timer `FFAA69` steht in L auf 200 und erreicht 0 in L+200 (auch bei L = E+49), dann S+4 = 1. Bei Landung auf dem Boden zusammen 252 Frames ab E (≈ 4,2 s), davon 200 nach der Landung (≈ 3,4 s). Gegnerangriffe in dieser Zeit bleiben ohne Wirkung (M gesehen in L−34 bis L+170, V in L+129 bei dx 42); der erste LP-Verlust kam nie vor L+200 (M L+211, 212, 260, 280, 327; V L+227, 248, 314, 472, 517, 543; in den Läufen der dritten Messung zweimal genau L+200, `m3_d1_greichweite_v_sm_r` und `_wk2_r`, danach Status 3 der Trefferreaktion bis L+226) | M Spalten `status3_bis_rel_L`, `t69_*`, `gegnerangriffe_im_schutz`, `naechster_lp_verlust_rel_L`; EINGRIFF `d_h_schutz` (WOOKY ab L+110 bei dx 40: Angriff in L+141 ohne Wirkung, erster LP-Verlust L+211; in `d_c_schutz` griff der festgehaltene Gegner nicht an); V Felder `status3_von_bis_rel_L`, `t69_*`, EINGRIFF `d_e_schutz` (EDDY E+92 bis E+312 bei dx 45) | gesichert |
+| Landung trifft alle Gegner im Bild | In L verliert jeder aktive Gegner im Bild LP und wird umgeworfen, unabhängig vom Abstand: WOOKY, EDDY und SKIP 5 LP, DOLG 10 LP (M dx −64 bis 221, SKIP bei 101 in `d_hurt_c`, dz −22 bis 29; V dx 18 bis 187, DOLG bei 204, SKIP bei 87, dz −19 bis 46). Ein noch wartender Gegner (S+4 = 2) bleibt unberührt (M EDDY in `d_anfang`, V WOOKY bei dx 321) | M Spalte `gegner_in_L`; V `d_e`, `d_tb`, `d_boss`, `d_768` (Feld `gegner_in_L`) | gesichert (DOLG: je ein Lauf bei M und V) |
+| Rang | −3 in N: M 12 → 9 (dreimal), 16 → 13, 10 → 7; V 11 → 8, 17 → 14, 13 → 10. Untergrenze 7: M 9 → 7 und 7 → 7 (EINGRIFF), V 9 → 7 (EINGRIFF Rang 8 in Frame 60, natürlich auf 9 gestiegen); oben M 24 → 21, V 23 → 20 (EINGRIFF). Auch der letzte Tod ohne Neueinstieg senkt ihn um 3 (M 10 → 7, 12 → 9, 11 → 8, 14 → 11; V 10 → 7, 13 → 10, 9 → 7 in t2+107, t2+120 bzw. t2+151) | M Spalten `rang_*`, EINGRIFF `d_rang7`, `d_rang9`, `d_rang24`; V alle `d_*`, EINGRIFF `d_e_r8`, `d_e_r22`, Feld `t2_rangwechsel_rel_t2` in `d_768`, `d_1281n`, `d_e2` | gesichert |
+| Leben | `FFAA7C` (P+0xEC) steht bei Spielbeginn auf 2 (DIP „Lives“, Standard 2 laut `-listxml`), nach dem ersten Tod auf 1, nach dem zweiten auf 0. Der zweite Tod führt zu keinem Neueinstieg (Spielende) | M Spalte `leben`; V `d_768`, `d_1281n` (ohne Eingriff), EINGRIFF `d_e2` (LP 2 in E+300) | gesichert |
+| Gegner während Tod und Fall | In allen Toden von M (Teil D) und V beginnt zwischen t+1 und E kein Gegner einen Angriff; sie gehen, spotten, warten oder stehen in Kampfhaltung (Aktion 0, 2, 4, 6). Im Fall und danach greifen sie an, ohne Wirkung (siehe Schutz). Zwei Läufe der dritten Messung zeigen Ausnahmen (unsicher, siehe unten) | M Spalten `gegneraktionen_bis_erscheinen`, `gegnerangriffe_bis_erscheinen`; V Felder `gegnerangriffe_t+1_bis_E`, `gegneraktionen_t+1_bis_E` | gesichert (für die Läufe von M und V) |
+| Gegner während Tod und Fall, Ausnahmen | M und V: in keinem Tod ein Angriffsbeginn zwischen t+1 und E. Dritte Messung (Spalte `gegnerangriffe_bis_erscheinen`, für D10 nicht ausgewertet): `m3_d1_greichweite_v_sw_r` t+4 S18 (der SKIP, dessen Ausfallstich `8A02` die Figur tötete), `m3_d1_stage9` t+17 S17 (Gegner aus Stage 9); Ursache nicht geklärt (beim SKIP vielleicht das Wirbel-Attribut, das in jedem Animationsschritt neu einsetzt) | M3 wie links | unsicher |
+| Timer `FFAA69` vor der Landung | V: steht schon ab E auf 200 und nimmt ab L+1 ab; M hat nur den Wert in L ausgewertet (200) | V Felder `t69_200_ab_rel_L`, `t69_erste_abnahme_rel_L`; M Spalte `t69_start` | unsicher |
+| Landung auf dem Mech | V: Die Landung an der Mech-Stelle trifft den Mech (−5 LP in L) und wirft den Reiter (WOOKY, Slot 16) ab (−5 LP in L+1, Aktion 0x0C). M nicht gemessen. Dritte Messung (Landungen dort in `m3_d1_item_bot1_s1_cam01344`, `_cam01408`) dafür nicht ausgewertet; ihre Spalte `gegner_in_L` zeigt nur, dass der Reiter in L noch keine LP verliert (passt zu V), Mech (Slot 59) und L+1 wertet sie nicht aus | V `d_1281`, `d_1281b`, `d_1281n` | unsicher |
+| Abschnittsgrenze vor dem Mech für die gehende Figur | dritte Messung: Eine Erkundung außerhalb des Belegs zeigt, dass auch die gehende Figur bei Bildschirm-x 200 stehen bleibt; M (erste Messung) und V nicht gemessen | kein Lauf im Belegskript | unsicher |
+| Flugweite beim Tod durch eine Klinge | nur dritte Messung (Spalte `flug_x`, Weg in x von t bis t+39): 62,375 px dreimal (SKIP, `m3_d1_item_bot1_s1_cam00768`, `_cam00960`, `m3_d1_greichweite_v_sm_r`), 171,625 px in Stage 5 (`m3_d1_stage5`), 0 px beim SKIP, dessen Opfer in t+3 an der Bildkante 360 stoppt (`m3_d1_greichweite_v_sw_r`). M hatte keinen Klingentod, V hat beim Klingentod nur N = t2+107 ausgewertet | M3 wie links | unsicher |
+| Schutz nach dem Neueinstieg in anderen Stages | M und V nur Stage 1. Dritte Messung (für den Schutz nicht ausgewertet): in Stage 4, 5 und 9 ebenfalls Status 3 bis L+199, Timer `FFAA69` 200 in L und 0 in L+200 (`m3_d1_stage4`, `_stage5`, `_stage9`, Spalten `status3_bis_rel_L`, `t69_*`) | M3 wie links | unsicher |
+| Tod mit zwei Sonderfällen zugleich (Klinge oder Rollen an einer Wand) | kam nicht vor; welche Regel dann gilt, ist offen | – | offen |
+| Weitere tragende Untergründe | andere als das Ölfass (andere Stages) nicht gesucht; ein Fass vor der Figur (Tiefe kleiner) nicht geprüft | – | offen |
+| Landung gegen schwache und ferne Gegner | ob die Landung Gegner mit 5 LP oder weniger tötet und ob sie Gegner außerhalb des Bildes trifft, nicht gemessen | – | offen |
+| Schutz nach dem Neueinstieg bei anderen Figuren | nur Captain Commando gemessen | – | offen |
+
+### E. Rang beim Stage-Wechsel
+
+M: Bot (`grafik/bot.lua` mit `durchlauf.lua`) bis zur nächsten Stage, dazu
+EINGRIFF Rang 8 bzw. 24 und Rangzähler 3000 in der Bossarena (`e_r8`,
+`e_r24`). V: Bot mit `rest_v_bot.lua` ab `item_v_b1_s1_cam02016`, `stage3`
+und `held0` (Mack), dazu ab dem Savestate `rest_v_e_vor` (Bossarena kurz vor
+dem Wechsel) ohne und mit Rang-Eingriff in Frame 2 (Wechsel in Frame 70).
+
+| Größe | Wert | Beleg | Status |
+|---|---|---|---|
+| Rang beim Stage-Wechsel | −3 genau im Frame, in dem der Stage-Index `FFA8CE` wechselt. M: Stage 1 → 2 17 → 14 (ab Bossarena) und 18 → 15 (ganze Stage 1), Stage 2 → 3 24 → 21; V: Stage 1 → 2 19 → 16 (Frame 2020), Stage 3 → 4 23 → 20 (9899), Mack Stage 1 → 2 20 → 17 (6748). Untergrenze 7: M 8 → 7, V 7 → 7, 8 → 7, 10 → 7; oben M 24 → 21, V 22 → 19 (jeweils EINGRIFF) | M `e_boss`, `e_s1`, `e_s2`, EINGRIFF `e_r8`, `e_r24`; V Bot `e_boss`, `e_s3`, `e_h0`, `e_vor_nat`, EINGRIFF `e_vor_r{7,8,10,22}` | gesichert |
+| Rangzähler | `FFF82C` bleibt beim Wechsel unverändert (M 84, 365, 600, 2237, 3000; V 14, 178, 385) und zählt danach weiter (V: nächster Anstieg 17 Frames nach dem Wechsel) | wie oben | gesichert |
+
+Die Angabe „Laut Workflow fällt er auch zu Beginn von Stage 2 um 3“ aus
+„Nachtrag: Schaden der Gegner“ ist damit bestätigt.
+
+### F. Nachprüfungen
+
+| Größe | Wert | Beleg | Status |
+|---|---|---|---|
+| Mindestabstand und Reichweite hinter der Figur (F1) | kein Mindestabstand: alle Stufen treffen bei dx 0. Hinter der Figur entscheidet die Blickrichtung des Gegners: Schaut er zur Figur, trifft Stufe 1 bis −28 (−29 nie), Stufe 2 und 3 bis −26 (−27 nie), der Tritt bis −25 (−26 nie); schaut er weg, nur bis −4, −2 bzw. −1 (−5, −3, −2 nie). Ein Gegner in seiner Trefferreaktion dreht sich nicht um; deshalb trafen bei M Stufe 2 bis 4 bei −20 nicht (Kettendruck 14 Frames nach dem Treffer, Gegner schaut weg), bei V mit spätem Kettendruck schon | M `f1_{w,e}_*` (EINGRIFF `CC_DX`, `CC_DZ`); V EINGRIFF `f1_{e,w}_s1_*`, `f1_{e,w}_s{2,3,4}_{0,n20}`, `f1b_{e,w}_s{2,3,4}_n{20..35}`; dritte Messung `m3_f1_*` (Grenzen je Blickrichtung), `m3_f1z_*` (dx −20: in der Reaktion mit Blick zur Figur Treffer, frei mit Blick weg kein Treffer) | gesichert (3. Messung) |
+| Reichweite bei Blick nach links | je 1 px kürzer: Stufe 1 ≤ 84 (85 nie), Stufe 2 ≤ 86 (87 nie), Stufe 3 ≤ 90 (91 nie), Tritt ≤ 99 (100 nie); Sprungangriff mit Richtung ≤ 98 (99 nie), neutral ≤ 75 (76 nie) | M `f2_*`, `f2j_*` (EINGRIFF, Sprungangriff in A+5); V EINGRIFF `f2_{e,w}_s{1..4}_*`, `f2j_{e,w}_{ri,ne}_{5,9}_*` (A+5 und A+9) | gesichert |
+| Richtung zum Gegner beim Kettendruck | Ausfallschritt mit eigener Animation: Die Figur rückt in D+1 bis D+4 um 8, 6, 4 und 2 px vor (20 px). Treffer erst in D+9 (Stufe 2), D+8 (Stufe 3), D+9 (Tritt), aktiv D+9 bis D+12 (Stufe 3: D+8 bis D+11); Schaden unverändert (4 / 5 / 10), die Kette läuft weiter (Folgedruck gibt die nächste Stufe, nach Stufe 3 den Tritt mit eigener Animation) | M `f3_*_r`, `f3_*_r_a20`, EINGRIFF `f3a_*` (nur WOOKY); V `f3_{e,w}_s{2,3,4}_r`, `f3_*_r_f`, EINGRIFF `f3a_e_s{2,3,4}_{7,8,9,12,13}` | gesichert |
+| Richtung weg vom Gegner beim Kettendruck | Die Figur dreht sich in D+1 um und macht denselben Schritt 20 px weg (−8, −6, −4, −2 px), kein Treffer; die Kette ist abgebrochen (Folgedruck in D+16 beginnt mit Stufe 1). Hoch oder runter ändern nichts (normaler Treffer in D+3 / D+4 / D+3, kein Schritt) | M `f3_*_l`, `f3_*_l_a16`, `f3_*_u`, `f3_*_d`; V `f3_*_s*_l`, `f3_*_l_f`, `f3_*_s*_{u,d}` | gesichert |
+| Treffer in der Luft werfen immer um | Normale Schläge von WOOKY (5 LP) und EDDY (6 LP), die am Boden nicht umwerfen, werfen die springende Figur bei jeder Höhe um, steigend und fallend (M 5 bis 47 px; V bei 2, 5, 12, 18, 27, 35, 41, 44 und 48 px); am Boden nicht | M `f4_*` (ohne Eingriff, Referenz `f4_*_0`); V `f5_e_j*`, `f5_w_j*` (Referenz `j0`) | gesichert |
+| Gleichzeitiger Treffer | Fällt der Treffer des Schlags (P+2) in den ersten aktiven Frame des Gegnerschlags, verliert nur der Gegner LP; einen Frame später verliert nur die Figur LP | M `f5_w_p26`/`p27`, `f5_e_p42`/`p43` (ohne Eingriff), `f5_wdx20_*`, `f5_wdx70_*`, `f5_edx20_*`, `f5_edx30_*` (EINGRIFF Lage vor dem Gegnerangriff); V ohne Eingriff `f6_e_p{65,66,67}` (`anlauf_c`), `f6_w_p{67,68,69}` (`anlauf_b`), `f6_t_p{72,73,74}` (`tiefe_b`) | gesichert |
+
+Deutung der dritten Messung zu F1: Die Grenzen „schaut zu ihr“ und „schaut
+weg“ liegen je Stufe 24 px auseinander, wie beim neutralen Sprungangriff in
+„Nachtrag: Sprungangriff“ (vorn 76 bzw. 52 px, hinten −27 bzw. −3; dort
+unsicher). Die Trefferfläche des Gegners liegt also in seine Blickrichtung
+verschoben.
+
+Unsicher (alle Werte; „dritte Messung“ nur, wo es eine gab):
+
+- Laufen in die Tiefe nach einem Treffer der Stufe 1: Messagent erst ab h+29
+  (Kontrollläufe `a_{w,e}_s1_t_hu`); Gegenprüfer nicht gemessen (Teil A nur
+  Stufe 2 bis 4); keine dritte Messung.
+- Sprungangriff runter gegen einen Gegner in seinem Angriff: Messagent Treffer
+  bei dx 46 gegen den schlagenden EDDY (`b_nat_e_runter_a18`, `_a22`) statt
+  bis 42 gegen gehende Gegner; Gegenprüfer nicht gemessen; keine dritte
+  Messung.
+- Eingabevarianten beim Sprungangriff, die nur der Gegenprüfer gemessen hat:
+  Messagent nicht gemessen (hoch nur im Frame des Sprungdrucks); Gegenprüfer
+  hoch und rechts im Sprungdruck → Tritt mit Richtung, 7 LP
+  (`b_nat_e_hdiag`), runter nur im Sprungdruck → neutraler Tritt, 7 LP
+  (`b_nat_e_dJ`), hoch vor dem Sprungdruck gedrückt und gehalten → hoch,
+  12 LP (`b_nat_e_hlang`); keine dritte Messung.
+- Timer `FFAA69` vor der Landung nach dem Neueinstieg: Messagent 200 in L
+  (früher nicht ausgewertet); Gegenprüfer 200 schon ab E, Abnahme ab L+1;
+  keine dritte Messung.
+- Landung nach dem Neueinstieg an der Mech-Stelle: Messagent nicht gemessen;
+  Gegenprüfer Mech −5 LP in L, Reiter −5 LP in L+1 und abgeworfen (Aktion
+  0x0C); dritte Messung (Landungen dort in `m3_d1_item_bot1_s1_cam01344`,
+  `_cam01408`) dafür nicht ausgewertet, nur der Reiter verliert dort in L
+  keine LP (wie bei V).
+- Abschnittsgrenze vor dem Mech als Halt für die gehende Figur: erste Messung
+  des Messagenten und Gegenprüfer nicht gemessen; dritte Messung nur eine
+  Erkundung außerhalb des Belegs (Halt bei Bildschirm-x 200).
+- Flugweite beim Tod durch eine Klinge (x von t bis t+39): Messagent kein
+  Klingentod; Gegenprüfer nicht ausgewertet (nur N = t2+107); dritte
+  Messung 62,375 px dreimal (SKIP), 171,625 px in Stage 5, 0 px beim
+  SKIP-Tod mit Stopp an der Bildkante 360.
+- Angriffe der Gegner zwischen t+1 und dem Erscheinen: Messagent und
+  Gegenprüfer in keinem Tod; dritte Messung (für D10 nicht ausgewertet)
+  zweimal, `m3_d1_greichweite_v_sw_r` t+4 (SKIP, Slot 18, der die Figur mit
+  dem Ausfallstich `8A02` tötete) und `m3_d1_stage9` t+17 (Slot 17).
+- Schutz nach dem Neueinstieg in anderen Stages: Messagent und Gegenprüfer
+  nur Stage 1; dritte Messung (nicht dafür ausgewertet) in Stage 4, 5 und 9
+  wie in Stage 1 (Status 3 bis L+199, Timer 0 in L+200).
+
+Offen:
+
+- Tod, wenn sich zwei Sonderfälle überlagern (Klinge oder Rollen an einer
+  Wand): kam nicht vor.
+- Weitere tragende Untergründe als das Ölfass (andere Stages) und ein Fass
+  vor der Figur (Tiefe kleiner als ihre).
+- Ob die Landung nach dem Neueinstieg Gegner mit 5 LP oder weniger tötet und
+  ob sie Gegner außerhalb des Bildes trifft.
+- Schutz nach dem Neueinstieg bei den anderen Figuren.
+
+Abgleich mit bestehenden Werten (kein gesicherter Wert wird überschrieben;
+betroffen sind folgende Stellen):
+
+- „Messgrößen“, Recovery-Frames Schlag („Die Figur ist ab h+13 wieder frei
+  (Laufen bewegt ab h+14 …)“) und `mechanik.md`, „Recovery-Frames
+  Standardschlag (Treffer)“ („handlungsfähig ab h+13 (Laufen oder nächster
+  Schlag)“): **möglicher Widerspruch, unsicher**. Gemessen war dort Laufen
+  zur Seite. Laufen in die Tiefe bewegt nach einem Treffer der Stufe 1 laut
+  Messagent erst ab h+29 (nur eine Messung); für Stufe 2 und 3 ist das
+  entsprechende Warten auf das Posenende (h+28) gesichert. Die Zeile in
+  `mechanik.md` bleibt unverändert, bis Stufe 1 gegengeprüft ist. Die übrigen
+  Werte der Stufe 1 hat Teil A genau wiedergefunden.
+- `mechanik.md`, Abschnitt „Sprungangriff“, Zeile „Aktive Frames“ („A+5 bis
+  A+28, solange die Figur in der Luft ist“): gilt laut „Nachtrag:
+  Sprungangriff“ für neutral und Richtung. Hoch (A+7 bis A+10) und runter
+  (A+9 bis A+32) haben eigene Fenster; die Zeile sollte deshalb „(neutral
+  und Richtung)“ im Namen tragen, sonst widerspricht sie den neuen Zeilen.
+- „Nachtrag: Schaden der Gegner“, Trefferreaktion (Workflow: „Bit 0x0400
+  wählt nur die Animation“): beim Tod entscheidet diese Reaktion (Aktion 4
+  in t) darüber, ob die Figur rollt und erst in t+151/152 statt t+120
+  wieder einsteigt (gesichert, 3. Messung). Der Rangwechsel in
+  `gs_hurt_c_lang` („Tod 1741, 12 → 9 in 1893“, also t+152) ist so ein
+  Rollen.
+- „Nachtrag: Reichweite der Kettenstufen 2–4“, Unsicher: Blick links (1 px
+  kürzer) und Richtung während der Kette (hoch und runter ohne Wirkung,
+  Ausfallschritt von 20 px zum Gegner, vom Gegner weg Abbruch) sind jetzt
+  gesichert.
+- „Nachtrag: Sprungangriff“, Varianten hoch und unten („Reichweite nicht
+  gemessen“): jetzt gemessen (Teil B). „Mit Blick nach links ist die
+  Reichweite 1 px kürzer (−75 bzw. −98)“: gesichert (neutral ≤ 75, Richtung
+  ≤ 98).
+- „Nachtrag: Schaden der Gegner“: Rang −3 beim Tod präzisiert (im Frame des
+  Neueinstiegs, auch beim letzten Tod) und beim Stage-Wechsel bestätigt; die
+  Workflow-Regeln „Jeder Treffer in der Luft wirft um“ und „Gleichzeitiger
+  Treffer“ sind jetzt mit Skript belegt (gemessen mit WOOKY und EDDY);
+  „etwa 120 Frames später geht es mit 72 LP weiter“ gilt für den normalen
+  Tod (sonst 107, 108 oder 151/152).
+- „Nachtrag: Trefferreaktion der Gegner“, Tod: Ein Treffer genau auf 0 LP
+  tötet nicht; der Ablauf nach dem tödlichen Treffer (Aktion 2 in t+2, Slot
+  frei in t+79) ist bestätigt.
+- „Gefundene Adressen“, `FFAA69`: Neben 35 (Aufstehen) und 20
+  (Spezialangriff) startet der Timer nach dem Neueinstieg mit 200.
+
 ## Objekt-Slots
 
 Spieler und Gegner liegen in Blöcken mit gleichem Feldaufbau.
@@ -2155,8 +3247,9 @@ Spieler und Gegner liegen in Blöcken mit gleichem Feldaufbau.
   bestimmt: Der Gegner aus `attack` belegt genau `FFCA10`–`FFCACF`, und
   beim Verschwinden (Frame 715) geht S+4 auf 0.
 - Gegner lagen in allen Läufen (Stage 1 und Demo-Stages) in den Slots 13–19.
-  In Slots 30–59 lagen andere Objekte, z. B. Slot 59 als Trefferfunke
-  (8 Frames je Treffer). **Unsicher**: dass die Slots 0–19 ausschließlich
+  Ausnahme aus den Nachträgen vom 2026-10-02: In `fern_rw20` liegt der
+  Raketen-DICK in Slot 10 (Szenarien, Savestates `fern_*`). In Slots 30–59
+  lagen andere Objekte, z. B. Slot 59 als Trefferfunke (8 Frames je Treffer). **Unsicher**: dass die Slots 0–19 ausschließlich
   Gegner enthalten.
 - Gegner zählen: `ramtools.py enemies` zählt je Frame die Slots 0–19 mit
   S+4 ≠ 0 (`belegt`), davon mit S+5 = 1 (`s5`), davon mit S+4 ∈ {1, 3}
@@ -2173,9 +3266,17 @@ Spieler und Gegner liegen in Blöcken mit gleichem Feldaufbau.
   Explosionen des Spezialangriffs von Ginzu und Baby Head. Die Geschosse der
   Figur (Rakete, Laser, Kugeln) liegen nicht dort, sondern in fünf eigenen
   Blöcken ab `FFAD90`.
+- Die Geschosse der Gegner liegen dagegen in der Objekttabelle (Nachtrag
+  Fernangriffe der Gegner): das Messer des SKIP immer in Slot 29, Kugel und
+  Rakete des DICK in einem der Slots 27–29, der im Frame vor dem Erscheinen
+  frei ist (gesichert (3. Messung); Reihenfolge der Vergabe offen). Auch die
+  Waffe in der Hand eines DICK ist ein eigenes Objekt (Typ `0x9A988`, beim
+  Pistolen-DICK Slot 58). Einzelheiten in „Geschosse der Gegner“.
 - Stage 1 belegt beim Start die Slots 16–18 mit `0200` und Slot 19 mit
-  `0100` (S+5 = 0, x = 2424, also weit voraus). Was in Slot 19 liegt, ist
-  offen.
+  `0100` (S+5 = 0, x = 2424, also weit voraus). In Slot 19 liegt laut
+  Gegenprüfer des Boss-Nachtrags ab Stage-Beginn schon der Boss DOLG (Typ
+  gesetzt, beim Erreichen der Arena werden nur seine LP geschrieben;
+  unsicher, eine Messung).
 
 ## Gefundene Adressen
 
@@ -2227,6 +3328,15 @@ Ausgabe `logs/a4_gegenpruefung.txt`).
 | `FFAA41` | S+0xB1 | 1 | Munition bzw. Ladungen der gehaltenen Waffe, bei der Aufnahme aus S+0xB1 des Gegenstands übernommen | `item_f_waffe`, `item_a_*`, `item_k_*_w`; `item_v_mis_r`, `item_v_las_leer` | gesichert |
 | `FFAA74` | – | 4, BCD | Punkte Spieler 1 als achtstellige BCD-Zahl. `FFAA76` ist ihre untere Hälfte mit den vier niedrigsten Stellen, ab 10.000 Punkten zählt `FFAA75` mit | `item_k_s7_2c_lp72` (13.260 Punkte), Abschnitte `punkte` in `item.csv`; Bot `item_v_b*` (Spalte `pkt`, 4 Byte) | gesichert |
 | `FFAA76` | – | 2, BCD | präzisiert: nur die vier niedrigsten Stellen der Punkte (untere Hälfte von `FFAA74`); unter 10.000 Punkten gleich dem Punktestand, darüber zu klein | wie `FFAA74` | gesichert |
+| `FFA99A` | S+0x0A | 2 | Aktion, Ergänzung (Nachtrag Boss), weiterer Wert: 0x18 Siegerpose nach dem Tod des Bosses (t+97 bzw. t+98 nach tödlichem Spezialangriff, sonst meist t+127 bis t+139) | `logs/boss.csv` („# G fall“, Spalte `siegerpose`; Kriterium im Kopf des Abschnitts), „# M fall“ | unsicher (Deutung nach dem Verhalten; beide Auswertungen nehmen unabhängig Aktion 0x18 als Kriterium, die Zeitpunkte t+97, t+128 und t+132 stimmen überein, in zwei Bot-Läufen des Messagenten aber t+55 und t+61) |
+| `FFAA12` | S+0x82 | 2 | Zeigerwort auf S+4 des Angreifers im Frame des LP-Verlusts (Slot = (`FF0000` + Wort − 4 − `FFBC90`) / 0xC0, Regel aus „Nachtrag: Schaden der Gegner“). Bei Geschossen zeigt es auf den Werfer (SKIP, DICK), nicht auf das Geschoss | `logs/fern.csv` (`A geschosse`, alle Treffer der natürlichen Läufe), `logs/fern_v.csv` (`wurf`, `angriff_dick`, `bahn`) | gesichert |
+| `FFAA7C` | S+0xEC | 1 | Leben von Spieler 1: 2 bei Spielbeginn (DIP „Lives“, Standard 2 laut `-listxml`), 1 nach dem ersten Tod (im Frame des Neueinstiegs), 0 nach dem zweiten; danach kein Neueinstieg | `logs/rest.csv` (Teil D, Spalte `leben`), `logs/rest_v.csv` (Teil D: `rest_v_d_768`, `rest_v_d_1281n`, EINGRIFF `rest_v_d_e2`) | gesichert |
+| `FFAA69` | – | 1 | Ergänzung (Nachtrag Rest der Spielfigur): Schutz-Timer auch nach dem Neueinstieg (zu den Zeilen oben: 35 nach dem Aufstehen, 20 nach dem Spezialangriff): steht in L auf 200, zählt ab L+1 herunter und erreicht 0 in L+200, dann S+4 = 1. Laut Gegenprüfer steht er schon ab dem Erscheinen auf 200 | `logs/rest.csv` (Teil D, Spalten `t69_start`, `t69_null_rel_L`), `logs/rest_v.csv` (Teil D, Felder `t69_200_ab_rel_L`, `t69_erste_abnahme_rel_L`, `t69_null_rel_L`) | gesichert (200 in L, 0 in L+200), unsicher (200 schon ab dem Erscheinen: nur Gegenprüfer) |
+| `FFA994` | S+0x04 | 1 | Grundzustand, Ergänzung (Nachtrag Rest der Spielfigur): 3 auch vom Erscheinen nach dem Neueinstieg bis L+199 (Schutz, danach 1 mit dem Ablauf von `FFAA69`) | `logs/rest.csv` (Teil D, Spalte `status3_bis_rel_L`), `logs/rest_v.csv` (Feld `status3_von_bis_rel_L`) | gesichert |
+| `FFA99A` | S+0x0A | 2 | Aktion, Ergänzung (Nachtrag Rest der Spielfigur), Werte beim Tod der Figur (dieselben Zahlen wie Sprint, Sprintsprung usw. in der Zeile „weitere Werte“, hier aber im Ablauf des Todes): 2 Flug ab t+2; normal 4, 6, 0x0A ab t+40, t+49, t+59; beim Rollen 4 ab t+40 (32 Frames), 6 ab t+72, 0x0A ab t+90 bzw. t+91; nach einem Flug gegen eine Wand 8 ab dem Stopp (senkrechter Fall), 6 ab t+40, 0x0A ab t+47; nach einem Klingentreffer 2, 4, 6, 8, 0x0A, 0x0C ab t+2, t+3, t+11, t+39, t+49, t+87. Wert 4 im Frame t (Reaktion auf einen Treffer von vorn mit Attribut-Bit 0x0400) führt zum Rollen. Nach dem Neueinstieg ist L der erste Frame mit 0x0A und Unterphase (S+0x0C) 2. Sprungangriff hoch: 0x0E bis A+29 (mit Treffer A+36), danach 0x0A | `logs/rest.csv` (Teil D Spalte `aktionen_rel_t`, Teil M3 `todesart` Spalten `reaktion_t`, `aktion8_ab`, Teil B Spalte `aktion0e_bis_rel`; Rollen: `rest_d_hurt_c` und Teil M3), `logs/rest_v.csv` (Teil B `akt0E_bis_rel_A`, `akt0A_ab_rel_A`; Teil D) | gesichert (Werte und Zeiten; Todesarten: 3. Messung), unsicher (Deutung) |
+| `FFA8CE` | – | 1 | Stage-Index (Stage 1 = 0). Im Frame seines Wechsels beginnt die nächste Stage, im selben Frame sinkt der Rang `FFF82A` um 3 | `logs/rest.csv` (Teil E, Ereigniszeilen „stage 0 -> 1“ der Bot-Läufe), `logs/rest_v.csv` (Teil E: `rest_v_e_*`) | gesichert |
+| `FFF82C` | – | 2 | Rangzähler für den 600er-Takt des Rangs (siehe „Nachtrag: Schaden der Gegner“): bleibt beim Stage-Wechsel unverändert und zählt weiter | `logs/rest.csv` (Teil E, EINGRIFF `rest_e_r8`, `rest_e_r24` mit 3000), `logs/rest_v.csv` (Teil E) | gesichert |
+| `FFA830` | – | 2 | Kamera-y (Gegenstück zu Kamera-x `FFA82E`): Die Figur erscheint nach dem Neueinstieg in Tiefe = Wert + 48 (und x = Kamera-x + 64) | `logs/rest.csv` (Teil D, Spalte `z_minus_ky`), `logs/rest_v.csv` (Feld `lage_E`) | gesichert (Bezug beim Neueinstieg), unsicher (Deutung als Tiefe des Bildausschnitts) |
 
 ### Gegner (Slot n, Basis S = `FFBC90 + n·0xC0`)
 
@@ -2244,9 +3354,24 @@ Ausgabe `logs/a4_gegenpruefung.txt`).
 | S+0x0E, +0x12, +0x16 | 16.16 | präzisiert: x, Höhe und Tiefe des Gegners sind in 16.16 Frame für Frame lesbar; Flugbahn beim Umwerfen (x 2,875 px/Frame, Höhe +5,0, Schwerkraft 70/256) und Zittern (±3, ±2, ±1 px) in Messung und Gegenprüfung gleich | `logs/reaktion.csv` (`a_*`, `b_*`), `logs/reaktion_v.csv` (`a_*`, `b_*`) | gesichert (die Vorframe-Kopien +0x66 ff. bleiben unsicher) |
 | S+0x1C | 4 | Animationszeiger des Gegners; die letzten fünf Hex-Stellen kennzeichnen Zustand und Angriff. Erste Animation je Angriff, ihr erster Frame ist der Angriffsbeginn A: WOOKY Schlag A `05FA54` (langsam; im „Nachtrag: Verhalten der Nahkämpfer“ W-A), Umwerfschlag A `05FB50` (W-B), Schlag B `05FC18` (schnell, W-C), Umwerfschlag B `05FC8C` (W-D), Schlag C `05FD24` (W-E); EDDY Schlag A `0643F8` (E-A), Umwerfschlag `0644F4` (E-B), Schlag B `0645BC` (E-C), Sprungtritt `064688` (E-D); SKIP Messerstich `0287E0`, Ausfallstich `028642`. Wartepose nach dem Angriff: WOOKY `05FB18`, EDDY `0644BC`, SKIP `02849E`. WOOKY außerdem: Gehen `05ED1C` ff., Stand `05ECAA`, Trefferreaktion Stufe 1 und 3 `05EFC8`/`05F002`/`05F034`, Stufe 2 `05EE94`/`05EECE`. EDDY: Gehen `063746`, Stand `0636D4`, Reaktion Stufe 1 und 3 `0639F4`/`063A2E`/`063A60`, Stufe 2 `0638C0`/`0638FA`, Aktion 0x1C `063C76` ff. Katalog: `messen_verhalten.py katalog` | `logs/greichweite.csv` (Teil 3 und 4, Spalte `anims`), `logs/greichweite_v.csv` (Teil 1 `anim_A`); `logs/verhalten.csv` (`katalog`), Tabelle `KENNUNG` in `messen_verhalten_v.py`; `logs/reaktion.csv`, `logs/reaktion_v.csv` (`a_*`, `c_zwei_*`) | gesichert (Beginn-Kennungen und Warteposen, in drei Nachträgen unabhängig gefunden), unsicher (Bezeichnungen nach dem Verhalten, nicht nach dem ROM; übriger Katalog) |
 | S+0x24 | 2 | Trefferattribut (präzisiert, siehe „Nachtrag: Schaden der Gegner“), gesetzt genau in den aktiven Frames eines Angriffs: WOOKY Schlag A und EDDY Schlag A `0x400C`; WOOKY Schlag B und C, EDDY Schlag B `0x440C`; Umwerfschläge und Sprungtritt `0x4C0C`; SKIP Messerstich `0x8402`, Ausfallstich `0x8A02`; Wirbel-Varianten des SKIP `0x8C00` in jedem Animationsschritt außer dessen erstem Frame, ohne Treffer, ihr Stich mit dem Attribut der normalen Variante. Bit 0x0800 hat das Attribut im treffenden Frame genau bei den Angriffen, die am Boden umwerfen. Stirbt der WOOKY im ersten aktiven Frame seines Schlags, bleibt es in t+1 gesetzt (ohne Wirkung). Im Frame +17 des Aufstehens `FF00`. Ein tödlich geworfener Gegner trägt von t+1 bis t+57 `0008` (Geschoss gegen andere Gegner) | `logs/greichweite.csv` (Teil 1 `attr`, `attr_treffer`; Teil 2 `SMWL_*`), `logs/greichweite_v.csv` (Teil 1 `attr`); `logs/verhalten.csv` (`katalog`, `angriffe`); `logs/reaktion.csv` (`d_gleich_w`), `logs/reaktion_v.csv` (`b_*` Spalte `attr_aufstehen`, `d_gleich_w`, `d_wurf_w`) | gesichert (Werte je Angriff; Wirbel-Varianten: 3. Messung; `FF00` nach Tritt, Sprungangriff und Kniestoß), unsicher (`0008` und `FF00` nach dem Wurf je nur eine Messung) |
-| S+0x40 (DOLG) | 2, vorzeichenbehaftet | LP des Boss DOLG: stehen, sobald er sichtbar ist, Höchstwert 110 in diesen Läufen. Unter seiner Super-Armor springen sie nach einem Treffer oft im nächsten Frame zurück (58 → 54 → 58), anders als „nie eine Zunahme“ in der Zeile S+0x40 oben (dort Demo und normale Gegner). Die Wellen richten sich nach dem niedrigen Wert: EDDY 4/5 bei etwa der Hälfte (ausgelöst bei 49–54, nie bei 56–58), DICK bei etwa einem Viertel (ausgelöst bei 26–27) | `logs/verhalten.csv` (`wellen`: `m3_bot_h2`, `m3_bot_h3`), `logs/verhalten_v.csv` (`wellen`, Spalten `dolg_lp_*`, `v_d_bot_*`) | gesichert (Höchstwert, Schwellen), unsicher (Rücksprung, nur dritte Messung) |
-| S+0x96 | 2, vorzeichenbehaftet | Zielabstand dx (x(Gegner) − x(Figur)), den WOOKY und EDDY für einen Angriff gespeichert haben. Ab A+1 bricht der Angriff ab, sobald dx das Fenster [Wert − 31, Wert + 32] verlässt. In natürlichen Läufen meist dx bei A, auf ±48 begrenzt (Ausnahme `ek2_l`: dx 44, Wert 32). Hält ein EINGRIFF die Figur bis A−1 fest, übernimmt der Gegner meist diesen Abstand (25, −30; `W3S2L`: 3 bei gehaltenen 25). Beim SKIP ±64. S+0xBA enthält denselben Wert | `logs/greichweite.csv` (Teil 2 Zeilen `ziel`: 49 Quellgruppen, 188 x-Proben; Spalte `ziel` in Teil 3 und 4), `logs/greichweite_v.csv` (Teil 5 `fenster`, 19 Quellen; Spalte `ziel` in Teil 4) | gesichert (Abbruchfenster, 3. Messung), unsicher (wann und wie der Wert gesetzt wird; S+0xBA nur Gegenprüfer; Bedeutung von ±64 beim SKIP, der nie abbricht) |
+| S+0x96 | 2, vorzeichenbehaftet | Zielabstand dx (x(Gegner) − x(Figur)), den WOOKY und EDDY für einen Angriff gespeichert haben. Ab A+1 bricht der Angriff ab, sobald dx das Fenster [Wert − 31, Wert + 32] verlässt. In natürlichen Läufen meist dx bei A, auf ±48 begrenzt (Ausnahme `ek2_l`: dx 44, Wert 32). Hält ein EINGRIFF die Figur bis A−1 fest, übernimmt der Gegner meist diesen Abstand (25, −30; `W3S2L`: 3 bei gehaltenen 25). Beim SKIP ±64. S+0xBA enthält denselben Wert | `logs/greichweite.csv` (Teil 2 Zeilen `ziel`: 49 Quellgruppen, 188 x-Proben; Spalte `ziel` in Teil 3 und 4), `logs/greichweite_v.csv` (Teil 5 `fenster`, 19 Quellen; Spalte `ziel` in Teil 4) | gesichert (Abbruchfenster, 3. Messung), unsicher (wann und wie der Wert gesetzt wird; S+0xBA nur Gegenprüfer). ±64 beim SKIP (der nie abbricht) ist der Zielpunkt seines Stichs, gesichert in der Zeile „S+0x96 / S+0x98“ |
 | S+0x9A | 2 | Ergänzung: Setzt ein Eingriff die LP (S+0x40) über S+0x9A, hält das Spiel nach dem nächsten Treffer an, und ein Angriff im Griff löst keinen Kniestoß aus. Eingriffe auf die LP setzen die Max-LP deshalb mit | Hinweise in `reaktion.lua` und `reaktion_v_frei.lua` (`CC_LP`); `logs/item.csv` (`item_w_griff`), Erklärungsläufe `item_v_m5_griff`, `item_v_m5_griff_max` | unsicher (Beobachtung bei Eingriffen) |
+| S+0x40 (DOLG) | 2, vorzeichenbehaftet | LP des Boss DOLG (Zeilen der Nachträge „Verhalten der Nahkämpfer“ und „Boss“ zusammengeführt). Startwert nach Rang 90 / 100 / 110 / 120 (Rang 7–8 / 9–15 / 16–23 / 24), geschrieben im Frame nach dem ersten Frame mit Kamera-x ≥ 2048; der früher genannte „Höchstwert 110“ ist Rang 16 beim Erreichen der Arena. Zurückweisung unter der Super-Armor: in h um den vollen Schaden gesenkt, in h+1 wieder auf dem Wert vor diesem Treffer, nicht vor der Kette (z. B. 58 → 54 → 58), anders als „nie eine Zunahme“ in der Zeile S+0x40 oben (dort Demo und normale Gegner); beim Abfangen kommt in h+1 die Hälfte zurück (10 → 5, 9 → 5, 7 → 4). Mit 0 lebt der Boss weiter, tot erst unter 0. Die Wellen richten sich nach dem niedrigen Wert, auch dem vorübergehend gesenkten: EDDY 4/5 bei höchstens der Hälfte der Max-LP S+0xB7 (55 bei 110, 50 bei 100; in den Verhaltensläufen ausgelöst bei 49–54, nie bei 56–58), DICK bei höchstens einem Viertel (27 bei 110, 25 bei 100; ausgelöst bei 26–27) | `logs/boss.csv` („# A rang“, „# A start“, „# B treffer“, „# M treffer“, „# G fall“, „# F wellen“, „# M wellen“), `logs/boss_v.csv` („# V a rang“, `a_w*`, „# V b arten“, `t_lp0`, „# V f wellen“); Wellen auch `logs/verhalten.csv` (`wellen`: `m3_bot_h2`, `m3_bot_h3`), `logs/verhalten_v.csv` (`wellen`, Spalten `dolg_lp_*`, `v_d_bot_*`) | gesichert (Startwerte, Zeitpunkt, Rücksprung; Schwellen der Wellen und Abfangen: 3. Messung) |
+| S+0x9A (DOLG) | 2 | Ergänzung (Nachtrag Boss): beim Boss immer 72, Maßstab der Lebensleiste, nicht die Max-LP (anders als bei den normalen Gegnern, Zeile S+0x9A oben; die Max-LP stehen in S+0xB7). Seine LP liegen damit ohne Eingriff über S+0x9A, ohne dass das Spiel anhält wie bei den Eingriffen auf die LP (Zeile S+0x9A „Ergänzung: Setzt ein Eingriff …“) | `logs/boss.csv` („# A start“), `logs/boss_v.csv` („# V a rang“, alle Läufe) | gesichert |
+| S+0xB7 (DOLG) | 1 | Max-LP des Bosses (90 / 100 / 110 / 120), im selben Frame wie die LP geschrieben, bleibt im Kampf stehen | `logs/boss.csv` („# A start“), `logs/boss_v.csv` („# V a rang“, „# V f wellen“ Spalte `max_lp`) | gesichert |
+| S+0x28 (DOLG) | 2 | Trefferfläche: 0 = nicht trefferbar. Jeder Treffer auf den Boss fiel in einen Frame mit gesetzter Fläche (1063 von 1063 bzw. 468 von 468, einige erst im Trefferframe gesetzt). Leer ab h+1 im Rückzug, von K bis nach dem Aufstehen und am Anfang einer Körperpresse ohne Vorphase; gesetzt bleibt sie in den eigenen Angriffen und (laut Gegenprüfer) während er die Figur hält | `logs/boss.csv` („# C schutz“, „# C schutz Treffer“), `logs/boss_v.csv` („# V c flaeche“, „# V b rueckzug“) | gesichert (Halten: unsicher, nur Gegenprüfer) |
+| S+0xAE (DOLG) | 1 | Schutzzähler: 10 in G nach dem Aufstehen, 5 am Ende des Rückzugs (h+55), in A einer Körperpresse ohne Vorphase 32 (direkt aus der Zuck-Reaktion) bzw. 31 (einen Frame nach dem Gehen, so auch beim Gegenprüfer). Solange er läuft, bleibt S+0x28 leer; die Fläche kommt mit dem ersten Zellenwechsel der Animation nach seinem Ablauf zurück | `logs/boss.csv` („# C aufstehen“ Spalte `schutz_in_G`, „# C schutz“, „# M presse schutz“), `logs/boss_v.csv` („# V b rueckzug“, „# V c umwerfen“, „# V c ausbruch“) | gesichert (10 und 5; Presse: 3. Messung) |
+| S+0x04 / S+0x05 (DOLG) | je 1 | Ergänzung (Nachtrag Boss), Zustand S+4 des Bosses: 1 frei (G = erster Frame mit 1), 3 Zuck-Reaktion (27 bzw. 15 Frames) und Taumeln nach dem Spezialangriff (78 Frames), 2 umgeworfen (K+1 bis G−1), beim Abfangen (Aktion 0x1E), während er die Figur hält und im Todesflug ab t+1. Slot 19 steht ab Stage-Beginn auf `0100` und trägt dann schon den Typ DOLG; beim Erreichen der Arena werden nur die LP geschrieben | `logs/boss.csv` („# M zucken“, „# M umwerfen“ Spalte `phasen`, „# C schutz“, „# G fall“), `logs/boss_v.csv` („# V c zittern“, „# V d einzelheiten“, „# V g fall“) | gesichert (Werte); unsicher (Typ ab Stage-Beginn: nur Gegenprüfer) |
+| S+0x0A (DOLG) | 2 | Ergänzung (Nachtrag Boss), Aktion des Bosses: 0 Gehen, auch Zuck-Reaktion von vorn bzw. auf den gehenden Boss (27 Frames); 4 Warten, auch Reaktion auf Kettenstufe 2 von vorn; 6 Angriff (Vorphase in Phase 0/2), auch Zuck-Reaktion von hinten (15 Frames); 8 Rückzug nach einer Zurückweisung (h+1 bis h+54); 0x0C umgeworfen; 0x12 Taumeln nach dem Spezialangriff; 0x14 Flug nach einem Raketentreffer; 0x1E Abfangen | `logs/boss.csv` („# M zucken“, „# M zucken summe“, „# M stufe2“, „# M treffer“, „# M umwerfen“, „# C reaktion“, „# M presse schutz“), `logs/boss_v.csv` („# V c zittern“, „# V b rueckzug“, „# V c umwerfen“) | gesichert (Werte), unsicher (Deutung nach dem Verhalten) |
+| S+0x1C (DOLG) | 4 | Ergänzung (Nachtrag Boss), Animationszeiger des Bosses, erster Frame eines Angriffs = A: kurzer Schlag `04A97E`, Armschwung `04A67C` (jeder Schwung), Ansturm Ausholen `04A6CA` (A; erstes Laufbild `04A26A` in A+20, ab dort aktiv), Körperpresse `04B842`, Griff `04ABDE`; Gehen ab `049EFA` | Kopf von `logs/boss_v.csv`, Abschnitte „# M stufe2“, „# M zucken“ in `logs/boss.csv`; Tabellen `ANIM_*` in `messen_boss.py` und `messen_boss_v.py` (unabhängig geschrieben, gleich) | gesichert (Beginn-Kennungen), unsicher (Bezeichnungen nach dem Verhalten) |
+| S+0x96 / S+0x98 | je 2, vorzeichenbehaftet | Ergänzung (Nachtrag Fernangriffe der Gegner) zur Zeile S+0x96: Zielpunkt der Fernkämpfer vor dem Angriff. SKIP, Messerwurf: S+0x96 = Welt-x, S+0x98 = Tiefe eines Punkts 150 px vor der Figur in ihrer Tiefe (gesetzt mit Aktion 6, Phase 0x0A); Wurf, sobald x und Tiefe des SKIP je −9..+10 davon abweichen. SKIP, Stich: S+0x96 = ±64, S+0x98 = 0, relativ zur Figur (das „±64 beim SKIP“ der Zeile S+0x96); Stich bei höchstens 8 px Abweichung in x. DICK: S+0x96 = dx, S+0x98 = dz relativ zur Figur, ±128/0 oder ±120/±24; Angriff bei höchstens 8 px (x) und 6 px (Tiefe) Abweichung. Im Frame vor A steht beim DICK dort schon ein Wert nahe dem aktuellen Abstand mit Tiefe 0 | `logs/fern.csv` (`A abstand`, `A angriffe`, `T ausloesung`; Lesart: den Zielpunkt zeigt `T abstand` (Zeile `zielpunkt (dx,dz)`), die Abweichung beim Angriffsbeginn die Spalten `start_*` von `T ausloesung`, den Wert im Frame vor A deren Spalten `ziel_x`, `ziel_z`), `logs/fern_v.csv` (`wurf`, `stich`, `angriff_dick`) | gesichert (3. Messung; beim Raketen-DICK gesichert) |
+| S+0xAB | 1 (ungerader Offset) | Salvenbudget des Pistolen-DICK, gesetzt in A: 20, 40, 60, 80, 100 oder 120 Frames. Schüsse der Salve = 1 + Anzahl k ≥ 0 mit 17k + 16 < Budget (2–6 oder 8), solange die Figur in Reichweite und Tiefe bleibt | `logs/fern.csv` (`T salve`: 63 natürliche Salven, `t_m22` A 4998, `t_kt_*`, Nachläufe `t_v7_g_r20`, `t_v7_z_r22` der V-Läufe `g_r20`, `z_r22`) | gesichert (3. Messung; Regel), offen (wovon der Wert abhängt) |
+| S+0x0A / S+0x0C | je 2 | Ergänzung (Nachtrag Fernangriffe der Gegner), Aktion und Phase von SKIP und DICK: SKIP Aktion 6, Phase 0x0A = Zielpunkt für den Messerwurf gewählt. DICK Aktion 6, Phase 2 = Angriff (Tiefenangleich und Schüsse); Aktion 0, Phase 4 = Gehen ab A+17 nach jeder Rakete und jeder Salve; Aktion 4 = Stehen (`0677CE`); Aktion 2 = Pose ohne Angriff (30, 60, 90 oder 120 Frames) | `logs/fern.csv` (`A angriffe`, `A abstand`, `T nachschuss`), `logs/fern_v.csv` (`wurf`, `angriff_dick`, `dick_pose`) | gesichert (Werte), unsicher (Deutung) |
+| S+0x1C | 4 | Ergänzung (Nachtrag Fernangriffe der Gegner) zur Zeile S+0x1C: Animationszeiger von SKIP und DICK. SKIP Messerwurf: `0289F2` (4 Frames, Beginn A), `028A2E` (3), `028A64` (1, Attribut 0xFF00), `028A9E` (1), `028AD8` (32), `028B12` (1); Gehen `0282F4`. DICK Pistole je Schuss: `068528` (5, Beginn A), `06855C` (1, 0xFF00), `068590` (10, Kugel), `0685C4` (1). Raketenwerfer: `0685F8` (5), `06862A` (1, 0xFF00), `06865C` (10, Rakete), `068690` (1). Gehen `067806`, Stehen `0677CE` bzw. `067760`, Pose `0686C4`, `0686FE`, `068730`, `068760`, `06878E`, `0687B8` | `logs/fern.csv` (`A angriffe`), `logs/fern_v.csv` (`wurf`, `stich`, `angriff_dick`, `dick_pose_folge`) | gesichert (Abläufe in beiden Messungen gleich), unsicher (Bezeichnungen nach dem Verhalten) |
+| S+0x9A | 2 | Ergänzung (Nachtrag Fernangriffe der Gegner), Max-LP des DICK: 19 bei Rang 7, 20–23 bei Rang 8–15, 26–28 bei Rang 20–24; Gegenprüfer je Rang 8/9: 20, 12: 22, 14/15: 23, 17: 24, 18: 25, 20/21: 26, 22: 27, 24: 28 | `logs/fern.csv` (`F erscheinen`), `logs/fern_v.csv` (`erscheinen`) | gesichert |
+| S+0x24 | 2 | Trefferattribut, Ergänzung (Nachtrag Rest der Spielfigur): Bit 0x8000 kennzeichnet Klingentreffer (SKIP Messerstich `8402` und Ausfallstich `8A02`, Gegner in Stage 5 `8002`; das geworfene Messer des SKIP trägt `0x0C08` ohne dieses Bit, siehe „Geschosse der Gegner“); stirbt die Figur daran, Neueinstieg t+107. Bit 0x0400 gibt der Figur bei einem Treffer von vorn die Reaktion 4; stirbt sie dabei, rollt sie (Neueinstieg t+151/152) | `logs/rest.csv` (Teil M3, `messen_rest.py todesart`: Spalten `attr`, `klinge`, `reaktion_t`, `klasse`) | gesichert (3. Messung) |
+| S+0x5E | 1 | Blickrichtung des Gegners, Bit 0x20 (gesetzt = Blick nach rechts laut `rest_kette.lua`). Per EINGRIFF gesetzt bestimmt sie, wie weit die Kettenschläge hinter der Figur reichen; in seiner Trefferreaktion dreht der Gegner sich nicht um | `logs/rest.csv` (Teil M3, EINGRIFF `CC_GBLICK`: `rest_m3_f1_*`, `rest_m3_f1z_*`), `logs/rest_v.csv` (`rest_v_f1b_*`; Watch-Feld `s<n>_blick` in `rest_v_frei.lua`) | gesichert (Wirkung, 3. Messung), unsicher (Zuordnung des Bits nur aus dem Szenario) |
+| S+0x40 | 2, vorzeichenbehaftet | Lebenspunkte, Ergänzung (Nachtrag Rest der Spielfigur): Ein Treffer genau auf 0 tötet nicht; der Gegner lebt mit 0 LP weiter (Trefferreaktion, Angriffe), Tod erst beim nächsten Treffer unter 0 (beim Boss ebenso, Zeile S+0x40 (DOLG)) | `logs/rest.csv` (Teil C, `rest_c_*`), `logs/rest_v.csv` (Teil C, `rest_v_c_*`) | gesichert |
 
 ### Objekte in Slot 20–59 (Gegenstände, Effekte)
 
@@ -2259,7 +3384,6 @@ Basis S = `FFBC90 + n·0xC0` wie bei den Gegnern (Nachträge vom 2026-10-02).
 | S+0x0E, +0x12, +0x16 | wie Gegner | x, Höhe, Tiefe | alle Läufe | gesichert |
 | S+0x1C | 4 | Animationszeiger, je Art verschieden (MISSILE `0x9652A`, LASER `0x9658A`, HAMMER `0x965A4`, Brathähnchen `0x965C6`–`0x96614`) | Probe des Messagenten | unsicher |
 | S+0x38 | 4 | Typkennung `0x95F9C` für alle Gegenstände (Waffen, Essen, SHURIKEN) | Abschnitte `objekte` und `bot` in `item.csv`, `katalog` in `item_v.csv` | gesichert |
-| S+0x3A | 2 | unteres Wort der Typkennung `0xA988` (die volle Kennung S+0x38 protokolliert der Bot nicht): Waffe, die ein besiegter DICK fallen lässt, im Flug; beim Landen wird sie zum Gegenstand `0x95F9C` (hier ein Raketenwerfer mit 3 Schuss) | `item_bot1` 6002–6114 (Bot-Protokoll) | unsicher (ein Fall) |
 | S+0x3D | 1 | Art: 0x00 GUN, 0x04 M-GUN, 0x08 MISSILE (Raketenwerfer), 0x0E SHURIKEN, 0x10 LASER, 0x12 HAMMER, 0x20 Brathähnchen, 0x22 TENDON, 0x24 und 0x2A Essen (Name offen), 0x2C CHERRY. Namen aus der Anzeigeleiste nach der Aufnahme | Bot-Kataloge `item_bot*` und `item_v_b*` | gesichert (Werte), Namen aus Snapshots |
 | S+0x3D | 1 | 0x0C: Waffe mit 5 Schuss (Name offen) | `item_v_kiste_*`, Bot `item_v_b3` (Stage 4, x 480 und 544) | unsicher (nur Gegenprüfer) |
 | S+0x60 | 2 | Liegezeit: 700 im Frame der Landung, danach −1 je Frame; bei Essen bleibt sie auf 700 | `item_a_liegen`, `item_f_fass`; `item_v_liegen` | gesichert |
@@ -2267,6 +3391,8 @@ Basis S = `FFBC90 + n·0xC0` wie bei den Gegnern (Nachträge vom 2026-10-02).
 | S+0x38 | 4 | Typ `0x98D64`: zerschlagbares Objekt in Slot 45–47 der Stage 1 (im Spezialangriff-Nachtrag Kiste genannt, Slot 46 in `spezial_drei_h2/h3`; laut Gegenstands-Nachtrag Glasscheiben mit LP 1) | `sd_kiste_h2`, `sd_kiste_h3`; `messen_spezial.py` (Ereignis `objekt_treffer`), Watch-Feld `typ` in `spezial_v_frei.lua` | gesichert (Wert), unsicher (Deutung) |
 | S+0x40 | 2 | LP eines zerschlagbaren Gegenstands; ein Treffer des Spezialangriffs senkt sie und kostet die Figur 9 LP | `sd_kiste_h2`, `sd_kiste_h3` (Kiste); `spezial_v_beh_v60`, `spezial_v_beh_h30` (Behälter) | gesichert |
 | S+0x38 | 4 | Typ `0x9974E` (Effekt, kein Gegenstand): Explosion des Spezialangriffs von Ginzu und Baby Head, in den Slots 53–59, an festen Stellen relativ zur Figur (vor ihr bei dx 88, 48, 64, 0, 16, dann 32, −16, −24); trifft statt der Figur, ohne Trefferstopp | RAM-Abzug der Läufe `h2_*`, `h3_*` (M4) | unsicher (nur M4; Zeiten und Bereiche der Treffer gesichert, siehe „Nachtrag: Spezialangriff“) |
+| S+0x38 | 4 | Typ `0x9A988`: Waffe in der Hand eines DICK (beim Pistolen-DICK in Slot 58). Nach seinem Tod fliegt sie im Bogen und wird 44 Frames nach dem tödlichen Treffer (DICK am Boden) zum Gegenstand `0x95F9C`: GUN (Art 0x00) mit 5 Schuss bzw. MISSILE (Art 0x08) mit 3 Schuss. Zusammengeführt mit der früheren Zeile S+0x3A (unsicher, ein Fall): Der Bot des Gegenstands-Nachtrags protokolliert nur das untere Wort `0xA988` und sah denselben Ablauf einmal mit einem Raketenwerfer (3 Schuss) | `logs/fern.csv` (`E Waffe`, `E Bogen`, `T bogen`), `logs/fern_v.csv` (`tod`); `item_bot1` 6002–6114 (Bot-Protokoll) | gesichert |
+| S+0x3D | 1 | Art der gehaltenen Waffe (Typ `0x9A988`): 0 Pistole, 4 Raketenwerfer. Andere Zählung als bei den Gegenständen `0x95F9C` (Zeile S+0x3D oben): nach der Landung Art 0x00 GUN bzw. 0x08 MISSILE | `logs/fern.csv` (`F erscheinen`), `logs/fern_v.csv` (`erscheinen`) | gesichert |
 
 ### Geschosse der Figur
 
@@ -2288,11 +3414,28 @@ G = `FFAD90` + k·0xC0 mit k = 0…4, Feldaufbau wie bei den Objekt-Slots.
 | S+0x04 | 2 | 0x0101 steht, 0x0301 im Trefferframe, 0x0201 zerbrochen (fliegt weg, nach etwa 50 Frames frei) | `item_f_*`, `item_a_liegen`; `item_v_fass*` | gesichert |
 | S+0x82 | 2 | Zeigerwort auf S+4 des Angreifers wie P+0x82 bei der Figur: die Figur oder ein Gegner-Slot (Mech: Slot 16, der Fahrer; EDDY: Slot 16) | `item_f_waffe` 501; `item_v_fass*`, `item_v_mech` 319 | gesichert |
 | S+0x40 | 2 | LP des Behälters in Slot 43 der Stage 1 (ab `ingame`, Typ S+0x38 = `0x9DA2A`): 777; ein Treffer des Spezialangriffs senkt sie auf 771 | `spezial_v_beh_v60`, `spezial_v_beh_h30` (EINGRIFF: Behälter neben die Figur gesetzt) | unsicher (nur V4) |
+| S+0x0E, S+0x16 (Slot 43: `FFDCDE`, `FFDCE6`) | 16.16 | x und Tiefe des Ölfasses. Seine Oberkante (Höhe 48) trägt die Figur beim Fall nach dem Neueinstieg, wenn das Fass 1 bis 16 px weiter hinten (Tiefe größer) und höchstens 35 px links bzw. 36 px rechts von ihr steht | `logs/rest.csv` (Teil M3, EINGRIFF `rest_m3_d4_fass_*`; natürlich Fass 44 in `rest_m3_d1_item_bot1_s1_cam01344`, `_cam01408`), `logs/rest_v.csv` (Fass 44: `rest_v_d_1281`, `_1281b`, `_1281n`) | gesichert (3. Messung) |
 
 Stage 1 (Messagent): Geldkassetten in Slot 40–42 (x 2320–2384), Ölfässer in
 Slot 43 (x 1520, Tiefe 172) und 44 (x 1480, Tiefe 184). Nebenbei:
 Glasscheiben `0x98D64` (LP 1) in Slot 45–47, Gullydeckel `0x957C4` in Slot
 38/39.
+
+### Geschosse der Gegner
+
+Basis S = `FFBC90 + n·0xC0` wie bei den Objekten (Nachtrag Fernangriffe der
+Gegner, 2026-10-02). Das Messer des SKIP liegt
+immer in Slot 29, Kugel und Rakete des DICK in einem der Slots 27–29, der im
+Frame vor G frei ist (gesichert (3. Messung); Reihenfolge der Vergabe offen).
+
+| Offset | Breite | Bedeutung | Beleg | Status |
+|---|---|---|---|---|
+| S+0x38 | 4 | Typ: `0x85B42` Messer des SKIP, `0x86022` Kugel und Rakete des DICK | `logs/fern.csv` (`A geschosse`, `T slots`), `logs/fern_v.csv` (`wurf`, `angriff_dick`, `rakete`) | gesichert |
+| S+0x6C | 2 | Zeigerwort auf S+4 des Werfers (wie P+0x82 bei der Figur) | wie oben | gesichert (bisher nur im Absatz „Zuordnung“ des „Nachtrag: Schaden der Gegner“ erwähnt, ohne eigenen Beleg) |
+| S+0x8B | 1 | Schaden des Geschosses; gleich dem LP-Verlust der Figur in allen Treffern | `logs/fern.csv` (`A geschosse`, `D Schaden je Rang`), `logs/fern_v.csv` (`bahn`, `dm_*`, `dk_*`, `dr_*`) | gesichert |
+| S+0x24 | 2 | Trefferattribut: Messer 0x0C08 im ganzen Flug; Kugel abwechselnd 0x0002 (wirft nicht um) und 0x0C02 (wirft um); Rakete im Flug ohne Attribut, Explosion 0x1402 in G+20 bis G+29 (trifft G+21 bis G+29). Messer und umwerfende Kugel tragen Bit 0x0800 wie die umwerfenden Nahkampfangriffe (Zeile S+0x24 unter „Gegner“); die Explosion wirft die Figur immer um, aber ohne Bit 0x0800. Kein Geschoss trägt das Klingenbit 0x8000 | `logs/fern.csv` (`A geschosse`, `B Rakete`; Umwerfen durch die Rakete `d_r_*`), `logs/fern_v.csv` (`angriff_dick`, `rakete`, `brt1_*`, `dr_*`) | gesichert |
+| S+0x1C | 4 | Animation: Kugel `0863D8` (normal) bzw. `0863F0` (umwerfend); nach einem Treffer Trefferfunke `095B5C` (12 Frames); Einschlag an der Arenawand `095Exx` (5–6 Frames; Gegenprüfer `095EAA`, `095EC4`, `095EDE`, `095EF8`); an Glas und Fass `095B06`, `095B20`, `095B3E` (9 Frames) | `logs/fern.csv` (`A geschosse`, `B Kugel`, `T bahnende`), `logs/fern_v.csv` (`kugel_ende`, `cmglas`, `cmfass`, `s_nat` 1399–1410) | gesichert (Kugel, Trefferfunke, Wand), unsicher (Glas und Fass, nur Gegenprüfer) |
+| S+0x04 | 1 | Zustand 3 beim Messer, das ein Schlag der Figur getroffen hat: Es prallt im Bogen zurück (bis 66 px hoch), trifft nicht mehr und ist nach etwa 40 Frames frei | `logs/fern.csv` (`c_ms_*`, `c_ms20_*`), `logs/fern_v.csv` (`cms1_*`, `cms3_*`) | gesichert |
 
 ### Nebenbefunde aus Aufgabe 4
 
@@ -2521,3 +3664,8 @@ Sprung im Nachtrag (siehe dort). Der Rest bleibt **unsicher**.
   Savestates geleert. Die Einarbeitung in diese Notizen und in
   `docs/mechanik.md` haben je Thema ein Entwurfs- und ein Prüfagent gegen
   die Entwürfe von Messagent und Gegenprüfer abgeglichen.
+- 2026-10-02 (Einrichtung Auftrag 2): Derselbe Container wie am Vormittag, ROM und Savestates noch vorhanden. Neu angelegt per Durchlauf-Bot durch Stage 1 (`CC_NAME=p0_s1 GFA_CFG=scripts/grafik/durchlauf.lua GFA_SAVE_CAM=256 … scripts/grafik/bot.sh stage1`, **EINGRIFF**: LP der Figur aufgefüllt, bei Stillstand LP der Gegner auf 1) die Savestates `p0_s1_s1_cam00256` bis `p0_s1_s1_cam02048` und `p0_s1_s2_cam00256` (Namen mit führenden Nullen). Prüfung in `p0_s1_s1_cam02048`: Boss in Slot 19, LP 110, S+0x9A = 72, Rang 16.
+- 2026-10-02 (Boss DOLG): Messagent M6, Gegenprüfer V6 und dritte Messung zum Boss der Stage 1. Neu sind die Szenarien `boss_frei`, `boss_v_frei` und `boss_v_bot` (Konfiguration für `grafik/bot.lua`), die Auswertungen `messen_boss.py` (Unterbefehl `dritte` für Teil M) und `messen_boss_v.py` sowie das Belegskript `belege_boss.sh` (923 Läufe des Messagenten einschließlich 344 der dritten Messung, 484 der Gegenprüfung) mit `logs/boss.csv` und `logs/boss_v.csv`. Neue Savestates: `boss_q_p`, `boss_q_r`, `boss_q_b`, `boss_q_m`, beim Gegenprüfer `boss_v_b1_s1_cam*`, `boss_v_allein`, `boss_v_rakete`, `boss_v_laser`, `boss_v_r9`; gebraucht werden außerdem die Phase-0-Savestates `p0_s1_s1_cam01536`, `p0_s1_s1_cam01793`, `p0_s1_s1_cam02048`. V6 bestätigte 33 von 57 Zeilen, 22 wichen ab, 2 waren nicht prüfbar; die dritte Messung (Teil M aus `boss_q_m`, Boss in Tiefe 208, meist Rang 20, beide Blickrichtungen) erklärte 20 der 24 durch gemeinsame Regeln. Mit der in Griff und Wurfweite geteilten Griff-Zeile: 58 Zeilen, 30 gesichert, 20 gesichert (3. Messung), 8 unsicher, dazu 3 offene. Korrigiert: Die Super-Armor betrifft auch Kettenstufe 3 und umwerfende Treffer (Abfangen mit halbem Schaden), die LP springen auf den Wert vor dem jeweiligen Treffer, der „Abbruchstoß“ ist harmlos; die Boss-LP hängen vom Rang beim Erreichen der Arena ab (90 bis 120); der zweite DICK kommt nur ab Rang 16 und bei höchstens drei anderen lebenden Gegnern. Mit Skript bestätigt: der Workflow-Schaden des Bosses (für Rang 12 bis 24, darunter weniger) und beim Boss der Gleichstand zugunsten der Figur. Reproduzierbarkeit: Vor Teil M lief das Skript beim Gegenprüfer zweimal ganz von vorn (19 min 32 s und 16 min 47 s, Exit 0), `boss.csv` (`c4f6c794…`, 3442 Zeilen) und `boss_v.csv` (`06e9648e…`, 1508 Zeilen) jeweils bitgleich; dabei behoben: zwei Savestates im selben Frame (`boss_v_allein` jetzt aus eigenem Bot-Lauf); das fehlende Aufräumen von `boss_a2_*` (Hinweis des Gegenprüfers) hat der Messagent danach behoben. Mit Teil M lief es zweimal ganz von vorn, beim Messagenten in 21 min 3 s (Exit 0; Teil des Messagenten 801 s, Teil V 458 s) und in der Gegenprobe der Einarbeitung in 18 min 38 s (Exit 0, `BOSS_JOBS=3`, `BOSS_V_JOBS=2`; 718 s und 398 s): `boss.csv` MD5 `3a051470fa672c786c5635677ec5c8f6` (4422 Zeilen) und `boss_v.csv` MD5 `06e9648e3d91b068a8ba4bfabd02be66` (1508 Zeilen) beide Male bitgleich. Danach enthält `logs/raw/` nur Savestates. Neu im Adressteil: beim Boss S+0x9A (Balkenskala), S+0xB7 (Max-LP), S+0x28 (Trefferfläche), S+0xAE (Schutzzähler), Zustände S+4, Aktionen S+0x0A und Angriffsanimationen S+0x1C.
+- 2026-10-02 (Fernangriffe der Gegner): Messagent M7, Gegenprüfer V7 und dritte Messung zu Messerwurf und Stichserie des SKIP sowie Pistole und Raketenwerfer des DICK in Stage 1. Neues Belegskript `belege_fern.sh` mit drei Blöcken: M7 mit `fern_frei.lua` (etwa 1100 Läufe), V7 mit `fern_v_frei.lua` und `fern_v_bot.lua` (358 Läufe), dritte Messung `fern_t_*` (367 Läufe). Neue Auswertungen `messen_fern.py` (für die dritte Messung um `ausloesung`, `salve`, `nachschuss`, `slots`, `bahnende`, `welle`, `bogen`, `fenster` ergänzt) und `messen_fern_v.py`. Belege: `logs/fern.csv` und `logs/fern_v.csv`. V7 bestätigte 37 von 55 Zeilen, 18 wichen ab (6 nur im Randwert). Die dritte Messung (Ränge 7–24, beide Flugrichtungen, andere Lagen, Eingabe-Bot `CC_HIN`) erklärt 13 davon durch gemeinsame Regeln: Trefferflächen in Weltkoordinaten (das gespiegelte Fenster rückt um 1 px), Auslösung über die Zielpunkte S+0x96/S+0x98, Salvenlänge aus dem Budget S+0xAB, nach der Rakete immer zuerst Gehen, zweiter Raketen-DICK nach Rang und Zahl der Gegner, Bogen der Waffe relativ zur Höhe des DICK. Von den 18 bleiben 5 unsicher: die Raten der drei Fernangriffe sowie Abstandsanteile und Rückzug des DICK. Korrigiert: Salven haben 2–6 oder 8 Schüsse (früher Abbruch 1–7); „Danach meist Stehen“ beim Raketen-DICK war die Phase 4; die Pistole macht bei Rang 7 nur 4 LP (Workflow-Wert 5–7 in docs/mechanik.md). Beim Einarbeiten erkannt: Alle drei Messungen lösen die Wellen der Bossarena per DOLG-LP in einem Schritt aus und trennen die Schwellen bei der Hälfte und beim Viertel nicht. Gekennzeichnet sind Widersprüche bzw. Einschränkungen zu zwei gesicherten Zeilen: SKIP-Stiche „alle 37 bis 49 Frames“ (auch 51 und 53 kommen vor) und „DICK (zwei)“ (ein zweiter DICK nur ab Rang 16). Neue Adressen: Zielpunkt S+0x96/S+0x98 von SKIP und DICK, Salvenbudget S+0xAB, Geschosse der Gegner in Slot 27–29 (Typ `0x85B42` bzw. `0x86022`, Werfer S+0x6C, Schaden S+0x8B), Waffe in der Hand des DICK (`0x9A988`, Art 0 bzw. 4). Läufe und Reproduzierbarkeit: zwei Vollläufe mit Exit 0 (22 min 23 s, 17 min 50 s). `logs/fern.csv`: 4315 Zeilen, MD5 `bb1260429a9a366f82b18439017d6e2c`; ohne den im zweiten Lauf ergänzten Abschnitt `E Bogen` ist die Datei bitgleich mit dem ersten Lauf, und ihre ersten 2802 Zeilen (ohne `E Bogen`) sind gleich dem Stand vor der dritten Messung (`7baee55e…`). `logs/fern_v.csv`: 1281 Zeilen, MD5 `b209e1f2b366e1eb0636a7d02162bc61`, gleich dem Volllauf von V7. Gegenprobe beim Einarbeiten: dritter Volllauf von vorn mit Exit 0 in 13 min 7 s, beide MD5 gleich. Die Savestates `fern_*`, `fern_v_*` und `fern_t_*` bleiben lokal. Voraussetzung sind die Phase-0-Savestates `p0_s1_s1_cam00768` und `p0_s1_s1_cam02048`.
+- 2026-10-02 (Rest der Spielfigur): Der Messagent M8 hat mit den neuen Szenarien `rest_kette`, `rest_sprung` und `rest_frei` gemessen. Teil A misst den Nachlauf der Kettenstufen 2–4, Teil B den Sprungangriff hoch und runter, Teil C Gegner mit genau 0 LP, Teil D Tod und Neueinstieg der Figur, Teil E den Rang beim Stage-Wechsel (Durchlauf-Bot) und Teil F sechs Nachprüfungen. Ausgewertet wird mit `messen_rest.py` (13 Unterbefehle). Der Gegenprüfer V8 hat ab anderen Savestates nachgemessen, mit eigenem Szenario `rest_v_frei` (nur Watch-Protokoll), der Bot-Konfiguration `rest_v_bot` und `messen_rest_v.py`. Er bestätigte 37 von 40 Zeilen. Ab wichen D1 (Tod durch den Mech: Neueinstieg t+108), D4 (Landung auf einem Ölfass nach 49 statt 52 Frames) und F1 (Kettenschläge hinter der Figur). Die dritte Messung (Teil M3, `rest_m3_*`) hat alle drei durch Regeln geklärt. Der Neueinstieg richtet sich nach der Todesart (normal t+120, Rollen t+151/152, Wand t+108, Klinge t+107; 23 Tode an Stellen in Stage 1, 4, 5 und 9). Die Figur fällt bis auf den Untergrund unter ihr (Boden 52, Ölfass 49 Frames). Hinter der Figur entscheidet die Blickrichtung des Gegners. Das Belegskript `belege_rest.sh` (Teile A–F, M3, V; laut seinen Aufrufen 3066 MAME-Läufe) lief von vorn in 28 min 48 s mit Exit 0. Dabei entstand `rest.csv` `6b202b9f…` (2617 Zeilen, erst einmal erzeugt), `rest_v.csv` `793f6f92…` (1861 Zeilen) blieb unverändert. Vor der dritten Messung lief es beim Gegenprüfer zweimal von vorn (1251 s ohne, 1094 s mit Teil V), und `rest.csv` war beide Male bitgleich mit der Datei des Messagenten (`7c4b5371…`). Neue Savestates sind `rest_e_r8`, `rest_e_r24` und `rest_v_e_vor`. Das Skript braucht dazu die Phase-0-Savestates `p0_s1_*` sowie Savestates aus `belege_item.sh`, `belege_greichweite.sh`, `belege_reaktion.sh` und `stage_start.lua`. Mit Skript bestätigt sind auch die bisherigen Workflow-Werte Rang −3 beim Stage-Wechsel, „Treffer in der Luft werfen um“ (mit WOOKY und EDDY) und gleichzeitiger Treffer. Gesichert sind jetzt auch die bisher unsicheren Werte Mindestabstand, Reichweite von hoch und runter, Blick links 1 px kürzer und Richtung beim Kettendruck. Neue Adressen: Leben `FFAA7C`, Stage-Index `FFA8CE`, Rangzähler `FFF82C`, Kamera-y `FFA830` und die Blickrichtung S+0x5E des Gegners. `FFAA69` steht nach dem Neueinstieg in L auf 200, und das Trefferattribut-Bit 0x8000 kennzeichnet Klingen. Bei der Einarbeitung fielen in nicht ausgewerteten Spalten von Teil M3 drei Punkte auf, die jetzt als unsicher geführt sind. Die Flugweite beim Klingentod ist nicht einheitlich (62,375 px beim SKIP, 171,625 px in Stage 5). Zwei Läufe zeigen einen Gegnerangriff zwischen Tod und Erscheinen. Stage 4, 5 und 9 zeigen denselben Schutz wie Stage 1. Unsicher bleiben damit neun Einzelwerte. Offen sind überlagerte Todesarten, weitere Untergründe, die Landung gegen schwache und ferne Gegner und der Schutz bei anderen Figuren.
+- 2026-10-02 (Gegenprobe vor der Übernahme, Auftrag 2): Die drei neuen Belegskripte liefen noch einmal von vorn, nacheinander und mit Exit 0: `belege_boss.sh` in 1118 s (`BOSS_JOBS=3 BOSS_V_JOBS=2`, parallel zur dritten Messung des Fernkampfs), `belege_rest.sh` in 984 s und `belege_fern.sh` in 787 s. Alle sechs CSV-Dateien waren danach bitgleich mit dem Stand davor: `boss.csv` `3a051470…`, `boss_v.csv` `06e9648e…`, `rest.csv` `6b202b9f…`, `rest_v.csv` `793f6f92…`, `fern.csv` `bb126042…`, `fern_v.csv` `b209e1f2…`. Damit ist jede Endfassung mindestens zweimal identisch erzeugt. Danach `logs/raw/` bis auf die Savestates geleert. Arbeitsweise wie in Auftrag 1: je Thema ein Messagent, ein unabhängiger Gegenprüfer und bei Abweichungen eine dritte Messung des Messagenten; die Einarbeitung in diese Notizen, `docs/mechanik.md` und `docs/erkenntnisse.md` haben je Thema ein Entwurfs- und ein Prüfagent gegen die Entwürfe abgeglichen, danach prüften weitere Agenten die zusammengesetzten Dokumente.
