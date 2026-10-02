@@ -19,6 +19,23 @@ inspiriert, soll sich aber nicht 1:1 so spielen. Daraus folgt:
   unter `research/captcomm/grafik/` dienen als Referenz für Größen, Timing
   und Aufbau.
 
+## Entscheidungen
+
+Entscheidungen des Nutzers vom 2026-10-02 (verbindlich; eingearbeitet in
+`docs/design.md` und `docs/design-gegner-stages.md`, Auftrag 2):
+
+| Nr. | Datum | Entscheidung | Begründung |
+|---|---|---|---|
+| E1 | 2026-10-02 | Welt: Kometenhafen „Perihel“ auf dem Kometen Orrin; die Küstenstadt und das Zirkusschiff sind verworfen | Der Spielname trägt den Kometen schon, und der Hafen bietet Schauplätze von Eis bis Schwerindustrie samt Schweif als Sonderstage |
+| E2 | 2026-10-02 | Schutzfenster der Figur wie im Vorbild: Gegner greifen auch in den Schutzfenstern und eine liegende Figur an, ihre Treffer sind wirkungslos | So gemessen, einfacher zu bauen, und die Gegner wirken nicht passiv |
+| E3 | 2026-10-02 | Kein Rückstoß in der Kette: 23 Frames Trefferreaktion mit Zittern als Animation, der Gegner bleibt am Ort | So gemessen; die Kette hält, weil der Gegner frühestens 45 Frames nach dem Treffer ausholt |
+| E4 | 2026-10-02 | Kein Schutz der Gegner nach dem Aufstehen: ab dem ersten handlungsfähigen Frame verwundbar und greifbar | So gemessen; ein Schutz würde den Druck auf aufstehende Gegner ohne Not nehmen |
+| E5 | 2026-10-02 | Höchstens zwei gleichzeitige Angreifer, je Seite der Figur einer; höchstens ein zielender Fernkämpfer, ab Stage 6 zwei | Im Vorbild greift meist einer an, selten mehr; die Regel hält Gruppen lesbar |
+| E6 | 2026-10-02 | Fester Spielschritt 60 Hz; alle Frame-Zahlen bleiben, Sekunden = Frames ÷ 60 | 60 Hz ist heute Standard, die Zeiten werden nur 0,6 % kürzer als im Vorbild |
+| E7 | 2026-10-02 | Helden Vela, Kord, Rin und Ollo mit den Werten aus `docs/design.md`, Abschnitt 5, als Arbeitsstand | Damit ist die vertikale Scheibe festgelegt; die Namen können später wechseln |
+| E8 | 2026-10-02 | Acht Stages, Sonderstage mit automatischem Scrollen an Position 5 | Wie im Designdokument geplant |
+| E9 | 2026-10-02 | Alle übrigen Vorschläge beider Designdokumente sind angenommen (Leben, Continues, Punkteschema, Zweispieler-Regeln, Fahrzeug, Essenswerte, Boss-LP 90 bis 120, Bossschaden bis 22, Flächenschaden bis 13, Wellenbonus, Gegner heben keine Waffen auf) | Keine Einwände; Einzelheiten stehen in den Designdokumenten |
+
 ## Wo was steht
 
 | Datei | Inhalt |

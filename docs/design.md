@@ -1,6 +1,7 @@
 # Comet Brawlers: Designdokument (Kern)
 
-Stand 2026-10-02, Entwurf. Dieses Dokument beschreibt Spielidee, Welt,
+Stand 2026-10-02, Entwurf mit den Entscheidungen des Nutzers vom selben
+Tag (Abschnitt 9). Dieses Dokument beschreibt Spielidee, Welt,
 technische Grundlage, Spielfigur, Helden, Schwierigkeit, Rahmen und den
 ersten spielbaren Stand. Gegner, Bosse, Stages und Gegenstände stehen in
 `docs/design-gegner-stages.md`. Verbindliche Zahlen stehen in
@@ -13,8 +14,10 @@ ersten spielbaren Stand. Gegner, Bosse, Stages und Gegenstände stehen in
 | (Workflow) | in `mechanik.md` so markiert: von mehreren Agenten gemessen, aber ohne Skript im Repo |
 | Richtwert | Wert aus `docs/erkenntnisse.md` oder `research/captcomm/grafik/README.md`, nicht in `mechanik.md`; zur Orientierung, nicht verbindlich |
 | notes.md, „Nachtrag: …“ | Wert aus den Messungen M1 bis M5 vom 2026-10-02 (Trefferreaktion der Gegner, Verhalten der Nahkämpfer, Reichweite der Gegnerangriffe, Spezialangriff, Sprint, Gegenstände und Waffen), Abschnitt in `research/captcomm/notes.md`; „unsicher“ steht mit den abweichenden Werten |
-| offen (nicht beauftragt) | Wert fehlt, keine Messung beauftragt |
-| Vorschlag | Designvorschlag ohne Messgrundlage, Entscheidung des Nutzers |
+| offen (M6, On) bis offen (M8, On) | Wert fehlt, Messpaket 2 misst ihn: M6 Boss, M7 Fernkampf und Messerwurf, M8 Rest der Spielfigur; On ist die Nummer in der Liste „Offen bis Messpaket 2“ am Ende von Abschnitt 8 |
+| offen | Wert fehlt, auch Messpaket 2 misst ihn nicht (ohne Messauftrag, ohne Nummer); der Grund steht dabei. Gleiche Bedeutung wie in `docs/design-gegner-stages.md` |
+| beschlossen (E1) bis (E9) | Entscheidung des Nutzers vom 2026-10-02 (Tabelle in Abschnitt 9); E9 umfasst alle eigenen Werte ohne Messgrundlage, die bisher „Vorschlag“ hießen; beim Testen anpassbar |
+| Arbeitsregel (Bestätigung des Nutzers offen) | eigene Festlegung für eine Lücke, die E1 bis E9 nicht decken; gilt, bis der Nutzer entscheidet, und steht in der Liste der offenen Entscheidungen (Abschnitt 9 bzw. `docs/design-gegner-stages.md`, Abschnitt 10) |
 
 ## 1. Vision in zehn Sätzen
 
@@ -28,10 +31,12 @@ zweiten Versuch besser gelingen, weil der Spieler Abstände und Rhythmus
 gelernt hat. Vom Vorbild übernehmen wir das Kampfgefühl nach Zahlen:
 Laufen, Sprung, Schlagkette, Griff, Wurf, Trefferstopp und Schutzfenster
 mit den gemessenen Werten aus `mechanik.md`. Diese Werte gelten Frame für
-Frame, und jede bewusste Abweichung steht in `mechanik.md`. Eigen sind die
+Frame; bewusste Abweichungen (60 Hz nach E6, der 12-px-Grenzfall der
+Kettenstufe 1 nach E9) stehen in Abschnitt 9 und werden später in
+`mechanik.md` nachgetragen. Eigen sind die
 vier Helden, die sich alle gleich bewegen und nur in Kette, Wurf und
-Spezialangriff unterscheiden. Eigen sind auch Welt und Geschichte, als
-Arbeitsannahme ein Frachthafen im Eis eines Kometen. Gegner, Bosse und
+Spezialangriff unterscheiden. Eigen sind auch Welt und Geschichte: der
+Frachthafen Perihel im Eis des Kometen Orrin. Gegner, Bosse und
 Stages entwerfen wir selbst; das Vorbild liefert dafür nur Rollen und
 Richtwerte für Lebenspunkte, Schaden und Stage-Längen. Grafik und Sound
 entstehen neu, mit Figuren in der Größe des Vorbilds und Musik ohne
@@ -40,62 +45,44 @@ Anleihen. Ziel ist ein Spiel, das sich in der Hand wie ein Automat von
 
 ## 2. Welt und Ton
 
-### Vorschlag A: Kometenhafen „Perihel“
+### Kometenhafen „Perihel“, beschlossen (E1)
 
 Im Eiskern des Kometen Orrin liegt der Frachthafen Perihel, der bei jedem
 Vorbeiflug am inneren System Waren umschlägt. Das Schweif-Syndikat hat
 Docks, Lager und Kontrollturm besetzt und will den Kometen mit seinen
 Bahntriebwerken auf Kollisionskurs mit der Hauptstadt des Systems bringen.
-Die Helden sind Hafenleute, die sich mit Werkzeug und Fäusten vom
-Andockring bis zum Triebwerksraum durcharbeiten. Der Ton ist kernig und
-comichaft: Neonlicht auf blauem Eis, dampfende Maschinen, Gegner in
-Overalls mit Atemmasken. Die Stages führen über Frachtdecks, Eisstollen und
-Treibstofflager bis zu einer Fahrt durch den Kometenschweif als
-Sonderstage.
+Die Helden, drei Hafenleute und ein lebender Eisbrocken, arbeiten sich mit
+Werkzeug und Fäusten vom Landedeck bis zum Flaggschiff des Syndikats
+durch. Der Ton ist kernig und comichaft: Neonlicht auf blauem Eis,
+dampfende Maschinen, Gegner in Overalls mit Atemmasken. Die acht Stages
+führen über Frachtkai, Eisbergwerk, Kuppelgärten und Klonlabor zur Fahrt
+durch den Kometenschweif als Sonderstage an Position 5 und weiter über
+Schmelzwerk und Antriebsschacht bis zum Flaggschiff des Syndikats.
 
-### Vorschlag B: Küstenstadt nach dem Einschlag
+### Begründung
 
-Ein Bruchstück eines Kometen ist vor einer Küstenstadt ins Meer gestürzt,
-die Flutwelle hat die Uferviertel verwüstet. Aus dem Krater wachsen
-leuchtende Kristalle, die Maschinen zum Leben erwecken und Menschen
-stärker, aber reizbarer machen. Banden plündern die geräumten Viertel,
-während ein Konzern die Kristalle heimlich abbaut. Der Ton ist sommerlich
-und laut wie ein Katastrophenfilm aus der Videothek: Palmen, Neon,
-umgekippte Busse, Möwen. Die Stages führen von der Strandpromenade über
-Hafen und Kanalisation zur Bohrinsel des Konzerns und hinab in den Krater.
-
-### Vorschlag C: Zirkusschiff zwischen den Planeten
-
-Ein Wanderzirkus reist mit einem alten Frachter von Planet zu Planet und
-spielt in jeder Station. Ein neuer Direktor hat das Schiff übernommen, die
-Artisten gegen Roboter getauscht und nutzt die Tournee für Raubzüge. Die
-Helden sind die entlassenen Artisten, die ihr Schiff zurückerobern. Der Ton
-ist bunt, schrill und voller Slapstick: Manege, Raubtierkäfige,
-Menschenkanonen und Clowns als Gegner. Die Stages wechseln zwischen den
-Decks des Schiffs und den Planeten, auf denen es landet.
-
-### Arbeitsannahme
-
-**Vorschlag A, Kometenhafen „Perihel“ (Vorschlag, Entscheidung des
-Nutzers offen).** Der Spielname trägt den Kometen schon, der Hafen bietet
-Schauplätze von Eis bis Schwerindustrie, und der Kometenschweif ergibt eine
-natürliche Sonderstage mit automatischem Scrollen. Die Helden in
-Abschnitt 5 sind für diese Welt entworfen; fällt die Wahl auf B oder C,
-behalten sie ihre Werte und bekommen neue Kostüme.
+Der Spielname trägt den Kometen schon, der Hafen bietet Schauplätze von
+Eis bis Schwerindustrie, und der Kometenschweif ergibt eine natürliche
+Sonderstage mit automatischem Scrollen. Die Helden in Abschnitt 5 sind für
+diese Welt entworfen. Acht Stages und die Sonderstage an Position 5 sind
+beschlossen (E8); Einzelheiten in `docs/design-gegner-stages.md`,
+Abschnitt 6. Verworfen sind die beiden
+anderen Vorschläge, eine Küstenstadt nach dem Einschlag eines
+Kometenbruchstücks und ein Zirkusschiff zwischen den Planeten.
 
 ## 3. Technische Grundlage
 
 | Festlegung | Wert | Quelle |
 |---|---|---|
 | Logische Auflösung | 384 × 224 Pixel; Spiellogik, Kollision und Kamera rechnen in diesem Raster | „Konventionen“; erkenntnisse.md „Hinweise für die eigene Grafik“ |
-| Spielschritt | fest 60 Hz, ein Logikschritt je Frame, alle Dauern in Frames. Das Original läuft mit 59,637405 Hz; dieselben Frame-Zahlen ergeben bei 60 Hz 0,6 % kürzere Zeiten | „Konventionen“ |
+| Spielschritt | fest 60 Hz, beschlossen (E6): ein Logikschritt je Frame, alle Dauern in Frames; die Frame-Zahlen aus `mechanik.md` gelten unverändert. Das Original läuft mit 59,637405 Hz; dieselben Frame-Zahlen ergeben bei 60 Hz 0,6 % kürzere Zeiten. Sekundenangaben in beiden Designdokumenten sind Frames ÷ 60 | „Konventionen“; Abschnitt 9 |
 | Einheiten | 1 Positionseinheit = 1 Pixel, horizontal wie in der Tiefe. Drei Achsen: x (Welt), Tiefe, Höhe. Positionen und Geschwindigkeiten mit Nachkommastellen, fein genug für Werte wie 70/256 px/Frame² | „Konventionen“, „Umgeworfen werden“ |
 | Tiefe | eigene Achse: Sie bestimmt Bildzeile und Zeichenreihenfolge, die Höhe hebt die Figur über ihren Schatten | „Konventionen“, „Sprung“ |
 | Trefferprüfung | über Abstände der Positionen von Angreifer und Ziel in x, Tiefe und Höhe, nicht über Bildüberlappung | „Angriff (Standardschlag, Kette)“, „Sprungangriff“; erkenntnisse.md „Hinweise für die eigene Grafik“ |
 | Eingabelatenz | Reaktion einen Frame nach der Eingabe (P+1), bei Laufen, Schlag und Sprung gleich. Die Werte in `mechanik.md` schließen diese Latenz ein; die Spiellogik darf keine weitere hinzufügen | „Konventionen“ |
 | Trefferstopp | 7 Frames je Treffer: Die Animation des Angreifers steht still. Beim Sprungangriff verlängert jeder Treffer die aktiven Frames um 7 | „Angriff (Standardschlag, Kette)“, „Sprungangriff“ |
-| Trefferstopp des Getroffenen | Der getroffene Gegner zeigt ab h+1 die Trefferpose, zittert in h+9 bis h+14 um ±3, ±2, ±1 px ohne Rückstoß und ist ab h+23 frei. Ein eigener Stillstand des Getroffenen ist offen, weil die Messung Pose und Position ausgewertet hat, keinen getrennten Trefferstopp | notes.md, „Nachtrag: Trefferreaktion der Gegner“ |
-| Rendering | skaliert nur die Ausgabe, bevorzugt ganzzahlig mit Rand; Logik und Kollision bleiben im Raster von 384 × 224 | Vorschlag |
+| Trefferstopp des Getroffenen | Beschlossen (E3): Der getroffene Gegner steht von h+1 bis h+8 in der Trefferpose still, zittert in h+9 bis h+14 um ±3, ±2, ±1 px und ist ab h+23 frei. Der Stillstand liegt innerhalb der 23 Frames, die Reaktion wird dadurch nicht länger. Das Zittern ist nur Animation: Die Position für Trefferprüfung und Reichweite bleibt, kein Rückstoß. Ob das Vorbild intern einen eigenen Stillstand hat, ist offen, weil die Messung Pose und Position ausgewertet hat, keinen getrennten Trefferstopp | notes.md, „Nachtrag: Trefferreaktion der Gegner“; Abschnitt 9 |
+| Rendering | skaliert nur die Ausgabe, bevorzugt ganzzahlig mit Rand; Logik und Kollision bleiben im Raster von 384 × 224 | beschlossen (E9) |
 
 Warum nur so: Alle Werte in `mechanik.md` sind in Pixeln und Frames des
 Originalbilds gemessen, und nur in denselben Einheiten lassen sie sich ohne
@@ -131,10 +118,10 @@ Sprungdruck, **A** Angriffsdruck im Sprung, **E** Wurfeingabe im Griff,
 
 | Aktion | Startup | Aktive Frames | Nachlauf | Reichweite x | Tiefe | Schaden | Umwerfen | Besonderheit | Quelle |
 |---|---|---|---|---|---|---|---|---|---|
-| Kette Stufe 1 | Treffer in P+2 | P+2 bis P+5 | nach Treffer handlungsfähig ab h+13, Pose ohne Eingabe bis h+27; Leerschlag handlungsfähig ab P+8, Ruhe ab P+17 | ≤ 85 px, ab 86 px kein Treffer | ≤ 11 px, nie ab 13 px; 12 px Grenzfall (Vorschlag: trifft, wie Stufe 2 bis 4) | 3 | nein | Trefferreaktion des Gegners 23 Frames (h bis h+22), kein Rückstoß; ein Treffer darin startet sie neu; danach holt er frühestens in h+45 aus (notes.md, „Nachtrag: Trefferreaktion der Gegner“) | „Angriff (Standardschlag, Kette)“ |
-| Kette Stufe 2 | Druck D in h+12 bis h+27 nach Stufe 1; Treffer in D+3 | D+3 bis D+6 | offen (nicht beauftragt); Folgedruck ab h+11 | ≤ 87 px | ≤ 12 px | 4 | nein | jeweils 1 px weiter kein Treffer | wie oben |
-| Kette Stufe 3 | Druck in h+11 bis h+26 nach Stufe 2; Treffer in D+4 | D+4 bis D+7 | offen (nicht beauftragt); Folgedruck ab h+11 | ≤ 91 px | ≤ 12 px | 5 | nein | – | wie oben |
-| Kette Stufe 4 (Abschluss) | Druck in h+11 bis h+26 nach Stufe 3; Treffer in D+3 | D+3 bis D+6; trifft er nichts, erneut D+17 bis D+20 | offen (nicht beauftragt) | ≤ 100 px | ≤ 12 px | 10 | ja, immer, auch wenn der Gegner noch LP hat | Gegner fliegt nach 8 Frames Stillstand mit 2,875 px/Frame und liegt 55 Frames nach dem Treffer 135 px entfernt (notes.md, „Nachtrag: Trefferreaktion der Gegner“) | wie oben |
+| Kette Stufe 1 | Treffer in P+2 | P+2 bis P+5 | nach Treffer handlungsfähig ab h+13, Pose ohne Eingabe bis h+27; Leerschlag handlungsfähig ab P+8, Ruhe ab P+17 | ≤ 85 px, ab 86 px kein Treffer | ≤ 11 px, nie ab 13 px; 12 px Grenzfall: trifft wie Stufe 2 bis 4, beschlossen (E9) | 3 | nein | Trefferreaktion des Gegners 23 Frames (h bis h+22), kein Rückstoß; ein Treffer darin startet sie neu; danach holt er frühestens in h+45 aus (notes.md, „Nachtrag: Trefferreaktion der Gegner“) | „Angriff (Standardschlag, Kette)“ |
+| Kette Stufe 2 | Druck D in h+12 bis h+27 nach Stufe 1; Treffer in D+3 | D+3 bis D+6 | offen (M8, O1); Folgedruck ab h+11 | ≤ 87 px | ≤ 12 px | 4 | nein | jeweils 1 px weiter kein Treffer | wie oben |
+| Kette Stufe 3 | Druck in h+11 bis h+26 nach Stufe 2; Treffer in D+4 | D+4 bis D+7 | offen (M8, O2); Folgedruck ab h+11 | ≤ 91 px | ≤ 12 px | 5 | nein | – | wie oben |
+| Kette Stufe 4 (Abschluss) | Druck in h+11 bis h+26 nach Stufe 3; Treffer in D+3 | D+3 bis D+6; trifft er nichts, erneut D+17 bis D+20 | offen (M8, O3) | ≤ 100 px | ≤ 12 px | 10 | ja, immer, auch wenn der Gegner noch LP hat | Gegner fliegt nach 8 Frames Stillstand mit 2,875 px/Frame und liegt 55 Frames nach dem Treffer 135 px entfernt (notes.md, „Nachtrag: Trefferreaktion der Gegner“) | wie oben |
 
 ### 4.3 Sprungangriff
 
@@ -142,8 +129,8 @@ Sprungdruck, **A** Angriffsdruck im Sprung, **E** Wurfeingabe im Griff,
 |---|---|---|---|---|---|---|---|---|---|
 | Neutral (Sprung ohne Richtung) | Angriff ab J+1 (in J selbst: Spezialangriff); Treffer ab A+5 | A+5 bis A+28, solange in der Luft; +7 je Treffer | Sprung einen Frame länger; Landung wie „Sprung“ | 27 px hinter bis 76 px vor der Figur | ≤ 12 px | 7 | ja, Gegner fliegt 135 px (notes.md, „Nachtrag: Trefferreaktion der Gegner“) | trifft nur, solange die Figur höchstens 45 px hoch ist (am Scheitel nicht); mehrere Gegner je Sprung, jeder einmal; ab A = J+38 ohne Wirkung (Workflow) | „Sprungangriff“ |
 | Richtung (Sprung mit links oder rechts) | wie neutral | wie neutral | wie neutral | 24 px hinter bis 99 px vor der Figur | ≤ 12 px | 7 | ja | Figur höchstens 41 px hoch | „Sprungangriff“ |
-| Hoch (hoch im Frame des Sprungdrucks) | Treffer ab A+7 | ab A+7 | wie neutral | offen (nicht beauftragt) | offen (nicht beauftragt) | 12 | ja | – | „Sprungangriff“, „Nicht übernommen“ |
-| Runter (runter mit dem Angriff) | offen (nicht beauftragt) | offen (nicht beauftragt) | wie neutral | offen (nicht beauftragt) | offen (nicht beauftragt) | 4 | nein | – | „Sprungangriff“, „Nicht übernommen“ |
+| Hoch (hoch im Frame des Sprungdrucks) | Treffer ab A+7 | ab A+7 | wie neutral | offen (M8, O4) | offen (M8, O4) | 12 | ja | – | „Sprungangriff“, „Nicht übernommen“ |
+| Runter (runter mit dem Angriff) | offen (M8, O5) | offen (M8, O5) | wie neutral | offen (M8, O5) | offen (M8, O5) | 4 | nein | – | „Sprungangriff“, „Nicht übernommen“ |
 
 ### 4.4 Griff und Wurf
 
@@ -158,7 +145,7 @@ Sprungdruck, **A** Angriffsdruck im Sprung, **E** Wurfeingabe im Griff,
 | Aktion | Startup | Aktive Frames | Nachlauf | Reichweite x | Tiefe | Schaden | Umwerfen | Besonderheit | Quelle |
 |---|---|---|---|---|---|---|---|---|---|
 | Spezialangriff (Angriff und Sprung im selben Frame) | Aktion ab P+1, Fläche aktiv ab P+8 | P+8 bis P+43 (36 Frames, ohne Trefferstopp); die Fläche wächst alle 6 Frames um 16 px | Aktion P+1 bis P+50, je Bild mit Treffer 7 Frames mehr; handlungsfähig ab P+51; geschützt bis P+70 (mit einem Treffer bis P+77) | vorn bis 43, 59, 75, 91, 107, 123 px, hinten bis 42, 58, 74, 90, 106, 122 px; volle Fläche | ≤ 28 px, nie ab 29 px | 6 je Gegner, jeder einmal, beliebig viele | ja, 135 px von der Figur weg | kostet 9 LP einmal, nur wenn er etwas trifft (auch Gegenstände), 8 Frames nach dem ersten Treffer; die LP fallen dabei höchstens auf 0, mit 0 LP gibt es keinen Spezialangriff; auslösbar aus Stand, Lauf, Sprint und Griff, in der eigenen Trefferreaktion ab 8 Frames nach dem Treffer, nicht in den 6 Landeframes (J+42 bis J+46 gibt es stattdessen einen neuen Sprung, J+47 nichts), erst ab J+48; Dauer und Form je Held in Abschnitt 5 | notes.md, „Nachtrag: Spezialangriff“ |
-| Spezialangriff aus dem Griff (Sprung und Angriff) | Eingabe in E | offen, weil notes.md, „Nachtrag: Spezialangriff“ nur den freien Spezialangriff Frame für Frame vermisst | handlungsfähig ab E+58 | Gegner fliegt etwa 158 px | – | 6 | ja | kostet die Figur 9 LP | „Griff und Wurf“ |
+| Spezialangriff aus dem Griff (Sprung und Angriff) | Eingabe in E | Arbeitsregel (Bestätigung des Nutzers offen): wie beim freien Spezialangriff (Zeile oben), ab E gezählt. Im Vorbild offen, weil notes.md, „Nachtrag: Spezialangriff“ nur den freien Spezialangriff Frame für Frame vermisst | handlungsfähig ab E+58 | Gegner fliegt etwa 158 px | – | 6 | ja | kostet die Figur 9 LP | „Griff und Wurf“ |
 | Sprint | Doppeltipp derselben Richtung (erster Druck und Pause je 1 bis 10 Frames), zweiten Druck halten; Sprint ab dem Frame nach dem zweiten Druck | – | endet im Frame nach dem Loslassen ohne Auslaufen, sonst nach 90 Frames: 1 Frame Stand, dann Gehen | 1 Frame 1,75, 5 Frames 3,875, dann alle 6 Frames 0,125 px/Frame weniger bis 2,125; 267,875 px in 90 Frames; diagonal das 0,75-fache | das 0,625-fache (1 Frame 1,0, dann 2,421875 px/Frame); am Rand der Tiefe stoppt nur die Bewegung | – | – | hoch oder runter dazu lenkt diagonal, Gegenrichtung beendet ihn; kein Griff im Sprint (die Figur läuft durch Gegner); Sprintsprung wie der normale Vorwärtssprung, das Sprinttempo geht verloren; neuer Sprint nur mit neuem Doppeltipp | notes.md, „Nachtrag: Sprint“ |
 | Sprintangriff | A = Angriffsdruck im Sprint: Aktion ab A+1, Treffer ab A+5 | A+5 bis A+14 (10 Frames) | ohne Treffer Aktion bis A+35, Gehen ab A+37; mit Treffer 7 Frames später | 26 px hinter bis 105 px vor der Figur | ≤ 12 px, nie ab 13 px | 9 | ja, 135 px | rutscht ab A+2 mit dem letzten Sprinttempo, jeden Frame 0,15625 px/Frame langsamer (32,8125 bis 50 px je nach Sprinttempo), nur wenn die Richtung in A noch gedrückt ist; trifft alle Gegner auf dem Weg, jeden einmal | notes.md, „Nachtrag: Sprint“ |
 
@@ -179,11 +166,15 @@ Sprungdruck, **A** Angriffsdruck im Sprung, **E** Wurfeingabe im Griff,
   „Angriff (Standardschlag, Kette)“, „Griff und Wurf“.
 - **Schutzfenster**: 27 Frames nach einem erlittenen Treffer, solange die
   Trefferreaktion läuft, unabhängig vom Schaden; 35 Frames nach dem
-  Aufstehen. In beiden Fenstern verliert die Figur keine LP. Im Vorbild
-  greifen die Gegner dort an, die Treffer bleiben
-  wirkungslos (notes.md, „Nachtrag: Verhalten der Nahkämpfer“);
-  Vorschlag: Treffer gehen ins Leere, die Gegner verhalten sich normal.
-  Quelle: „Unverwundbarkeit“.
+  Aufstehen; während des Spezialangriffs und danach bis P+70 (mit einem
+  Treffer bis P+77, Abschnitt 4.5). In diesen Fenstern und solange sie
+  liegt, verliert die Figur keine LP. Beschlossen (E2): Die Gegner greifen
+  dort wie im Vorbild an, auch eine liegende Figur, und ihre Treffer
+  bleiben wirkungslos; die Angriffserlaubnis nimmt auf Schutzfenster keine
+  Rücksicht
+  (`docs/design-gegner-stages.md`, Abschnitt 2). So ist es gemessen, so ist
+  es einfacher, und die Gegner wirken nicht passiv. Quelle:
+  „Unverwundbarkeit“; notes.md, „Nachtrag: Verhalten der Nahkämpfer“.
 - **Gleichzeitiger Treffer**: Wird der Schlag der Figur im selben Frame
   aktiv wie der Treffer eines Gegners, gewinnt die Figur (Workflow).
   Quelle: „Schaden der Gegner“.
@@ -203,7 +194,9 @@ der vier Helden des Vorbilds (erkenntnisse.md „Spielfiguren“): Kette je
 Stufe 3–6 / 4–6 / 5–6 / 6–10 LP, Summe 20–24 LP; Wurf 12–14 LP, 181–208 px;
 Sonderwürfe 14 oder 16 LP; Spezialangriff 41–60 Frames; Umriss 36–73 ×
 71–83 px. Weil die Umrisse in dieser Spanne bleiben, passen die Reichweiten
-aus Abschnitt 4 ohne Skalierung zum Bild.
+aus Abschnitt 4 ohne Skalierung zum Bild. Beschlossen (E7): Vela, Kord,
+Rin und Ollo mit den Werten dieses Abschnitts als Arbeitsstand; die Namen
+können später wechseln.
 
 - **Vela**, Lotsin des Hafens: ruhig und genau, kämpft mit
   Magnethandschuhen und ist die Allrounderin, deren Werte der gemessenen
@@ -219,7 +212,7 @@ aus Abschnitt 4 ohne Skalierung zum Bild.
 | Held | Umriss im Stand (mit Schatten) | Kette (LP je Stufe) | Wurf | Sonderwurf | Spezialangriff |
 |---|---|---|---|---|---|
 | Vela | 57 × 76 px (wie die Referenzfigur) | 3 / 4 / 5 / 10 (22) | 14 LP, etwa 185 px | keiner | 50 Frames: kniet, schlägt die Handschuhe auf den Boden, eine Welle aus Eissplittern läuft nach beiden Seiten |
-| Kord | 72 × 82 px | 4 / 4 / 5 / 8 (21) | 14 LP, etwa 192 px | Sprung im Griff: springt mit dem Gegner und rammt ihn in den Boden, 16 LP; ersetzt bei ihm das Loslassen per Sprung; Flugbahn offen (nicht beauftragt) | 58 Frames: dreht sich auf der Stelle, der Anker kreist an der Kette um ihn |
+| Kord | 72 × 82 px | 4 / 4 / 5 / 8 (21) | 14 LP, etwa 192 px | Sprung im Griff: springt mit dem Gegner und rammt ihn in den Boden, 16 LP; ersetzt bei ihm das Loslassen per Sprung; Flugbahn offen: ohne Messauftrag, festlegen, wenn Kord gebaut wird | 58 Frames: dreht sich auf der Stelle, der Anker kreist an der Kette um ihn |
 | Rin | 38 × 75 px | 3 / 4 / 6 / 8 (21) | 12 LP, etwa 182 px | runter + Angriff im Griff: Hebelwurf über sich hinweg, 14 LP, etwa 175 px; rückwärts wirft sie nur mit weg oder hoch | 43 Frames: Sprung auf normaler Bahn mit gestrecktem Stab, Funkenschauer nach beiden Seiten |
 | Ollo | 63 × 72 px | 5 / 6 / 6 / 6 (23) | 12 LP, etwa 204 px | keiner | 47 Frames: bläst einen Kegel aus Kometengas nach vorn, Gegner im Strahl vereisen kurz |
 
@@ -240,16 +233,20 @@ gemessen ist.
 
 Die Figur hat 72 LP („Lebenspunkte“). Normale Gegner treffen mit 5 bis
 13 LP, Raketen bis 15, der Boss mit 9 bis 22 LP je Angriff („Schaden der
-Gegner“). Gegner, die zu Beginn einer Stage schon stehen (vorplatziert),
-haben feste Werte; später erscheinende hängen vom Rang ab.
+Gegner“). Genannte Ausnahmen, Arbeitsregel (Bestätigung des Nutzers
+offen): der Griff des Fahrzeuggegners mit 15 LP und rollende Fässer mit
+16 LP bei Kontakt (`docs/design-gegner-stages.md`, Abschnitte 6 bis 8).
+Gegner, die zu Beginn einer Stage schon stehen (vorplatziert, in
+`docs/design-gegner-stages.md` „Startgegner“), haben feste Werte; später
+erscheinende hängen vom Rang ab.
 
 | Rang | Wert | Quelle |
 |---|---|---|
 | Spanne, Start | 7 bis 24, Start bei 9 | „Schaden der Gegner“ |
-| Anstieg | +1 nach 409 Frames, danach alle 600 Frames (≈ 10 s); 24 nach 409 + 14 × 600 = 8809 Frames (≈ 2,5 min) | wie oben |
+| Anstieg | +1 nach 409 Frames, danach alle 600 Frames (≈ 10 s); 24 nach 409 + 14 × 600 = 8809 Frames (≈ 2,4 min) | wie oben |
 | Tod der Figur | −3 | wie oben |
 | Wirkung | legt beim Beginn eines Angriffs dessen Schaden fest und beim Erscheinen die LP eines später erscheinenden Gegners | wie oben |
-| Rang beim Stage-Wechsel | offen (nicht beauftragt); Vorschlag: läuft weiter | – |
+| Rang beim Stage-Wechsel | läuft weiter, beschlossen (E9); im Vorbild offen (M8, O7) | Abschnitt 9 |
 
 | Rolle | Schaden vorplatziert | Schaden nach Rang | LP | Quelle |
 |---|---|---|---|---|
@@ -257,36 +254,44 @@ haben feste Werte; später erscheinende hängen vom Rang ab.
 | Nahkämpfer schwer | 6 | jeweils 1 mehr: 8 / 9 / 10 / 11 | vorplatziert 30, später 32–42 | wie oben |
 | Schneller Messerkämpfer | – | Messer 7–10, Wurfmesser und Ausfallstich 10–13 | 34–46 | wie oben |
 | Fernkämpfer | – | Pistole 5–7 je Schuss, Raketen 12–15 (Workflow) | Richtwert 16–28 (erkenntnisse.md) | „Schaden der Gegner“ |
-| Boss | – | Schläge 9–12, Ansturm 12–17, Körperpresse 16–22, Griff und Wurf 16–22 (Workflow) | Richtwert 100 (erkenntnisse.md); im Vorbild 110 gemessen (notes.md, „Nachtrag: Verhalten der Nahkämpfer“) | „Schaden der Gegner“ |
+| Boss | – | Schläge 9–12, Ansturm 12–17, Körperpresse 16–22, Griff und Wurf 16–22 (Workflow) | 90–120, beschlossen (E9); 100 bis 110 im Vorbild, Rangabhängigkeit offen (M6, O8): grafik/README.md nennt 100, die Messläufe 110 (notes.md, „Nachtrag: Verhalten der Nahkämpfer“) | „Schaden der Gegner“ |
 
 Wie die LP innerhalb der Spanne vom Rang abhängen, steht nicht in
-`mechanik.md`. Vorschlag: gleichmäßig von der Untergrenze bei Rang 7 bis
-zur Obergrenze bei Rang 24. Flächenangreifer und schwerer Gegner bekommen
-ihre Werte in `docs/design-gegner-stages.md`.
+`mechanik.md`. Beschlossen (E9): gleichmäßig von der Untergrenze bei
+Rang 7 bis zur Obergrenze bei Rang 24. Flächenangreifer und schwerer
+Gegner bekommen ihre Werte in `docs/design-gegner-stages.md`.
 
 **Rechnung 1: Wie viele Treffer hält die Figur aus?** Weil sie erst unter
 0 LP stirbt, übersteht sie bei Schaden d genau 72 geteilt durch d Treffer,
-abgerundet. Für den Stage-Beginn gilt Rang 9; für das Stage-Ende Rang 24,
-den der Spieler ohne Tod nach etwa 2,5 Minuten erreicht. Eine Stage mit
-Kämpfen dauert länger als das reine Gehen von 17 bis 56 Sekunden
-(erkenntnisse.md „Stages als Vorbild“), also liegt ihr Ende meist bei
-Rang 24.
+abgerundet. Stage 1 beginnt bei Rang 9. Weil der Rang über den
+Stage-Wechsel weiterläuft (E9), beginnt jede weitere Stage mit dem Rang
+am Ende der vorigen, nach jedem Tod 3 tiefer. Das Ende von Stage 1
+schätzen wir aus dem Vorbild: Ein Bot besiegte dort den ersten Boss nach
+6047 Frames, davon hing er 1266 Frames an einem Tresen fest
+(grafik/README.md, Stage 1). Nach 4781 bis 6047 Frames steht der Rang bei
+17 bis 19; Stage 1 beginnt also in Rangstufe II und endet in Rangstufe
+III. Rang 22 folgt nach 7609 Frames, Rang 24 nach 8809 Frames (≈ 2,4 min),
+ohne Tod also im Lauf von Stage 2; ab dort gelten die Zeilen „Rang
+22–24“. Zum Vergleich: Ein Durchlauf ohne Kämpfe dauert im Vorbild 17 bis
+56 Sekunden einschließlich Skriptszenen (erkenntnisse.md „Stages als
+Vorbild“), bei uns das reine Gehen 14 bis 24 s
+(`docs/design-gegner-stages.md`, Abschnitt 5).
 
 | Lage | Rang | Schaden je Treffer | Treffer ausgehalten | LP danach | tödlich ist der |
 |---|---|---|---|---|---|
-| Beginn, vorplatzierter Nahkämpfer leicht | fest | 5 | 14 | 2 | 15. Treffer |
-| Beginn, vorplatzierter Nahkämpfer schwer | fest | 6 | 12 | 0 | 13. Treffer |
-| Beginn, später erscheinender leichter | 9 | 8 | 9 | 0 | 10. Treffer |
-| Beginn, später erscheinender schwerer | 9 | 9 | 8 | 0 | 9. Treffer |
-| Ende, Nahkämpfer leicht | 24 | 10 | 7 | 2 | 8. Treffer |
-| Ende, Nahkämpfer schwer | 24 | 11 | 6 | 6 | 7. Treffer |
-| Ende, Ausfallstich (Höchstwert) | 24 | 13 | 5 | 7 | 6. Treffer |
+| Beginn Stage 1, vorplatzierter Nahkämpfer leicht | fest | 5 | 14 | 2 | 15. Treffer |
+| Beginn Stage 1, vorplatzierter Nahkämpfer schwer | fest | 6 | 12 | 0 | 13. Treffer |
+| Beginn Stage 1, später erscheinender leichter | 9 | 8 | 9 | 0 | 10. Treffer |
+| Beginn Stage 1, später erscheinender schwerer | 9 | 9 | 8 | 0 | 9. Treffer |
+| Rang 22–24, Nahkämpfer leicht | 22–24 | 10 | 7 | 2 | 8. Treffer |
+| Rang 22–24, Nahkämpfer schwer | 22–24 | 11 | 6 | 6 | 7. Treffer |
+| Rang 22–24, Ausfallstich (Höchstwert) | 22–24 | 13 | 5 | 7 | 6. Treffer |
 | Boss, Körperpresse (Höchstwert) | 24 | 22 | 3 | 6 | 4. Treffer |
 
-Zu Beginn hält die Figur also 8 bis 14 Treffer aus, am Ende 5 bis 7, gegen
-die schwersten Bossangriffe 3. Die Regel „Tod erst unter 0 LP“ bringt bei
-6, 8 und 9 LP Schaden genau einen Treffer mehr, weil die LP dort genau auf
-0 fallen.
+Zu Beginn von Stage 1 hält die Figur also 8 bis 14 Treffer aus, ab Rang 22
+(ohne Tod ab Stage 2) 5 bis 7, gegen die schwersten Bossangriffe 3. Die
+Regel „Tod erst unter 0 LP“ bringt bei 6, 8 und 9 LP Schaden genau einen
+Treffer mehr, weil die LP dort genau auf 0 fallen.
 
 **Rechnung 2: Wie viele Ketten braucht ein Gegner?** Eine volle Kette von
 Vela macht 22 LP und wirft immer um. Angefangene Ketten zählen mit.
@@ -294,42 +299,46 @@ Vela macht 22 LP und wirft immer um. Angefangene Ketten zählen mit.
 | Rolle | LP | Ketten (22 LP) | Anmerkung |
 |---|---|---|---|
 | Nahkämpfer leicht, vorplatziert | 16 | 1 | fällt im Abschlusstritt |
-| Nahkämpfer leicht, später | 22–34 | 1–2 | mit 22 LP steht er nach einer Kette auf genau 0; ob er fällt, ist offen, weil M1 den Tod nur bei LP unter 0 ausgelöst hat (notes.md, „Nachtrag: Trefferreaktion der Gegner“) |
+| Nahkämpfer leicht, später | 22–34 | 1–2 | mit 22 LP steht er nach einer Kette auf genau 0; ob er fällt, ist offen (M8, O9), weil M1 den Tod nur bei LP unter 0 ausgelöst hat (notes.md, „Nachtrag: Trefferreaktion der Gegner“) |
 | Nahkämpfer schwer, vorplatziert | 30 | 2 | nach der ersten Kette 8 LP Rest |
 | Nahkämpfer schwer, später | 32–42 | 2 | – |
 | Schneller Messerkämpfer | 34–46 | 2–3 | ab 45 LP reichen zwei Ketten (44 LP) nicht |
 | Fernkämpfer | Richtwert 16–28 | 1–2 | – |
-| Flächenangreifer | Richtwert 30–60 (grafik/README.md, Gegnertabelle) | 2–3 | – |
-| Schwerer Gegner | Richtwert 85 | 4 | 88 LP |
-| Boss | Richtwert 100 (Vorbild 110) | 5 | Super-Armor: nur Ketten mit Umwerfen zählen; 4 Ketten und ein Wurf ergeben 102 LP; mit 110 LP stehen nach 5 Ketten genau 0 LP |
+| Flächenangreifer | 30–60 (Glimmer und Fackel, `docs/design-gegner-stages.md`, Abschnitte 1.5 und 3) | 2–3 | – |
+| Schwerer Gegner (Koloss) | 85–99 (`docs/design-gegner-stages.md`, Abschnitt 1.6) | 4–5 | ab 89 LP reichen vier Ketten (88 LP) nicht |
+| Boss | 90–120 (Ballast 100); Vorbild 100 bis 110 | 5–6 | Super-Armor: nur Ketten mit Umwerfen, Würfe und Sprungangriffe zählen (`docs/design-gegner-stages.md`, Abschnitt 4); mit 100 LP ergeben 4 Ketten und ein Wurf 102 LP; mit 110 LP stehen nach 5 Ketten genau 0 LP, ob der Boss dann fällt, ist offen (M6, O9); mit 120 LP braucht es 6 Ketten |
 
 Mit Kord und Rin (21 LP je Kette) braucht ein leichter Nahkämpfer mit
 22 LP einen Schlag mehr, mit Ollo (23 LP) fällt er sicher in einer Kette.
 Nach dem Abschlusstritt ist ein Gegner unverwundbar, bis er 105 Frames
 später wieder frei ist (schwerer Nahkämpfer 89 bis 117 Frames); einen
 Schutz danach hat er nicht (notes.md, „Nachtrag: Trefferreaktion der
-Gegner“).
+Gegner“). Beschlossen (E4): Unsere Gegner haben ebenfalls keinen Schutz
+nach dem Aufstehen; ab dem ersten handlungsfähigen Frame G sind sie
+verwundbar und greifbar, nach einem Wurf greifbar ab G+1 wie im Vorbild
+(`docs/design-gegner-stages.md`, Abschnitt 2).
 
 ## 7. Rahmen
 
-Alles in diesem Abschnitt ist Vorschlag; das Vorbild ist hier nicht
-untersucht (erkenntnisse.md „Stand der Analyse“).
+Alles in diesem Abschnitt ist beschlossen (E9), außer der Zeile, die als
+Arbeitsregel gekennzeichnet ist; das Vorbild ist hier nicht untersucht
+(erkenntnisse.md „Stand der Analyse“).
 
-| Element | Vorschlag | Begründung |
+| Element | Festlegung | Begründung |
 |---|---|---|
 | Titel | Logo vor dem Kometen, „Start drücken“; ohne Eingabe Wechsel zwischen Demo mit Spielszenen, Bestenliste und Steuerungstafel | Automatengefühl; die Demo zeigt Kette, Griff und Wurf, bevor jemand spielt |
 | Figurenwahl | vier Helden nebeneinander mit Porträt, Name und drei Kurzangaben (Kette, Wurf, Spezialangriff); Wahl mit Richtung und Angriff; Countdown wie am Automaten; zwei Spieler dürfen denselben Helden in anderer Farbe nehmen | Die Helden unterscheiden sich nur in diesen drei Punkten, also zeigt die Wahl genau diese |
 | Anzeigeleiste | oben je Spieler: Name, Punkte, Leben, LP-Balken mit 1 px je LP (72 px); daneben Name und Balken des Gegners, den die Figur zuletzt getroffen hat, bis sie einen anderen trifft; Boss-Balken in Lagen | Der Gegnerbalken zeigt, ob sich noch eine Kette lohnt; 1 px je LP macht Schaden ablesbar |
 | Zeit | keine Zeitanzeige in normalen Stages, Zeitlimit nur in der Sonderstage | Der Rang steigt schon mit der Spielzeit (Abschnitt 6), ein Zeitlimit würde Zögern doppelt bestrafen |
-| Leben | drei Leben je Spiel; Neueinstieg an derselben Stelle mit 72 LP, Rang −3; Schutzdauer nach dem Neueinstieg offen (nicht beauftragt) | Rang −3 aus „Schaden der Gegner“ fängt eine Pechsträhne ab |
-| Continue | nach dem letzten Leben Countdown „Weiter?“; Punkte bleiben, ein Continue-Zähler ist sichtbar; Anzahl offen | ohne Münzen hält der Zähler den Reiz, ohne Continue durchzukommen |
+| Leben | drei Leben je Spiel; Neueinstieg an derselben Stelle mit 72 LP, Rang −3; Schutzdauer nach dem Neueinstieg offen (M8, O10) | Rang −3 aus „Schaden der Gegner“ fängt eine Pechsträhne ab |
+| Continue | nach dem letzten Leben Countdown „Weiter?“; Punkte bleiben, ein Continue-Zähler ist sichtbar; Anzahl offen (Abschnitt 9) | ohne Münzen hält der Zähler den Reiz, ohne Continue durchzukommen |
 | Punkte je Treffer | 10 Punkte je LP Schaden (volle Kette 220, Wurf 140) | Ketten, Würfe und Treffer mit geworfenen Gegnern zählen nach ihrer Wirkung; Richtwert Vorbild: Kette 10/20/30/40 je Stufe (notes.md, „Nachtrag: Gegenstände und Waffen“) |
 | Punkte je Gegner | Bonus nach Rolle: leicht 100, schwer und Fernkämpfer 200, Messerkämpfer und Flächenangreifer 300, schwerer Gegner 1000, Boss 5000 | belohnt das Beenden und schwierige Ziele; Richtwert Vorbild: 80 bzw. 100 je Abschuss eines leichten bzw. schweren Nahkämpfers (ebenda) |
 | Punkte je Gegenstand | Essen 100, Wertsachen aus Kisten 500 bis 5000, Waffe aufheben 0 | gibt Kisten einen Grund, auch bei vollen LP; Richtwert Vorbild: Essen bei vollen LP gibt 100 bis 1000 Punkte statt LP, Waffe aufheben 0 (ebenda) |
 
 Zwei Spieler gleichzeitig:
 
-| Regel | Vorschlag | Begründung |
+| Regel | Festlegung | Begründung |
 |---|---|---|
 | Beitritt | jederzeit mit Start | Automatengefühl, kein Neustart nötig |
 | Freundbeschuss | aus: Schläge, Sprungangriffe, Spezialangriffe und geworfene Gegner treffen den Mitspieler nicht | In Gruppen träfen Ketten und Würfe sonst ständig den Partner; das Kampfgefühl soll wie allein bleiben |
@@ -338,6 +347,7 @@ Zwei Spieler gleichzeitig:
 | Kamera | scrollt, wenn der vordere Spieler die Haltelinie überschreitet (`design-gegner-stages.md`, Abschnitt 5), aber nur, solange der hintere nicht am linken Rand steht; sonst ist der rechte Rand für den vorderen eine Wand; Sperren gelten für beide | Beide bleiben im Bild, keiner wird hinausgeschoben, der linke Rand bleibt Wand (erkenntnisse.md „Stages als Vorbild“) |
 | Rang | ein gemeinsamer Rang, −3 bei jedem Tod | einfach; wer öfter stirbt, senkt den Druck für beide |
 | Gegner | mehr Gegner je Welle statt mehr LP; im Vorbild greift meist einer an, zwei gleichzeitig in 0,6 bis 9 % der Gruppenframes, mehr als zwei in höchstens 3 % (notes.md, „Nachtrag: Verhalten der Nahkämpfer“) | Mehr LP würden die Rechnung aus Abschnitt 6 verschieben |
+| Angriffserlaubnis | Arbeitsregel (Bestätigung des Nutzers offen): Die Grenze aus E5 gilt je Figur, also je Figur höchstens zwei Angreifer, je Seite einer (`design-gegner-stages.md`, Abschnitt 2) | E5 ist für eine Figur formuliert; so bleibt der Druck auf jede Figur wie allein |
 
 ## 8. Vertikale Scheibe
 
@@ -348,10 +358,10 @@ Frame für Frame wie gemessen anfühlt, bevor Inhalte in die Breite gehen.
 |---|---|---|
 | Held | Vela, ein Spieler, Grundkit aus Abschnitt 4 einschließlich Sprint und Sprintangriff (Werte in Abschnitt 4.5) | Abschnitte 4 und 5 |
 | Zwei Nahkämpfer | Nahkämpfer leicht und schwer: Gehen, Angriffsserie, Treffer, Umgeworfen, Liegen, Aufstehen, Gegriffen, Geworfen, Tod | `design-gegner-stages.md`, Abschnitte 1 und 9 |
-| Ein Fernkämpfer | hält Abstand und schießt; seine Waffe bleibt liegen | wie oben |
-| Stage-Abschnitt | Anfang der ersten Stage bis zu einer Kamerasperre mit einer Welle, danach die Bossarena; Tiefenstreifen, Hintergrund, eine Vordergrundebene | `design-gegner-stages.md`, Abschnitte 5 und 7 |
-| Boss | ein Boss mit Super-Armor, Richtwert 100 LP, drei Angriffe | `design-gegner-stages.md`, Abschnitt 4 |
-| Zwei Gegenstände | Essen (Heilwerte im Vorbild je Art: voll, +55, +40, +16 oder +12 LP; bei vollen LP Punkte statt LP; Essen läuft nicht ab) und die Waffe des Fernkämpfers (Richtwert Raketenwerfer: 3 Schuss, 8 LP, wirft um, nur die Explosion trifft); Waffen liegen 700 Frames ab der Landung L, blinken dann und verschwinden in L+792 (92 Frames ab Liegezeit 0; notes.md, „Nachtrag: Gegenstände und Waffen“) | `design-gegner-stages.md`, Abschnitt 8 |
+| Ein Fernkämpfer | Zünder mit Raketenwerfer: hält Abstand und schießt; seine Waffe bleibt liegen | wie oben |
+| Stage-Abschnitt | Abschnitte A, B und F der ersten Stage mit den Wellen 1, 2 (Sperrwelle), 7 und 9 (nur der Zünder mit Raketenwerfer), Übergang von B nach F mit Blende; Tiefenstreifen, Hintergrund, eine Vordergrundebene. Zuschnitt als Arbeitsregel (Bestätigung des Nutzers offen) in der Tabelle „Zuschnitt der Scheibe“ | `design-gegner-stages.md`, Abschnitte 5 und 7 |
+| Boss | Ballast mit Super-Armor, 100 LP (Spanne 90 bis 120, Abschnitt 6), drei Angriffe: Ansturm, Armschwung, Körperpresse. Arbeitsregel (Bestätigung des Nutzers offen): Der Ansturm wirft bei Kontakt um (12 bis 17 LP), ohne Übergang in den Griff; der Griff kommt erst nach M6 (O17). Super-Armor im Vorbild im Einzelnen offen (M6, O12) | `design-gegner-stages.md`, Abschnitte 4 und 7 |
+| Zwei Gegenstände | Essen: ein Kometenbraten aus einem Fass in Abschnitt B (heilt voll; Heilwerte je Art beschlossen (E9) wie im Vorbild: voll, +55, +40, +16 oder +12 LP; bei vollen LP Punkte statt LP; Essen läuft nicht ab). Der Raketenwerfer (`mechanik.md`, „Gegenstände und Waffen“: 3 Schuss, 8 LP, wirft um, nur die Explosion trifft) aus zwei Asservatenkisten und vom Zünder, kein Laser; Fass und Kisteninhalt als Arbeitsregel (Bestätigung des Nutzers offen). Waffen liegen 700 Frames ab der Landung L, blinken dann und verschwinden in L+792 (92 Frames ab Liegezeit 0; notes.md, „Nachtrag: Gegenstände und Waffen“) | `design-gegner-stages.md`, Abschnitte 7 und 8 |
 | Rahmen | Anzeigeleiste mit LP-Balken von Figur und Gegner, Leben, Punkte; Rang intern; Tod und Neueinstieg | Abschnitt 7 |
 | Prüfhilfe | Frame-Protokoll (x, Tiefe, Höhe, LP, Aktion, Rang je Frame) und abspielbare Eingabeaufzeichnung | Abnahme |
 | Nicht enthalten | Titel, Figurenwahl, zweiter Spieler, weitere Helden, Sonderstage, Sound außer Platzhaltern | – |
@@ -393,10 +403,12 @@ Messwerte, die vor der Scheibe gesichert sein müssen:
 
 1. Trefferreaktion der Gegner: gesichert (notes.md, „Nachtrag:
    Trefferreaktion der Gegner“): 23 Frames je Stufe ohne Rückstoß, Liegen
-   32 Frames (leicht) bzw. 16 bis 44 Frames (schwer, Auswahl offen),
-   Aufstehen 18 Frames ohne Schutz danach. Die Kette hält, weil der Gegner
-   frühestens in h+45 ausholt. Offen bleibt der Tod bei genau 0 LP, weil
-   M1 ihn nur unter 0 LP ausgelöst hat.
+   32 Frames (leicht) bzw. 16 bis 44 Frames (schwer; Auswahl im Vorbild
+   offen, bei uns als Arbeitsregel gleichverteilt in Schritten von 4,
+   `design-gegner-stages.md`, Abschnitt 2), Aufstehen 18 Frames ohne Schutz
+   danach. Die Kette hält, weil der Gegner
+   frühestens in h+45 ausholt. Der Tod bei genau 0 LP ist offen (M8, O9),
+   weil M1 ihn nur unter 0 LP ausgelöst hat.
 2. Gegnerverhalten: gesichert (notes.md, „Nachtrag: Verhalten der
    Nahkämpfer“): Anhalten 46 bis 48 px vor der Figur (nach schnellem Gehen
    55 bis 56 px), Pause vor jedem Angriff 29 − 4 · ⌊Rang/4⌋ Frames, selten
@@ -407,8 +419,8 @@ Messwerte, die vor der Scheibe gesichert sein müssen:
    Gegnerangriffe“): Startup 4 bis 10 Frames (Messerkämpfer 13 bis 14);
    Abbruch, wenn die Figur mehr als 32 px links oder 31 px rechts vom
    Zielpunkt steht (Zielabstand höchstens 48 px) oder die Tiefe −10
-   bis +11 px verlässt; Treffer bis 48 px Höhe. Offen bleiben Pistole,
-   Rakete und Wurfmesser, weil sie in keinem Messlauf vorkamen.
+   bis +11 px verlässt; Treffer bis 48 px Höhe. Pistole, Rakete und
+   Wurfmesser sind offen (M7, O11), weil sie in keinem Messlauf vorkamen.
 4. Spezialangriff und Sprint: gesichert (notes.md, „Nachtrag:
    Spezialangriff“ und „Nachtrag: Sprint“), Werte in Abschnitt 4.5.
    Unsicher: Tiefengrenzen der Explosionsform und Reichweite des
@@ -418,11 +430,13 @@ Messwerte, die vor der Scheibe gesichert sein müssen:
    Waffen“), Werte in der Tabelle oben. Unsicher: größte Laserreichweite
    (310, 350 oder unter 275 px) und Aufnahmebereich rechts beim
    Raketenwerfer (35 oder 37 px).
-6. Ohne Messauftrag, vor der Scheibe festzulegen oder nachzumessen:
-   Nachlauf der Kettenstufen 2 bis 4, Reichweite der Sprungangriffe hoch
-   und runter, Super-Armor des Bosses (nach wie vielen Treffern er
-   abbricht, wie viele LP zurückkommen), Schutzdauer nach dem
-   Neueinstieg, Rang beim Stage-Wechsel.
+6. Mit Messpaket 2 beauftragt (Liste „Offen bis Messpaket 2“ am Ende
+   dieses Abschnitts): Nachlauf der Kettenstufen 2 bis 4, Reichweite der
+   Sprungangriffe hoch und runter, Tod bei genau 0 LP, Schutzdauer nach
+   dem Neueinstieg, Rang beim Stage-Wechsel (M8); Super-Armor des Bosses
+   (welche Treffer zählen, wann und auf welchen Wert die LP zurückspringen,
+   Schaden und Umwerfen des Abbruchstoßes) und seine LP im Vorbild (M6, O8
+   und O12); Pistole, Rakete und Wurfmesser (M7, O11).
 
 Abnahmekriterien, jeweils mit Frame-Protokoll und Eingabeaufzeichnung
 prüfbar:
@@ -447,38 +461,84 @@ prüfbar:
    185 px entfernt ab und wirft einen zweiten Gegner auf der Bahn mit 3 LP
    um.
 7. Nach einem erlittenen Treffer verliert die Figur 27 Frames lang und nach
-   dem Aufstehen 35 Frames lang keine LP, auch wenn ein Gegner in
-   Schlagdistanz bleibt, und umgeworfen liegt sie ohne Eingabe 121 Frames.
+   dem Aufstehen 35 Frames lang keine LP, auch wenn ein Gegner dort
+   angreift (E2), und umgeworfen liegt sie ohne Eingabe 121 Frames.
 8. Mit genau 0 LP spielt die Figur weiter, und treffen Figur und Gegner im
    selben Frame, verliert nur der Gegner LP.
 9. Der Rang startet bei 9, steigt nach 409 Frames und danach alle 600 Frames
    um 1 bis 24, sinkt bei jedem Tod um 3, und ein später erscheinender
-   leichter Nahkämpfer trifft bei Rang 9 mit genau 8 LP.
+   leichter Nahkämpfer trifft bei Rang 8 bis 14 mit genau 8 LP.
 10. Die Kamera hält an der Sperre, bis die Welle besiegt ist, der Boss
     bricht eine Kette ohne Umwerfen mit einem Stoß ab und erhält die LP
     zurück, und sein Fall besiegt alle übrigen Gegner.
 
-## 9. Offene Entscheidungen des Nutzers
+### Offen bis Messpaket 2
 
-1. Welt: Kometenhafen (Arbeitsannahme), Küstenstadt oder Zirkusschiff.
-2. Helden: Namen, Konzepte und Werte von Vela, Kord, Rin und Ollo
-   bestätigen oder ändern.
-3. Spielschritt 60 Hz statt 59,64 Hz annehmen (alle Zeiten 0,6 % kürzer).
-4. Grenzfälle: Griff mit Blick nach links 38 px wie im Vorbild oder
-   symmetrisch 39 px; Kettenstufe 1 bei 12 px Tiefe treffen lassen.
-5. Schutzfenster: Gegner greifen an, Treffer werden ignoriert (Vorschlag,
-   so im Vorbild laut M2), oder sie warten (Vorschlag in
-   `design-gegner-stages.md`, Abschnitt 10, Punkt 6).
-6. Freier Spezialangriff: 9 LP Kosten nur bei Treffer (Richtwert) oder
-   immer.
-7. Zeitlimit in normalen Stages: keines (Vorschlag) oder eines.
-8. Leben je Spiel, Zahl der Continues, Punkte beim Continue behalten.
-9. Punkteschema und Extraleben.
-10. Zwei Spieler: Freundbeschuss aus und kein Griff auf den Mitspieler
-    (Vorschlag); mehr Gegner je Welle statt mehr LP.
-11. Rang: läuft über den Stage-Wechsel weiter (Vorschlag); LP der Gegner
-    gleichmäßig über den Rang verteilt (Vorschlag).
-12. Grafikstil und Sound: Palette, Pixelstil, Musikrichtung.
+Messpaket 2 misst, was in diesem Dokument noch fehlt: **M6** den Boss,
+**M7** Fernkampf und Messerwurf, **M8** den Rest der Spielfigur (Nachlauf
+der Kettenstufen 2 bis 4, Sprungangriff hoch und runter, Tod bei genau
+0 LP, Schutz nach dem Neueinstieg, Rang beim Stage-Wechsel). Der Nachtrag
+nach Phase 2 füllt diese Stellen. Nummeriert sind nur Stellen mit
+Messauftrag; offene Werte ohne Messauftrag heißen in beiden Dokumenten
+einfach „offen“ mit Grund. Dieselbe Lücke trägt in beiden Dokumenten
+dieselbe Nummer; nur Neues setzt sich in `docs/design-gegner-stages.md`,
+Abschnitt 10, ab O17 fort. O6 und O13 bis O16 sind nach der Prüfung
+entfallen (O6 ohne Messauftrag, O13 bis O16 in O8, O11 und O12
+zusammengelegt).
+
+| Nr. | Stelle | Was fehlt | Messpaket |
+|---|---|---|---|
+| O1 | 4.2, Kette Stufe 2, Nachlauf | handlungsfähig ab (Laufen, Schlag, Sprung) nach Treffer und Leerschlag, Pose ohne Eingabe | M8 |
+| O2 | 4.2, Kette Stufe 3, Nachlauf | wie O1 | M8 |
+| O3 | 4.2, Kette Stufe 4, Nachlauf | wie O1, dazu der Nachlauf nach dem zweiten aktiven Abschnitt D+17 bis D+20 | M8 |
+| O4 | 4.3, Sprungangriff hoch | Reichweite x und Tiefe | M8 |
+| O5 | 4.3, Sprungangriff runter | Startup, aktive Frames, Reichweite x und Tiefe | M8 |
+| O7 | 6, Rang beim Stage-Wechsel | Verhalten im Vorbild; unsere Regel steht (läuft weiter, E9) | M8 |
+| O8 | 6, Boss (Rollentabelle); `design-gegner-stages.md`, 4, Prinzip 4 | LP des Vorbild-Bosses: 100 oder 110, Abhängigkeit vom Rang | M6 |
+| O9 | 6, Rechnung 2 (leichter Nahkämpfer und Boss); 8, Messwerte Punkt 1 | stirbt ein Gegner bei genau 0 LP? Fällt der Boss bei genau 0 LP? | M8; beim Boss M6 |
+| O10 | 7, Leben | Dauer und Art des Schutzes nach dem Neueinstieg | M8 |
+| O11 | 8, Messwerte Punkt 3; `design-gegner-stages.md`, 1.3 und 1.4 | Pistole, Rakete und Messerwurf: Auslösung, gehaltener Abstand, Startup, Geschoss, Reichweite, Schaden, Rhythmus | M7 |
+| O12 | 8, Tabelle (Boss) und Messwerte Punkt 6; `design-gegner-stages.md`, 4, Prinzip 1 | Super-Armor im Einzelnen: welche Treffer zählen (auch der Spezialangriff), wann und auf welchen Wert die LP zurückspringen, Schaden und Umwerfen des Abbruchstoßes; dazu Trefferreaktion, Angriffe und Rhythmus des Bosses | M6 |
+
+## 9. Entscheidungen des Nutzers
+
+### Entschieden am 2026-10-02
+
+| Nr. | Thema | Entscheidung | Wo eingearbeitet |
+|---|---|---|---|
+| E1 | Welt | Kometenhafen „Perihel“ auf dem Kometen Orrin; Küstenstadt und Zirkusschiff sind verworfen | Abschnitte 1 und 2 |
+| E2 | Schutzfenster der Figur | wie im Vorbild: Gegner greifen in den Schutzfenstern und eine liegende Figur an, ihre Treffer sind wirkungslos; die Angriffserlaubnis nimmt darauf keine Rücksicht. Begründung: so gemessen, einfacher, und die Gegner wirken nicht passiv | Abschnitt 4.7; `design-gegner-stages.md`, Abschnitt 2 |
+| E3 | Rückstoß der Kette | keiner; die Trefferreaktion dauert 23 Frames mit Zittern als Animation, der Gegner bleibt am Ort | Abschnitt 3 (Stillstand h+1 bis h+8 innerhalb der 23 Frames); `design-gegner-stages.md`, Abschnitte 1.6, 2 und 9 (gilt für alle normalen Gegner, geht E9 vor) |
+| E4 | Schutz der Gegner nach dem Aufstehen | keiner; ab dem ersten handlungsfähigen Frame sofort verwundbar und greifbar | Abschnitt 6; `design-gegner-stages.md`, Abschnitt 2 |
+| E5 | Gleichzeitige Angreifer | höchstens zwei, je Seite der Figur höchstens einer; höchstens ein Fernkämpfer zielt gleichzeitig, ab Stage 6 zwei | `design-gegner-stages.md`, Abschnitt 2; Abschnitt 7 (zwei Spieler, Arbeitsregel) |
+| E6 | Spielschritt | 60 Hz fester Schritt; alle Frame-Zahlen bleiben, Sekundenangaben sind Frames ÷ 60 | Abschnitt 3; `design-gegner-stages.md`, Einheiten und Abschnitte 5 und 6 |
+| E7 | Helden | Vela, Kord, Rin und Ollo mit den Werten aus Abschnitt 5 als Arbeitsstand; die Namen können später wechseln | Abschnitt 5 |
+| E8 | Stages | acht, die Sonderstage mit automatischem Scrollen an Position 5 | Abschnitt 2; `design-gegner-stages.md`, Abschnitt 6 |
+| E9 | Übrige Vorschläge | alle weiteren Vorschläge beider Designdokumente sind angenommen, darunter Leben, Continues (Punkte bleiben), Punkteschema, Zweispieler-Regeln, kein Zeitlimit in normalen Stages, Rang läuft über den Stage-Wechsel weiter, LP der Gegner gleichmäßig nach Rang, Fahrzeug nur als Gegner, Essenswerte, Boss-LP 90 bis 120, Bossschaden bis 22, Flächenschaden bis 13, Wellenbonus, Gegner heben keine Waffen auf. Im Text steht dafür „beschlossen (E9)“ | beide Dokumente |
+
+### Offen
+
+1. Namen der Helden endgültig (E7 lässt sie wechseln).
+2. Grafikstil und Sound: Palette, Pixelstil, Musikrichtung.
+3. Zahl der Continues: E9 nimmt den Continue-Ablauf an; eine Zahl war
+   nicht vorgeschlagen.
+4. Extraleben: E9 nimmt das Punkteschema an; Extraleben waren nicht
+   vorgeschlagen.
+5. Grenzfälle gegenüber dem Vorbild: Griff mit Blick nach links 38 px wie
+   im Vorbild (so steht es in Abschnitt 4.4) oder symmetrisch 39 px; freier
+   Spezialangriff kostet 9 LP nur bei einem Treffer wie im Vorbild (so
+   steht es in Abschnitt 4.5) oder immer.
+6. Arbeitsregel, zwei Spieler: Die Grenze der Angreifer aus E5 gilt je
+   Figur (Abschnitt 7; `design-gegner-stages.md`, Abschnitt 2).
+7. Arbeitsregel, Schaden über der Spanne 5 bis 13: Griff des
+   Fahrzeuggegners 15 LP und rollende Fässer 16 LP gelten als genannte
+   Ausnahmen (Abschnitt 6).
+8. Arbeitsregel, Spezialangriff aus dem Griff: aktive Frames wie beim
+   freien Spezialangriff, ab E gezählt (Abschnitt 4.5).
+
+Offene Entscheidungen und weitere Arbeitsregeln zu Gegnern, Bossen,
+Stages und zur Scheibe stehen in `docs/design-gegner-stages.md`,
+Abschnitt 10.
 
 ## 10. Quellen
 
@@ -487,9 +547,11 @@ prüfbar:
 | `docs/mechanik.md` | Konventionen; Bewegung; Angriff (Standardschlag, Kette); Sprung; Sprungangriff; Griff und Wurf; Spezialangriff; Sprint; Trefferreaktion der Gegner; Umgeworfen werden; Schaden der Gegner; Reichweite der Gegnerangriffe; Unverwundbarkeit; Lebenspunkte; Gegenstände und Waffen; Nicht übernommen |
 | `research/captcomm/notes.md` | Nachtrag: Trefferreaktion der Gegner; Nachtrag: Verhalten der Nahkämpfer; Nachtrag: Reichweite der Gegnerangriffe; Nachtrag: Spezialangriff; Nachtrag: Sprint; Nachtrag: Gegenstände und Waffen |
 | `docs/erkenntnisse.md` | Haltung: inspiriert, kein Nachbau; Stand der Analyse; Was das Kampfgefühl ausmacht; Spielfiguren; Gegner als Vorbild; Stages als Vorbild; Hinweise für die eigene Grafik; Übernehmen, Richtwert, selbst gestalten |
-| `research/captcomm/grafik/README.md` | Spielfiguren mit „Animationen im Einzelnen“ (Captain Commando, Mack the Knife, Ginzu the Ninja, Baby Head); Gemeinsame Bewegungen; Gegner (Gegnertabelle, nur Max-LP von CAROL / BRENDA und MARBIN) |
+| `research/captcomm/grafik/README.md` | Spielfiguren mit „Animationen im Einzelnen“ (Captain Commando, Mack the Knife, Ginzu the Ninja, Baby Head); Gemeinsame Bewegungen; Stage 1 (Dauer des Bot-Laufs, LP des Bosses) |
 | `research/captcomm/grafik/figuren/ablaeufe.csv` | Zeilen `captain_*` für die Animationsliste in Abschnitt 8 |
 | `docs/auftraege/2026-10-02-opus-messungen-und-design.md` | Auftrag D1, Bedeutung von M1 bis M5 |
+| `docs/auftraege/2026-10-02-opus-auftrag-2-boss-fernkampf-spezifikation.md` | Abschnitt 1 (Entscheidungen E1 bis E9), Auftrag D3, Messpaket 2 (M6 bis M8) |
+| `docs/design-gegner-stages.md` | Abschnitt 1 (Gegnerrollen), 2 (Angriffserlaubnis, Trefferreaktion), 3 (Typen), 4 (Bosse), 5 (Kamera, Stage-Länge), 6 (Stages), 7 (erste Stage, Zuschnitt der Scheibe), 8 (Gegenstände), 9 (Animationen der Gegner), 10 (offene Entscheidungen und Arbeitsregeln, Fortsetzung der Liste „Offen bis Messpaket 2“) |
 
 Zuordnung zum Vorbild Captain Commando (nur hier genannt):
 
