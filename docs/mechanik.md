@@ -8,8 +8,10 @@ der Bildrate des Originals: 59,637405 Hz laut `mame -listxml captcomm`
 Messungen ist Captain Commando.
 
 Stand 2026-10-02: Werte aus Aufgabe 4 und 5 sowie aus den Nachträgen
-(Sprung, Schlagreichweite, Reichweite der Kettenstufen 2–4, Würfe)
-übernommen.
+(Sprung, Schlagreichweite, Reichweite der Kettenstufen 2–4, Würfe,
+Schaden der Gegner) übernommen. Werte mit „Workflow“ in der Belegspalte
+sind von mehreren Agenten unabhängig gemessen und gegengeprüft, aber nicht
+mit einem Skript im Repo nachvollziehbar (Kennzeichnung in notes.md).
 
 ## Konventionen
 
@@ -94,6 +96,20 @@ ersten Stage (WOOKY, 30-LP-Gegner); andere Typen fliegen etwas anders weit
 | Liegen | 121 Frames vom Umwerfen bis zum Aufstehen (≈ 2,0 s), danach 35 Frames Schutz | wie oben |
 | Aufstehen beschleunigen | Tastendrücke (Angriff oder Sprung) beim Liegen verkürzen die Liegephase, sechs Drücke beenden sie. Schnelles Drücken: 88–93 statt 121 Frames | wie oben |
 
+## Schaden der Gegner
+
+| Größe | Wert | Beleg |
+|---|---|---|
+| Schwierigkeit (Rang) | Ein Rang von 7 bis 24 steuert Schaden und LP der Gegner. Start bei 9, +1 nach 409 Frames und danach alle 600 Frames (≈ 10 s), bis 24 (nach ≈ 2,5 min). Jeder Tod der Figur senkt ihn um 3 | notes.md „Nachtrag: Schaden der Gegner“, `logs/gegnerschaden.csv` |
+| Fester Schaden | Die Gegner, die zu Beginn der Stage schon stehen, machen immer gleich viel: WOOKY 5, EDDY 6 LP je Treffer | wie oben |
+| Schaden mit Rang | Später erscheinende Gegner: WOOKY 7 / 8 / 9 / 10 LP bei Rang 7 / 8–14 / 15–21 / 22–24; EDDY jeweils 1 mehr; SKIP mit Messer 7 bis 10, sein geworfenes Messer und sein Ausfallstich 10 bis 13. Der Wert wird beim Beginn des Angriffs festgelegt | wie oben (WOOKY Rang 7–12 und SKIP-Stich im Repo, Rest Workflow) |
+| LP der Gegner mit Rang | Später erscheinende Gegner bekommen beim Erscheinen mehr LP: WOOKY 22 bis 34, EDDY 32 bis 42, SKIP 34 bis 46 | wie oben (Workflow) |
+| Fernkampf und Boss | DICK: Pistole 5–7 je Schuss, Raketenwerfer 12–15. Boss DOLG: Schläge 9–12, Ansturm 12–17, Körperpresse 16–22, Griff und Wurf 16–22 (je nach Rang) | notes.md (Workflow) |
+| Zustand der Figur | ändert den Schaden nicht (Stehen, Laufen, Angreifen, Springen, Halten, LP, Blickrichtung, Tiefe). Treffer in der Luft werfen immer um | wie oben (Workflow) |
+| Tod | erst bei LP unter 0; mit genau 0 LP spielt die Figur weiter | wie oben (Workflow) |
+| Gleichzeitiger Treffer | Wird der Schlag der Figur im selben Frame aktiv wie der Treffer des Gegners, gewinnt die Figur | wie oben (Workflow) |
+| Reichweite der Gegnerschläge | WOOKY: Tiefenabstand bis 11 px. Gegen eine springende Figur treffen die Schläge bis zu deren Höhe von 48 px | wie oben (Workflow) |
+
 ## Unverwundbarkeit
 
 | Größe | Wert | Beleg |
@@ -113,8 +129,8 @@ ist dieselbe.
 | Größe | Wert | Beleg |
 |---|---|---|
 | Spielfigur | 72 LP | notes.md „Gefundene Adressen“ (`FFA9D0`) |
-| erster Gegnertyp in Stage 1 („WOOKY“) | 16 LP: eine volle Kette (3 + 4 + 5 + 10 = 22) besiegt ihn | notes.md, `logs/a5_schaden.csv` |
-| zweiter Gegnertyp in Stage 1 (pink) | 30 LP: nach einer vollen Kette liegt er mit 8 LP | wie oben (`combo_c`) |
+| erster Gegnertyp in Stage 1 („WOOKY“) | 16 LP (die zu Beginn stehenden; später erscheinende je nach Rang 22–34): eine volle Kette (3 + 4 + 5 + 10 = 22) besiegt ihn | notes.md, `logs/a5_schaden.csv` |
+| zweiter Gegnertyp in Stage 1 (pink, „EDDY“) | 30 LP (später erscheinende 32–42): nach einer vollen Kette liegt er mit 8 LP | wie oben (`combo_c`) |
 
 ## Nicht übernommen (unsicher oder nicht gemessen)
 
@@ -126,8 +142,7 @@ ist dieselbe.
   Ausfallschritt von etwa 20 px mit späterem Treffer, vom Gegner weg bricht
   die Kette ab (einzelne Läufe).
 - Schaden des Sprungangriffs.
-- Schaden der Gegner gegen die Figur (5, 6, 8 beobachtet) ist noch keinem
-  Gegnertyp sicher zugeordnet.
+- Schaden des Roboters (schwankt auch bei gleichem Rang).
 - Griffreichweite der Figur (Messung läuft).
 - Würfe durch Bosse (DOLG in Stage 1 packt und wirft, nur ein Lauf).
 - Reichweite des geworfenen Gegners als Geschoss (hängt vom Zieltyp ab).

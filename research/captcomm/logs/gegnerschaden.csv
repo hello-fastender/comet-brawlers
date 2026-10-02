@@ -1,0 +1,178 @@
+# Schaden der Gegner gegen die Figur (Captain Commando). gs_hurt*, gs_hurt_c_lang: ohne Eingriff.
+# gs_*_rangN: EINGRIFF, Rang (Byte FFF82A) ab Frame 2 auf N gehalten. typ = S+0x38,
+# max_lp = S+0x9A, attr = Trefferattribut S+0x24 (0x4000 Schlag, 0x8000 Messer, 0x0800 wirft um),
+# schadenswert = S+0x8B des Verursachers (beim Angriffsbeginn gesetzt).
+# Zusammenfassung: Schaden je Gegner (Typ/Max-LP) und Rang
+EDDY 30 LP (direkt, attr 0x400c): Rang 7: 6, Rang 10: 6, Rang 11: 6, Rang 16: 6, Rang 24: 6
+EDDY 30 LP (direkt, attr 0x440c): Rang 7: 6, Rang 11: 6, Rang 24: 6
+EDDY 30 LP (direkt, attr 0x4c0c): Rang 7: 6, Rang 11: 6, Rang 16: 6, Rang 24: 6
+SKIP 34 LP (direkt, attr 0x8402): Rang 7: 7
+SKIP 36 LP (direkt, attr 0x8402): Rang 11: 8
+SKIP 40 LP (direkt, attr 0x8402): Rang 16: 9
+SKIP 46 LP (direkt, attr 0x8402): Rang 24: 10
+WOOKY 16 LP (direkt, attr 0x400c): Rang 7: 5, Rang 10: 5, Rang 11: 5, Rang 16: 5, Rang 24: 5
+WOOKY 16 LP (direkt, attr 0x440c): Rang 10: 5, Rang 11: 5, Rang 16: 5, Rang 24: 5
+WOOKY 16 LP (direkt, attr 0x4c0c): Rang 7: 5, Rang 10: 5, Rang 11: 5, Rang 16: 5, Rang 24: 5
+WOOKY 22 LP (direkt, attr 0x440c): Rang 7: 7
+WOOKY 26 LP (direkt, attr 0x400c): Rang 9: 8, Rang 10: 8
+WOOKY 26 LP (direkt, attr 0x440c): Rang 11: 8, Rang 12: 8
+WOOKY 26 LP (direkt, attr 0x4c0c): Rang 10: 8
+# messen_a5.py rang
+lauf,frame,ereignis,rang,lp
+gs_hurt,1,start,9,72
+gs_hurt,409,rang 9->10,10,72
+gs_hurt,1009,rang 10->11,11,37
+gs_hurt_b,1,start,9,72
+gs_hurt_b,409,rang 9->10,10,72
+gs_hurt_b,1009,rang 10->11,11,37
+gs_hurt_c_lang,1,start,9,72
+gs_hurt_c_lang,409,rang 9->10,10,72
+gs_hurt_c_lang,1009,rang 10->11,11,66
+gs_hurt_c_lang,1609,rang 11->12,12,6
+gs_hurt_c_lang,1741,tod,12,-2
+gs_hurt_c_lang,1893,rang 12->9,9,72
+gs_hurt_c_lang,2209,rang 9->10,10,64
+gs_hurt_c_lang,2809,rang 10->11,11,20
+gs_hurt_c_rang16,1,start,9,72
+gs_hurt_c_rang16,2,rang 9->16,16,72
+gs_hurt_c_rang16,409,rang 16->17,17,72
+gs_hurt_c_rang16,410,rang 17->16,16,72
+gs_hurt_c_rang16,1009,rang 16->17,17,66
+gs_hurt_c_rang16,1010,rang 17->16,16,66
+gs_hurt_c_rang16,1609,rang 16->17,17,1
+gs_hurt_c_rang16,1610,rang 17->16,16,1
+gs_hurt_c_rang16,1791,tod,16,-8
+gs_hurt_c_rang24,1,start,9,72
+gs_hurt_c_rang24,2,rang 9->24,24,72
+gs_hurt_c_rang24,1697,tod,24,-2
+gs_hurt_c_rang7,1,start,9,72
+gs_hurt_c_rang7,2,rang 9->7,7,72
+gs_hurt_c_rang7,409,rang 7->8,8,72
+gs_hurt_c_rang7,410,rang 8->7,7,72
+gs_hurt_c_rang7,1009,rang 7->8,8,66
+gs_hurt_c_rang7,1010,rang 8->7,7,66
+gs_hurt_c_rang7,1609,rang 7->8,8,9
+gs_hurt_c_rang7,1610,rang 8->7,7,9
+gs_hurt_c_rang7,1729,tod,7,-5
+gs_kontakt_b_rang24,1,start,10,72
+gs_kontakt_b_rang24,2,rang 10->24,24,72
+gs_kontakt_b_rang7,1,start,10,72
+gs_kontakt_b_rang7,2,rang 10->7,7,72
+gs_kontakt_b_rang7,109,rang 7->8,8,66
+gs_kontakt_b_rang7,110,rang 8->7,7,66
+gs_kontakt_rang24,1,start,10,72
+gs_kontakt_rang24,2,rang 10->24,24,72
+gs_kontakt_rang7,1,start,10,72
+gs_kontakt_rang7,2,rang 10->7,7,72
+gs_kontakt_rang7,397,rang 7->8,8,57
+gs_kontakt_rang7,398,rang 8->7,7,57
+# messen_a5.py angreifer
+lauf,frame,schaden,lp_nachher,rang,art,slot,typ,max_lp,attr,schadenswert,figur_hoehe,umgeworfen
+gs_hurt,450,5,67,10,direkt,18,0x5a97e,16,0x400c,5,0,nein
+gs_hurt,510,5,62,10,direkt,18,0x5a97e,16,0x400c,5,0,nein
+gs_hurt,574,5,57,10,direkt,18,0x5a97e,16,0x4c0c,5,0,ja
+gs_hurt,731,5,52,10,direkt,18,0x5a97e,16,0x400c,5,0,nein
+gs_hurt,803,5,47,10,direkt,18,0x5a97e,16,0x400c,5,0,nein
+gs_hurt,864,5,42,10,direkt,18,0x5a97e,16,0x400c,5,0,nein
+gs_hurt,924,5,37,10,direkt,18,0x5a97e,16,0x4c0c,5,0,ja
+gs_hurt,1131,5,32,11,direkt,16,0x5a97e,16,0x440c,5,0,nein
+gs_hurt,1158,6,26,11,direkt,17,0x60ca0,30,0x440c,6,0,nein
+gs_hurt,1188,5,21,11,direkt,16,0x5a97e,16,0x440c,5,0,nein
+gs_hurt,1217,6,15,11,direkt,17,0x60ca0,30,0x440c,6,0,nein
+gs_hurt,1249,5,10,11,direkt,16,0x5a97e,16,0x400c,5,0,nein
+gs_hurt,1277,5,5,11,direkt,18,0x5a97e,16,0x4c0c,5,0,ja
+gs_hurt,1434,5,0,11,direkt,18,0x5a97e,16,0x440c,5,0,nein
+gs_hurt_b,422,5,67,10,direkt,18,0x5a97e,16,0x440c,5,0,nein
+gs_hurt_b,480,5,62,10,direkt,18,0x5a97e,16,0x440c,5,0,nein
+gs_hurt_b,543,5,57,10,direkt,18,0x5a97e,16,0x4c0c,5,0,ja
+gs_hurt_b,741,5,52,10,direkt,18,0x5a97e,16,0x400c,5,0,nein
+gs_hurt_b,817,5,47,10,direkt,18,0x5a97e,16,0x400c,5,0,nein
+gs_hurt_b,878,5,42,10,direkt,18,0x5a97e,16,0x400c,5,0,nein
+gs_hurt_b,938,5,37,10,direkt,18,0x5a97e,16,0x4c0c,5,0,ja
+gs_hurt_b,1220,5,32,11,direkt,18,0x5a97e,16,0x400c,5,0,nein
+gs_hurt_b,1284,5,27,11,direkt,18,0x5a97e,16,0x400c,5,0,nein
+gs_hurt_c_lang,959,6,66,10,direkt,17,0x60ca0,30,0x400c,6,0,nein
+gs_hurt_c_lang,1035,6,60,11,direkt,17,0x60ca0,30,0x400c,6,0,nein
+gs_hurt_c_lang,1108,6,54,11,direkt,17,0x60ca0,30,0x4c0c,6,0,ja
+gs_hurt_c_lang,1265,6,48,11,direkt,17,0x60ca0,30,0x440c,6,0,nein
+gs_hurt_c_lang,1299,8,40,11,direkt,18,0x25086,36,0x8402,8,0,nein
+gs_hurt_c_lang,1336,8,32,11,direkt,18,0x25086,36,0x8402,8,0,nein
+gs_hurt_c_lang,1373,8,24,11,direkt,18,0x25086,36,0x8402,8,0,nein
+gs_hurt_c_lang,1410,8,16,11,direkt,18,0x25086,36,0x8402,8,0,nein
+gs_hurt_c_lang,1437,5,11,11,direkt,16,0x5a97e,16,0x400c,5,0,nein
+gs_hurt_c_lang,1497,5,6,11,direkt,16,0x5a97e,16,0x4c0c,5,0,ja
+gs_hurt_c_lang,1741,8,-2,12,direkt,15,0x5a97e,26,0x440c,8,0,ja
+gs_hurt_c_lang,2206,8,64,9,direkt,14,0x5a97e,26,0x400c,8,0,nein
+gs_hurt_c_lang,2280,8,56,10,direkt,14,0x5a97e,26,0x400c,8,0,nein
+gs_hurt_c_lang,2345,8,48,10,direkt,14,0x5a97e,26,0x400c,8,0,nein
+gs_hurt_c_lang,2405,8,40,10,direkt,14,0x5a97e,26,0x4c0c,8,0,ja
+gs_hurt_c_lang,2625,5,35,10,direkt,16,0x5a97e,16,0x440c,5,0,nein
+gs_hurt_c_lang,2683,5,30,10,direkt,16,0x5a97e,16,0x440c,5,0,nein
+gs_hurt_c_lang,2744,5,25,10,direkt,16,0x5a97e,16,0x400c,5,0,nein
+gs_hurt_c_lang,2806,5,20,10,direkt,16,0x5a97e,16,0x4c0c,5,0,ja
+gs_hurt_c_lang,2963,8,12,11,direkt,14,0x5a97e,26,0x440c,8,0,nein
+gs_hurt_c_rang16,951,6,66,16,direkt,17,0x60ca0,30,0x400c,6,0,nein
+gs_hurt_c_rang16,1016,6,60,16,direkt,17,0x60ca0,30,0x400c,6,0,nein
+gs_hurt_c_rang16,1076,5,55,16,direkt,16,0x5a97e,16,0x440c,5,0,nein
+gs_hurt_c_rang16,1133,6,49,16,direkt,17,0x60ca0,30,0x400c,6,0,nein
+gs_hurt_c_rang16,1185,6,43,16,direkt,17,0x60ca0,30,0x4c0c,6,0,ja
+gs_hurt_c_rang16,1379,5,38,16,direkt,16,0x5a97e,16,0x400c,5,0,nein
+gs_hurt_c_rang16,1420,9,29,16,direkt,18,0x25086,40,0x8402,9,0,nein
+gs_hurt_c_rang16,1457,9,20,16,direkt,18,0x25086,40,0x8402,9,0,nein
+gs_hurt_c_rang16,1494,9,11,16,direkt,18,0x25086,40,0x8402,9,0,nein
+gs_hurt_c_rang16,1542,5,6,16,direkt,16,0x5a97e,16,0x400c,5,0,nein
+gs_hurt_c_rang16,1594,5,1,16,direkt,16,0x5a97e,16,0x4c0c,5,0,ja
+gs_hurt_c_rang16,1791,9,-8,16,direkt,18,0x25086,40,0x8402,9,0,ja
+gs_hurt_c_rang24,943,6,66,24,direkt,17,0x60ca0,30,0x400c,6,0,nein
+gs_hurt_c_rang24,1002,6,60,24,direkt,17,0x60ca0,30,0x440c,6,0,nein
+gs_hurt_c_rang24,1054,6,54,24,direkt,17,0x60ca0,30,0x440c,6,0,nein
+gs_hurt_c_rang24,1120,6,48,24,direkt,17,0x60ca0,30,0x4c0c,6,0,ja
+gs_hurt_c_rang24,1311,10,38,24,direkt,18,0x25086,46,0x8402,10,0,nein
+gs_hurt_c_rang24,1348,10,28,24,direkt,18,0x25086,46,0x8402,10,0,nein
+gs_hurt_c_rang24,1385,10,18,24,direkt,18,0x25086,46,0x8402,10,0,nein
+gs_hurt_c_rang24,1422,10,8,24,direkt,18,0x25086,46,0x8402,10,0,nein
+gs_hurt_c_rang24,1459,5,3,24,direkt,16,0x5a97e,16,0x4c0c,5,0,ja
+gs_hurt_c_rang24,1697,5,-2,24,direkt,16,0x5a97e,16,0x400c,5,0,ja
+gs_hurt_c_rang7,963,6,66,7,direkt,17,0x60ca0,30,0x400c,6,0,nein
+gs_hurt_c_rang7,1039,6,60,7,direkt,17,0x60ca0,30,0x400c,6,0,nein
+gs_hurt_c_rang7,1116,6,54,7,direkt,17,0x60ca0,30,0x4c0c,6,0,ja
+gs_hurt_c_rang7,1273,6,48,7,direkt,17,0x60ca0,30,0x440c,6,0,nein
+gs_hurt_c_rang7,1307,7,41,7,direkt,18,0x25086,34,0x8402,7,0,nein
+gs_hurt_c_rang7,1344,7,34,7,direkt,18,0x25086,34,0x8402,7,0,nein
+gs_hurt_c_rang7,1381,7,27,7,direkt,18,0x25086,34,0x8402,7,0,nein
+gs_hurt_c_rang7,1418,7,20,7,direkt,18,0x25086,34,0x8402,7,0,nein
+gs_hurt_c_rang7,1449,5,15,7,direkt,16,0x5a97e,16,0x400c,5,0,nein
+gs_hurt_c_rang7,1476,6,9,7,direkt,17,0x60ca0,30,0x4c0c,6,0,ja
+gs_hurt_c_rang7,1668,7,2,7,direkt,14,0x5a97e,22,0x440c,7,0,nein
+gs_hurt_c_rang7,1729,7,-5,7,direkt,14,0x5a97e,22,0x440c,7,0,ja
+gs_kontakt_b_rang24,28,6,66,24,direkt,17,0x60ca0,30,0x400c,6,0,nein
+gs_kontakt_b_rang24,86,6,60,24,direkt,17,0x60ca0,30,0x400c,6,0,nein
+gs_kontakt_b_rang24,145,6,54,24,direkt,17,0x60ca0,30,0x440c,6,0,nein
+gs_kontakt_b_rang24,186,5,49,24,direkt,16,0x5a97e,16,0x400c,5,0,nein
+gs_kontakt_b_rang24,215,6,43,24,direkt,17,0x60ca0,30,0x440c,6,0,nein
+gs_kontakt_b_rang24,269,6,37,24,direkt,17,0x60ca0,30,0x440c,6,0,nein
+gs_kontakt_b_rang24,335,6,31,24,direkt,17,0x60ca0,30,0x440c,6,0,nein
+gs_kontakt_b_rang24,387,6,25,24,direkt,17,0x60ca0,30,0x440c,6,0,nein
+gs_kontakt_b_rang24,434,5,20,24,direkt,16,0x5a97e,16,0x440c,5,0,nein
+gs_kontakt_b_rang24,482,5,15,24,direkt,16,0x5a97e,16,0x400c,5,0,nein
+gs_kontakt_b_rang24,529,5,10,24,direkt,16,0x5a97e,16,0x4c0c,5,0,ja
+gs_kontakt_b_rang7,48,6,66,7,direkt,17,0x60ca0,30,0x400c,6,0,nein
+gs_kontakt_b_rang7,129,6,60,7,direkt,17,0x60ca0,30,0x400c,6,0,nein
+gs_kontakt_b_rang7,206,6,54,7,direkt,17,0x60ca0,30,0x4c0c,6,0,ja
+gs_kontakt_b_rang7,363,6,48,7,direkt,17,0x60ca0,30,0x400c,6,0,nein
+gs_kontakt_b_rang7,430,6,42,7,direkt,17,0x60ca0,30,0x400c,6,0,nein
+gs_kontakt_b_rang7,495,6,36,7,direkt,17,0x60ca0,30,0x4c0c,6,0,ja
+gs_kontakt_rang24,28,5,67,24,direkt,18,0x5a97e,16,0x400c,5,0,nein
+gs_kontakt_rang24,74,5,62,24,direkt,18,0x5a97e,16,0x400c,5,0,nein
+gs_kontakt_rang24,122,5,57,24,direkt,18,0x5a97e,16,0x4c0c,5,0,ja
+gs_kontakt_rang24,365,5,52,24,direkt,18,0x5a97e,16,0x400c,5,0,nein
+gs_kontakt_rang24,428,5,47,24,direkt,18,0x5a97e,16,0x400c,5,0,nein
+gs_kontakt_rang24,472,5,42,24,direkt,18,0x5a97e,16,0x400c,5,0,nein
+gs_kontakt_rang24,520,5,37,24,direkt,18,0x5a97e,16,0x4c0c,5,0,ja
+gs_kontakt_rang7,28,5,67,7,direkt,18,0x5a97e,16,0x400c,5,0,nein
+gs_kontakt_rang7,94,5,62,7,direkt,18,0x5a97e,16,0x400c,5,0,nein
+gs_kontakt_rang7,162,5,57,7,direkt,18,0x5a97e,16,0x4c0c,5,0,ja
+gs_kontakt_rang7,425,5,52,7,direkt,18,0x5a97e,16,0x400c,5,0,nein
+gs_kontakt_rang7,508,5,47,7,direkt,18,0x5a97e,16,0x400c,5,0,nein
+gs_kontakt_rang7,572,5,42,7,direkt,18,0x5a97e,16,0x400c,5,0,nein
+gs_kontakt_rang7,640,5,37,7,direkt,18,0x5a97e,16,0x4c0c,5,0,ja

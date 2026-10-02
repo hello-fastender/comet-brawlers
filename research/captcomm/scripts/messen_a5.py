@@ -25,6 +25,10 @@ Unterbefehle:
   wurf PREFIX..   Wurf aus dem Griff: Eingabe, Schaden, Loslassen, Scheitel,
                   Landung (ganzzahlige Hoehe 0), Ruheposition; Weiten relativ
                   zur Startposition des Gegners und zur Figur
+  angreifer PREFIX..  jeder LP-Verlust von P1 mit Verursacher (Zeiger P+0x82,
+                  Trefferattribut S+0x24, Schadenswert S+0x8B; Geschosse und
+                  Griffe gesondert) und dem Rang FFF82A
+  rang PREFIX..   Verlauf des Rangs FFF82A (jeder Wechsel) und Tode der Figur
   umfallen PREFIX..  jedes Umwerfen der Figur: Flugbeginn, Scheitel, Bodenkontakt,
                   Ruhelage (dx zum Ort des Umwerfens), Aufstehen, Liegedauer
   wurfablauf PREFIX..  Ereignisse ab dem Griff: LP-Verluste (Gegner, Figur),
@@ -618,6 +622,80 @@ def cmd_umfallen(args):
                   f"{(fix(d, rest, X) - x0) if rest else 0:+g},{up or '-'},{(up - f) if up else '-'},{vx:+g}")
 
 
+RANK = 0xFFF82A                        # Schwierigkeitswert (Byte, 7..24)
+PTR_ANGREIFER = P1 + 0x82              # Wort: Slotadresse+4 des letzten Angreifers
+PTR_HALTER = P1 + 0x70                 # Wort: Slotadresse+4 des haltenden Gegners
+
+
+def cmd_angreifer(args):
+    """Jeder LP-Verlust von P1 mit Verursacher. Regel (Workflow Gegnerschaden):
+    P+0x82 zeigt auf den Slot des Angreifers (S = 0xFF0000 + Wort - 4); dessen
+    Trefferattribut S+0x24 ist aktiv (Bit 0x4000/0x8000) und S+0x8B ist der
+    Schaden ("direkt"). Sonst: Geschoss in Slot 20-59 mit S+0x6C = Zeigerwort,
+    aktivem S+0x24 und S+0x8B = Schaden ("geschoss"); Figur gehalten (P+9 = 6
+    im Frame davor), Halter aus P+0x70 ("griff"); sonst "anders"."""
+    print("lauf,frame,schaden,lp_nachher,rang,art,slot,typ,max_lp,attr,schadenswert,"
+          "figur_hoehe,umgeworfen")
+    for prefix in args.prefix:
+        d = Dump(prefix)
+        name = Path(prefix).name
+        for f0, f in zip(d.frames, d.frames[1:]):
+            dmg = d.value(f0, HP, 2, True) - d.value(f, HP, 2, True)
+            if dmg <= 0 or not d.value(f0, STATE):
+                continue
+
+            def slot_of(word):
+                a = 0xFF0000 + word - 4
+                n = (a - SLOT_BASE) // SLOT_SIZE
+                return n if 0 <= n < 60 and (a - SLOT_BASE) % SLOT_SIZE == 0 else None
+
+            def aktiv(b):
+                at = d.value(f, b + 0x24, 2)
+                return at & 0xC000 and at >> 8 != 0xFF
+
+            art, n = "anders", None
+            ptr = d.value(f, PTR_ANGREIFER, 2)
+            k = slot_of(ptr)
+            if k is not None:
+                b = SLOT_BASE + k * SLOT_SIZE
+                if aktiv(b) and d.value(f, b + 0x8B) == dmg:
+                    art, n = "direkt", k
+            if n is None:
+                for k in range(20, 60):
+                    b = SLOT_BASE + k * SLOT_SIZE
+                    if (d.value(f, b + 4) and d.value(f, b + 0x6C, 2) == ptr
+                            and d.value(f, b + 0x24, 2) not in (0, 0xFF00) and d.value(f, b + 0x8B) == dmg):
+                        art, n = "geschoss", k
+                        break
+            if n is None and d.value(f0, P1 + 9) == 6:
+                k = slot_of(d.value(f0, PTR_HALTER, 2))
+                if k is not None:
+                    art, n = "griff", k
+            b = SLOT_BASE + (n or 0) * SLOT_SIZE
+            st = d.value(f + 1, STATE) if f + 1 in d.offsets else d.value(f, STATE)
+            row = (f"{name},{f},{dmg},{d.value(f, HP, 2, True)},{d.value(f, RANK)},{art},"
+                   + (f"{n},{d.value(f, b + 0x38, 4):#x},{d.value(f, b + 0x9A, 2)},"
+                      f"{d.value(f, b + 0x24, 2):#06x},{d.value(f, b + 0x8B)}," if n is not None else ",,,,,")
+                   + f"{d.value(f0, H, 2, True)},{'ja' if st == 2 else 'nein'}")
+            print(row)
+
+
+def cmd_rang(args):
+    """Verlauf des Rangs FFF82A: jeder Wechsel, dazu Tode der Figur (LP < 0)."""
+    print("lauf,frame,ereignis,rang,lp")
+    for prefix in args.prefix:
+        d = Dump(prefix)
+        name = Path(prefix).name
+        f1 = d.frames[0]
+        print(f"{name},{f1},start,{d.value(f1, RANK)},{d.value(f1, HP, 2, True)}")
+        for f0, f in zip(d.frames, d.frames[1:]):
+            r0, r1 = d.value(f0, RANK), d.value(f, RANK)
+            if r0 != r1:
+                print(f"{name},{f},rang {r0}->{r1},{r1},{d.value(f, HP, 2, True)}")
+            if d.value(f0, HP, 2, True) >= 0 > d.value(f, HP, 2, True):
+                print(f"{name},{f},tod,{r1},{d.value(f, HP, 2, True)}")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -653,6 +731,12 @@ def main():
     p.add_argument("prefix", nargs="+")
     p.add_argument("--bis", type=int, default=10, help="Frames nach dem Druck (Standard 10)")
     p.set_defaults(fn=cmd_kette)
+    p = sub.add_parser("rang")
+    p.add_argument("prefix", nargs="+")
+    p.set_defaults(fn=cmd_rang)
+    p = sub.add_parser("angreifer")
+    p.add_argument("prefix", nargs="+")
+    p.set_defaults(fn=cmd_angreifer)
     p = sub.add_parser("umfallen")
     p.add_argument("prefix", nargs="+")
     p.set_defaults(fn=cmd_umfallen)

@@ -14,6 +14,7 @@ Kennzeichnung in diesem Dokument:
 
 - **gesichert**: in mindestens zwei unabhängigen Läufen reproduziert (mit variierten Eingaben, weil MAME deterministisch ist, siehe „Szenarien“), Beleg mit Frame-Nummern und Logausschnitt angegeben
 - **unsicher**: einzelner Lauf, Vermutung oder Wert mit möglicher Messverzerrung (Begründung dabei)
+- **gesichert (Workflow)**: von mindestens zwei Agenten eines Workflows unabhängig gemessen und gegengeprüft, Läufe aber nur im Scratchpad der Sitzung (nicht mit einem Skript im Repo nachvollziehbar)
 - **offen**: noch nicht gemessen
 
 ## Stand (2026-10-01)
@@ -29,6 +30,7 @@ Kennzeichnung in diesem Dokument:
 | 7. Nachtrag: Sprung und Schlagreichweite | erledigt: Sprungablauf, Höhe, Schwerkraft, Weite und Steuerung sowie x-Reichweite, Tiefentoleranz und aktive Frames des Standardschlags gesichert, siehe „Nachtrag“ |
 | 8. Nachtrag: Reichweite der Kettenstufen 2–4 | erledigt: x-Reichweite, Tiefentoleranz und aktive Frames je Stufe gesichert (per gekennzeichnetem Eingriff, natürlich gegengeprüft), siehe „Nachtrag: Reichweite der Kettenstufen 2–4“ |
 | 9. Nachtrag: Würfe | erledigt: Eingabe, Schaden, Ablauf, Flugbahn und Weite des Wurfs, Kniestoß, Spezialangriff im Griff, geworfener Gegner als Geschoss; Umwerfen der Figur durch Gegner und Verkürzen des Liegens gesichert, siehe „Nachtrag: Würfe“. Griffreichweite folgt |
+| 10. Nachtrag: Schaden der Gegner | erledigt: Zuordnung jedes Treffers zum Angreifer, Schaden je Gegner und Angriff, Abhängigkeit vom Rang (Schwierigkeitswert FFF82A), Regeln für Umwerfen und Tod gesichert, siehe „Nachtrag: Schaden der Gegner“ |
 
 ### Umgebung
 
@@ -78,6 +80,7 @@ Kennzeichnung in diesem Dokument:
 | `belege_a5.sh` | erzeugt `logs/a5_*.csv` | ja |
 | `laeufe_a7.sh`, `belege_a7.sh` | Läufe (~1 min) und Logausschnitte `logs/a7_*.csv` für den Nachtrag Sprung und Schlagreichweite; dazu `messen_a5.py sprung` und `aktiv` | ja |
 | `belege_wurf.sh` | 42 Läufe mit `scenarios/griff.lua` (freie Eingaben `CC_IN`, Länge `CC_FRAMES`; Eingriff nur zum Absetzen des Gegners) und Auswertung mit `messen_a5.py wurf`, `wurfablauf`, `umfallen` nach `logs/wurf.csv` (~1 min) | ja: zweimal ausgeführt, Ergebnis identisch |
+| `belege_gegnerschaden.sh` | 13 Läufe mit `scenarios/rang.lua` (Hülle um `hurt*.lua`/`griff.lua`: Laufzeit `CC_FRAMES`, Rang-Eingriff `CC_RANG`) und Auswertung mit `messen_a5.py angreifer` und `rang` nach `logs/gegnerschaden.csv` (~30 s) | ja: zweimal ausgeführt, Ergebnis identisch |
 | `belege_kette.sh` | 159 Läufe mit `scenarios/kette.lua` (Kette bis Stufe `CC_STUFE`, Eingriffe `CC_DX`, `CC_DZ`, `CC_FERN`, `CC_POKE_BIS`; ohne Eingriff `CC_VERT`, `CC_ABSTAND_LETZT`) und Auswertung mit `messen_a5.py kette` nach `logs/kette_reichweite.csv`; löscht danach die eigenen Rohabzüge (~2 min) | ja: zweimal ausgeführt, Ergebnis identisch |
 
 Ablauf:
@@ -377,7 +380,7 @@ rutscht aber nicht, er springt nach dem ersten Bodenkontakt flach (bis
 | Ablauf | Figur gebunden von E+1 bis E+37, frei ab E+38, sie bewegt sich nicht. Gegner losgelassen in E+22 in Höhe 59, erster Bodenkontakt E+59, Ruhe E+71 | gesichert |
 | Flugbahn ab dem Loslassen | x: 5,0 px/Frame, jeden Frame 1/16 weniger. Höhe: +2,0 px/Frame, jeden Frame 13/64 (0,203) weniger; Scheitel 69,86 px nach 10 Frames. Erster Bodenkontakt nach 37 Frames und 143,4 px, dann trägt ein flacher Rückprall noch 28,1 px | gesichert (Workflow Frame für Frame, Eckwerte in `wurf.csv`) |
 | Weite | Ruhelage 183,8 bis 185,2 px von der Figur, vorwärts wie rückwärts (13 px Versatz beim Loslassen plus 171,5 px Flug). Unabhängig von Tiefe, Zeitpunkt und Kniestößen. Ein Bildschirmrand begrenzt die Weite nicht | gesichert für WOOKY (16 LP), den 30-LP-Gegner (EDDY) und zwei weitere Typen (25 Würfe hier, 21 natürliche im Workflow) |
-| Weite je Gegnertyp | SKIP (Typ `0x25086`): 175,6 px ab Loslassen, Ruhe etwa 196 px von der Figur. Typ `0x36fb2` (Stage 2): 163,3 px, Ruhe etwa 181 px. Schaden gleich (14) | gesichert (zwei Agenten unabhängig, nur Workflow-Läufe) |
+| Weite je Gegnertyp | SKIP (Typ `0x25086`): 175,6 px ab Loslassen, Ruhe etwa 196 px von der Figur. Typ `0x36fb2` (Stage 2): 163,3 px, Ruhe etwa 181 px. Schaden gleich (14) | gesichert (Workflow) |
 | Haltedauer | Ohne Eingabe reißt sich der Gegner 60 Frames nach Griffbeginn los (`wr_a_halten`: Griff 6, los in 67). Wurf frühestens in Griff+1 (`wr_a_zeit7`), spätestens im letzten Halteframe (`wr_a_zeit66`); in Frame 67 kommt nur noch ein Leerschlag | gesichert |
 | Kniestoß | Angriff ohne Richtung im Griff: Treffer K+5 mit 4 LP, Gegner wieder gehalten ab K+23. Die nächste Eingabe (Knie oder Wurf) wird ab K+18 angenommen, in K+2 bis K+17 verworfen und nicht gepuffert (`wr_a_knie1_frueh`). Jeder Kniestoß startet die 60 Frames Haltedauer neu. Der dritte Kniestoß wirft den Gegner um (4 LP, etwa 165 px weit) | gesichert (`wr_a_knie*`, Workflow) |
 | Sprung im Griff | lässt den Gegner ohne Schaden los, danach normaler Sprung (im Stand oder mit Richtung) | gesichert (`wr_a_sprung*`) |
@@ -398,8 +401,10 @@ Die normalen Gegner der ersten Stages werfen die Figur nicht. Was in
 Treffer mit Umwerf-Eigenschaft: Die Figur wird dabei nicht gehalten und
 kann zwischen den Schlägen weglaufen. Der WOOKY wirft meist mit seinem
 dritten oder vierten Schlag um, mit mehreren Gegnern auch früher. Nur der
-Boss von Stage 1 (DOLG) packt und wirft die Figur (20–22 LP, 5 px/Frame,
-etwa 180–230 px; unsicher, ein Lauf im Workflow).
+Boss von Stage 1 (DOLG) und der Roboter packen die Figur. Der Wurf des
+DOLG macht je nach Rang 16–22 LP (gesichert (Workflow), siehe „Nachtrag:
+Schaden der Gegner“). Die Figur fliegt dabei mit 5 px/Frame etwa 180–230 px
+weit (unsicher, ein Lauf).
 
 | Größe | Wert | Status |
 |---|---|---|
@@ -407,6 +412,86 @@ etwa 180–230 px; unsicher, ein Lauf im Workflow).
 | Liegen | Vom Umwerfen bis zum Aufstehen 121 Frames (122 nach dem 138-px-Flug), bei beiden Gegnertypen | gesichert (`wr_u_passiv`, `wr_u_b_passiv`) |
 | Aufstehen beschleunigen | Tastendrücke (Angriff oder Sprung) beim Liegen verkürzen die Liegephase: sechs Drücke beenden sie zwei Frames nach dem sechsten. Jeden 2. Frame gedrückt: 93 statt 121 Frames, jeden 4.: 103, Angriff und Sprung abwechselnd in jedem Frame: 88. Jeden 8. Frame gedrückt ändert nichts. Drücke während des Flugs und Richtungen zählen nicht | gesichert (`wr_u_mash*`, unabhängig vom Workflow gemessen) |
 | Wand | Landet die Figur an einer Wand (Stage 1: Bankschalter), fehlt der Rückprall und sie liegt 6 Frames länger | unsicher (ein Agent, 10 Fälle) |
+
+## Nachtrag: Schaden der Gegner
+
+Belege: `logs/gegnerschaden.csv`, erzeugt von
+`scripts/belege_gegnerschaden.sh` (Szenario `rang.lua` um `hurt*.lua` bzw.
+`griff.lua`, Auswertung `messen_a5.py angreifer` und `rang`). Dazu kommt ein
+Workflow mit vier Messagenten (Zuordnungsregel, Stage 1 auf zwei Wegen
+durchgespielt, Gegnertypen, Zustand der Figur) und je zwei Gegenprüfungen.
+Dessen Läufe liegen nur im Scratchpad (`workflow_gs/`). Werte, die nur dort
+belegt sind, tragen den Status „gesichert (Workflow)“: von mindestens zwei
+Agenten unabhängig gemessen und gegengeprüft, aber nicht mit einem Skript
+im Repo nachvollziehbar. Die Durchspiel-Läufe des Workflows füllen die LP
+der Figur nach jedem Treffer wieder auf (EINGRIFF; der Schaden des Treffers
+selbst bleibt sichtbar).
+
+**Zuordnung** (gesichert): Im Frame des LP-Verlusts zeigt das Wort P+0x82
+(`FFAA12`) auf den Slot des Angreifers (S = `0xFF0000` + Wort − 4). Dessen
+Trefferattribut S+0x24 ist aktiv, und das Byte S+0x8B ist genau der
+Schaden. S+0x8B wird beim Beginn des Angriffs gesetzt. Ausnahmen: Bei
+Geschossen zeigt der Zeiger auf den Werfer, der Schaden steht im Geschoss
+(Slot 20–59, S+0x6C = Zeigerwort). Bei Griffen (Boss, Roboter) bleibt der
+Zeiger alt, der Halter steht in P+0x70. Mit dieser Regel sind die früher
+unklaren Werte erklärt: Die 6er in `hurt` (1158, 1217) sind Tritte des
+30-LP-Gegners (EDDY), die 8er in `hurt_c` (1299–1410) Messerstiche von SKIP,
+der 8er in 1741 ein WOOKY mit 26 LP.
+
+**Rang** (gesichert): Das Byte `FFF82A` ist ein Schwierigkeitswert. Ab
+`ingame` steht es auf 9, steigt in Frame 409 und danach alle 600 Frames um 1
+(Zähler `FFF82C`) bis höchstens 24. Bei jedem Tod der Figur fällt es beim
+Wiedereinstieg um 3 (`gs_hurt_c_lang`: Tod 1741, 12 → 9 in 1893). Der Zähler
+läuft im 600er-Takt weiter. Das Spiel hält den Wert zwischen 7 und 24. Laut
+Workflow fällt er auch zu Beginn von Stage 2 um 3.
+
+| Gegner | Schaden je Treffer | Status |
+|---|---|---|
+| Gegner, die beim Start von Stage 1 schon stehen (WOOKY 16 LP, EDDY 30 LP) | WOOKY 5, EDDY 6, bei jedem Rang (7 bis 24) und mit allen Angriffen | gesichert (`gs_*_rang7/24`, `gs_hurt*`) |
+| später erscheinende WOOKY | Rang 7: 7, 8–14: 8, 15–21: 9, 22–24: 10 | gesichert: Rang 7 und 9–12 hier (`gs_hurt_c_rang7`, `gs_hurt_c_lang`), Rest Workflow |
+| später erscheinende EDDY | Rang 7: 8, 8–14: 9, 15–21: 10, 22–24: 11 | gesichert (Workflow) |
+| SKIP, Messerstich | Rang 7: 7, 11: 8, 16: 9, 24: 10 (Stufen bei etwa 9, 16/17, 23) | gesichert (`gs_hurt_c*`, Workflow) |
+| SKIP, geworfenes Messer (Geschoss, wirft um) | 10 bis 13 je nach Rang (11 bei Rang 12–16, 13 ab 22) | gesichert (Workflow) |
+| SKIP, Ausfallstich (wirft um) | 10 bis 13 je nach Rang | gesichert (Workflow) |
+| DICK, Pistole (zwei Schüsse im Abstand von 17 Frames, der zweite wirft um) | 5 bis 7 je Schuss | gesichert (Workflow) |
+| DICK, Raketenwerfer (Explosion) | 12 bis 15 | gesichert (Workflow) |
+| Roboter (von einem WOOKY gesteuert) | Schläge 12 bis 23, Griff 13 bis 21, auch bei gleichem Rang verschieden | unsicher |
+| DOLG (Boss Stage 1) | Schläge 9–12, Ansturm 12–17, Sprung/Körperpresse 16–22, Griff und Wurf 16–22, je nach Rang | gesichert (Workflow) |
+
+Die maximalen LP später erscheinender Gegner hängen vom Rang beim
+Erscheinen ab (WOOKY 22 bis 34, EDDY 32 bis 42, SKIP 34 bis 46). Deshalb
+schien der Schaden früher mit den Max-LP zu wachsen.
+
+**Unabhängig vom Zustand der Figur** (gesichert, Workflow mit über 1.000
+Treffern): Stehen, Laufen, eigener Angriff, Sprung, Halten eines Gegners,
+Blickrichtung, Tiefe und eigene LP ändern den Schaden nicht. Aufeinander
+folgende Treffer werden nicht stärker; nur ein Rangwechsel zwischen zwei
+Angriffen ändert den Wert.
+
+Weitere Regeln (gesichert, Workflow):
+
+- **Umwerfen**: Die Figur fällt nur, wenn das Attribut das Bit 0x0800 hat,
+  wenn sie in der Luft getroffen wird oder wenn ihre LP unter 0 fallen.
+  Jeder Treffer in der Luft wirft um.
+- **Tod**: Genau 0 LP überlebt die Figur (normale Trefferreaktion). Erst
+  unter 0 stirbt sie; etwa 120 Frames später geht es mit 72 LP weiter.
+- **Gleichzeitiger Treffer**: Wird der Schlag der Figur im ersten aktiven
+  Frame des Gegners aktiv, verliert nur der Gegner LP. Einen Frame später
+  trifft der Gegner zuerst.
+- **Schutz nach Treffer**: Die 27 Frames schützen vor Schlägen, nicht vor
+  Geschossen und Griffen.
+- **Reichweite der Gegner** (Stage-1-Fußvolk): WOOKY trifft bis zu einem
+  Tiefenabstand von 11 px, ab 12 nicht. Gegen eine springende Figur treffen
+  die Schläge bis zu ihrer Höhe von 48 px, bei 49–51 px nicht (der
+  Sprungtritt von EDDY bis 50).
+- **Angriffe von WOOKY und EDDY**: Je zwei normale Schläge (Treffer 4 bzw.
+  9 Frames nach Angriffsbeginn) und zwei Umwerf-Angriffe (Gerade und
+  Aufwärtshaken beim WOOKY, Ausfallschlag und Sprungtritt bei EDDY).
+  Zwischen zwei Umwerf-Angriffen landet derselbe Gegner 0 bis 3 normale
+  Treffer.
+- **Trefferreaktion**: Von hinten getroffen eine eigene Animation, von
+  vorn je nach Attribut zwei verschiedene (Bit 0x0400 wählt nur die
+  Animation).
 
 ## Objekt-Slots
 
