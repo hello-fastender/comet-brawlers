@@ -1,0 +1,184 @@
+# Griff der Figur (Captain Commando), griff.lua. gr_nat_*, gr_sprung_*, gr_angriff_*: ohne Eingriff.
+# gr_x_*: EINGRIFF bis Frame 4 (Gegner bei dx/dz 11 abgesetzt), dann Schritt nach oben (dz 11 -> 10).
+# gr_z_*: EINGRIFF, Tiefe des Gegners bis Frame 40 gehalten. gr_still_*: Gegner bei dx 30 abgesetzt,
+# keine Eingabe. dx/dz: Gegner minus Figur, ganzzahlig am Frame-Ende.
+# Zusammenfassung
+gr_angriff_k_g+1: Griff in Frame 6 bei dx 39, dz 10
+gr_angriff_k_g+60: Griff in Frame 6 bei dx 39, dz 10
+gr_angriff_k_g+61: Griff in Frame 6 bei dx 39, dz 10
+gr_angriff_k_g-1: kein Griff
+gr_angriff_k_g0: Griff in Frame 6 bei dx 39, dz 10
+gr_nat_ac: Griff in Frame 25 bei dx 38, dz 0
+gr_nat_an: Griff in Frame 25 bei dx 38, dz 6
+gr_nat_k: Griff in Frame 6 bei dx 39, dz 10
+gr_nat_kb: Griff in Frame 12 bei dx 38, dz 2
+gr_sprung_k: kein Griff
+gr_still_kontakt: kein Griff
+gr_still_kontakt_b: kein Griff
+x kontakt_b_links: dxm37: Griff bei dx -37/dz 10; dxm38: Griff bei dx -38/dz 10; dxm39: kein Griff; dxm40: kein Griff
+x kontakt_b_rechts: dx38: Griff bei dx 38/dz 10; dx39: Griff bei dx 39/dz 10; dx40: kein Griff; dx41: kein Griff
+x kontakt_links: dxm37: Griff bei dx -37/dz 10; dxm38: Griff bei dx -38/dz 10; dxm39: kein Griff; dxm40: kein Griff
+x kontakt_rechts: dx38: Griff bei dx 38/dz 10; dx39: Griff bei dx 39/dz 10; dx40: kein Griff; dx41: kein Griff
+z kontakt: dz10: Griff bei dx 39/dz 10; dz11: kein Griff; dzm10: Griff bei dx 39/dz -10; dzm11: kein Griff
+z kontakt_b: dz10: Griff bei dx 38/dz 10; dz11: kein Griff; dzm10: Griff bei dx 38/dz -10; dzm11: kein Griff
+# Treffer der gr_angriff_*-Laeufe (messen_a5.py treffer)
+lauf,frame,slot,max_lp,lp_vorher,lp_nachher,schaden,stufe,p1_aktion,status_vorher,status_nachher,umgefallen
+gr_angriff_k_g+1,12,18,16,16,12,4,2,0x0,3,3/3,nein
+gr_angriff_k_g+60,71,18,16,16,12,4,2,0x0,3,3/3,nein
+gr_angriff_k_g-1,7,18,16,16,13,3,1,0x10,1,3/3,nein
+# messen_a5.py griff
+lauf,frame,ereignis,dx,dz,p1_aktion,p1_phase,gegner_slot,gegner_status,gegner_aktion,schaden,eingaben
+gr_angriff_k_g0,2,vorher,46,10,0x0,0,18,1,0x6,0,P1 Right
+gr_angriff_k_g0,3,vorher,45,10,0x0,0,18,1,0x6,0,P1 Right
+gr_angriff_k_g0,4,vorher,43,10,0x0,0,18,1,0x6,0,P1 Right
+gr_angriff_k_g0,5,vorher,41,10,0x0,0,18,1,0x6,0,P1 Right
+gr_angriff_k_g0,6,GRIFF,39,10,0x0,0,18,2,0x0,0,P1 Button 1|P1 Right
+gr_angriff_k_g0,7,gegner_aktion wechselt,26,0,0x0,2,18,3,0x2,0,P1 Button 1|P1 Right
+gr_angriff_k_g0,67,gegner verlaesst status 2/3,17,0,0x0,0,18,1,0x8,0,
+gr_angriff_k_g+1,2,vorher,46,10,0x0,0,18,1,0x6,0,P1 Right
+gr_angriff_k_g+1,3,vorher,45,10,0x0,0,18,1,0x6,0,P1 Right
+gr_angriff_k_g+1,4,vorher,43,10,0x0,0,18,1,0x6,0,P1 Right
+gr_angriff_k_g+1,5,vorher,41,10,0x0,0,18,1,0x6,0,P1 Right
+gr_angriff_k_g+1,6,GRIFF,39,10,0x0,0,18,2,0x0,0,P1 Right
+gr_angriff_k_g+1,7,gegner_aktion wechselt,26,0,0x0,2,18,3,0x2,0,P1 Button 1
+gr_angriff_k_g+1,12,treffer im griff,21,0,0x0,4,18,3,0x4,4,
+gr_angriff_k_g+1,12,gegner_aktion wechselt,21,0,0x0,4,18,3,0x4,0,
+gr_angriff_k_g+1,30,gegner_aktion wechselt,17,0,0x0,2,18,3,0x2,0,
+gr_angriff_k_g+1,80,laufende (gegner noch in status 2/3),17,0,0x0,2,18,3,0x2,0,
+gr_angriff_k_g+60,2,vorher,46,10,0x0,0,18,1,0x6,0,P1 Right
+gr_angriff_k_g+60,3,vorher,45,10,0x0,0,18,1,0x6,0,P1 Right
+gr_angriff_k_g+60,4,vorher,43,10,0x0,0,18,1,0x6,0,P1 Right
+gr_angriff_k_g+60,5,vorher,41,10,0x0,0,18,1,0x6,0,P1 Right
+gr_angriff_k_g+60,6,GRIFF,39,10,0x0,0,18,2,0x0,0,P1 Right
+gr_angriff_k_g+60,7,gegner_aktion wechselt,26,0,0x0,2,18,3,0x2,0,
+gr_angriff_k_g+60,71,treffer im griff,21,0,0x0,4,18,3,0x4,4,
+gr_angriff_k_g+60,71,gegner_aktion wechselt,21,0,0x0,4,18,3,0x4,0,
+gr_angriff_k_g+60,89,gegner_aktion wechselt,17,0,0x0,2,18,3,0x2,0,
+gr_angriff_k_g+60,90,laufende (gegner noch in status 2/3),17,0,0x0,2,18,3,0x2,0,
+gr_angriff_k_g+61,2,vorher,46,10,0x0,0,18,1,0x6,0,P1 Right
+gr_angriff_k_g+61,3,vorher,45,10,0x0,0,18,1,0x6,0,P1 Right
+gr_angriff_k_g+61,4,vorher,43,10,0x0,0,18,1,0x6,0,P1 Right
+gr_angriff_k_g+61,5,vorher,41,10,0x0,0,18,1,0x6,0,P1 Right
+gr_angriff_k_g+61,6,GRIFF,39,10,0x0,0,18,2,0x0,0,P1 Right
+gr_angriff_k_g+61,7,gegner_aktion wechselt,26,0,0x0,2,18,3,0x2,0,
+gr_angriff_k_g+61,67,gegner verlaesst status 2/3,17,0,0x0,0,18,1,0x8,0,P1 Button 1
+gr_angriff_k_g-1,-,kein Griff,,,,,,,,,
+gr_nat_ac,21,vorher,45,0,0x0,2,17,1,0x6,0,P1 Right
+gr_nat_ac,22,vorher,43,0,0x0,2,17,1,0x6,0,P1 Right
+gr_nat_ac,23,vorher,42,0,0x0,2,17,1,0x6,0,P1 Right
+gr_nat_ac,24,vorher,40,0,0x0,2,17,1,0x6,0,P1 Right
+gr_nat_ac,25,GRIFF,38,0,0x0,0,17,2,0x0,0,P1 Right
+gr_nat_ac,26,gegner_aktion wechselt,26,0,0x0,2,17,3,0x2,0,P1 Right
+gr_nat_ac,60,laufende (gegner noch in status 2/3),17,0,0x0,2,17,3,0x2,0,
+gr_nat_an,21,vorher,45,6,0x0,0,18,1,0x6,0,P1 Right
+gr_nat_an,22,vorher,43,6,0x0,0,18,1,0x6,0,P1 Right
+gr_nat_an,23,vorher,42,6,0x0,0,18,1,0x6,0,P1 Right
+gr_nat_an,24,vorher,40,6,0x0,0,18,1,0x6,0,P1 Right
+gr_nat_an,25,GRIFF,38,6,0x0,0,18,2,0x0,0,P1 Right
+gr_nat_an,26,gegner_aktion wechselt,26,0,0x0,2,18,3,0x2,0,P1 Right
+gr_nat_an,60,laufende (gegner noch in status 2/3),17,0,0x0,2,18,3,0x2,0,
+gr_nat_k,2,vorher,46,10,0x0,0,18,1,0x6,0,P1 Right
+gr_nat_k,3,vorher,45,10,0x0,0,18,1,0x6,0,P1 Right
+gr_nat_k,4,vorher,43,10,0x0,0,18,1,0x6,0,P1 Right
+gr_nat_k,5,vorher,41,10,0x0,0,18,1,0x6,0,P1 Right
+gr_nat_k,6,GRIFF,39,10,0x0,0,18,2,0x0,0,P1 Right
+gr_nat_k,7,gegner_aktion wechselt,26,0,0x0,2,18,3,0x2,0,P1 Right
+gr_nat_k,40,laufende (gegner noch in status 2/3),17,0,0x0,2,18,3,0x2,0,
+gr_nat_kb,8,vorher,45,2,0x0,2,17,1,0x6,0,P1 Right
+gr_nat_kb,9,vorher,43,2,0x0,2,17,1,0x6,0,P1 Right
+gr_nat_kb,10,vorher,42,2,0x0,2,17,1,0x6,0,P1 Right
+gr_nat_kb,11,vorher,40,2,0x0,2,17,1,0x6,0,P1 Right
+gr_nat_kb,12,GRIFF,38,2,0x0,0,17,2,0x0,0,P1 Right
+gr_nat_kb,13,gegner_aktion wechselt,26,0,0x0,2,17,3,0x2,0,P1 Right
+gr_nat_kb,40,laufende (gegner noch in status 2/3),17,0,0x0,2,17,3,0x2,0,
+gr_sprung_k,-,kein Griff,,,,,,,,,
+gr_still_kontakt,-,kein Griff,,,,,,,,,
+gr_still_kontakt_b,-,kein Griff,,,,,,,,,
+gr_x_kontakt_b_links_dxm37,2,vorher,-37,11,0x0,2,17,1,0xa,0,P1 Left
+gr_x_kontakt_b_links_dxm37,3,vorher,-36,11,0x0,2,17,1,0xa,0,
+gr_x_kontakt_b_links_dxm37,4,vorher,-37,11,0x0,2,17,1,0x0,0,P1 Up
+gr_x_kontakt_b_links_dxm37,5,GRIFF,-37,10,0x0,0,17,2,0x0,0,P1 Up
+gr_x_kontakt_b_links_dxm37,6,gegner_aktion wechselt,-26,0,0x0,2,17,3,0x2,0,P1 Up
+gr_x_kontakt_b_links_dxm37,30,laufende (gegner noch in status 2/3),-17,0,0x0,2,17,3,0x2,0,
+gr_x_kontakt_b_links_dxm38,2,vorher,-38,11,0x0,2,17,1,0xa,0,P1 Left
+gr_x_kontakt_b_links_dxm38,3,vorher,-37,11,0x0,2,17,1,0xa,0,
+gr_x_kontakt_b_links_dxm38,4,vorher,-38,11,0x0,2,17,1,0x0,0,P1 Up
+gr_x_kontakt_b_links_dxm38,5,GRIFF,-38,10,0x0,0,17,2,0x0,0,P1 Up
+gr_x_kontakt_b_links_dxm38,6,gegner_aktion wechselt,-26,0,0x0,2,17,3,0x2,0,P1 Up
+gr_x_kontakt_b_links_dxm38,30,laufende (gegner noch in status 2/3),-17,0,0x0,2,17,3,0x2,0,
+gr_x_kontakt_b_links_dxm39,-,kein Griff,,,,,,,,,
+gr_x_kontakt_b_links_dxm40,-,kein Griff,,,,,,,,,
+gr_x_kontakt_b_rechts_dx38,2,vorher,38,11,0x0,2,17,1,0xa,0,
+gr_x_kontakt_b_rechts_dx38,3,vorher,38,11,0x0,2,17,1,0xa,0,
+gr_x_kontakt_b_rechts_dx38,4,vorher,38,11,0x0,2,17,1,0x0,0,P1 Up
+gr_x_kontakt_b_rechts_dx38,5,GRIFF,38,10,0x0,0,17,2,0x0,0,P1 Up
+gr_x_kontakt_b_rechts_dx38,6,gegner_aktion wechselt,26,0,0x0,2,17,3,0x2,0,P1 Up
+gr_x_kontakt_b_rechts_dx38,30,laufende (gegner noch in status 2/3),17,0,0x0,2,17,3,0x2,0,
+gr_x_kontakt_b_rechts_dx39,2,vorher,39,11,0x0,2,17,1,0xa,0,
+gr_x_kontakt_b_rechts_dx39,3,vorher,39,11,0x0,2,17,1,0xa,0,
+gr_x_kontakt_b_rechts_dx39,4,vorher,39,11,0x0,2,17,1,0x0,0,P1 Up
+gr_x_kontakt_b_rechts_dx39,5,GRIFF,39,10,0x0,0,17,2,0x0,0,P1 Up
+gr_x_kontakt_b_rechts_dx39,6,gegner_aktion wechselt,26,0,0x0,2,17,3,0x2,0,P1 Up
+gr_x_kontakt_b_rechts_dx39,30,laufende (gegner noch in status 2/3),17,0,0x0,2,17,3,0x2,0,
+gr_x_kontakt_b_rechts_dx40,-,kein Griff,,,,,,,,,
+gr_x_kontakt_b_rechts_dx41,-,kein Griff,,,,,,,,,
+gr_x_kontakt_links_dxm37,2,vorher,-37,11,0x0,0,18,1,0x0,0,P1 Left
+gr_x_kontakt_links_dxm37,3,vorher,-35,11,0x0,0,18,1,0x6,0,
+gr_x_kontakt_links_dxm37,4,vorher,-37,11,0x0,0,18,1,0x6,0,P1 Up
+gr_x_kontakt_links_dxm37,5,GRIFF,-37,10,0x0,0,18,2,0x0,0,P1 Up
+gr_x_kontakt_links_dxm37,6,gegner_aktion wechselt,-26,0,0x0,2,18,3,0x2,0,P1 Up
+gr_x_kontakt_links_dxm37,30,laufende (gegner noch in status 2/3),-17,0,0x0,2,18,3,0x2,0,
+gr_x_kontakt_links_dxm38,2,vorher,-38,11,0x0,0,18,1,0x0,0,P1 Left
+gr_x_kontakt_links_dxm38,3,vorher,-36,11,0x0,0,18,1,0x6,0,
+gr_x_kontakt_links_dxm38,4,vorher,-38,11,0x0,0,18,1,0x6,0,P1 Up
+gr_x_kontakt_links_dxm38,5,GRIFF,-38,10,0x0,0,18,2,0x0,0,P1 Up
+gr_x_kontakt_links_dxm38,6,gegner_aktion wechselt,-26,0,0x0,2,18,3,0x2,0,P1 Up
+gr_x_kontakt_links_dxm38,30,laufende (gegner noch in status 2/3),-17,0,0x0,2,18,3,0x2,0,
+gr_x_kontakt_links_dxm39,-,kein Griff,,,,,,,,,
+gr_x_kontakt_links_dxm40,-,kein Griff,,,,,,,,,
+gr_x_kontakt_rechts_dx38,2,vorher,38,11,0x0,0,18,1,0x6,0,
+gr_x_kontakt_rechts_dx38,3,vorher,38,11,0x0,0,18,1,0x6,0,
+gr_x_kontakt_rechts_dx38,4,vorher,38,11,0x0,0,18,1,0x6,0,P1 Up
+gr_x_kontakt_rechts_dx38,5,GRIFF,38,10,0x0,0,18,2,0x0,0,P1 Up
+gr_x_kontakt_rechts_dx38,6,gegner_aktion wechselt,26,0,0x0,2,18,3,0x2,0,P1 Up
+gr_x_kontakt_rechts_dx38,30,laufende (gegner noch in status 2/3),17,0,0x0,2,18,3,0x2,0,
+gr_x_kontakt_rechts_dx39,2,vorher,39,11,0x0,0,18,1,0x6,0,
+gr_x_kontakt_rechts_dx39,3,vorher,39,11,0x0,0,18,1,0x6,0,
+gr_x_kontakt_rechts_dx39,4,vorher,39,11,0x0,0,18,1,0x6,0,P1 Up
+gr_x_kontakt_rechts_dx39,5,GRIFF,39,10,0x0,0,18,2,0x0,0,P1 Up
+gr_x_kontakt_rechts_dx39,6,gegner_aktion wechselt,26,0,0x0,2,18,3,0x2,0,P1 Up
+gr_x_kontakt_rechts_dx39,30,laufende (gegner noch in status 2/3),17,0,0x0,2,18,3,0x2,0,
+gr_x_kontakt_rechts_dx40,-,kein Griff,,,,,,,,,
+gr_x_kontakt_rechts_dx41,-,kein Griff,,,,,,,,,
+gr_z_kontakt_b_dz10,8,vorher,45,10,0x0,2,17,1,0x6,0,P1 Right
+gr_z_kontakt_b_dz10,9,vorher,43,10,0x0,2,17,1,0x6,0,P1 Right
+gr_z_kontakt_b_dz10,10,vorher,42,10,0x0,2,17,1,0x6,0,P1 Right
+gr_z_kontakt_b_dz10,11,vorher,40,10,0x0,2,17,1,0x6,0,P1 Right
+gr_z_kontakt_b_dz10,12,GRIFF,38,10,0x0,0,17,2,0x0,0,P1 Right
+gr_z_kontakt_b_dz10,13,gegner_aktion wechselt,26,0,0x0,2,17,3,0x2,0,P1 Right
+gr_z_kontakt_b_dz10,45,laufende (gegner noch in status 2/3),17,0,0x0,2,17,3,0x2,0,
+gr_z_kontakt_b_dz11,-,kein Griff,,,,,,,,,
+gr_z_kontakt_b_dzm10,8,vorher,45,-10,0x0,2,17,1,0x6,0,P1 Right
+gr_z_kontakt_b_dzm10,9,vorher,43,-10,0x0,2,17,1,0x6,0,P1 Right
+gr_z_kontakt_b_dzm10,10,vorher,42,-10,0x0,2,17,1,0x6,0,P1 Right
+gr_z_kontakt_b_dzm10,11,vorher,40,-10,0x0,2,17,1,0x6,0,P1 Right
+gr_z_kontakt_b_dzm10,12,GRIFF,38,-10,0x0,0,17,2,0x0,0,P1 Right
+gr_z_kontakt_b_dzm10,13,gegner_aktion wechselt,26,0,0x0,2,17,3,0x2,0,P1 Right
+gr_z_kontakt_b_dzm10,45,laufende (gegner noch in status 2/3),17,0,0x0,2,17,3,0x2,0,
+gr_z_kontakt_b_dzm11,-,kein Griff,,,,,,,,,
+gr_z_kontakt_dz10,2,vorher,46,10,0x0,0,18,1,0x6,0,P1 Right
+gr_z_kontakt_dz10,3,vorher,45,10,0x0,0,18,1,0x6,0,P1 Right
+gr_z_kontakt_dz10,4,vorher,43,10,0x0,0,18,1,0x6,0,P1 Right
+gr_z_kontakt_dz10,5,vorher,41,10,0x0,0,18,1,0x6,0,P1 Right
+gr_z_kontakt_dz10,6,GRIFF,39,10,0x0,0,18,2,0x0,0,P1 Right
+gr_z_kontakt_dz10,7,gegner_aktion wechselt,26,0,0x0,2,18,3,0x2,0,P1 Right
+gr_z_kontakt_dz10,45,laufende (gegner noch in status 2/3),17,0,0x0,2,18,3,0x2,0,
+gr_z_kontakt_dz11,-,kein Griff,,,,,,,,,
+gr_z_kontakt_dzm10,2,vorher,46,-10,0x0,0,18,1,0x6,0,P1 Right
+gr_z_kontakt_dzm10,3,vorher,45,-10,0x0,0,18,1,0x6,0,P1 Right
+gr_z_kontakt_dzm10,4,vorher,43,-10,0x0,0,18,1,0x6,0,P1 Right
+gr_z_kontakt_dzm10,5,vorher,41,-10,0x0,0,18,1,0x6,0,P1 Right
+gr_z_kontakt_dzm10,6,GRIFF,39,-10,0x0,0,18,2,0x0,0,P1 Right
+gr_z_kontakt_dzm10,7,gegner_aktion wechselt,26,0,0x0,2,18,3,0x2,0,P1 Right
+gr_z_kontakt_dzm10,45,laufende (gegner noch in status 2/3),17,0,0x0,2,18,3,0x2,0,
+gr_z_kontakt_dzm11,-,kein Griff,,,,,,,,,

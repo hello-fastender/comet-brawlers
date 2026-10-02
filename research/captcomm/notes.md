@@ -29,8 +29,9 @@ Kennzeichnung in diesem Dokument:
 | 6. Übernahme gesicherter Werte nach `docs/mechanik.md` | erledigt: alle gesicherten Messwerte aus Aufgabe 5 sowie Eingabelatenz, Trefferstopp, Kombo-Fenster, Liegedauer und Lebenspunkte; nach dem Nachtrag auch Sprung und Schlagreichweite. Unsichere Punkte stehen dort unter „Nicht übernommen“ |
 | 7. Nachtrag: Sprung und Schlagreichweite | erledigt: Sprungablauf, Höhe, Schwerkraft, Weite und Steuerung sowie x-Reichweite, Tiefentoleranz und aktive Frames des Standardschlags gesichert, siehe „Nachtrag“ |
 | 8. Nachtrag: Reichweite der Kettenstufen 2–4 | erledigt: x-Reichweite, Tiefentoleranz und aktive Frames je Stufe gesichert (per gekennzeichnetem Eingriff, natürlich gegengeprüft), siehe „Nachtrag: Reichweite der Kettenstufen 2–4“ |
-| 9. Nachtrag: Würfe | erledigt: Eingabe, Schaden, Ablauf, Flugbahn und Weite des Wurfs, Kniestoß, Spezialangriff im Griff, geworfener Gegner als Geschoss; Umwerfen der Figur durch Gegner und Verkürzen des Liegens gesichert, siehe „Nachtrag: Würfe“. Griffreichweite folgt |
+| 9. Nachtrag: Würfe | erledigt: Eingabe, Schaden, Ablauf, Flugbahn und Weite des Wurfs, Kniestoß, Spezialangriff im Griff, geworfener Gegner als Geschoss; Umwerfen der Figur durch Gegner und Verkürzen des Liegens gesichert; dazu Reichweite und Bedingungen des Griffs, siehe „Nachtrag: Griff und Würfe“ |
 | 10. Nachtrag: Schaden der Gegner | erledigt: Zuordnung jedes Treffers zum Angreifer, Schaden je Gegner und Angriff, Abhängigkeit vom Rang (Schwierigkeitswert FFF82A), Regeln für Umwerfen und Tod gesichert, siehe „Nachtrag: Schaden der Gegner“ |
+| 11. Nachtrag: Sprungangriff | erledigt: vier Varianten, Schaden, Umwerfen, aktive Frames, Höhen-, x- und Tiefenreichweite gesichert, siehe „Nachtrag: Sprungangriff“ |
 
 ### Umgebung
 
@@ -79,6 +80,8 @@ Kennzeichnung in diesem Dokument:
 | `laeufe_a5.sh` | alle MAME-Läufe für Aufgabe 5 (und die Grundläufe aus 3/4) von vorn, ~1 min | ja: zweimal ausgeführt, Ergebnisse identisch |
 | `belege_a5.sh` | erzeugt `logs/a5_*.csv` | ja |
 | `laeufe_a7.sh`, `belege_a7.sh` | Läufe (~1 min) und Logausschnitte `logs/a7_*.csv` für den Nachtrag Sprung und Schlagreichweite; dazu `messen_a5.py sprung` und `aktiv` | ja |
+| `belege_sprungangriff.sh` | 129 Läufe mit `scenarios/sprungangriff.lua` (Einzelframe-Proben `CC_FERN_BIS`/`CC_NAH_BIS`, Richtung zum Angriff `CC_ADIR`) und Auswertung mit `messen_a5.py sprungangriff` und `treffer` nach `logs/sprungangriff.csv` (~1 min) | ja: zweimal ausgeführt, Ergebnis identisch |
+| `belege_griff.sh` | 36 Läufe mit `scenarios/griff.lua` und Auswertung mit `messen_a5.py griff` und `treffer` nach `logs/griff.csv` (~20 s) | ja: zweimal ausgeführt, Ergebnis identisch |
 | `belege_wurf.sh` | 42 Läufe mit `scenarios/griff.lua` (freie Eingaben `CC_IN`, Länge `CC_FRAMES`; Eingriff nur zum Absetzen des Gegners) und Auswertung mit `messen_a5.py wurf`, `wurfablauf`, `umfallen` nach `logs/wurf.csv` (~1 min) | ja: zweimal ausgeführt, Ergebnis identisch |
 | `belege_gegnerschaden.sh` | 13 Läufe mit `scenarios/rang.lua` (Hülle um `hurt*.lua`/`griff.lua`: Laufzeit `CC_FRAMES`, Rang-Eingriff `CC_RANG`) und Auswertung mit `messen_a5.py angreifer` und `rang` nach `logs/gegnerschaden.csv` (~30 s) | ja: zweimal ausgeführt, Ergebnis identisch |
 | `belege_kette.sh` | 159 Läufe mit `scenarios/kette.lua` (Kette bis Stufe `CC_STUFE`, Eingriffe `CC_DX`, `CC_DZ`, `CC_FERN`, `CC_POKE_BIS`; ohne Eingriff `CC_VERT`, `CC_ABSTAND_LETZT`) und Auswertung mit `messen_a5.py kette` nach `logs/kette_reichweite.csv`; löscht danach die eigenen Rohabzüge (~2 min) | ja: zweimal ausgeführt, Ergebnis identisch |
@@ -235,7 +238,7 @@ zum Aufstehen dauert 121–122 Frames (7 Fälle in `hurt`, `hurt_b`, `hurt_c`).
 **Korrigiert** (Nachtrag Würfe): Die Gegner halten die Figur nicht fest. Ihr
 dritter oder vierter Schlag wirft sie um, ohne Griff; dazwischen kann die
 Figur weglaufen. Die Schläge kommen im Abstand von etwa 56–79 Frames. Siehe
-„Nachtrag: Würfe“.
+„Nachtrag: Griff und Würfe“.
 
 **Figurabhängig** (unsicher, nur Demo): Mack the Knife macht in Stufe 1–3
 ebenfalls 3, 4 und 5 Schaden, mit dem Abschlusstritt aber nur 8. Ab
@@ -357,9 +360,56 @@ Unsicher:
   gehalten, macht die Figur einen Ausfallschritt von etwa 20 px und trifft
   später. Diese Variante kommt auch in der Demo vor; sie ist nur aus
   einzelnen Läufen bekannt.
-- Reichweite des Sprungangriffs: Messung läuft.
+- Reichweite des Sprungangriffs: siehe „Nachtrag: Sprungangriff“.
 
-## Nachtrag: Würfe
+## Nachtrag: Sprungangriff
+
+Belege: `logs/sprungangriff.csv`, erzeugt von `scripts/belege_sprungangriff.sh`
+(Szenario `sprungangriff.lua`, Auswertung `messen_a5.py sprungangriff` und
+`treffer`). Dazu kommt ein Workflow mit fünf Messagenten (Schaden, Timing,
+Höhe, x, Tiefe, dazu eine Auswertung von 1.800 Läufen ohne Eingriff) und je
+zwei Gegenprüfungen. J ist der Frame des Sprungdrucks, A der des
+Angriffsdrucks. Die Proben setzen den Gegner per EINGRIFF relativ zur Figur
+(Einzelframe-Proben: nur im Frame T in Reichweite, davor und danach 200 px
+entfernt). Gewertet werden wie beim Schlag die ganzzahligen Positionen am
+Frame-Ende.
+
+Es gibt vier Varianten, alle mit Aktion 0x0E:
+
+| Variante | Auslöser | Schaden | Status |
+|---|---|---|---|
+| neutral | Sprung ohne Richtung, Angriff ohne Richtung (oder hoch/links/rechts beim Angriff) | 7, wirft um | gesichert |
+| Richtung | links oder rechts im Frame des Sprungdrucks (Vorwärts- und Rückwärtssprung; die Figur dreht sich dabei nicht) | 7, wirft um | gesichert |
+| hoch | hoch genau im Frame des Sprungdrucks (senkrechter Sprung) | 12, wirft um, erster Treffer A+7, trifft auch in 46 px Höhe | gesichert (`sa_nat_*_hoch_*`, ein Gegenprüfer); Reichweite nicht gemessen |
+| unten | runter zusammen mit dem Angriffsdruck | 4, wirft nicht um | gesichert (`sa_nat_kb_unten_*`, ein Gegenprüfer); Reichweite nicht gemessen |
+
+Neutral und Richtung im Einzelnen:
+
+| Größe | Wert | Status |
+|---|---|---|
+| Schaden | 7 je Treffer bei beiden Gegnertypen, in jeder Höhe, unabhängig von einer vorherigen Kette. Mehr als jede der Kettenstufen 1–3 | gesichert (174 Treffer im Workflow, `sa_nat_*`) |
+| Umwerfen | jeder Treffer wirft um: der Gegner fliegt 135 px weit in Blickrichtung der Figur (nicht vom Angreifer weg), liegt 55 Frames nach dem Treffer | gesichert (Workflow) |
+| Aktive Frames | A+5 bis A+28, solange die Figur in der Luft ist (bis J+42). A+3, A+4 und ab A+29 nie. Jeder Treffer hält Figur und Zeitgeber 7 Frames an (Trefferstopp), das Fenster verlängert sich entsprechend | gesichert (`sa_fen_*`) |
+| Mehrere Gegner | ein Sprungangriff kann mehrere Gegner treffen (je 7), denselben aber nur einmal | gesichert (`sa_nat_kb_richtung`: Slot 17 in Frame 10, Slot 16 in Frame 40) |
+| Höhe (neutral) | trifft bis zu einer Höhe der Figur von 45 px, ab 46 nie; keine Mindesthöhe. Beim normalen Sprung ist der Tritt dadurch um den Scheitel herum (A+12 bis A+24 bei A = J+4) wirkungslos | gesichert (`sa_fen_neutral_*`) |
+| Höhe (Richtung) | trifft bis 41 px, ab 43 nie (42 kommt im Sprung nicht vor) | gesichert (`sa_fen_richtung_*`) |
+| x-Reichweite (neutral) | Gegner vor der Figur bis dx 76, ab 77 nie; hinter der Figur bis dx −27, ab −28 nie (Gegner schaut zur Figur) | gesichert (`sa_x_*_neutral_*`, beide Gegnertypen) |
+| x-Reichweite (Richtung) | vor der Figur bis dx 99, ab 100 nie; hinter der Figur bis dx −24, ab −25 nie | gesichert (`sa_x_*_richtung_*`) |
+| Tiefe | \|dz\| ≤ 12 trifft immer, ab 13 nie, ohne Grenzfall, unabhängig von Höhe und Variante | gesichert (`sa_z_*`) |
+| Frühester / spätester Druck | Angriff im selben Frame wie der Sprung ergibt den Spezialangriff (Aktion 0x14), ab J+1 einen Sprungangriff. Ein Druck bis J+41 startet ihn noch; ab A = J+38 bleibt er ohne aktiven Frame. Drücke bei der Landung gehen verloren | gesichert (Workflow) |
+| Dauer | Der Sprung dauert mit Angriff einen Frame länger (Höhe steht in A+1 einmal still), mit Treffer zusätzlich 7 Frames je Treffer | gesichert |
+
+Unsicher bzw. nur im Workflow:
+
+- Die Reichweite hängt von Pose und Blickrichtung des Gegners ab (die
+  Trefferfläche des Gegners ist nicht mittig). Schaut der Gegner von der Figur
+  weg, reicht der neutrale Tritt nur bis dx 52 und hinten bis −3. In
+  einzelnen Angriffsposen des Gegners verschiebt sich die Grenze um 1 bis
+  10 px, und die Höhengrenze sinkt auf etwa 41 px.
+- Mit Blick nach links ist die Reichweite 1 px kürzer (−75 bzw. −98), wie
+  bei der Kette (eine Gegenprüfung).
+
+## Nachtrag: Griff und Würfe
 
 Belege: `logs/wurf.csv`, erzeugt von `scripts/belege_wurf.sh` (Szenario
 `griff.lua`, Auswertung `messen_a5.py wurf`, `wurfablauf`, `umfallen`). Dazu
@@ -370,6 +420,27 @@ plus Richtung im Griff), Captain Commando wirft. „Rückprall“: In
 `messen_a5.py wurf` heißt die Spalte `rutschen_nach_landung`. Der Gegner
 rutscht aber nicht, er springt nach dem ersten Bodenkontakt flach (bis
 3,7 px) wieder ab und landet erst danach endgültig.
+
+### Griff
+
+Belege: `logs/griff.csv`, erzeugt von `scripts/belege_griff.sh` (Szenario
+`griff.lua`, Auswertung `messen_a5.py griff` und `treffer`), dazu ein
+Workflow mit vier Messagenten (x, Tiefe, Bedingungen, Angriffe aus dem
+Griff; zusammen über 7.000 Läufe) und je zwei Gegenprüfungen. Die Proben
+setzen den Gegner bis Frame 4 per EINGRIFF ab (dx, dz 11). Danach macht die
+Figur einen Schritt nach oben (dz 11 → 10), ohne sich in x zu bewegen.
+
+| Größe | Wert | Status |
+|---|---|---|
+| Auslöser | Die Figur läuft (eine Richtung ist gehalten) und der Gegner steht in Griffweite. Entschieden wird an den ganzzahligen Positionen am Ende des Frames. Ein Tiefenschritt allein genügt. Ohne Eingabe gibt es keinen Griff, ebenso wenig im Sprung, bei der Landung, beim Sprint und in der eigenen Trefferreaktion | gesichert (`gr_still_*`, `gr_sprung_k`, `gr_x_*`, Workflow) |
+| x-Reichweite | Gegner vor der Figur, beide schauen sich an: bis 39 px, ab 40 nie (Blick rechts); bis 38 px, ab 39 nie (Blick links). Gleich für beide Gegnertypen | gesichert (`gr_x_*`, `gr_nat_*`) |
+| Tiefe | \|dz\| ≤ 10 greift, ab 11 nie, auf beiden Seiten | gesichert (`gr_z_*`) |
+| Gegner hinter der Figur | Schaut er zur Figur, greift sie ihn bis 24 px hinter sich (Blick links: 25 px). Schaut er weg, gar nicht | gesichert (Workflow) |
+| Gegner vor der Figur, schaut weg | nur bis etwa 14 px | gesichert (Workflow) |
+| Pose des Gegners | In zwei Ausholposen vor seinem Schlag reicht der Griff 1 px weiter (40 bzw. 39 links), beim pinken Gegner in einer Pose bis 41 px; dann greift die Figur unter 5 px Abstand nicht. In aktiven Angriffsframes und in der Trefferreaktion des Gegners gibt es keinen Griff, liegende Gegner werden erst im Frame des Aufstehens gegriffen | gesichert (Workflow) |
+| Haltedauer | 60 Frames, dann reißt sich der Gegner los. Danach ist 30 Frames lang kein neuer Griff möglich. Andere Gegner können die Figur beim Halten treffen; ein Treffer beendet den Griff | gesichert (Workflow, Haltedauer auch `wr_a_halten`) |
+| Angriff am Griffbeginn (G = Griff-Frame) | Druck in G−1 oder früher: normaler Schlag, kein Griff. Druck in G: geht verloren. Ab G+1 Kniestoß bzw. Wurf, bis G+60 | gesichert (`gr_angriff_*`, Workflow) |
+| Kniestoß, Wurf | siehe „Wurf der Figur“: Knie 4 LP (Treffer K+5), der dritte wirft um; Wurf 14 LP; höchstens 22 LP je Griff (2 Knie + Wurf) | gesichert |
 
 ### Wurf der Figur
 

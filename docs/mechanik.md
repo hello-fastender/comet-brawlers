@@ -8,8 +8,8 @@ der Bildrate des Originals: 59,637405 Hz laut `mame -listxml captcomm`
 Messungen ist Captain Commando.
 
 Stand 2026-10-02: Werte aus Aufgabe 4 und 5 sowie aus den Nachträgen
-(Sprung, Schlagreichweite, Reichweite der Kettenstufen 2–4, Würfe,
-Schaden der Gegner) übernommen. Werte mit „Workflow“ in der Belegspalte
+(Sprung, Schlagreichweite, Reichweite der Kettenstufen 2–4, Sprungangriff,
+Griff und Würfe, Schaden der Gegner) übernommen. Werte mit „Workflow“ in der Belegspalte
 sind von mehreren Agenten unabhängig gemessen und gegengeprüft, aber nicht
 mit einem Skript im Repo nachvollziehbar (Kennzeichnung in notes.md).
 
@@ -65,7 +65,20 @@ mit einem Skript im Repo nachvollziehbar (Kennzeichnung in notes.md).
 | Horizontal | 2,25 px/Frame vor- oder rückwärts, festgelegt durch die Richtung im Frame des Sprungdrucks; Weite 92,25 px. In der Luft nicht steuerbar | wie oben |
 | Tiefe in der Luft | 0,5 px/Frame, solange hoch oder runter gehalten wird (jederzeit in der Luft) | wie oben |
 | Tastendauer | ohne Einfluss auf den Sprung | wie oben |
-| Sprungangriff | hält die Höhe einen Frame lang an, der Sprung dauert dadurch einen Frame länger | wie oben |
+
+## Sprungangriff
+
+A ist der Frame des Angriffsdrucks im Sprung, J der des Sprungdrucks.
+
+| Größe | Wert | Beleg |
+|---|---|---|
+| Varianten | Neutral (Sprung ohne Richtung) und Richtung (Sprung mit links/rechts): je 7 LP und Umwerfen. Hoch im Frame des Sprungdrucks: 12 LP, Umwerfen, Treffer ab A+7. Runter mit dem Angriff: 4 LP ohne Umwerfen | notes.md „Nachtrag: Sprungangriff“, `logs/sprungangriff.csv` |
+| Umwerfen | Der Gegner fliegt 135 px in Blickrichtung der Figur | wie oben (Workflow) |
+| Aktive Frames | A+5 bis A+28, solange die Figur in der Luft ist; jeder Treffer verlängert um 7 Frames Trefferstopp. Mehrere Gegner pro Sprung möglich, jeder nur einmal | wie oben |
+| Reichweite neutral | x von 27 px hinter bis 76 px vor der Figur, Tiefe ≤ 12 px, Figur höchstens 45 px hoch (am Scheitel des Sprungs trifft der Tritt nicht) | wie oben |
+| Reichweite Richtung | x von 24 px hinter bis 99 px vor der Figur, Tiefe ≤ 12 px, Figur höchstens 41 px hoch | wie oben |
+| Zeitfenster | Angriff ab J+1 (im selben Frame wie der Sprung: Spezialangriff). Ab A = J+38 kommt der Tritt nicht mehr zur Wirkung, bei der Landung gedrückt geht er verloren | wie oben (Workflow) |
+| Dauer | Der Sprung dauert mit Angriff einen Frame länger (die Höhe steht in A+1 einmal still) | notes.md „Nachtrag: Sprung und Schlagreichweite“ |
 
 ## Griff und Wurf
 
@@ -75,7 +88,11 @@ ersten Stage (WOOKY, 30-LP-Gegner); andere Typen fliegen etwas anders weit
 
 | Größe | Wert | Beleg |
 |---|---|---|
-| Eingabe | Im Griff Angriff plus Richtung. Enthält die Richtung die Blickrichtung (auch diagonal), wird der Gegner nach vorn geworfen, sonst (weg, hoch, runter) rückwärts über die Figur. Angriff ohne Richtung ist ein Kniestoß | notes.md „Nachtrag: Würfe“, `logs/wurf.csv` |
+| Griff auslösen | Die Figur läuft (Richtung gehalten) in den Gegner: Griff, wenn er höchstens 39 px vor ihr steht (Blick links: 38 px) und der Tiefenabstand höchstens 10 px beträgt. Ohne Eingabe, im Sprung und in der eigenen Trefferreaktion kein Griff | notes.md „Nachtrag: Griff und Würfe“, `logs/griff.csv` |
+| Griff von hinten | Gegner hinter der Figur, der sie anschaut: bis 24 px. Schaut er weg: kein Griff | wie oben (Workflow) |
+| Angriff am Griffbeginn | Ein Angriffsdruck einen Frame vor dem Griff gibt einen normalen Schlag (kein Griff), im Griff-Frame selbst geht er verloren | wie oben |
+| Nach dem Losreißen | 30 Frames lang kein neuer Griff. Andere Gegner können die haltende Figur treffen, das beendet den Griff | wie oben (Workflow) |
+| Eingabe | Im Griff Angriff plus Richtung. Enthält die Richtung die Blickrichtung (auch diagonal), wird der Gegner nach vorn geworfen, sonst (weg, hoch, runter) rückwärts über die Figur. Angriff ohne Richtung ist ein Kniestoß | notes.md „Nachtrag: Griff und Würfe“, `logs/wurf.csv` |
 | Schaden Wurf | 14 LP in E+1, unabhängig von Zeitpunkt und vorherigen Kniestößen | wie oben |
 | Ablauf Wurf | Figur gebunden E+1 bis E+37, handlungsfähig ab E+38, bewegt sich dabei nicht. Gegner losgelassen in E+22 (Höhe 59 px), erster Bodenkontakt E+59, liegt ab E+71 still | wie oben |
 | Flugbahn | ab dem Loslassen x 5,0 px/Frame, jeden Frame um 1/16 px/Frame langsamer; Höhe +2,0 px/Frame, jeden Frame 13/64 px/Frame weniger (Scheitel 69,9 px). Nach dem ersten Bodenkontakt ein flacher Rückprall (bis 3,7 px hoch) | wie oben |
@@ -91,7 +108,7 @@ ersten Stage (WOOKY, 30-LP-Gegner); andere Typen fliegen etwas anders weit
 
 | Größe | Wert | Beleg |
 |---|---|---|
-| Auslöser | Normale Gegner packen und werfen die Figur nicht. Bestimmte Schläge (beim WOOKY meist der dritte einer Serie) werfen sie um, mit normalem Schaden | notes.md „Nachtrag: Würfe“, `logs/wurf.csv` (`wr_u_*`) |
+| Auslöser | Normale Gegner packen und werfen die Figur nicht. Bestimmte Schläge (beim WOOKY meist der dritte einer Serie) werfen sie um, mit normalem Schaden | notes.md „Nachtrag: Griff und Würfe“, `logs/wurf.csv` (`wr_u_*`) |
 | Flug | 8 Frames Stillstand nach dem Treffer, dann 2,875 px/Frame vom Angreifer weg, Startgeschwindigkeit nach oben 5,0 px/Frame, Schwerkraft 70/256 px/Frame² (Scheitel etwa 48 px). Erster Bodenkontakt nach 37 Frames Flug bei 109 px, liegt 135 px (selten 138 px) vom Ausgangspunkt entfernt | wie oben |
 | Liegen | 121 Frames vom Umwerfen bis zum Aufstehen (≈ 2,0 s), danach 35 Frames Schutz | wie oben |
 | Aufstehen beschleunigen | Tastendrücke (Angriff oder Sprung) beim Liegen verkürzen die Liegephase, sechs Drücke beenden sie. Schnelles Drücken: 88–93 statt 121 Frames | wie oben |
@@ -116,7 +133,7 @@ ersten Stage (WOOKY, 30-LP-Gegner); andere Typen fliegen etwas anders weit
 |---|---|---|
 | nach erlittenem Treffer | 27 Frames (≈ 0,45 s), solange die Trefferreaktion läuft, unabhängig vom Schaden | notes.md „Messgrößen“, `logs/a5_schutz.csv` (`hurt`, `hurt_b`, `hurt_c`) |
 | nach dem Aufstehen | 35 Frames (≈ 0,59 s), ab dem Aufstehen | wie oben, dazu der gekennzeichnete Eingriff `schutz_eingriff` |
-| Liegen nach dem Umwerfen | 121–122 Frames (≈ 2,0 s) vom Umwerfen bis zum Aufstehen, durch Tastendrücke verkürzbar (siehe „Umgeworfen werden“) | notes.md „Messungen im Einzelnen“, „Nachtrag: Würfe“ |
+| Liegen nach dem Umwerfen | 121–122 Frames (≈ 2,0 s) vom Umwerfen bis zum Aufstehen, durch Tastendrücke verkürzbar (siehe „Umgeworfen werden“) | notes.md „Messungen im Einzelnen“, „Nachtrag: Griff und Würfe“ |
 
 Im Original sind in beiden Schutzfenstern keine LP-Verluste messbar, auch
 wenn ein Gegner die ganze Zeit in Schlagdistanz steht. Ob dessen Angriffe
@@ -135,17 +152,19 @@ ist dieselbe.
 ## Nicht übernommen (unsicher oder nicht gemessen)
 
 - Mechanismus der Unverwundbarkeit (Treffer ignoriert oder Gegner wartet).
-- Reichweite des Sprungangriffs, Mindestabstand des Standardschlags
-  (Treffer bis hinunter zu 41 px beobachtet).
-- Blickrichtung links: Reichweite vermutlich 1 px kürzer (nur eine Messung).
+- Mindestabstand des Standardschlags (Treffer bis hinunter zu 41 px
+  beobachtet).
+- Reichweite der Sprungangriff-Varianten „hoch“ und „unten“.
+- Blickrichtung links: Reichweite von Schlag und Sprungangriff vermutlich
+  1 px kürzer (je eine Gegenprüfung; beim Griff gesichert: 38 statt 39 px).
 - Richtung beim Kettendruck: Zum Gegner hin gehalten gibt es einen
   Ausfallschritt von etwa 20 px mit späterem Treffer, vom Gegner weg bricht
   die Kette ab (einzelne Läufe).
-- Schaden des Sprungangriffs.
 - Schaden des Roboters (schwankt auch bei gleichem Rang).
-- Griffreichweite der Figur (Messung läuft).
-- Würfe durch Bosse (DOLG in Stage 1 packt und wirft, nur ein Lauf).
+- Wurfweite der Boss-Würfe (DOLG in Stage 1 packt und wirft; der Schaden
+  steht oben, die Weite nur aus einem Lauf).
 - Reichweite des geworfenen Gegners als Geschoss (hängt vom Zieltyp ab).
-- Spezialattacke ohne Griff (in der Demo vermutlich 9 LP Kosten) und Werte
-  der anderen Figuren (Mack: Abschlusstritt 8 statt 10; Würfe der anderen
+- Spezialangriff ohne Griff (Angriff und Sprung gleichzeitig): kostet 9 LP,
+  die Figur ist dabei etwa 50 Frames geschützt (Workflow); Schaden und
+  Reichweite nicht gemessen. Werte der anderen Figuren (Mack: Abschlusstritt 8 statt 10; Würfe der anderen
   Figuren weichen ab).
