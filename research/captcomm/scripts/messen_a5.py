@@ -15,7 +15,7 @@ Unterbefehle:
   sprung PREFIX   je Sprung: Eingabe, Absprung, Scheitel, Landung, Weite, Geschwindigkeiten
   aktiv PREFIX..  je aktivem Frame des Einzelschlags (P+2..P+5): Abstand zum
                   naechsten Gegner (ganzzahlig, Frame-Ende) und ob er trifft
-  kette PREFIX..  fuer kette.lua: je Frame nach dem letzten Druck (D+1..D+10)
+  kette PREFIX..  fuer kette.lua: je Frame nach dem letzten Druck (D+1..D+n, --bis n)
                   Stufe, Abstand und Tiefe zum Gegner, Treffer
   sprungangriff PREFIX..  je Frame ab dem Angriffsdruck bis zur Landung (oder
                   zum ersten Treffer): Hoehe von P1, Abstand, Tiefe, Treffer
@@ -340,7 +340,7 @@ def cmd_kette(args):
                 continue
             slot = min(near)[1]
         s = SLOT_BASE + slot * SLOT_SIZE
-        for f in range(p + 1, min(p + 11, d.frames[-1] + 1)):
+        for f in range(p + 1, min(p + args.bis + 1, d.frames[-1] + 1)):
             dx = d.value(f, s + 0x0E, 2) - d.value(f, X, 2)
             dz = d.value(f, s + 0x16, 2) - d.value(f, Z, 2)
             dmg = d.value(f - 1, s + 0x40, 2, True) - d.value(f, s + 0x40, 2, True)
@@ -549,6 +549,7 @@ def main():
     p.set_defaults(fn=cmd_aktiv)
     p = sub.add_parser("kette")
     p.add_argument("prefix", nargs="+")
+    p.add_argument("--bis", type=int, default=10, help="Frames nach dem Druck (Standard 10)")
     p.set_defaults(fn=cmd_kette)
     p = sub.add_parser("sprungangriff")
     p.add_argument("prefix", nargs="+")

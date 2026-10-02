@@ -7,8 +7,8 @@ der Bildrate des Originals: 59,637405 Hz laut `mame -listxml captcomm`
 (MAME 0.264, 8 MHz Pixeltakt ÷ (512 × 262)). Referenzfigur für alle
 Messungen ist Captain Commando.
 
-Stand 2026-10-01: Werte aus Aufgabe 4 und 5 sowie aus dem Nachtrag
-(Sprung, Schlagreichweite) übernommen.
+Stand 2026-10-01: Werte aus Aufgabe 4 und 5 sowie aus den Nachträgen
+(Sprung, Schlagreichweite, Reichweite der Kettenstufen 2–4) übernommen.
 
 ## Konventionen
 
@@ -47,7 +47,10 @@ Stand 2026-10-01: Werte aus Aufgabe 4 und 5 sowie aus dem Nachtrag
 | Reichweite Standardschlag (x) | Treffer bei x-Abstand ≤ 85 px zwischen den Positionen von Figur und Gegner, kein Treffer ab 86 px | notes.md „Nachtrag“, `logs/a7_reichweite.csv` |
 | Reichweite Standardschlag (Tiefe) | Treffer bei Tiefenabstand ≤ 11 px, nie ab 13 px. 12 px ist ein Grenzfall (trifft fast immer) | wie oben |
 | Aktive Frames Standardschlag | P+2 bis P+5 (4 Frames): Ein Gegner, der in dieser Zeit in Reichweite kommt, wird getroffen | wie oben |
-| Kombo-Fenster | Der nächste Kettenschlag wird nur bei einem Druck in h+12 bis h+27 angenommen (16 Frames, ≈ 0,27 s). Drücke in h+1 bis h+11 werden verworfen, nicht gepuffert. Ein Druck ab h+28 beginnt eine neue Kette mit Stufe 1 | notes.md „Messungen im Einzelnen“, `logs/a5_schlag.csv` |
+| Reichweite Kettenstufen 2–4 (x) | Stufe 2: ≤ 87 px, Stufe 3: ≤ 91 px, Stufe 4: ≤ 100 px; jeweils 1 px weiter kein Treffer | notes.md „Nachtrag: Reichweite der Kettenstufen 2–4“, `logs/kette_reichweite.csv` |
+| Reichweite Kettenstufen 2–4 (Tiefe) | Treffer bei Tiefenabstand ≤ 12 px, nie ab 13 px (ohne Grenzfall) | wie oben |
+| Aktive Frames Kettenstufen 2–4 | D = Frame des Kettendrucks. Stufe 2: D+3 bis D+6, Stufe 3: D+4 bis D+7, Stufe 4: D+3 bis D+6. Trifft der Abschlusstritt dort nichts, ist er von D+17 bis D+20 noch einmal aktiv | wie oben |
+| Kombo-Fenster | Der nächste Kettenschlag wird nur in einem Fenster von 16 Frames (≈ 0,27 s) nach dem Treffer h der Vorstufe angenommen: für Stufe 2 bei einem Druck in h+12 bis h+27, für Stufe 3 und 4 in h+11 bis h+26. Frühere Drücke werden verworfen, nicht gepuffert. Spätere Drücke beginnen eine neue Kette mit Stufe 1 | notes.md „Messungen im Einzelnen“ und „Nachtrag: Reichweite der Kettenstufen 2–4“, `logs/a5_schlag.csv`, `logs/kette_reichweite.csv` |
 
 ## Sprung
 
@@ -86,8 +89,12 @@ ist dieselbe.
 ## Nicht übernommen (unsicher oder nicht gemessen)
 
 - Mechanismus der Unverwundbarkeit (Treffer ignoriert oder Gegner wartet).
-- Reichweite der Kettenstufen 2–4 und des Sprungangriffs, Mindestabstand
-  des Standardschlags (Treffer bis hinunter zu 41 px beobachtet).
+- Reichweite des Sprungangriffs, Mindestabstand des Standardschlags
+  (Treffer bis hinunter zu 41 px beobachtet).
+- Blickrichtung links: Reichweite vermutlich 1 px kürzer (nur eine Messung).
+- Richtung beim Kettendruck: Zum Gegner hin gehalten gibt es einen
+  Ausfallschritt von etwa 20 px mit späterem Treffer, vom Gegner weg bricht
+  die Kette ab (einzelne Läufe).
 - Schaden des Sprungangriffs.
 - Schaden der Gegner gegen die Figur (5, 6, 8 beobachtet) ist noch keinem
   Gegnertyp sicher zugeordnet.

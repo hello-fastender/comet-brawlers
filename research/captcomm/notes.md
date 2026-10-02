@@ -27,6 +27,7 @@ Kennzeichnung in diesem Dokument:
 | 5. Messungen | erledigt: alle sieben Messgrößen gesichert (Captain Commando), dazu Kombo-Fenster und Trefferstopp. Offen bleibt nur, *wie* der Schutz wirkt (Treffer ignoriert oder Gegner greift nicht an), siehe „Messungen“ |
 | 6. Übernahme gesicherter Werte nach `docs/mechanik.md` | erledigt: alle gesicherten Messwerte aus Aufgabe 5 sowie Eingabelatenz, Trefferstopp, Kombo-Fenster, Liegedauer und Lebenspunkte; nach dem Nachtrag auch Sprung und Schlagreichweite. Unsichere Punkte stehen dort unter „Nicht übernommen“ |
 | 7. Nachtrag: Sprung und Schlagreichweite | erledigt: Sprungablauf, Höhe, Schwerkraft, Weite und Steuerung sowie x-Reichweite, Tiefentoleranz und aktive Frames des Standardschlags gesichert, siehe „Nachtrag“ |
+| 8. Nachtrag: Reichweite der Kettenstufen 2–4 | erledigt: x-Reichweite, Tiefentoleranz und aktive Frames je Stufe gesichert (per gekennzeichnetem Eingriff, natürlich gegengeprüft), siehe „Nachtrag: Reichweite der Kettenstufen 2–4“ |
 
 ### Umgebung
 
@@ -75,6 +76,7 @@ Kennzeichnung in diesem Dokument:
 | `laeufe_a5.sh` | alle MAME-Läufe für Aufgabe 5 (und die Grundläufe aus 3/4) von vorn, ~1 min | ja: zweimal ausgeführt, Ergebnisse identisch |
 | `belege_a5.sh` | erzeugt `logs/a5_*.csv` | ja |
 | `laeufe_a7.sh`, `belege_a7.sh` | Läufe (~1 min) und Logausschnitte `logs/a7_*.csv` für den Nachtrag Sprung und Schlagreichweite; dazu `messen_a5.py sprung` und `aktiv` | ja |
+| `belege_kette.sh` | 159 Läufe mit `scenarios/kette.lua` (Kette bis Stufe `CC_STUFE`, Eingriffe `CC_DX`, `CC_DZ`, `CC_FERN`, `CC_POKE_BIS`; ohne Eingriff `CC_VERT`, `CC_ABSTAND_LETZT`) und Auswertung mit `messen_a5.py kette` nach `logs/kette_reichweite.csv`; löscht danach die eigenen Rohabzüge (~2 min) | ja: zweimal ausgeführt, Ergebnis identisch |
 
 Ablauf:
 
@@ -194,7 +196,9 @@ h+28 beginnt eine neue Kette mit Stufe 1. Das Fenster ist in `kontakt`
 h+12 angenommen, h+27 angenommen, h+28 Stufe 1. Die Ketten in `attack`,
 `attack_b` und `combo_c` passen dazu (dort wurde bei h+6/h+8 verworfen und
 bei h+14 angenommen). Die Unterphase `FFA99C` springt genau dann auf 4,
-wenn die Figur wieder frei ist (beim Leerschlag auf 2).
+wenn die Figur wieder frei ist (beim Leerschlag auf 2). Das gilt für den
+Druck der Stufe 2. Für Stufe 3 und 4 liegt das Fenster einen Frame früher
+(h+11 bis h+26), siehe „Nachtrag: Reichweite der Kettenstufen 2–4“.
 
 **Startup bei Annäherung.** Läuft der Gegner erst während des Schlags in
 die Reichweite, kommt der Treffer später (`attack_b`: neuer Schlag ab 399 bei
@@ -277,7 +281,78 @@ den Positionen vom Frame-Anfang widersprechen sich die Annäherungen. Nur die
 ganzzahligen Positionen am Frame-Ende ergeben eine gemeinsame Grenze.
 Gegner gleichen ihre Tiefe an die Figur an. Deshalb ist die untere Grenze
 (Gegner 13 px weiter vorn, kein Treffer) nur in zwei Läufen belegt
-(`tiefeA_v21`, `tiefeA_v22`). Nicht gemessen: Reichweite der Kettenstufen 2–4 und des Sprungangriffs.
+(`tiefeA_v21`, `tiefeA_v22`). Die Kettenstufen 2–4 stehen im nächsten Abschnitt.
+
+## Nachtrag: Reichweite der Kettenstufen 2–4
+
+Belege: `logs/kette_reichweite.csv`, erzeugt von `scripts/belege_kette.sh`
+mit dem Szenario `kette.lua` (Savestates `kontakt` mit 16 LP und
+`kontakt_b` mit 30 LP, Slot 17). D ist der Frame, in dem die Taste der
+geprüften Stufe gedrückt ist. Positionen wie oben: ganzzahlig am Frame-Ende,
+dx = x(Gegner) − x(Figur), dz entsprechend in der Tiefe.
+
+**Methode (EINGRIFF)**: In einer natürlichen Kette steht der getroffene
+Gegner still, der Abstand bleibt also der beim ersten Treffer. Um die
+Grenze zu finden, setzt `kette.lua` den Gegner vom Treffer der Vorstufe bis
+D+12 auf einen festen Abstand zur Figur (x-Bruchteil 0). Mit `CC_FERN=n`
+bleibt er bis D+n 200 px entfernt und kommt erst dann in Reichweite. Daran
+sieht man, welche Frames aktiv sind. Die Kette selbst bleibt dabei
+unverändert (Kombostufe im RAM, Schaden 4/5/10). Zur Kontrolle gibt der
+gleiche Eingriff bei Stufe 1 genau die natürlich gemessenen Werte (≤ 85 px,
+P+2 bis P+5).
+
+Ein Workflow mit je einer Mess- und zwei Gegenprüfungen pro Stufe hat das
+Ergebnis unter variierten Bedingungen bestätigt. Variiert wurden die
+Abstände zwischen den Drücken (12 bis 26 Frames nach dem Treffer, also
+innerhalb und außerhalb der Trefferreaktion des Gegners) und der Frame des
+ersten Drucks, auf beiden Savestates, mit mehreren hundert Läufen je
+Stufe. `belege_kette.sh` wiederholt davon eine Auswahl von 111 Läufen
+(dazu 48 Läufe zum Kombo-Fenster, siehe unten).
+
+| Größe | Stufe 2 | Stufe 3 | Stufe 4 (Abschlusstritt) | Status |
+|---|---|---|---|---|
+| Startup (Treffer ab) | D+3 | D+4 | D+3 | gesichert (Aufgabe 5) |
+| x-Reichweite | ≤ 87 px, ab 88 nie | ≤ 91 px, ab 92 nie | ≤ 100 px, ab 101 nie | gesichert |
+| Tiefentoleranz | \|dz\| ≤ 12, ab 13 nie | \|dz\| ≤ 12, ab 13 nie | \|dz\| ≤ 12, ab 13 nie | gesichert |
+| Aktive Frames | D+3 bis D+6 | D+4 bis D+7 | D+3 bis D+6, dazu D+17 bis D+20 | gesichert |
+
+- Anders als bei Stufe 1 gibt es bei \|dz\| = 12 keinen Grenzfall: Alle
+  Folgestufen treffen dort immer. Das gilt auch an der x-Grenze (dx 87/91/100
+  mit dz ±12 trifft, mit ±13 nie).
+- Oben und unten sowie beide Gegnertypen verhalten sich gleich.
+- **Zweites Fenster des Tritts**: Hat der Tritt in D+3 bis D+6 nichts
+  getroffen, ist er von D+17 bis D+20 noch einmal aktiv, mit denselben
+  Grenzen. Zwischen D+7 und D+16 sowie ab D+21 trifft er nicht. Weil der
+  Trefferstopp die Animation anhält, verschieben sich diese Frames, sobald ein
+  anderer Gegner getroffen wird.
+- **Ohne Eingriff** (`kr_nat_*`): Eine Tiefenbewegung vor Stufe 1
+  (`CC_VERT`) stellt die Tiefe ein. Danach läuft die Kette ohne Eingriff.
+  Stufe 4 trifft bei dz +12 (`kr_nat_a_vm2`) und bei dz −12
+  (`kr_nat_b_v13`). Bei dz 13 (`CC_VERT=-3`) trifft schon Stufe 1 nicht.
+  Natürliche Treffer der Stufen 2–4 bei dx 84/85 kommen in `attack`,
+  `attack_b`, `combo_c` und in Anläufen vor, alle innerhalb der Grenzen.
+
+**Kombo-Fenster je Stufe** (Nebenbefund, ohne Eingriff, `kr_fen_*`): Der
+Druck der Stufe 2 wird in h+12 bis h+27 nach dem Treffer der Stufe 1
+angenommen (wie in „Messungen im Einzelnen“). Für die Drücke der Stufen 3
+und 4 liegt das Fenster einen Frame früher, bei h+11 bis h+26 nach dem
+Treffer der Vorstufe. Davor werden die Drücke verworfen, danach beginnen
+sie eine neue Kette. Beide Fenster sind 16 Frames lang. Geprüft wurde das
+auf `kontakt` und `kontakt_b`, mit erstem Druck in Frame 3 und 6 (beides
+gleich). Es ist gesichert und deckt sich mit den Gegenprüfungen des
+Workflows (dort Stufe 3/4 mit Abstand 27: neue Kette).
+
+Unsicher:
+
+- Mit Blick nach links ist die Reichweite vermutlich 1 px kürzer (Stufe 1
+  ≤ 84, Stufe 2 ≤ 86). Das hat nur eine Gegenprüfung per Eingriff gemessen.
+- Richtung während der Kette: Hoch, runter und zum Gegner hin ändern
+  nichts, und die Kette bleibt erhalten. Vom Gegner weg bricht die Kette ab
+  und setzt sie zurück. Wird beim Kettendruck die Richtung zum Gegner
+  gehalten, macht die Figur einen Ausfallschritt von etwa 20 px und trifft
+  später. Diese Variante kommt auch in der Demo vor; sie ist nur aus
+  einzelnen Läufen bekannt.
+- Reichweite des Sprungangriffs: Messung läuft.
 
 ## Objekt-Slots
 
