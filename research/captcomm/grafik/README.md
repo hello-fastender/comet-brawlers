@@ -8,6 +8,8 @@ auch die öffentliche Verbreitung in diesem Repo abdeckt (Freigabe
 gehören nicht dazu; alle Bilder sind Aufnahmen des laufenden Spiels, keine
 aus den ROMs ausgelesenen Grafikdaten.
 
+![Die 9 Stages im Überblick](stages/uebersicht.png)
+
 Alle Bilder lassen sich mit `scripts/grafik/alle.sh` neu erzeugen (etwa
 15 Minuten). Die Läufe sind deterministisch.
 
@@ -40,7 +42,7 @@ Alle Bilder lassen sich mit `scripts/grafik/alle.sh` neu erzeugen (etwa
 
 | Ordner | Inhalt |
 |---|---|
-| `stages/` | je Stage `stage<N>_start.png` (erster spielbarer Moment), sechs Szenenbilder `stage<N>_szene_<k>.png` über die Kamerastrecke verteilt, Panoramen `stage<N>_panorama[_<k>].png` (ein Bild je Abschnitt zwischen Kamerasprüngen) |
+| `stages/` | `uebersicht.png` (alle 9 Stages, je die mittlere Szene); je Stage `stage<N>_start.png` (erster spielbarer Moment), sechs Szenenbilder `stage<N>_szene_<k>.png` über die Kamerastrecke verteilt, Panoramen `stage<N>_panorama[_<k>].png` (ein Bild je Abschnitt zwischen Kamerasprüngen) |
 | `figuren/` | Animationsstreifen der vier Spielfiguren `<figur>_<bewegung>.png`, Dauern in `ablaeufe.csv` |
 | `gegner/` | Pose-Galerien `stage<N>_<typ>.png` je Gegnertyp (Typkennung S+0x38) und Ablaufstreifen von WOOKY und EDDY (`wooky_*`, `eddy_*`, Dauern in `ablaeufe.csv`) |
 
@@ -1007,6 +1009,6 @@ EDDY von der Kette getroffen:
 | `scripts/scenarios/stage_start.lua` | Stage-Start (Savestate `stage<N>`), auch für andere Figuren (`CC_FIGUR`, `CC_SAVE_NAME`) |
 | `scripts/scenarios/held_kontakt.lua`, `anim.lua` | Kontaktlage je Figur; Aufnahme mit Snapshot je Frame und Watch-CSV |
 | `scripts/grafik/bot.lua`, `bot.sh`, `durchlauf.lua` | Durchlauf-Bot (aus dem Grafik-Workflow übernommen) |
-| `scripts/grafik/panorama.py`, `szenen.py` | Panoramen und Szenenauswahl |
+| `scripts/grafik/panorama.py`, `szenen.py`, `uebersicht.sh` | Panoramen, Szenenauswahl, Übersichtsbild |
 | `scripts/grafik/streifen.py`, `helden.sh`, `gegner_ablauf.sh` | Animationsstreifen |
 | `scripts/grafik/gegner.py`, `gegner.sh` | Pose-Galerien |

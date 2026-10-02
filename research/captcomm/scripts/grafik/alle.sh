@@ -7,7 +7,8 @@
 #      held<k>/held<k>_kontakt fuer die vier Spielfiguren
 #   2. Durchlauf je Stage mit dem Bot: Panorama-Streifen (Kamera-Schritte von
 #      32 px) und Szenenbilder (alle 300 Frames)
-#   3. Animationsstreifen der Spielfiguren, Pose-Galerien und Ablaufstreifen der Gegner
+#   3. Uebersichtsbild der 9 Stages, Animationsstreifen der Spielfiguren,
+#      Pose-Galerien und Ablaufstreifen der Gegner
 set -euo pipefail
 cd "$(dirname "$0")/../.."
 q() { "$@" >/dev/null 2>&1 || { echo "Fehler: $*" >&2; exit 1; }; }
@@ -29,6 +30,7 @@ for n in 1 2 3 4 5 6 7 8 9; do
 	python3 scripts/grafik/szenen.py logs/raw/pan_s$n $n grafik/stages/stage${n}_szene
 	rm -f logs/raw/snap/pan_s${n}_*.png
 done
+scripts/grafik/uebersicht.sh
 scripts/grafik/helden.sh
 scripts/grafik/gegner.sh
 scripts/grafik/gegner_ablauf.sh
