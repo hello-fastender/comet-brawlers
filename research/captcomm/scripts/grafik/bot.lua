@@ -11,6 +11,9 @@
 --                 nach dem Stage-Intro (Aktion 2/4 -> 0) gespeichert wird
 --   stop_on_control  nach diesem Savestate beenden (+ stop_delay Frames)
 --   bot           true: Bot spielt (Gegner angreifen, sonst nach rechts)
+--   angriff       false: Bot ignoriert Gegner (kein Ziel, kein Angriff), laeuft
+--                 nur nach rechts, wechselt bei Stillstand die Tiefe und springt
+--                 (Standard true; ergaenzt fuer scenarios/verhalten_bot.lua)
 --   hp_refill     true: Spieler-LP (P+0x40) jeden Frame auf 72 (EINGRIFF)
 --   clear_after   Frames ohne Kamerafortschritt bei lebenden Gegnern, nach
 --                 denen deren LP auf 1 gesetzt werden (EINGRIFF), Standard 900;
@@ -235,7 +238,7 @@ local function on_frame()
 	local best = 1e9
 	for _, e in ipairs(list) do
 		local dist = math.abs(e.x - px) + 2 * math.abs(e.d - pd)
-		if dist < best and (ignore_slot[e.n] or 0) < f then best = dist; target = e end
+		if dist < best and (ignore_slot[e.n] or 0) < f and cfg.angriff ~= false then best = dist; target = e end
 	end
 	-- Ziel ohne LP-Verlust trotz Angriffen -> 600 Frames ignorieren
 	if target then

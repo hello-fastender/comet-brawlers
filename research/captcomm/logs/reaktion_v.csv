@@ -1,0 +1,495 @@
+# Gegenpruefung Trefferreaktion der Gegner (Praefix reaktion_v), erzeugt von scripts/belege_reaktion.sh
+# (Teil reaktion_v) mit scenarios/reaktion_v_frei.lua und scripts/messen_reaktion_v.py belege.
+# Laeufe reaktion_v_*: _w = WOOKY (Savestates anlauf, anlauf_b; 16 LP, Slot 18), _e = EDDY (anlauf_c;
+# 30 LP, Slot 17), c_* zusaetzlich WOOKY Slot 16 (anlauf_c, ohne Eingriff). Einziger EINGRIFF: b_tritt_w
+# (CC_LP=18:35, LP/Vorframe-LP/Max-LP des WOOKY auf 35, damit er den Tritt ueberlebt). Rang nie veraendert.
+# h = LP-Verlust, K = umwerfender Treffer, E = Wurfeingabe, G = erster Frame nach dem Aufstehen, t = LP < 0.
+# A: Trefferreaktion ohne Umwerfen (WOOKY Slot 18)
+lauf,slot,typ,h,schaden,stufe,blick_figur,s4_3_bis,s4_1_ab,naechster_treffer,anim_wechsel,zittern_dx,tiefe_aenderung,aktion_frei,erste_x_aenderung,standpose_ab,ausholen_ab,ausholanimation,aktiv_ab,figur_lp_verlust
+reaktion_v_a_w_geh,18,5A97E,19,3,1,rechts,h+22,h+23,,+1:5EFC8 +10:5F002 +22:5F034 +23:5ED1C +27:5ED4E,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,h+24,h+137,,,,
+reaktion_v_a_w_stand,18,5A97E,54,3,1,rechts,h+22,h+23,,+1:5EFC8 +10:5F002 +22:5F034 +23:5ED1C +24:5ECAA,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,,h+24,h+45,5FC18,h+49,+49
+reaktion_v_a_w_aus,18,5A97E,66,3,1,rechts,h+22,h+23,,+1:5EFC8 +10:5F002 +22:5F034 +23:5ED1C +24:5ECAA,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,,h+24,h+45,5FC18,h+49,+49
+reaktion_v_a_w_kette,18,5A97E,46,3,1,rechts,h+22,h+23,h+24,+1:5EFC8 +10:5F002 +22:5F034 +23:5ED1C,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,,,,,,
+reaktion_v_a_w_kette,18,5A97E,70,4,2,rechts,h+22,h+23,h+24,+0:5ECAA +1:5EE94 +10:5EECE +22:5EEFA +23:5ED1C,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,,,,,,
+reaktion_v_a_w_kette,18,5A97E,94,5,3,rechts,h+22,h+23,,+0:5ECAA +1:5EFC8 +10:5F002 +22:5F034 +23:5ED1C +24:5ECAA,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,,h+24,h+45,5FA54,h+54,+54
+reaktion_v_a_w_neu,18,5A97E,50,3,1,rechts,h+17,,h+18,+1:5EFC8 +10:5F002,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,,,,,,,
+reaktion_v_a_w_neu,18,5A97E,68,4,2,rechts,h+22,h+23,,+1:5EE94 +10:5EECE +22:5EEFA +23:5ED1C +24:5ECAA,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,,h+24,h+45,5FC18,h+49,+49
+reaktion_v_a_w_frueh,18,5A97E,52,3,1,rechts,h+15,,h+16,+1:5EFC8 +10:5F002,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,,,,,,,
+reaktion_v_a_w_frueh,18,5A97E,68,4,2,rechts,h+15,,h+16,+1:5EE94 +10:5EECE,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,,,,,,,
+reaktion_v_a_w_frueh,18,5A97E,84,5,3,rechts,h+17,,h+18,+1:5EFC8 +10:5F002,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,,,,,,,
+reaktion_v_a_w_spaet,18,5A97E,49,3,1,rechts,h+22,h+23,h+30,+1:5EFC8 +10:5F002 +22:5F034 +23:5ED1C +24:5ECAA,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,,h+24,,,,
+reaktion_v_a_w_spaet,18,5A97E,79,4,2,rechts,h+22,h+23,h+30,+1:5EE94 +10:5EECE +22:5EEFA +23:5ED1C +24:5ECAA,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,,h+24,,,,
+reaktion_v_a_w_spaet,18,5A97E,109,5,3,rechts,h+22,h+23,h+29,+1:5EFC8 +10:5F002 +22:5F034 +23:5ED1C +24:5ECAA,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,,h+24,,,,
+reaktion_v_a_w_links,18,5A97E,79,3,1,links,h+22,h+23,,+0:5FC18 +1:5EFC8 +10:5F002 +22:5F034 +23:5ED1C +27:5ED4E,+9:-3 +10:+3 +11:-2 +12:+2 +13:-1 +14:+1,0,0,h+24,,,,,
+reaktion_v_k_w_19,18,5A97E,46,3,1,rechts,h+21,,h+22,+1:5EFC8 +10:5F002,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,,,,,,,
+reaktion_v_k_w_19,18,5A97E,68,4,2,rechts,h+22,h+23,,+0:5F034 +1:5EE94 +10:5EECE +22:5EEFA +23:5ED1C +24:5ECAA,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,,h+24,h+45,5FC18,h+49,+49
+reaktion_v_k_w_20,18,5A97E,46,3,1,rechts,h+22,,h+23,+1:5EFC8 +10:5F002 +22:5F034,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,,,,,,,
+reaktion_v_k_w_20,18,5A97E,69,4,2,rechts,h+22,h+23,,+0:5ED1C +1:5EE94 +10:5EECE +22:5EEFA +23:5ED1C +24:5ECAA,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,,h+24,h+45,5FC18,h+49,+49
+# A: Trefferreaktion ohne Umwerfen (EDDY Slot 17)
+lauf,slot,typ,h,schaden,stufe,blick_figur,s4_3_bis,s4_1_ab,naechster_treffer,anim_wechsel,zittern_dx,tiefe_aenderung,aktion_frei,erste_x_aenderung,standpose_ab,ausholen_ab,ausholanimation,aktiv_ab,figur_lp_verlust
+reaktion_v_a_e_geh,17,60CA0,17,3,1,rechts,h+22,h+23,,+1:639F4 +10:63A2E +22:63A60 +23:63746 +27:63778,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,h+24,h+45,h+66,64688,h+75,+75
+reaktion_v_a_e_stand,17,60CA0,47,3,1,rechts,h+22,h+23,,+1:639F4 +10:63A2E +22:63A60 +23:63746 +24:636D4,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,,h+24,h+45,643F8,h+54,+54
+reaktion_v_a_e_aus,17,60CA0,64,3,1,rechts,h+22,h+23,,+1:639F4 +10:63A2E +22:63A60 +23:63746 +24:636D4,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,,h+24,h+45,643F8,h+54,+54
+reaktion_v_a_e_kette,17,60CA0,44,3,1,rechts,h+22,h+23,h+25,+1:639F4 +10:63A2E +22:63A60 +23:63746 +24:636D4,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,,h+24,,,,
+reaktion_v_a_e_kette,17,60CA0,69,4,2,rechts,h+22,h+23,h+25,+1:638C0 +10:638FA +22:63926 +23:63746 +24:636D4,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,,h+24,,,,
+reaktion_v_a_e_kette,17,60CA0,94,5,3,rechts,h+22,,h+23,+1:639F4 +10:63A2E +22:63A60,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,,,,,,,
+reaktion_v_a_e_neu,17,60CA0,46,3,1,rechts,h+14,,h+15,+1:639F4 +10:63A2E,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,,,,,,,
+reaktion_v_a_e_neu,17,60CA0,61,4,2,rechts,h+14,,h+15,+1:638C0 +10:638FA,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,,,,,,,
+reaktion_v_a_e_neu,17,60CA0,76,5,3,rechts,h+22,h+23,,+1:639F4 +10:63A2E +22:63A60 +23:63746 +24:636D4,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,,h+24,h+45,643F8,h+54,+54
+reaktion_v_a_e_frueh,17,60CA0,50,3,1,rechts,h+14,,h+15,+1:639F4 +10:63A2E,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,,,,,,,
+reaktion_v_a_e_frueh,17,60CA0,65,4,2,rechts,h+14,,h+15,+1:638C0 +10:638FA,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,,,,,,,
+reaktion_v_a_e_frueh,17,60CA0,80,5,3,rechts,h+13,,h+14,+1:639F4 +10:63A2E,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1,0,,,,,,,
+reaktion_v_a_e_spaet,17,60CA0,42,3,1,rechts,h+22,h+23,h+30,+1:639F4 +10:63A2E +22:63A60 +23:63746 +24:636D4,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,,h+24,,,,
+reaktion_v_a_e_spaet,17,60CA0,72,4,2,rechts,h+22,h+23,h+30,+1:638C0 +10:638FA +22:63926 +23:63746 +24:636D4,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,,h+24,,,,
+reaktion_v_a_e_spaet,17,60CA0,102,5,3,rechts,h+22,h+23,h+29,+1:639F4 +10:63A2E +22:63A60 +23:63746 +24:636D4,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,,h+24,,,,
+reaktion_v_a_e_links,17,60CA0,247,3,1,links,h+22,h+23,,+1:639F4 +10:63A2E +22:63A60 +23:63746 +24:636D4,+9:-3 +10:+3 +11:-2 +12:+2 +13:-1 +14:+1,0,0,h+50,h+24,h+45,64688,h+54,+54
+reaktion_v_k_e_20,17,60CA0,45,3,1,rechts,h+22,,h+23,+1:639F4 +10:63A2E +22:63A60,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,,,,,,,
+reaktion_v_k_e_20,17,60CA0,68,4,2,rechts,h+22,h+23,,+0:63746 +1:638C0 +10:638FA +22:63926 +23:63746 +24:636D4,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,h+50,h+24,h+45,64688,,
+reaktion_v_k_e_s3_19,17,60CA0,45,3,1,rechts,h+16,,h+17,+1:639F4 +10:63A2E,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,,,,,,,
+reaktion_v_k_e_s3_19,17,60CA0,62,4,2,rechts,h+22,,h+23,+1:638C0 +10:638FA +22:63926,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,,,,,,,
+reaktion_v_k_e_s3_19,17,60CA0,85,5,3,rechts,h+22,h+23,,+0:63746 +1:639F4 +10:63A2E +22:63A60 +23:63746 +24:636D4,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,h+50,h+24,h+45,64688,h+54,+54
+# C: Trefferreaktion bei zwei Gegnern in einem Schlag (Slot 16 WOOKY, Slot 17 EDDY)
+lauf,slot,typ,h,schaden,stufe,blick_figur,s4_3_bis,s4_1_ab,naechster_treffer,anim_wechsel,zittern_dx,tiefe_aenderung,aktion_frei,erste_x_aenderung,standpose_ab,ausholen_ab,ausholanimation,aktiv_ab,figur_lp_verlust
+reaktion_v_c_zwei_a,16,5A97E,189,3,1,rechts,h+22,h+23,,+1:5EFC8 +10:5F002 +22:5F034 +23:5ED1C +27:5ED4E +30:5ECAA,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,h+24,h+30,h+51,5FC18,h+55,+55
+reaktion_v_c_zwei_b,16,5A97E,242,3,1,rechts,h+22,h+23,,+1:5EFC8 +10:5F002 +22:5F034 +23:5ED1C +27:5ED4E +29:5ECAA,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,h+24,h+29,h+50,5FA54,,+55
+reaktion_v_c_kette_a,16,5A97E,189,3,1,rechts,h+17,,h+18,+1:5EFC8 +10:5F002,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,,,,,,,
+reaktion_v_c_kette_a,16,5A97E,207,4,2,rechts,h+15,,h+16,+1:5EE94 +10:5EECE,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,,,,,,,
+reaktion_v_c_kette_a,16,5A97E,223,5,3,rechts,h+22,h+23,,+1:5EFC8 +10:5F002 +22:5F034 +23:5ED1C +27:5ED4E +30:5ECAA,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,h+24,h+30,,,,
+reaktion_v_c_kette_b,16,5A97E,242,3,1,rechts,h+19,,h+20,+1:5EFC8 +10:5F002,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,,,,,,,
+reaktion_v_c_kette_b,16,5A97E,262,4,2,rechts,h+22,,h+23,+1:5EE94 +10:5EECE +22:5EEFA,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,,,,,,,
+reaktion_v_c_kette_b,16,5A97E,285,5,3,rechts,h+22,h+23,,+0:5ED1C +1:5EFC8 +10:5F002 +22:5F034 +23:5ED1C +27:5ED4E +29:5ECAA,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,h+24,h+29,,,,
+reaktion_v_c_fenster27,16,5A97E,189,3,1,rechts,h+22,h+23,h+30,+1:5EFC8 +10:5F002 +22:5F034 +23:5ED1C +27:5ED4E,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,h+24,,,,,
+reaktion_v_c_fenster27,16,5A97E,219,4,2,rechts,h+22,h+23,,+0:5ECAA +1:5EE94 +10:5EECE +22:5EEFA +23:5ED1C +24:5ECAA,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,,h+24,,,,
+reaktion_v_c_fenster28,16,5A97E,242,3,1,rechts,h+22,h+23,h+30,+1:5EFC8 +10:5F002 +22:5F034 +23:5ED1C +27:5ED4E +29:5ECAA,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,h+24,h+29,,,,
+reaktion_v_c_fenster28,16,5A97E,272,3,1,rechts,h+22,h+23,,+1:5EFC8 +10:5F002 +22:5F034 +23:5ED1C +25:5ECAA,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,h+24,h+25,,,,
+reaktion_v_c_zwei_a,17,60CA0,189,3,1,rechts,h+22,h+23,,+1:639F4 +10:63A2E +22:63A60 +23:63746 +24:636D4,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,,h+24,h+45,645BC,h+55,+55
+reaktion_v_c_zwei_b,17,60CA0,242,3,1,rechts,h+22,h+23,,+1:639F4 +10:63A2E +22:63A60 +23:63746 +25:636D4,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,h+24,h+25,h+46,64688,h+55,+55
+reaktion_v_c_kette_a,17,60CA0,189,3,1,rechts,h+17,,h+18,+1:639F4 +10:63A2E,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,,,,,,,
+reaktion_v_c_kette_a,17,60CA0,207,4,2,rechts,h+15,,h+16,+1:638C0 +10:638FA,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,,,,,,,
+reaktion_v_c_kette_a,17,60CA0,223,5,3,rechts,h+22,h+23,,+1:639F4 +10:63A2E +22:63A60 +23:63746 +24:636D4,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,,h+24,,,,
+reaktion_v_c_kette_b,17,60CA0,242,3,1,rechts,h+19,,h+20,+1:639F4 +10:63A2E,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,,,,,,,
+reaktion_v_c_kette_b,17,60CA0,262,4,2,rechts,h+22,,h+23,+1:638C0 +10:638FA +22:63926,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,,,,,,,
+reaktion_v_c_kette_b,17,60CA0,285,5,3,rechts,h+22,h+23,,+0:63746 +1:639F4 +10:63A2E +22:63A60 +23:63746 +24:636D4,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,,h+24,,,,
+reaktion_v_c_fenster27,17,60CA0,189,3,1,rechts,h+22,h+23,h+30,+1:639F4 +10:63A2E +22:63A60 +23:63746 +24:636D4,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,,h+24,,,,
+reaktion_v_c_fenster27,17,60CA0,219,4,2,rechts,h+22,h+23,,+1:638C0 +10:638FA +22:63926 +23:63746 +25:636D4,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,h+24,h+25,,,,
+reaktion_v_c_fenster28,17,60CA0,242,3,1,rechts,h+22,h+23,h+30,+1:639F4 +10:63A2E +22:63A60 +23:63746 +25:636D4,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,h+24,h+25,,,,
+reaktion_v_c_fenster28,17,60CA0,272,3,1,rechts,h+22,h+23,,+1:639F4 +10:63A2E +22:63A60 +23:63746 +24:636D4,+9:+3 +10:-3 +11:+2 +12:-2 +13:+1 +14:-1,0,0,,h+24,,,,
+# C: Trefferstopp der Figur (zwei Gegner) und Vergleich mit einem Gegner (a_e_stand, a_e_kette, a_w_kette)
+lauf,h,getroffen,schaden,figur_anim_wechsel,figur_phase4_ab,figur_ruhe_ab
+reaktion_v_c_zwei_a,189,slot 16 slot 17,3/3,h+0 h+11 h+12 h+28,h+13,h+28
+reaktion_v_c_zwei_b,242,slot 16 slot 17,3/3,h+0 h+11 h+12 h+28,h+13,h+28
+reaktion_v_c_kette_a,189,slot 16 slot 17,3/3,h+0 h+11 h+12 h+16 h+17 h+18 h+29,h+13,
+reaktion_v_c_kette_a,207,slot 16 slot 17,4/4,h+0 h+11 h+13 h+14 h+15 h+16 h+27,h+11,
+reaktion_v_c_kette_a,223,slot 16 slot 17,5/5,h+0 h+11 h+27,h+11,h+27
+reaktion_v_c_kette_b,242,slot 16 slot 17,3/3,h+0 h+11 h+12 h+18 h+19 h+20,h+13,
+reaktion_v_c_kette_b,262,slot 16 slot 17,4/4,h+0 h+11 h+20 h+21 h+22 h+23,h+11,
+reaktion_v_c_kette_b,285,slot 16 slot 17,5/5,h+0 h+11 h+27,h+11,h+27
+reaktion_v_c_fenster27,189,slot 16 slot 17,3/3,h+0 h+11 h+12 h+28 h+29 h+30,h+13,
+reaktion_v_c_fenster27,219,slot 16 slot 17,4/4,h+0 h+11 h+27,h+11,h+27
+reaktion_v_c_fenster28,242,slot 16 slot 17,3/3,h+0 h+11 h+12 h+28 h+29 h+30,h+13,h+28
+reaktion_v_c_fenster28,272,slot 16 slot 17,3/3,h+0 h+11 h+12 h+28,h+13,h+28
+reaktion_v_a_e_stand,47,slot 17,3,h+0 h+11 h+12 h+28,h+13,h+28
+reaktion_v_a_e_kette,44,slot 17,3,h+0 h+11 h+12 h+23 h+24 h+25,h+13,
+reaktion_v_a_e_kette,69,slot 17,4,h+0 h+11 h+22 h+23 h+24 h+25,h+11,
+reaktion_v_a_e_kette,94,slot 17,5,h+0 h+11 h+21 h+22 h+23,h+11,
+reaktion_v_a_e_kette,117,slot 17,10,h+0 h+11 h+13 h+15 h+17 h+19 h+21 h+25 h+27 h+29 h+30,,h+30
+reaktion_v_a_w_kette,46,slot 18,3,h+0 h+11 h+12 h+22 h+23 h+24,h+13,
+reaktion_v_a_w_kette,70,slot 18,4,h+0 h+11 h+21 h+22 h+23 h+24,h+11,
+reaktion_v_a_w_kette,94,slot 18,5,h+0 h+11 h+27,h+11,h+27
+# B: Umwerfen durch Tritt, Sprungangriff (neutral, Richtung) und dritten Kniestoss
+lauf,slot,K,schaden,flug_ab,dx_je_frame,h_start,h_v0,schwerkraft_256,scheitel,scheitel_hoehe,boden,boden_weg,ruhe,ruhe_weg,dz,s4_K+1_bis_G-1,phasen,liegen,aufstehen,G,K_bis_G,anim_aufstehen,attr_aufstehen,aktionen_ab_G,erste_x_aenderung_ab_G
+reaktion_v_b_tritt_w,18,103,10,K+9,2.87500,0.0000,5.0,70.0,K+27,48.2422,K+46,109.2500,K+55,135.1250,0,2,K+0:C/0 K+1:C/2 K+46:C/4 K+55:C/8 K+87:C/A K+105:0/A,32,18,K+105,105,+1:5F59C +9:5F5C6 +17:5F5FE +18:5ED1C,+17:FF00,G+0:0 (Laufende G+122),G+1
+reaktion_v_b_sprung_w,18,54,7,K+9,2.87500,0.0000,5.0,70.0,K+27,48.2422,K+46,109.2500,K+55,135.1250,0,2,K+0:C/0 K+1:C/2 K+46:C/4 K+55:C/8 K+87:C/A K+105:0/A,32,18,K+105,105,+1:5F59C +9:5F5C6 +17:5F5FE +18:5ED1C,+17:FF00,G+0:0 (Laufende G+101),G+1
+reaktion_v_b_sprungr_w,18,52,7,K+9,2.87500,0.0000,5.0,70.0,K+27,48.2422,K+46,109.2500,K+55,135.1250,0,2,K+0:C/0 K+1:C/2 K+46:C/4 K+55:C/8 K+87:C/A K+105:0/A,32,18,K+105,105,+1:5F59C +9:5F5C6 +17:5F5FE +18:5ED1C,+17:FF00,G+0:0 (Laufende G+103),G+1
+reaktion_v_b_knie_w,18,97,4,K+9,2.87500,16.0000,5.0,70.0,K+27,64.2422,K+49,117.8750,K+58,143.7500,0,2,K+0:C/0 K+1:C/2 K+49:C/4 K+58:C/8 K+90:C/A K+108:0/A,32,18,K+108,108,+1:5F59C +9:5F5C6 +17:5F5FE +18:5ED1C,+17:FF00,G+0:0 G+70:6 (Laufende G+95),G+1
+reaktion_v_b_knie_wb,18,100,4,K+9,2.87500,16.0000,5.0,70.0,K+27,64.2422,K+49,117.8750,K+58,143.7500,0,2,K+0:C/0 K+1:C/2 K+49:C/4 K+58:C/8 K+90:C/A K+108:0/A,32,18,K+108,108,+1:5F59C +9:5F5C6 +17:5F5FE +18:5ED1C,+17:FF00,G+0:0 (Laufende G+92),G+1
+reaktion_v_a_e_kette,17,117,10,K+9,2.87500,0.0000,5.0,70.0,K+27,48.2422,K+46,109.2500,K+55,135.1250,0,2,K+0:C/0 K+1:C/2 K+46:C/4 K+55:C/8 K+71:C/A K+89:0/0,16,18,K+89,89,+1:63FD2 +9:63FFC +17:64034 +18:63746,+17:FF00,G+0:0 (Laufende G+114),G+1
+reaktion_v_a_e_spaet,17,131,10,K+9,2.87500,0.0000,5.0,70.0,K+27,48.2422,K+46,109.2500,K+55,135.1250,0,2,K+0:C/0 K+1:C/2 K+46:C/4 K+55:C/8 K+71:C/A K+89:0/0,16,18,K+89,89,+1:63FD2 +9:63FFC +17:64034 +18:63746,+17:FF00,G+0:0 G+40:2 G+100:0 (Laufende G+110),G+1
+reaktion_v_a_e_frueh,17,94,10,K+9,2.87500,0.0000,5.0,70.0,K+27,48.2422,K+46,109.2500,K+55,135.1250,0,2,K+0:C/0 K+1:C/2 K+46:C/4 K+55:C/8 K+99:C/A K+117:0/0,44,18,K+117,117,+1:63FD2 +9:63FFC +17:64034 +18:63746,+17:FF00,G+0:0 G+40:2 (Laufende G+89),G+1
+reaktion_v_b_sprung_e,17,58,7,K+9,2.87500,0.0000,5.0,70.0,K+27,48.2422,K+46,109.2500,K+55,135.1250,0,2,K+0:C/0 K+1:C/2 K+46:C/4 K+55:C/8 K+99:C/A K+117:0/0,44,18,K+117,117,+1:63FD2 +9:63FFC +17:64034 +18:63746,+17:FF00,G+0:0 G+40:2 (Laufende G+85),G+1
+reaktion_v_b_sprungr_e,17,52,7,K+9,2.87500,0.0000,5.0,70.0,K+27,48.2422,K+46,109.2500,K+55,135.1250,0,2,K+0:C/0 K+1:C/2 K+46:C/4 K+55:C/8 K+99:C/A K+117:0/0,44,18,K+117,117,+1:63FD2 +9:63FFC +17:64034 +18:63746,+17:FF00,G+0:0 G+45:6 (Laufende G+91),G+1
+reaktion_v_b_knie_e,17,93,4,K+9,2.87500,16.0000,5.0,70.0,K+27,64.2422,K+49,117.8750,K+58,143.7500,0,2,K+0:C/0 K+1:C/2 K+49:C/4 K+58:C/8 K+98:C/A K+116:0/0,40,18,K+116,116,+1:63FD2 +9:63FFC +17:64034 +18:63746,+17:FF00,G+0:0 G+40:2 (Laufende G+91),G+1
+# B: Wurf (vorwaerts und rueckwaerts)
+lauf,slot,E,schaden_in,los,flug_ab,dx_erster,dx_abnahme_je_frame,h_v0,schwerkraft_256,scheitel,scheitel_hoehe,boden,ruhe,weg_ab_los,s4_bis_G,liegen,aufstehen,G,E_bis_G,aktionen,aktionen_ab_G,erste_x_aenderung_ab_G
+reaktion_v_b_wurf_w,18,60,E+1,E+22,E+23,+5.0000,0.06250,2.0000,52.0,E+32,69.8594,E+59,E+71,+171.5000,3,16,18,E+105,105,E+0:2 E+22:4 E+71:C E+105:0,G+0:0 (Laufende G+95),G+1
+reaktion_v_b_wurf_wr,18,65,E+1,E+22,E+23,-5.0000,0.06250,2.0000,52.0,E+32,69.8594,E+59,E+71,-171.5000,3,16,18,E+105,105,E+0:2 E+22:4 E+71:C E+105:0,G+0:0 G+62:4 (Laufende G+90),G+1
+reaktion_v_b_wurf_e,17,55,E+1,E+22,E+23,+5.0000,0.06250,2.0000,52.0,E+32,69.8594,E+59,E+71,+171.5000,3,40,18,E+129,129,E+0:2 E+22:4 E+71:C E+129:0,G+0:0 G+40:2 (Laufende G+116),G+1
+reaktion_v_b_wurf_er,17,58,E+1,E+22,E+23,-5.0000,0.06250,2.0000,52.0,E+32,69.8594,E+59,E+71,-171.5000,3,40,18,E+129,129,E+0:2 E+22:4 E+71:C E+129:0,G+0:0 G+40:2 (Laufende G+113),G+1
+# B: Schlaege der Figur um G (Verwundbarkeit; Fenster = aktive Frames P+2..P+5, nach einem Treffer endet es)
+lauf,slot,bezug,G,druck,stufe,aktiv_rel_G,treffer_rel_G,kein_treffer_rel_G,dx,dz,blick_gegner
+reaktion_v_bp_w1,18,52,157,107,2,G-47..G-44,-,G-47 G-46 G-45 G-44,83/83/83/83,10/10/10/10,zur Figur/zur Figur/zur Figur/zur Figur
+reaktion_v_bp_w1,18,52,157,115,1,G-40..G-37,-,G-40 G-39 G-38 G-37,83/83/83/83,10/10/10/10,zur Figur/zur Figur/zur Figur/zur Figur
+reaktion_v_bp_w1,18,52,157,123,1,G-32..G-29,-,G-32 G-31 G-30 G-29,83/83/83/83,10/10/10/10,zur Figur/zur Figur/zur Figur/zur Figur
+reaktion_v_bp_w1,18,52,157,131,1,G-24..G-21,-,G-24 G-23 G-22 G-21,83/83/83/83,10/10/10/10,zur Figur/zur Figur/zur Figur/zur Figur
+reaktion_v_bp_w1,18,52,157,139,1,G-16..G-13,-,G-16 G-15 G-14 G-13,83/83/83/83,10/10/10/10,zur Figur/zur Figur/zur Figur/zur Figur
+reaktion_v_bp_w1,18,52,157,147,1,G-8..G-5,-,G-8 G-7 G-6 G-5,83/83/83/83,10/10/10/10,zur Figur/zur Figur/zur Figur/zur Figur
+reaktion_v_bp_w1,18,52,157,155,1,G+0..G+3,G+0,-,83/83/83/83,10/10/10/10,zur Figur/zur Figur/zur Figur/zur Figur
+reaktion_v_bp_w2,18,52,157,111,2,G-43..G-40,-,G-43 G-42 G-41 G-40,83/83/83/83,10/10/10/10,zur Figur/zur Figur/zur Figur/zur Figur
+reaktion_v_bp_w2,18,52,157,119,1,G-36..G-33,-,G-36 G-35 G-34 G-33,83/83/83/83,10/10/10/10,zur Figur/zur Figur/zur Figur/zur Figur
+reaktion_v_bp_w2,18,52,157,127,1,G-28..G-25,-,G-28 G-27 G-26 G-25,83/83/83/83,10/10/10/10,zur Figur/zur Figur/zur Figur/zur Figur
+reaktion_v_bp_w2,18,52,157,135,1,G-20..G-17,-,G-20 G-19 G-18 G-17,83/83/83/83,10/10/10/10,zur Figur/zur Figur/zur Figur/zur Figur
+reaktion_v_bp_w2,18,52,157,143,1,G-12..G-9,-,G-12 G-11 G-10 G-9,83/83/83/83,10/10/10/10,zur Figur/zur Figur/zur Figur/zur Figur
+reaktion_v_bp_w2,18,52,157,151,1,G-4..G-1,-,G-4 G-3 G-2 G-1,83/83/83/83,10/10/10/10,zur Figur/zur Figur/zur Figur/zur Figur
+reaktion_v_bp_w2,18,52,157,159,1,G+4..G+7,G+4,-,77/77/77/77,11/11/11/11,zur Figur/zur Figur/zur Figur/zur Figur
+reaktion_v_bp_tritt_e1,17,117,206,205,4,G+2..G+5,-,G+2 G+3 G+4 G+5,74/74/74/74,-1/-1/-1/-1,zur Figur/zur Figur/zur Figur/zur Figur
+reaktion_v_bp_tritt_e2,17,117,206,204,4,G+1..G+4,-,G+1 G+2 G+3 G+4,78/78/78/78,0/0/0/0,zur Figur/zur Figur/zur Figur/zur Figur
+reaktion_v_bp_wurf_e3,17,56,184,182,1,G+0..G+3,G+0,-,56/56/56/56,0/0/0/0,weg/weg/weg/weg
+reaktion_v_bp_wurf_e4,17,56,184,181,1,G-1..G+2,G+0,G-1,56/56/56/56,0/0/0/0,weg/weg/weg/weg
+reaktion_v_bp_wurf_e6,17,59,187,184,1,G-1..G+2,G+0,G-1,-47/-47/-47/-47,0/0/0/0,weg/weg/weg/weg
+reaktion_v_bp_wurf_e1,17,59,187,184,1,G-1..G+2,G+1,G-1 G+0,-61/-61/-62/-62,0/0/0/0,weg/weg/zur Figur/zur Figur
+reaktion_v_bp_wurf_w1,18,66,170,167,1,G-1..G+2,G+1,G-1 G+0,-74/-74/-76/-76,0/0/0/0,weg/weg/zur Figur/zur Figur
+# B: Griff am liegenden Gegner (Figur laeuft vorher los)
+lauf,slot,bezug,G,griff,griff_rel_G,dx_bei_griff,dz_bei_griff,laufen_ab_rel_G
+reaktion_v_bg_w1,18,52,157,157,G+0,24,10,G-84
+reaktion_v_bg_w2,18,52,157,157,G+0,38,10,G-84
+reaktion_v_bg_wknie,18,97,205,205,G+0,17,0,G-84
+reaktion_v_bg_ewurf1,17,56,184,185,G+1,23,0,G-90
+reaktion_v_bg_ewurf2,17,56,184,185,G+1,30,0,G-86
+# D: Tod (t = erster Frame mit LP < 0)
+lauf,slot,t,schaden,art,lp,s4_2_ab,flug_ab,dx_je_frame,h_v0,aktion_4_ab,aktion_6_ab,aktion_0A_ab,slot_frei,t_bis_frei,ablauf,gegner_lp_verlust_nach_t,figur_lp_verlust_nach_t,attr_aktiv_nach_t
+reaktion_v_d_s1_w,18,154,3,Stufe 1,-2,t+1,t+3,2.87500,5.0,t+40,t+49,t+58,t+79,79,t+0:3/0 t+1:2/0 t+2:2/2 t+40:2/4 t+49:2/6 t+58:2/A t+79:0/0,keiner,keiner,keins
+reaktion_v_d_gleich_w,18,171,3,Stufe 1,-2,t+1,t+3,2.87500,5.0,t+40,t+49,t+58,t+79,79,t+0:3/0 t+1:2/0 t+2:2/2 t+40:2/4 t+49:2/6 t+58:2/A t+79:0/0,keiner,keiner,t+1..t+1 (440C)
+reaktion_v_d_s2_w,18,139,4,Stufe 2,-3,t+1,t+3,2.87500,5.0,t+40,t+72,t+90,t+111,111,t+0:3/4 t+1:2/0 t+2:2/2 t+40:2/4 t+72:2/6 t+90:2/A t+111:0/0,keiner,keiner,keins
+reaktion_v_d_s2_wb,18,136,4,Stufe 2,-3,t+1,t+3,2.87500,5.0,t+40,t+72,t+90,t+111,111,t+0:3/4 t+1:2/0 t+2:2/2 t+40:2/4 t+72:2/6 t+90:2/A t+111:0/0,keiner,keiner,keins
+reaktion_v_d_sprung_w,18,102,7,Sprungangriff,-3,t+1,t+3,2.87500,5.0,t+40,t+49,t+58,t+79,79,t+0:3/C t+1:2/0 t+2:2/2 t+40:2/4 t+49:2/6 t+58:2/A t+79:0/0,keiner,keiner,keins
+reaktion_v_a_w_frueh,18,102,10,Tritt,-6,t+1,t+3,2.87500,5.0,t+40,t+49,t+58,t+79,79,t+0:3/C t+1:2/0 t+2:2/2 t+40:2/4 t+49:2/6 t+58:2/A t+79:0/0,keiner,keiner,keins
+reaktion_v_a_w_spaet,18,138,10,Tritt,-6,t+1,t+3,2.87500,5.0,t+40,t+49,t+58,t+79,79,t+0:3/C t+1:2/0 t+2:2/2 t+40:2/4 t+49:2/6 t+58:2/A t+79:0/0,keiner,keiner,keins
+reaktion_v_d_probe_w1,18,102,7,Sprungangriff,-3,t+1,t+3,2.87500,5.0,t+40,t+49,t+58,t+79,79,t+0:3/C t+1:2/0 t+2:2/2 t+40:2/4 t+49:2/6 t+58:2/A t+79:0/0,keiner,keiner,keins
+reaktion_v_d_wurf_w,18,73,14,Wurf,-2,,t+22,4.68750/4.75000/4.81250/4.87500/4.93750/5.00000,2.0,t+28,t+79,t+80,t+101,101,t+0:3/2 t+21:3/4 t+79:3/6 t+80:3/A t+101:0/0,keiner,keiner,t+1..t+57 (8)
+reaktion_v_d_s1_e,17,248,3,Stufe 1,-3,t+1,t+3,2.87500,5.0,t+40,t+49,t+58,t+79,79,t+0:3/0 t+1:2/0 t+2:2/2 t+40:2/4 t+49:2/6 t+58:2/A t+79:0/0,keiner,keiner,keins
+reaktion_v_d_s2_e,17,198,4,Stufe 2,-1,t+1,t+3,2.87500,5.0,t+40,t+72,t+90,t+111,111,t+0:3/4 t+1:2/0 t+2:2/2 t+40:2/4 t+72:2/6 t+90:2/A t+111:0/0,keiner,keiner,keins
+reaktion_v_d_s3_e,17,248,5,Stufe 3,-3,t+1,t+3,2.87500,5.0,t+40,t+49,t+58,t+79,79,t+0:3/0 t+1:2/0 t+2:2/2 t+40:2/4 t+49:2/6 t+58:2/A t+79:0/0,keiner,keiner,keins
+reaktion_v_d_tritt_e,17,196,10,Tritt,-1,t+1,t+3,2.87500,5.0,t+40,t+49,t+58,t+79,79,t+0:3/C t+1:2/0 t+2:2/2 t+40:2/4 t+49:2/6 t+58:2/A t+79:0/0,keiner,keiner,keins
+# D: Schlaege der Figur auf den sterbenden Gegner
+lauf,slot,t,druck,stufe,aktiv_rel_t,dx,dz,hoehe_gegner,s4_gegner,gegner_lp_verlust
+reaktion_v_d_s1_w_pa,18,154,166,2,t+15..t+18,83/86/89/92,10/10/10/10,43/45/46/47,2/2/2/2,keiner
+reaktion_v_d_probe_w1,18,102,154,2,t+55..t+58,83/83/83/83,10/10/10/10,0/0/0/0,2/2/2/2,keiner
+reaktion_v_d_probe_w1,18,102,162,1,t+62..t+65,83/83/83/83,10/10/10/10,0/0/0/0,2/2/2/2,keiner
+reaktion_v_d_probe_w1,18,102,170,1,t+70..t+73,83/83/83/83,10/10/10/10,0/0/0/0,2/2/2/2,keiner
+reaktion_v_d_probe_w1,18,102,178,1,t+78..t+81,83/83/83/83,10/10/10/10,0/0/0/0,2/0/0/0,keiner
+reaktion_v_d_probe_w2,18,102,158,2,t+59..t+62,83/83/83/83,10/10/10/10,0/0/0/0,2/2/2/2,keiner
+reaktion_v_d_probe_w2,18,102,166,1,t+66..t+69,83/83/83/83,10/10/10/10,0/0/0/0,2/2/2/2,keiner
+reaktion_v_d_probe_w2,18,102,174,1,t+74..t+77,83/83/83/83,10/10/10/10,0/0/0/0,2/2/2/2,keiner
+# D: Gleichzeitig-Fall: d_gleich_ref ohne letzten Druck (erster aktiver Frame des WOOKY), d_gleich_w mit Druck 169
+d_gleich_ref,168,attr 0,anim 5FC18,lp_wooky 1,lp_figur 72,s4_wooky 1
+d_gleich_ref,169,attr 0,anim 5FC18,lp_wooky 1,lp_figur 72,s4_wooky 1
+d_gleich_ref,170,attr 0,anim 5FC18,lp_wooky 1,lp_figur 72,s4_wooky 1
+d_gleich_ref,171,attr 440C,anim 5FC50,lp_wooky 1,lp_figur 67,s4_wooky 1
+d_gleich_ref,172,attr 440C,anim 5FC50,lp_wooky 1,lp_figur 67,s4_wooky 1
+d_gleich_ref,173,attr 440C,anim 5FC50,lp_wooky 1,lp_figur 67,s4_wooky 1
+d_gleich_ref,174,attr 440C,anim 5FC50,lp_wooky 1,lp_figur 67,s4_wooky 1
+d_gleich_w,168,attr 0,anim 5FC18,lp_wooky 1,lp_figur 72,s4_wooky 1
+d_gleich_w,169,attr 0,anim 5FC18,lp_wooky 1,lp_figur 72,s4_wooky 1
+d_gleich_w,170,attr 0,anim 5FC18,lp_wooky 1,lp_figur 72,s4_wooky 1
+d_gleich_w,171,attr 440C,anim 5FC50,lp_wooky -2,lp_figur 72,s4_wooky 3
+d_gleich_w,172,attr 440C,anim 5FC50,lp_wooky -2,lp_figur 72,s4_wooky 2
+d_gleich_w,173,attr 0,anim 5F308,lp_wooky -2,lp_figur 72,s4_wooky 2
+d_gleich_w,174,attr 0,anim 5F33A,lp_wooky -2,lp_figur 72,s4_wooky 2
+# Alle LP-Verluste (Gegner und Figur) je Lauf
+lauf,frame,ziel,schaden,stufe_oder_angreifer,lp_danach
+reaktion_v_a_e_aus,64,slot 17,3,Stufe 1,27
+reaktion_v_a_e_aus,118,Figur,6,Angreifer Slot 17,66
+reaktion_v_a_e_frueh,50,slot 17,3,Stufe 1,27
+reaktion_v_a_e_frueh,65,slot 17,4,Stufe 2,23
+reaktion_v_a_e_frueh,80,slot 17,5,Stufe 3,18
+reaktion_v_a_e_frueh,94,slot 17,10,Stufe 4,8
+reaktion_v_a_e_geh,17,slot 17,3,Stufe 1,27
+reaktion_v_a_e_geh,92,Figur,6,Angreifer Slot 17,66
+reaktion_v_a_e_kette,44,slot 17,3,Stufe 1,27
+reaktion_v_a_e_kette,69,slot 17,4,Stufe 2,23
+reaktion_v_a_e_kette,94,slot 17,5,Stufe 3,18
+reaktion_v_a_e_kette,117,slot 17,10,Stufe 4,8
+reaktion_v_a_e_links,59,slot 17,14,Stufe 1,16
+reaktion_v_a_e_links,247,slot 17,3,Stufe 1,13
+reaktion_v_a_e_links,301,Figur,6,Angreifer Slot 17,66
+reaktion_v_a_e_neu,46,slot 17,3,Stufe 1,27
+reaktion_v_a_e_neu,61,slot 17,4,Stufe 2,23
+reaktion_v_a_e_neu,76,slot 17,5,Stufe 3,18
+reaktion_v_a_e_neu,130,Figur,6,Angreifer Slot 17,66
+reaktion_v_a_e_spaet,42,slot 17,3,Stufe 1,27
+reaktion_v_a_e_spaet,72,slot 17,4,Stufe 2,23
+reaktion_v_a_e_spaet,102,slot 17,5,Stufe 3,18
+reaktion_v_a_e_spaet,131,slot 17,10,Stufe 4,8
+reaktion_v_a_e_stand,47,slot 17,3,Stufe 1,27
+reaktion_v_a_e_stand,101,Figur,6,Angreifer Slot 17,66
+reaktion_v_a_w_aus,66,slot 18,3,Stufe 1,13
+reaktion_v_a_w_aus,115,Figur,5,Angreifer Slot 18,67
+reaktion_v_a_w_frueh,52,slot 18,3,Stufe 1,13
+reaktion_v_a_w_frueh,68,slot 18,4,Stufe 2,9
+reaktion_v_a_w_frueh,84,slot 18,5,Stufe 3,4
+reaktion_v_a_w_frueh,102,slot 18,10,Stufe 4,-6
+reaktion_v_a_w_geh,19,slot 18,3,Stufe 1,13
+reaktion_v_a_w_kette,46,slot 18,3,Stufe 1,13
+reaktion_v_a_w_kette,70,slot 18,4,Stufe 2,9
+reaktion_v_a_w_kette,94,slot 18,5,Stufe 3,4
+reaktion_v_a_w_kette,148,Figur,5,Angreifer Slot 18,67
+reaktion_v_a_w_links,79,slot 18,3,Stufe 1,13
+reaktion_v_a_w_neu,50,slot 18,3,Stufe 1,13
+reaktion_v_a_w_neu,68,slot 18,4,Stufe 2,9
+reaktion_v_a_w_neu,117,Figur,5,Angreifer Slot 18,67
+reaktion_v_a_w_spaet,49,slot 18,3,Stufe 1,13
+reaktion_v_a_w_spaet,79,slot 18,4,Stufe 2,9
+reaktion_v_a_w_spaet,109,slot 18,5,Stufe 3,4
+reaktion_v_a_w_spaet,138,slot 18,10,Stufe 4,-6
+reaktion_v_a_w_stand,54,slot 18,3,Stufe 1,13
+reaktion_v_a_w_stand,103,Figur,5,Angreifer Slot 18,67
+reaktion_v_b_knie_e,54,slot 17,4,Stufe 2,26
+reaktion_v_b_knie_e,73,slot 17,4,Stufe 2,22
+reaktion_v_b_knie_e,93,slot 17,4,Stufe 2,18
+reaktion_v_b_knie_w,57,slot 18,4,Stufe 2,12
+reaktion_v_b_knie_w,77,slot 18,4,Stufe 2,8
+reaktion_v_b_knie_w,97,slot 18,4,Stufe 2,4
+reaktion_v_b_knie_wb,60,slot 18,4,Stufe 2,12
+reaktion_v_b_knie_wb,78,slot 18,4,Stufe 2,8
+reaktion_v_b_knie_wb,100,slot 18,4,Stufe 2,4
+reaktion_v_b_sprung_e,58,slot 17,7,Stufe 2,23
+reaktion_v_b_sprung_w,54,slot 18,7,Stufe 2,9
+reaktion_v_b_sprungr_e,52,slot 17,7,Stufe 2,23
+reaktion_v_b_sprungr_w,52,slot 18,7,Stufe 2,9
+reaktion_v_b_tritt_w,45,slot 18,3,Stufe 1,32
+reaktion_v_b_tritt_w,64,slot 18,4,Stufe 2,28
+reaktion_v_b_tritt_w,85,slot 18,5,Stufe 3,23
+reaktion_v_b_tritt_w,103,slot 18,10,Stufe 4,13
+reaktion_v_b_wurf_e,56,slot 17,14,Stufe 1,16
+reaktion_v_b_wurf_e,104,slot 16,3,Stufe 1,13
+reaktion_v_b_wurf_er,59,slot 17,14,Stufe 1,16
+reaktion_v_b_wurf_w,61,slot 18,14,Stufe 1,2
+reaktion_v_b_wurf_wr,66,slot 18,14,Stufe 1,2
+reaktion_v_bg_ewurf1,56,slot 17,14,Stufe 1,16
+reaktion_v_bg_ewurf1,104,slot 16,3,Stufe 1,13
+reaktion_v_bg_ewurf2,56,slot 17,14,Stufe 1,16
+reaktion_v_bg_ewurf2,104,slot 16,3,Stufe 1,13
+reaktion_v_bg_w1,52,slot 18,7,Stufe 2,9
+reaktion_v_bg_w2,52,slot 18,7,Stufe 2,9
+reaktion_v_bg_wknie,57,slot 18,4,Stufe 2,12
+reaktion_v_bg_wknie,77,slot 18,4,Stufe 2,8
+reaktion_v_bg_wknie,97,slot 18,4,Stufe 2,4
+reaktion_v_bp_tritt_e1,44,slot 17,3,Stufe 1,27
+reaktion_v_bp_tritt_e1,69,slot 17,4,Stufe 2,23
+reaktion_v_bp_tritt_e1,94,slot 17,5,Stufe 3,18
+reaktion_v_bp_tritt_e1,117,slot 17,10,Stufe 4,8
+reaktion_v_bp_tritt_e1,207,slot 17,3,Stufe 1,5
+reaktion_v_bp_tritt_e2,44,slot 17,3,Stufe 1,27
+reaktion_v_bp_tritt_e2,69,slot 17,4,Stufe 2,23
+reaktion_v_bp_tritt_e2,94,slot 17,5,Stufe 3,18
+reaktion_v_bp_tritt_e2,117,slot 17,10,Stufe 4,8
+reaktion_v_bp_tritt_e2,206,slot 17,3,Stufe 1,5
+reaktion_v_bp_w1,52,slot 18,7,Stufe 2,9
+reaktion_v_bp_w1,157,slot 18,3,Stufe 1,6
+reaktion_v_bp_w2,52,slot 18,7,Stufe 2,9
+reaktion_v_bp_w2,161,slot 18,3,Stufe 1,6
+reaktion_v_bp_wurf_e1,59,slot 17,14,Stufe 1,16
+reaktion_v_bp_wurf_e1,188,slot 17,3,Stufe 1,13
+reaktion_v_bp_wurf_e3,56,slot 17,14,Stufe 1,16
+reaktion_v_bp_wurf_e3,104,slot 16,3,Stufe 1,13
+reaktion_v_bp_wurf_e3,184,slot 17,3,Stufe 1,13
+reaktion_v_bp_wurf_e4,56,slot 17,14,Stufe 1,16
+reaktion_v_bp_wurf_e4,104,slot 16,3,Stufe 1,13
+reaktion_v_bp_wurf_e4,184,slot 17,3,Stufe 1,13
+reaktion_v_bp_wurf_e6,59,slot 17,14,Stufe 1,16
+reaktion_v_bp_wurf_e6,187,slot 17,3,Stufe 1,13
+reaktion_v_bp_wurf_w1,66,slot 18,14,Stufe 1,2
+reaktion_v_bp_wurf_w1,171,slot 18,3,Stufe 1,-1
+reaktion_v_c_fenster27,54,Figur,6,Angreifer Slot 17,66
+reaktion_v_c_fenster27,131,Figur,6,Angreifer Slot 17,60
+reaktion_v_c_fenster27,159,Figur,5,Angreifer Slot 16,55
+reaktion_v_c_fenster27,189,slot 16,3,Stufe 1,13
+reaktion_v_c_fenster27,189,slot 17,3,Stufe 1,27
+reaktion_v_c_fenster27,219,slot 16,4,Stufe 2,9
+reaktion_v_c_fenster27,219,slot 17,4,Stufe 2,23
+reaktion_v_c_fenster28,54,Figur,6,Angreifer Slot 17,66
+reaktion_v_c_fenster28,131,Figur,6,Angreifer Slot 17,60
+reaktion_v_c_fenster28,159,Figur,5,Angreifer Slot 16,55
+reaktion_v_c_fenster28,207,Figur,6,Angreifer Slot 17,49
+reaktion_v_c_fenster28,242,slot 16,3,Stufe 1,13
+reaktion_v_c_fenster28,242,slot 17,3,Stufe 1,27
+reaktion_v_c_fenster28,272,slot 16,3,Stufe 1,10
+reaktion_v_c_fenster28,272,slot 17,3,Stufe 1,24
+reaktion_v_c_kette_a,54,Figur,6,Angreifer Slot 17,66
+reaktion_v_c_kette_a,131,Figur,6,Angreifer Slot 17,60
+reaktion_v_c_kette_a,159,Figur,5,Angreifer Slot 16,55
+reaktion_v_c_kette_a,189,slot 16,3,Stufe 1,13
+reaktion_v_c_kette_a,189,slot 17,3,Stufe 1,27
+reaktion_v_c_kette_a,207,slot 16,4,Stufe 2,9
+reaktion_v_c_kette_a,207,slot 17,4,Stufe 2,23
+reaktion_v_c_kette_a,223,slot 16,5,Stufe 3,4
+reaktion_v_c_kette_a,223,slot 17,5,Stufe 3,18
+reaktion_v_c_kette_b,54,Figur,6,Angreifer Slot 17,66
+reaktion_v_c_kette_b,131,Figur,6,Angreifer Slot 17,60
+reaktion_v_c_kette_b,159,Figur,5,Angreifer Slot 16,55
+reaktion_v_c_kette_b,207,Figur,6,Angreifer Slot 17,49
+reaktion_v_c_kette_b,242,slot 16,3,Stufe 1,13
+reaktion_v_c_kette_b,242,slot 17,3,Stufe 1,27
+reaktion_v_c_kette_b,262,slot 16,4,Stufe 2,9
+reaktion_v_c_kette_b,262,slot 17,4,Stufe 2,23
+reaktion_v_c_kette_b,285,slot 16,5,Stufe 3,4
+reaktion_v_c_kette_b,285,slot 17,5,Stufe 3,18
+reaktion_v_c_zwei_a,54,Figur,6,Angreifer Slot 17,66
+reaktion_v_c_zwei_a,131,Figur,6,Angreifer Slot 17,60
+reaktion_v_c_zwei_a,159,Figur,5,Angreifer Slot 16,55
+reaktion_v_c_zwei_a,189,slot 16,3,Stufe 1,13
+reaktion_v_c_zwei_a,189,slot 17,3,Stufe 1,27
+reaktion_v_c_zwei_a,244,Figur,6,Angreifer Slot 17,49
+reaktion_v_c_zwei_b,54,Figur,6,Angreifer Slot 17,66
+reaktion_v_c_zwei_b,131,Figur,6,Angreifer Slot 17,60
+reaktion_v_c_zwei_b,159,Figur,5,Angreifer Slot 16,55
+reaktion_v_c_zwei_b,207,Figur,6,Angreifer Slot 17,49
+reaktion_v_c_zwei_b,242,slot 16,3,Stufe 1,13
+reaktion_v_c_zwei_b,242,slot 17,3,Stufe 1,27
+reaktion_v_c_zwei_b,297,Figur,6,Angreifer Slot 17,43
+reaktion_v_d_gleich_ref,46,slot 18,3,Stufe 1,13
+reaktion_v_d_gleich_ref,63,slot 18,4,Stufe 2,9
+reaktion_v_d_gleich_ref,80,slot 18,5,Stufe 3,4
+reaktion_v_d_gleich_ref,122,slot 18,3,Stufe 1,1
+reaktion_v_d_gleich_ref,171,Figur,5,Angreifer Slot 18,67
+reaktion_v_d_gleich_w,46,slot 18,3,Stufe 1,13
+reaktion_v_d_gleich_w,63,slot 18,4,Stufe 2,9
+reaktion_v_d_gleich_w,80,slot 18,5,Stufe 3,4
+reaktion_v_d_gleich_w,122,slot 18,3,Stufe 1,1
+reaktion_v_d_gleich_w,171,slot 18,3,Stufe 1,-2
+reaktion_v_d_probe_w1,45,slot 18,3,Stufe 1,13
+reaktion_v_d_probe_w1,62,slot 18,4,Stufe 2,9
+reaktion_v_d_probe_w1,79,slot 18,5,Stufe 3,4
+reaktion_v_d_probe_w1,102,slot 18,7,Stufe 2,-3
+reaktion_v_d_probe_w2,45,slot 18,3,Stufe 1,13
+reaktion_v_d_probe_w2,62,slot 18,4,Stufe 2,9
+reaktion_v_d_probe_w2,79,slot 18,5,Stufe 3,4
+reaktion_v_d_probe_w2,102,slot 18,7,Stufe 2,-3
+reaktion_v_d_s1_e,44,slot 17,3,Stufe 1,27
+reaktion_v_d_s1_e,61,slot 17,4,Stufe 2,23
+reaktion_v_d_s1_e,78,slot 17,5,Stufe 3,18
+reaktion_v_d_s1_e,112,slot 17,3,Stufe 1,15
+reaktion_v_d_s1_e,129,slot 17,4,Stufe 2,11
+reaktion_v_d_s1_e,146,slot 17,5,Stufe 3,6
+reaktion_v_d_s1_e,180,slot 17,3,Stufe 1,3
+reaktion_v_d_s1_e,214,slot 17,3,Stufe 1,0
+reaktion_v_d_s1_e,248,slot 17,3,Stufe 1,-3
+reaktion_v_d_s1_w,46,slot 18,3,Stufe 1,13
+reaktion_v_d_s1_w,63,slot 18,4,Stufe 2,9
+reaktion_v_d_s1_w,80,slot 18,5,Stufe 3,4
+reaktion_v_d_s1_w,122,slot 18,3,Stufe 1,1
+reaktion_v_d_s1_w,154,slot 18,3,Stufe 1,-2
+reaktion_v_d_s1_w_pa,46,slot 18,3,Stufe 1,13
+reaktion_v_d_s1_w_pa,63,slot 18,4,Stufe 2,9
+reaktion_v_d_s1_w_pa,80,slot 18,5,Stufe 3,4
+reaktion_v_d_s1_w_pa,122,slot 18,3,Stufe 1,1
+reaktion_v_d_s1_w_pa,154,slot 18,3,Stufe 1,-2
+reaktion_v_d_s2_e,44,slot 17,3,Stufe 1,27
+reaktion_v_d_s2_e,61,slot 17,4,Stufe 2,23
+reaktion_v_d_s2_e,78,slot 17,5,Stufe 3,18
+reaktion_v_d_s2_e,112,slot 17,3,Stufe 1,15
+reaktion_v_d_s2_e,129,slot 17,4,Stufe 2,11
+reaktion_v_d_s2_e,146,slot 17,5,Stufe 3,6
+reaktion_v_d_s2_e,180,slot 17,3,Stufe 1,3
+reaktion_v_d_s2_e,198,slot 17,4,Stufe 2,-1
+reaktion_v_d_s2_w,46,slot 18,3,Stufe 1,13
+reaktion_v_d_s2_w,63,slot 18,4,Stufe 2,9
+reaktion_v_d_s2_w,80,slot 18,5,Stufe 3,4
+reaktion_v_d_s2_w,122,slot 18,3,Stufe 1,1
+reaktion_v_d_s2_w,139,slot 18,4,Stufe 2,-3
+reaktion_v_d_s2_wb,45,slot 18,3,Stufe 1,13
+reaktion_v_d_s2_wb,62,slot 18,4,Stufe 2,9
+reaktion_v_d_s2_wb,79,slot 18,5,Stufe 3,4
+reaktion_v_d_s2_wb,117,slot 18,3,Stufe 1,1
+reaktion_v_d_s2_wb,136,slot 18,4,Stufe 2,-3
+reaktion_v_d_s3_e,44,slot 17,3,Stufe 1,27
+reaktion_v_d_s3_e,61,slot 17,4,Stufe 2,23
+reaktion_v_d_s3_e,78,slot 17,5,Stufe 3,18
+reaktion_v_d_s3_e,112,slot 17,3,Stufe 1,15
+reaktion_v_d_s3_e,146,slot 17,3,Stufe 1,12
+reaktion_v_d_s3_e,180,slot 17,3,Stufe 1,9
+reaktion_v_d_s3_e,214,slot 17,3,Stufe 1,6
+reaktion_v_d_s3_e,231,slot 17,4,Stufe 2,2
+reaktion_v_d_s3_e,248,slot 17,5,Stufe 3,-3
+reaktion_v_d_sprung_w,45,slot 18,3,Stufe 1,13
+reaktion_v_d_sprung_w,62,slot 18,4,Stufe 2,9
+reaktion_v_d_sprung_w,79,slot 18,5,Stufe 3,4
+reaktion_v_d_sprung_w,102,slot 18,7,Stufe 2,-3
+reaktion_v_d_tritt_e,44,slot 17,3,Stufe 1,27
+reaktion_v_d_tritt_e,78,slot 17,3,Stufe 1,24
+reaktion_v_d_tritt_e,112,slot 17,3,Stufe 1,21
+reaktion_v_d_tritt_e,146,slot 17,3,Stufe 1,18
+reaktion_v_d_tritt_e,163,slot 17,4,Stufe 2,14
+reaktion_v_d_tritt_e,180,slot 17,5,Stufe 3,9
+reaktion_v_d_tritt_e,196,slot 17,10,Stufe 4,-1
+reaktion_v_d_wurf_w,57,slot 18,4,Stufe 2,12
+reaktion_v_d_wurf_w,73,slot 18,14,Stufe 2,-2
+reaktion_v_k_e_20,45,slot 17,3,Stufe 1,27
+reaktion_v_k_e_20,68,slot 17,4,Stufe 2,23
+reaktion_v_k_e_s3_19,45,slot 17,3,Stufe 1,27
+reaktion_v_k_e_s3_19,62,slot 17,4,Stufe 2,23
+reaktion_v_k_e_s3_19,85,slot 17,5,Stufe 3,18
+reaktion_v_k_e_s3_19,139,Figur,6,Angreifer Slot 17,66
+reaktion_v_k_w_19,46,slot 18,3,Stufe 1,13
+reaktion_v_k_w_19,68,slot 18,4,Stufe 2,9
+reaktion_v_k_w_19,117,Figur,5,Angreifer Slot 18,67
+reaktion_v_k_w_20,46,slot 18,3,Stufe 1,13
+reaktion_v_k_w_20,69,slot 18,4,Stufe 2,9
+reaktion_v_k_w_20,118,Figur,5,Angreifer Slot 18,67
+# Rang (FFF82A) je Lauf
+a_e_aus,10/11
+a_e_frueh,10/11
+a_e_geh,10/11
+a_e_kette,10/11
+a_e_links,10/11
+a_e_neu,10/11
+a_e_spaet,10/11
+a_e_stand,10/11
+a_w_aus,10
+a_w_frueh,10
+a_w_geh,10
+a_w_kette,10
+a_w_links,9/10
+a_w_neu,10
+a_w_spaet,10
+a_w_stand,10
+b_knie_e,10/11
+b_knie_w,10
+b_knie_wb,9/10
+b_sprung_e,10/11
+b_sprung_w,10
+b_sprungr_e,10/11
+b_sprungr_w,9/10
+b_tritt_w,9/10
+b_wurf_e,10/11
+b_wurf_er,10/11
+b_wurf_w,10
+b_wurf_wr,9/10
+bg_ewurf1,10/11
+bg_ewurf2,10/11
+bg_w1,9/10
+bg_w2,9/10
+bg_wknie,10
+bp_tritt_e1,10/11
+bp_tritt_e2,10/11
+bp_w1,9/10
+bp_w2,9/10
+bp_wurf_e1,10/11
+bp_wurf_e3,10/11
+bp_wurf_e4,10/11
+bp_wurf_e6,10/11
+bp_wurf_w1,9/10
+c_fenster27,10/11
+c_fenster28,10/11
+c_kette_a,10/11
+c_kette_b,10/11
+c_zwei_a,10/11
+c_zwei_b,10/11
+d_gleich_ref,10
+d_gleich_w,10
+d_probe_w1,9/10
+d_probe_w2,9/10
+d_s1_e,10/11
+d_s1_w,10
+d_s1_w_pa,10
+d_s2_e,10/11
+d_s2_w,10
+d_s2_wb,9/10
+d_s3_e,10/11
+d_sprung_w,9/10
+d_tritt_e,10/11
+d_wurf_w,10
+k_e_20,10/11
+k_e_s3_19,10/11
+k_w_19,9/10
+k_w_20,9/10

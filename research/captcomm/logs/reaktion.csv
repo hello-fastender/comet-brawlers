@@ -1,0 +1,1046 @@
+# Trefferreaktion der Gegner (Praefix reaktion), erzeugt von scripts/belege_reaktion.sh.
+# Laeufe reaktion_m_*: _w = WOOKY (kontakt, 16 LP, Slot 18), _e = EDDY (kontakt_b, 30 LP, Slot 17).
+# h = Frame des LP-Verlusts, K = Umwerfen, G = erster Frame mit S+4 = 1 nach dem Aufstehen.
+# EINGRIFFE: CC_LP=40 bei WOOKY in a3_s4_w, a4_*_w, b_tritt_w* und den Proben dazu (LP und Max-LP
+# auf 40); CC_LP=2/5/10 in d_* (Tod); a_links_*: Gegner bis h-1 links der Figur gesetzt; bp_*: Gegner
+# nur im Frame T bei dx 50/dz 0 (wurf_w2: dx -50), davor und danach 200 px entfernt; bg_*: Gegner ab T-1 bei dx 30 bzw.
+# 20; c_*: WOOKY aus Slot 16 neben EDDY gesetzt; d_probe_*: sterbender Gegner nur in T bei dx 50.
+# Ohne Eingriff: a_* (ausser a_links_*), a3_*/a4_* beim EDDY, b_*_e*, b_sprung_*, b_wurf_*, b_knie_*,
+# c_einzel_b, d_tritt_w, bn_* (natuerliche Gegenprobe zu bp_*).
+# Zusammenfassung
+A1 EDDY Stufe 1: S+4=3 von h bis h+22, S+4=1 ab h+23 (8 Treffer)
+A1 EDDY Stufe 2: S+4=3 von h bis h+22, S+4=1 ab h+23 (9 Treffer)
+A1 EDDY Stufe 3: S+4=3 von h bis h+22, S+4=1 ab h+23 (7 Treffer)
+A1 WOOKY Stufe 1: S+4=3 von h bis h+22, S+4=1 ab h+23 (8 Treffer)
+A1 WOOKY Stufe 2: S+4=3 von h bis h+22, S+4=1 ab h+23 (9 Treffer)
+A1 WOOKY Stufe 3: S+4=3 von h bis h+22, S+4=1 ab h+23 (7 Treffer)
+A1 EDDY Animation: h+1:reaktion h+10:reaktion h+22:063926 h+23:gehen | h+1:reaktion h+10:reaktion h+22:reaktion h+23:gehen
+A1 WOOKY Animation: h+1:reaktion h+10:reaktion h+22:05eefa h+23:gehen | h+1:reaktion h+10:reaktion h+22:reaktion h+23:gehen
+A1 EDDY: erste Bewegung -/h+24/h+50; Ausholen ab -/h+45/h+46/h+47/h+53/h+54/h+55; Angriff aktiv ab -/h+54/h+55/h+56/h+62/h+63/h+64
+A1 WOOKY: erste Bewegung -/h+24; Ausholen ab -/h+45; Angriff aktiv ab -/h+49
+A2 Zittern h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1; x gesamt +1; Tiefe gesamt +0 (2 Treffer, z. B. a4_frueh_e, a4_frueh_w)
+A2 Zittern h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1; x gesamt +0; Tiefe gesamt +0 (38 Treffer, z. B. a3_s2_12_e, a3_s2_12_w, a3_s2_27_e)
+A2 Zittern h+9:-3 h+10:+3 h+11:-2 h+12:+2 h+13:-1 h+14:+1; x gesamt +0; Tiefe gesamt +0 (2 Treffer, z. B. a_links_e, a_links_w)
+A3 a3_s2_12_e: Stufe 1 h=5, Folgetreffer h+15 (Stufe 2) -> neue Reaktion bis h+22 ab dem Folgetreffer
+A3 a3_s2_12_w: Stufe 1 h=5, Folgetreffer h+15 (Stufe 2) -> neue Reaktion bis h+22 ab dem Folgetreffer
+A3 a3_s3_12_e: Stufe 1 h=5, Folgetreffer h+17 (Stufe 2) -> neue Reaktion bis h+15 ab dem Folgetreffer
+A3 a3_s3_12_e: Stufe 2 h=22, Folgetreffer h+16 (Stufe 3) -> neue Reaktion bis h+22 ab dem Folgetreffer
+A3 a3_s3_12_w: Stufe 1 h=5, Folgetreffer h+17 (Stufe 2) -> neue Reaktion bis h+15 ab dem Folgetreffer
+A3 a3_s3_12_w: Stufe 2 h=22, Folgetreffer h+16 (Stufe 3) -> neue Reaktion bis h+22 ab dem Folgetreffer
+A3 a3_s3_26_e: Stufe 1 h=5, Folgetreffer h+17 (Stufe 2) -> neue Reaktion bis h+22 ab dem Folgetreffer
+A3 a3_s3_26_w: Stufe 1 h=5, Folgetreffer h+17 (Stufe 2) -> neue Reaktion bis h+22 ab dem Folgetreffer
+A3 a3_s4_12_e: Stufe 1 h=5, Folgetreffer h+17 (Stufe 2) -> neue Reaktion bis h+17 ab dem Folgetreffer
+A3 a3_s4_12_e: Stufe 2 h=22, Folgetreffer h+18 (Stufe 3) -> neue Reaktion bis h+14 ab dem Folgetreffer
+A3 a3_s4_12_e: Stufe 3 h=40, Folgetreffer h+15 (Stufe 4) -> neue Reaktion bis umgeworfen ab dem Folgetreffer
+A3 a3_s4_12_w: Stufe 1 h=5, Folgetreffer h+17 (Stufe 2) -> neue Reaktion bis h+17 ab dem Folgetreffer
+A3 a3_s4_12_w: Stufe 2 h=22, Folgetreffer h+18 (Stufe 3) -> neue Reaktion bis h+14 ab dem Folgetreffer
+A3 a3_s4_12_w: Stufe 3 h=40, Folgetreffer h+15 (Stufe 4) -> neue Reaktion bis umgeworfen ab dem Folgetreffer
+A3 a3_s4_26_e: Stufe 1 h=5, Folgetreffer h+17 (Stufe 2) -> neue Reaktion bis h+17 ab dem Folgetreffer
+A3 a3_s4_26_e: Stufe 2 h=22, Folgetreffer h+18 (Stufe 3) -> neue Reaktion bis h+22 ab dem Folgetreffer
+A3 a3_s4_26_w: Stufe 1 h=5, Folgetreffer h+17 (Stufe 2) -> neue Reaktion bis h+17 ab dem Folgetreffer
+A3 a3_s4_26_w: Stufe 2 h=22, Folgetreffer h+18 (Stufe 3) -> neue Reaktion bis h+22 ab dem Folgetreffer
+A3 a4_frueh_e: Stufe 1 h=5, Folgetreffer h+15 (Stufe 2) -> neue Reaktion bis h+14 ab dem Folgetreffer
+A3 a4_frueh_e: Stufe 2 h=20, Folgetreffer h+15 (Stufe 3) -> neue Reaktion bis h+13 ab dem Folgetreffer
+A3 a4_frueh_e: Stufe 3 h=35, Folgetreffer h+14 (Stufe 4) -> neue Reaktion bis umgeworfen ab dem Folgetreffer
+A3 a4_frueh_w: Stufe 1 h=5, Folgetreffer h+15 (Stufe 2) -> neue Reaktion bis h+14 ab dem Folgetreffer
+A3 a4_frueh_w: Stufe 2 h=20, Folgetreffer h+15 (Stufe 3) -> neue Reaktion bis h+13 ab dem Folgetreffer
+A3 a4_frueh_w: Stufe 3 h=35, Folgetreffer h+14 (Stufe 4) -> neue Reaktion bis umgeworfen ab dem Folgetreffer
+A4 a3_s2_12_e Stufe 2: Druck h+12, Reaktion bis h+14, aktiv ab h+15, Luecke 0 Frames (S+4 im aktiven Frame 3), Treffer h+15; Gegner in der Luecke: -
+A4 a3_s2_12_w Stufe 2: Druck h+12, Reaktion bis h+14, aktiv ab h+15, Luecke 0 Frames (S+4 im aktiven Frame 3), Treffer h+15; Gegner in der Luecke: -
+A4 a3_s2_27_e Stufe 2: Druck h+27, Reaktion bis h+22, aktiv ab h+30, Luecke 7 Frames (S+4 im aktiven Frame 3), Treffer h+30; Gegner in der Luecke: h+23:gehen x ab h+24 h+27:gehen
+A4 a3_s2_27_w Stufe 2: Druck h+27, Reaktion bis h+22, aktiv ab h+30, Luecke 7 Frames (S+4 im aktiven Frame 3), Treffer h+30; Gegner in der Luecke: h+23:gehen h+24:stand
+A4 a3_s3_12_e Stufe 2: Druck h+14, Reaktion bis h+16, aktiv ab h+17, Luecke 0 Frames (S+4 im aktiven Frame 3), Treffer h+17; Gegner in der Luecke: -
+A4 a3_s3_12_e Stufe 3: Druck h+12, Reaktion bis h+15, aktiv ab h+16, Luecke 0 Frames (S+4 im aktiven Frame 3), Treffer h+16; Gegner in der Luecke: -
+A4 a3_s3_12_w Stufe 2: Druck h+14, Reaktion bis h+16, aktiv ab h+17, Luecke 0 Frames (S+4 im aktiven Frame 3), Treffer h+17; Gegner in der Luecke: -
+A4 a3_s3_12_w Stufe 3: Druck h+12, Reaktion bis h+15, aktiv ab h+16, Luecke 0 Frames (S+4 im aktiven Frame 3), Treffer h+16; Gegner in der Luecke: -
+A4 a3_s3_26_e Stufe 2: Druck h+14, Reaktion bis h+16, aktiv ab h+17, Luecke 0 Frames (S+4 im aktiven Frame 3), Treffer h+17; Gegner in der Luecke: -
+A4 a3_s3_26_e Stufe 3: Druck h+26, Reaktion bis h+22, aktiv ab h+30, Luecke 7 Frames (S+4 im aktiven Frame 3), Treffer h+30; Gegner in der Luecke: h+23:gehen x ab h+24 h+27:gehen
+A4 a3_s3_26_w Stufe 2: Druck h+14, Reaktion bis h+16, aktiv ab h+17, Luecke 0 Frames (S+4 im aktiven Frame 3), Treffer h+17; Gegner in der Luecke: -
+A4 a3_s3_26_w Stufe 3: Druck h+26, Reaktion bis h+22, aktiv ab h+30, Luecke 7 Frames (S+4 im aktiven Frame 3), Treffer h+30; Gegner in der Luecke: h+23:gehen h+24:stand
+A4 a3_s4_12_e Stufe 2: Druck h+14, Reaktion bis h+16, aktiv ab h+17, Luecke 0 Frames (S+4 im aktiven Frame 3), Treffer h+17; Gegner in der Luecke: -
+A4 a3_s4_12_e Stufe 3: Druck h+14, Reaktion bis h+17, aktiv ab h+18, Luecke 0 Frames (S+4 im aktiven Frame 3), Treffer h+18; Gegner in der Luecke: -
+A4 a3_s4_12_e Stufe 4: Druck h+12, Reaktion bis h+14, aktiv ab h+15, Luecke 0 Frames (S+4 im aktiven Frame 3), Treffer h+15; Gegner in der Luecke: -
+A4 a3_s4_12_w Stufe 2: Druck h+14, Reaktion bis h+16, aktiv ab h+17, Luecke 0 Frames (S+4 im aktiven Frame 3), Treffer h+17; Gegner in der Luecke: -
+A4 a3_s4_12_w Stufe 3: Druck h+14, Reaktion bis h+17, aktiv ab h+18, Luecke 0 Frames (S+4 im aktiven Frame 3), Treffer h+18; Gegner in der Luecke: -
+A4 a3_s4_12_w Stufe 4: Druck h+12, Reaktion bis h+14, aktiv ab h+15, Luecke 0 Frames (S+4 im aktiven Frame 3), Treffer h+15; Gegner in der Luecke: -
+A4 a3_s4_26_e Stufe 2: Druck h+14, Reaktion bis h+16, aktiv ab h+17, Luecke 0 Frames (S+4 im aktiven Frame 3), Treffer h+17; Gegner in der Luecke: -
+A4 a3_s4_26_e Stufe 3: Druck h+14, Reaktion bis h+17, aktiv ab h+18, Luecke 0 Frames (S+4 im aktiven Frame 3), Treffer h+18; Gegner in der Luecke: -
+A4 a3_s4_26_e Stufe 4: Druck h+26, Reaktion bis h+22, aktiv ab h+29, Luecke 6 Frames (S+4 im aktiven Frame 3), Treffer h+29; Gegner in der Luecke: h+23:gehen x ab h+24 h+27:gehen
+A4 a3_s4_26_w Stufe 2: Druck h+14, Reaktion bis h+16, aktiv ab h+17, Luecke 0 Frames (S+4 im aktiven Frame 3), Treffer h+17; Gegner in der Luecke: -
+A4 a3_s4_26_w Stufe 3: Druck h+14, Reaktion bis h+17, aktiv ab h+18, Luecke 0 Frames (S+4 im aktiven Frame 3), Treffer h+18; Gegner in der Luecke: -
+A4 a3_s4_26_w Stufe 4: Druck h+26, Reaktion bis h+22, aktiv ab h+29, Luecke 6 Frames (S+4 im aktiven Frame 3), Treffer h+29; Gegner in der Luecke: h+23:gehen h+24:stand
+A4 a4_frueh_e Stufe 2: Druck h+12, Reaktion bis h+14, aktiv ab h+15, Luecke 0 Frames (S+4 im aktiven Frame 3), Treffer h+15; Gegner in der Luecke: -
+A4 a4_frueh_e Stufe 3: Druck h+11, Reaktion bis h+14, aktiv ab h+15, Luecke 0 Frames (S+4 im aktiven Frame 3), Treffer h+15; Gegner in der Luecke: -
+A4 a4_frueh_e Stufe 4: Druck h+11, Reaktion bis h+13, aktiv ab h+14, Luecke 0 Frames (S+4 im aktiven Frame 3), Treffer h+14; Gegner in der Luecke: -
+A4 a4_frueh_w Stufe 2: Druck h+12, Reaktion bis h+14, aktiv ab h+15, Luecke 0 Frames (S+4 im aktiven Frame 3), Treffer h+15; Gegner in der Luecke: -
+A4 a4_frueh_w Stufe 3: Druck h+11, Reaktion bis h+14, aktiv ab h+15, Luecke 0 Frames (S+4 im aktiven Frame 3), Treffer h+15; Gegner in der Luecke: -
+A4 a4_frueh_w Stufe 4: Druck h+11, Reaktion bis h+13, aktiv ab h+14, Luecke 0 Frames (S+4 im aktiven Frame 3), Treffer h+14; Gegner in der Luecke: -
+A4 a4_grenze19_e Stufe 2: Druck h+19, Reaktion bis h+21, aktiv ab h+22, Luecke 0 Frames (S+4 im aktiven Frame 3), Treffer h+22; Gegner in der Luecke: -
+A4 a4_grenze19_w Stufe 2: Druck h+19, Reaktion bis h+21, aktiv ab h+22, Luecke 0 Frames (S+4 im aktiven Frame 3), Treffer h+22; Gegner in der Luecke: -
+A4 a4_grenze20_e Stufe 2: Druck h+20, Reaktion bis h+22, aktiv ab h+23, Luecke 0 Frames (S+4 im aktiven Frame 3), Treffer h+23; Gegner in der Luecke: -
+A4 a4_grenze20_w Stufe 2: Druck h+20, Reaktion bis h+22, aktiv ab h+23, Luecke 0 Frames (S+4 im aktiven Frame 3), Treffer h+23; Gegner in der Luecke: -
+A4 a4_spaet_e Stufe 2: Druck h+27, Reaktion bis h+22, aktiv ab h+30, Luecke 7 Frames (S+4 im aktiven Frame 3), Treffer h+30; Gegner in der Luecke: h+23:gehen x ab h+24 h+27:gehen
+A4 a4_spaet_e Stufe 3: Druck h+26, Reaktion bis h+22, aktiv ab h+30, Luecke 7 Frames (S+4 im aktiven Frame 3), Treffer h+30; Gegner in der Luecke: h+23:gehen x ab h+24 h+25:stand
+A4 a4_spaet_e Stufe 4: Druck h+26, Reaktion bis h+22, aktiv ab h+29, Luecke 6 Frames (S+4 im aktiven Frame 3), Treffer h+29; Gegner in der Luecke: h+23:gehen x ab h+24 h+25:stand
+A4 a4_spaet_e2 Stufe 2: Druck h+27, Reaktion bis h+22, aktiv ab h+30, Luecke 7 Frames (S+4 im aktiven Frame 3), Treffer h+30; Gegner in der Luecke: h+23:gehen x ab h+24 h+27:gehen
+A4 a4_spaet_e2 Stufe 3: Druck h+26, Reaktion bis h+22, aktiv ab h+30, Luecke 7 Frames (S+4 im aktiven Frame 3), Treffer h+30; Gegner in der Luecke: h+23:gehen x ab h+24 h+26:stand
+A4 a4_spaet_e2 Stufe 4: Druck h+26, Reaktion bis h+22, aktiv ab h+29, Luecke 6 Frames (S+4 im aktiven Frame 3), Treffer h+29; Gegner in der Luecke: h+23:gehen x ab h+24 h+25:stand
+A4 a4_spaet_w Stufe 2: Druck h+27, Reaktion bis h+22, aktiv ab h+30, Luecke 7 Frames (S+4 im aktiven Frame 3), Treffer h+30; Gegner in der Luecke: h+23:gehen h+24:stand
+A4 a4_spaet_w Stufe 3: Druck h+26, Reaktion bis h+22, aktiv ab h+30, Luecke 7 Frames (S+4 im aktiven Frame 3), Treffer h+30; Gegner in der Luecke: h+23:gehen h+24:stand
+A4 a4_spaet_w Stufe 4: Druck h+26, Reaktion bis h+22, aktiv ab h+29, Luecke 6 Frames (S+4 im aktiven Frame 3), Treffer h+29; Gegner in der Luecke: h+23:gehen h+24:stand
+A4 a4_spaet_w2 Stufe 2: Druck h+27, Reaktion bis h+22, aktiv ab h+30, Luecke 7 Frames (S+4 im aktiven Frame 3), Treffer h+30; Gegner in der Luecke: h+23:gehen h+24:stand
+A4 a4_spaet_w2 Stufe 3: Druck h+26, Reaktion bis h+22, aktiv ab h+30, Luecke 7 Frames (S+4 im aktiven Frame 3), Treffer h+30; Gegner in der Luecke: h+23:gehen h+24:stand
+A4 a4_spaet_w2 Stufe 4: Druck h+26, Reaktion bis h+22, aktiv ab h+29, Luecke 6 Frames (S+4 im aktiven Frame 3), Treffer h+29; Gegner in der Luecke: h+23:gehen h+24:stand
+B1 b_tritt_w: K=57, Flug ab K+9 vx +2.875 vh +5 g -0.2734 (vx-Aenderung +0), Scheitel K+27 48.2422, Boden K+46 (+109.25), Ruhe K+55 (+135.125); B2 Aufstehen ab K+87, S+4=1 K+105, liegt 32, steht auf 18 Frames, S+4 2, danach Aktion 0x0 bis Laufende
+B1 b_tritt_e: K=57, Flug ab K+9 vx +2.875 vh +5 g -0.2734 (vx-Aenderung +0), Scheitel K+27 48.2422, Boden K+46 (+109.25), Ruhe K+55 (+135.125); B2 Aufstehen ab K+95, S+4=1 K+113, liegt 40, steht auf 18 Frames, S+4 2, danach Aktion 0x1c bis G+84
+B1 b_sprung_w: K=15, Flug ab K+9 vx +2.875 vh +5 g -0.2734 (vx-Aenderung +0), Scheitel K+27 48.2422, Boden K+46 (+109.25), Ruhe K+55 (+135.125); B2 Aufstehen ab K+87, S+4=1 K+105, liegt 32, steht auf 18 Frames, S+4 2, danach Aktion 0x0 bis G+159
+B1 b_sprung_e: K=15, Flug ab K+9 vx +2.875 vh +5 g -0.2734 (vx-Aenderung +0), Scheitel K+27 48.2422, Boden K+46 (+109.25), Ruhe K+55 (+135.125); B2 Aufstehen ab K+95, S+4=1 K+113, liegt 40, steht auf 18 Frames, S+4 2, danach Aktion 0x0 bis G+39
+B1 b_wurf_w: K=16, Flug ab K+22 vx +5 vh +2 g -0.2031 (vx-Aenderung -0.0625), Scheitel K+31 69.8594, Boden K+58 (+147.375), Ruhe K+70 (+175.5); B2 Aufstehen ab K+86, S+4=1 K+104, liegt 16, steht auf 18 Frames, S+4 3, danach Aktion 0x0 bis G+159
+B1 b_wurf_e: K=15, Flug ab K+22 vx +5 vh +2 g -0.2031 (vx-Aenderung -0.0625), Scheitel K+31 69.8594, Boden K+58 (+147.375), Ruhe K+70 (+173.5); B2 Aufstehen ab K+106, S+4=1 K+124, liegt 36, steht auf 18 Frames, S+4 3, danach Aktion 0x0 bis G+40
+B1 b_knie_w: K=56, Flug ab K+9 vx +2.875 vh +5 g -0.2734 (vx-Aenderung +0), Scheitel K+27 64.2422, Boden K+49 (+117.875), Ruhe K+58 (+143.75); B2 Aufstehen ab K+90, S+4=1 K+108, liegt 32, steht auf 18 Frames, S+4 2, danach Aktion 0x0 bis G+69
+B1 b_knie_e: K=55, Flug ab K+9 vx +2.875 vh +5 g -0.2734 (vx-Aenderung +0), Scheitel K+27 64.2422, Boden K+49 (+117.875), Ruhe K+58 (+143.75); B2 Aufstehen ab K+78, S+4=1 K+96, liegt 20, steht auf 18 Frames, S+4 2, danach Aktion 0x0 bis G+69
+B1 b_tritt_w2: K=64, Flug ab K+9 vx +2.875 vh +5 g -0.2734 (vx-Aenderung +0), Scheitel K+27 48.2422, Boden K+46 (+109.25), Ruhe K+55 (+135.125); B2 Aufstehen ab K+87, S+4=1 K+105, liegt 32, steht auf 18 Frames, S+4 2, danach Aktion 0x0 bis Laufende
+B1 b_tritt_e2: K=74, Flug ab K+9 vx +2.875 vh +5 g -0.2734 (vx-Aenderung +0), Scheitel K+27 48.2422, Boden K+46 (+109.25), Ruhe K+55 (+135.125); B2 Aufstehen ab K+75, S+4=1 K+93, liegt 20, steht auf 18 Frames, S+4 2, danach Aktion 0x0 bis G+39
+B1 b_sprung_w2: K=19, Flug ab K+9 vx +2.875 vh +5 g -0.2734 (vx-Aenderung +0), Scheitel K+27 48.2422, Boden K+46 (+109.25), Ruhe K+55 (+135.125); B2 Aufstehen ab K+87, S+4=1 K+105, liegt 32, steht auf 18 Frames, S+4 2, danach Aktion 0x0 bis G+159
+B1 b_sprung_e2: K=32, Flug ab K+9 vx +2.875 vh +5 g -0.2734 (vx-Aenderung +0), Scheitel K+27 48.2422, Boden K+46 (+109.25), Ruhe K+55 (+135.125); B2 Aufstehen ab K+75, S+4=1 K+93, liegt 20, steht auf 18 Frames, S+4 2, danach Aktion 0x0 bis G+39
+B1 b_wurf_w2: K=26, Flug ab K+22 vx -5 vh +2 g -0.2031 (vx-Aenderung +0.0625), Scheitel K+31 69.8594, Boden K+58 (-147.375), Ruhe K+70 (-175.5); B2 Aufstehen ab K+86, S+4=1 K+104, liegt 16, steht auf 18 Frames, S+4 3, danach Aktion 0x0 bis G+59
+B3 tritt_w: Treffer bei G+0/+1/+2/+4/+6/+8/+12/+16/+20/+24/+28/+32/+36/+40; kein Treffer bei G-65 (K+40)/G-45 (K+60)/G-25 (K+80)/G-18 (K+87)/G-10 (K+95)/G-4 (K+101)/G-2 (K+103)/G-1 (K+104)
+B3 tritt_e: Treffer bei G+0/+1/+2/+4/+6/+8/+12/+16/+20/+24/+28/+32/+36/+40; kein Treffer bei G-73 (K+40)/G-53 (K+60)/G-33 (K+80)/G-18 (K+95)/G-10 (K+103)/G-4 (K+109)/G-2 (K+111)/G-1 (K+112)
+B3 sprung_w: Treffer bei G+0/+1/+2/+4/+6/+8/+12/+16/+20/+24/+28/+32/+36/+40; kein Treffer bei G-65 (K+40)/G-45 (K+60)/G-25 (K+80)/G-18 (K+87)/G-10 (K+95)/G-4 (K+101)/G-2 (K+103)/G-1 (K+104); Figur schlug nicht: G-65
+B3 sprung_w ohne Eingriff (bn_sprung_w_g0): erster aktiver Frame G+0, Treffer G+0, dx 82, dz 10
+B3 sprung_w ohne Eingriff (bn_sprung_w_gm1): erster aktiver Frame G-1, Treffer G+0, dx 82, dz 10
+B3 sprung_e: Treffer bei G+0/+1/+2/+4/+6/+8/+12/+16/+20/+24/+28/+32/+36/+40; kein Treffer bei G-73 (K+40)/G-53 (K+60)/G-33 (K+80)/G-18 (K+95)/G-10 (K+103)/G-4 (K+109)/G-2 (K+111)/G-1 (K+112); Figur schlug nicht: G-73
+B3 sprung_e ohne Eingriff (bn_sprung_e_g0): erster aktiver Frame G+0, Treffer G+0, dx 67, dz 2
+B3 sprung_e ohne Eingriff (bn_sprung_e_gm1): erster aktiver Frame G-1, Treffer G+0, dx 67, dz 2
+B3 wurf_w: Treffer bei G+0/+1/+2/+4/+6/+8/+12/+16/+20/+24/+28/+32/+36/+40; kein Treffer bei G-64 (K+40)/G-44 (K+60)/G-24 (K+80)/G-18 (K+86)/G-10 (K+94)/G-4 (K+100)/G-2 (K+102)/G-1 (K+103)
+B3 wurf_e: Treffer bei G+0/+1/+2/+4/+6/+8/+12/+16/+20/+24/+28/+32/+36/+40; kein Treffer bei G-84 (K+40)/G-64 (K+60)/G-44 (K+80)/G-18 (K+106)/G-10 (K+114)/G-4 (K+120)/G-2 (K+122)/G-1 (K+123)
+B3 knie_w: Treffer bei G+0/+1/+2/+4/+6/+8/+12/+16/+20/+24/+28/+32/+36/+40; kein Treffer bei G-68 (K+40)/G-48 (K+60)/G-28 (K+80)/G-18 (K+90)/G-10 (K+98)/G-4 (K+104)/G-2 (K+106)/G-1 (K+107)
+B3 knie_e: Treffer bei G+0/+1/+2/+4/+6/+8/+12/+16/+20/+24/+28/+32/+36/+40; kein Treffer bei G-56 (K+40)/G-36 (K+60)/G-18 (K+78)/G-10 (K+86)/G-4 (K+92)/G-2 (K+94)/G-1 (K+95)
+B3 tritt_w2: Treffer bei G+0/+2; kein Treffer bei G-1 (K+104)
+B3 tritt_e2: Treffer bei G+0/+2; kein Treffer bei G-1 (K+92)
+B3 sprung_w2: Treffer bei G+0/+2; kein Treffer bei G-1 (K+104)
+B3 sprung_e2: Treffer bei G+0/+2; kein Treffer bei G-1 (K+92)
+B3 wurf_w2: Treffer bei G+0/+2; kein Treffer bei G-1 (K+103)
+B3 Griff bg_tritt_w_gm3: Laufen ab 159, Griff in 162 (G+0)
+B3 Griff bg_tritt_w_gm10: Laufen ab 152, Griff in 162 (G+0)
+B3 Griff bg_tritt_e_gm3: Laufen ab 167, Griff in 170 (G+0)
+B3 Griff bg_tritt_e_gm10: Laufen ab 160, Griff in 170 (G+0)
+B3 Griff bg_sprung_w_gm3: Laufen ab 117, Griff in 120 (G+0)
+B3 Griff bg_sprung_w_gm10: Laufen ab 110, Griff in 120 (G+0)
+B3 Griff bg_sprung_e_gm3: Laufen ab 125, Griff in 128 (G+0)
+B3 Griff bg_sprung_e_gm10: Laufen ab 118, Griff in 128 (G+0)
+B3 Griff bg_wurf_w_gm3: Laufen ab 117, Griff in 121 (G+1)
+B3 Griff bg_wurf_w_gm10: Laufen ab 110, Griff in 121 (G+1)
+B3 Griff bg_wurf_e_gm3: Laufen ab 136, Griff in 140 (G+1)
+B3 Griff bg_wurf_e_gm10: Laufen ab 129, Griff in 140 (G+1)
+B3 Griff bg_knie_w_gm3: Laufen ab 161, Griff in 164 (G+0)
+B3 Griff bg_knie_w_gm10: Laufen ab 154, Griff in 164 (G+0)
+B3 Griff bg_knie_e_gm3: Laufen ab 148, Griff in 151 (G+0)
+B3 Griff bg_knie_e_gm10: Laufen ab 141, Griff in 151 (G+0)
+C c_einzel_b: Druck 30, Treffer 32 an 17/EDDY (Schaden 3, Stufe 1), Animationswechsel der Figur h+11 h+12, Phase 4 ab h+13
+C c_einzel_b: Druck 46, Treffer 49 an 17/EDDY (Schaden 4, Stufe 2), Animationswechsel der Figur h+11, Phase 4 ab h+11
+C c_einzel_b: Druck 63, Treffer 67 an 17/EDDY (Schaden 5, Stufe 3), Animationswechsel der Figur h+11 h+27, Phase 4 ab h+11
+C c_fenster27: Druck 20, Treffer 22 an 16/WOOKY 17/EDDY (Schaden 3 3, Stufe 1), Animationswechsel der Figur h+11 h+12, Phase 4 ab h+13
+C c_fenster27: Druck 49, Treffer 52 an 16/WOOKY 17/EDDY (Schaden 4 4, Stufe 2), Animationswechsel der Figur h+11 h+27, Phase 4 ab h+11
+C c_fenster28: Druck 20, Treffer 22 an 16/WOOKY 17/EDDY (Schaden 3 3, Stufe 1), Animationswechsel der Figur h+11 h+12 h+28, Phase 4 ab h+13
+C c_fenster28: Druck 50, Treffer 52 an 16/WOOKY 17/EDDY (Schaden 3 3, Stufe 1), Animationswechsel der Figur h+11 h+12 h+28, Phase 4 ab h+13
+C c_kette_a: Druck 20, Treffer 22 an 16/WOOKY 17/EDDY (Schaden 3 3, Stufe 1), Animationswechsel der Figur h+11 h+12, Phase 4 ab h+13
+C c_kette_a: Druck 36, Treffer 39 an 16/WOOKY 17/EDDY (Schaden 4 4, Stufe 2), Animationswechsel der Figur h+11, Phase 4 ab h+11
+C c_kette_a: Druck 53, Treffer 57 an 16/WOOKY 17/EDDY (Schaden 5 5, Stufe 3), Animationswechsel der Figur h+11 h+27, Phase 4 ab h+11
+C c_kette_b: Druck 30, Treffer 32 an 16/WOOKY 17/EDDY (Schaden 3 3, Stufe 1), Animationswechsel der Figur h+11 h+12, Phase 4 ab h+13
+C c_kette_b: Druck 46, Treffer 49 an 16/WOOKY 17/EDDY (Schaden 4 4, Stufe 2), Animationswechsel der Figur h+11, Phase 4 ab h+11
+C c_kette_b: Druck 63, Treffer 67 an 16/WOOKY 17/EDDY (Schaden 5 5, Stufe 3), Animationswechsel der Figur h+11 h+27, Phase 4 ab h+11
+C c_zwei_a: Druck 20, Treffer 22 an 16/WOOKY 17/EDDY (Schaden 3 3, Stufe 1), Animationswechsel der Figur h+11 h+12 h+28 h+56, Phase 4 ab h+13
+C c_zwei_b: Druck 30, Treffer 32 an 16/WOOKY 17/EDDY (Schaden 3 3, Stufe 1), Animationswechsel der Figur h+11 h+12 h+28 h+56, Phase 4 ab h+13
+C a_s1_e_p20: Druck 20, Treffer 22 an 17/EDDY (Schaden 3, Stufe 1), Animationswechsel der Figur h+11 h+12 h+28 h+56, Phase 4 ab h+13
+C a_s3_e_b: Druck 20, Treffer 22 an 17/EDDY (Schaden 3, Stufe 1), Animationswechsel der Figur h+11 h+12, Phase 4 ab h+13
+C a_s3_e_b: Druck 36, Treffer 39 an 17/EDDY (Schaden 4, Stufe 2), Animationswechsel der Figur h+11, Phase 4 ab h+11
+C a_s3_e_b: Druck 53, Treffer 57 an 17/EDDY (Schaden 5, Stufe 3), Animationswechsel der Figur h+11 h+27 h+56 h+69, Phase 4 ab h+11
+D d_tritt_w (WOOKY): Tod t=57 (LP -6), t+0:3/c.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+49:2/6.0 t+58:2/a.0 t+79:0/0.0; Flug t+3, vx +2.875 vh +5, Boden t+40, Ruhe t+49, frei t+79 (79 Frames); Treffer danach: keine; Angriffsframes 0; Figur verliert LP: keiner; Frames im Bereich eines Schlags: 15
+D d_s1_w (WOOKY): Tod t=5 (LP -1), t+0:3/0.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+49:2/6.0 t+58:2/a.0 t+79:0/0.0; Flug t+3, vx +2.875 vh +5, Boden t+40, Ruhe t+49, frei t+79 (79 Frames); Treffer danach: keine; Angriffsframes 0; Figur verliert LP: keiner; Frames im Bereich eines Schlags: 15
+D d_s1_e (EDDY): Tod t=22 (LP -1), t+0:3/0.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+49:2/6.0 t+58:2/a.0 t+79:0/0.0; Flug t+3, vx +2.875 vh +5, Boden t+40, Ruhe t+49, frei t+79 (79 Frames); Treffer danach: keine; Angriffsframes 0; Figur verliert LP: keiner; Frames im Bereich eines Schlags: 15
+D d_s3_e (EDDY): Tod t=40 (LP -2), t+0:3/0.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+49:2/6.0 t+58:2/a.0 t+79:0/0.0; Flug t+3, vx +2.875 vh +5, Boden t+40, Ruhe t+49, frei t+79 (79 Frames); Treffer danach: keine; Angriffsframes 0; Figur verliert LP: keiner; Frames im Bereich eines Schlags: 10
+D d_sprung_w (WOOKY): Tod t=15 (LP -2), t+0:3/c.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+49:2/6.0 t+58:2/a.0 t+79:0/0.0; Flug t+3, vx +2.875 vh +5, Boden t+40, Ruhe t+49, frei t+79 (79 Frames); Treffer danach: keine; Angriffsframes 0; Figur verliert LP: keiner; Frames im Bereich eines Schlags: 0
+D d_gleich_w (WOOKY): Tod t=28 (LP -1), t+0:3/0.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+49:2/6.0 t+58:2/a.0 t+79:0/0.0; Flug t+3, vx +2.875 vh +5, Boden t+40, Ruhe t+49, frei t+79 (79 Frames); Treffer danach: keine; Angriffsframes 1; Figur verliert LP: keiner; Frames im Bereich eines Schlags: 15
+D d_probe_w_t20 (WOOKY): Tod t=5 (LP -1), t+0:3/0.0 t+1:2/0.0 t+2:2/2.0; Flug t+3, vx +2.875 vh +5, Boden -, Ruhe -, frei - (- Frames); Treffer danach: keine; Angriffsframes 0; Figur verliert LP: keiner; Frames im Bereich eines Schlags: 14
+D d_probe_w_t30 (WOOKY): Tod t=5 (LP -1), t+0:3/0.0 t+1:2/0.0 t+2:2/2.0; Flug t+3, vx +2.875 vh +5, Boden -, Ruhe -, frei - (- Frames); Treffer danach: keine; Angriffsframes 0; Figur verliert LP: keiner; Frames im Bereich eines Schlags: 16
+D d_probe_w_t45 (WOOKY): Tod t=5 (LP -1), t+0:3/0.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+49:2/6.0; Flug t+3, vx +2.875 vh +5, Boden t+40, Ruhe t+49, frei - (- Frames); Treffer danach: keine; Angriffsframes 0; Figur verliert LP: keiner; Frames im Bereich eines Schlags: 16
+D d_probe_w_t60 (WOOKY): Tod t=5 (LP -1), t+0:3/0.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+49:2/6.0 t+58:2/a.0; Flug t+3, vx +2.875 vh +5, Boden t+40, Ruhe t+49, frei - (- Frames); Treffer danach: keine; Angriffsframes 0; Figur verliert LP: keiner; Frames im Bereich eines Schlags: 16
+D d_probe_w_t75 (WOOKY): Tod t=5 (LP -1), t+0:3/0.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+49:2/6.0 t+58:2/a.0 t+79:0/0.0; Flug t+3, vx +2.875 vh +5, Boden t+40, Ruhe t+49, frei t+79 (79 Frames); Treffer danach: keine; Angriffsframes 0; Figur verliert LP: keiner; Frames im Bereich eines Schlags: 16
+D d_probe_e_t40 (EDDY): Tod t=22 (LP -1), t+0:3/0.0 t+1:2/0.0 t+2:2/2.0 t+17:2/8.0; Flug t+3, vx +2.875 vh +5, Boden -, Ruhe -, frei - (- Frames); Treffer danach: keine; Angriffsframes 0; Figur verliert LP: keiner; Frames im Bereich eines Schlags: 16
+D d_probe_e_t55 (EDDY): Tod t=22 (LP -1), t+0:3/0.0 t+1:2/0.0 t+2:2/2.0 t+32:2/8.0 t+40:2/6.0; Flug t+3, vx +2.875 vh +5, Boden t+40, Ruhe t+40, frei - (- Frames); Treffer danach: keine; Angriffsframes 0; Figur verliert LP: keiner; Frames im Bereich eines Schlags: 16
+D d_probe_e_t70 (EDDY): Tod t=22 (LP -1), t+0:3/0.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+47:2/8.0 t+49:2/6.0 t+58:2/a.0; Flug t+3, vx +2.875 vh +5, Boden t+40, Ruhe t+49, frei - (- Frames); Treffer danach: keine; Angriffsframes 0; Figur verliert LP: keiner; Frames im Bereich eines Schlags: 16
+D d_probe_e_t90 (EDDY): Tod t=22 (LP -1), t+0:3/0.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+49:2/6.0 t+58:2/a.0; Flug t+3, vx +2.875 vh +5, Boden t+40, Ruhe t+49, frei - (- Frames); Treffer danach: keine; Angriffsframes 0; Figur verliert LP: keiner; Frames im Bereich eines Schlags: 16
+D d_gleich_w: LP der Figur in Frame 26-32: 72
+DR A4 dr_a4_e_k (EDDY): Treffer h=67 Stufe 3, Ausholen h+45, aktiv h+55 (EDDY)
+DR A4 dr_a4_e_p30 (EDDY): Treffer h=32 Stufe 1, Ausholen h+45, aktiv h+54 (EDDY)
+DR A4 dr_a4_e_p40 (EDDY): Treffer h=42 Stufe 1, Ausholen h+45, aktiv h+54 (EDDY)
+DR A4 dr_a4_e_p47 (EDDY): Treffer h=49 Stufe 1, Ausholen h+45, aktiv h+54 (EDDY)
+DR A4 dr_a4_e_p52 (EDDY): Treffer h=54 Stufe 1, Ausholen h+45, aktiv h+54 (EDDY)
+DR A4 dr_a4_w_k (WOOKY): Treffer h=49 Stufe 3, Ausholen h+45, aktiv h+49 (schnell 05FC18)
+DR A4 dr_a4_w_p2 (WOOKY): Treffer h=38 Stufe 2, Ausholen h+45, aktiv h+49 (schnell 05FC18)
+DR A4 dr_a4_w_p3a (WOOKY): Treffer h=63 Stufe 3, Ausholen h+45, aktiv h+54 (langsam 05FA54)
+DR A4 dr_a4_w_p3b (WOOKY): Treffer h=66 Stufe 3, Ausholen h+45, aktiv h+54 (langsam 05FA54)
+DR A4 dr_a4_w_p3c (WOOKY): Treffer h=72 Stufe 3, Ausholen h+45, aktiv h+54 (langsam 05FA54)
+DR A4 dr_a4_w_p12 (WOOKY): Treffer h=14 Stufe 1, Ausholen h+45, aktiv h+49 (schnell 05FC18)
+DR A4 dr_a4_w_p25 (WOOKY): Treffer h=27 Stufe 1, Ausholen h+45, aktiv h+49 (schnell 05FC18)
+DR A4 dr_a4_w_p33 (WOOKY): Treffer h=35 Stufe 1, Ausholen h+45, aktiv h+49 (schnell 05FC18)
+DR A4 dr_a4_w_p38 (WOOKY): Treffer h=40 Stufe 1, Ausholen h+45, aktiv h+49 (schnell 05FC18)
+DR B dr_b_e_k (EDDY): K=86, Ruhe K+58, liegt 36, Aufstehen 18 Frames, G = K+112, danach Aktion 0x0 bis G+69, Bewegung ab G+1
+DR B dr_b_e_s20 (EDDY): K=32, Ruhe K+55, liegt 40, Aufstehen 18 Frames, G = K+113, danach Aktion 0x0 bis G+39, Bewegung ab G+1
+DR B dr_b_e_s25 (EDDY): K=37, Ruhe K+55, liegt 40, Aufstehen 18 Frames, G = K+113, danach Aktion 0x0 bis G+39, Bewegung ab G+1
+DR B dr_b_e_s31 (EDDY): K=43, Ruhe K+55, liegt 20, Aufstehen 18 Frames, G = K+93, danach Aktion 0x0 bis G+39, Bewegung ab G+1
+DR B dr_b_e_t30 (EDDY): K=84, Ruhe K+55, liegt 20, Aufstehen 18 Frames, G = K+93, danach Aktion 0x0 bis G+77, Bewegung ab G+1
+DR B dr_b_e_t35 (EDDY): K=89, Ruhe K+55, liegt 20, Aufstehen 18 Frames, G = K+93, danach Aktion 0x0 bis G+77, Bewegung ab G+1
+DR B dr_b_e_t40 (EDDY): K=94, Ruhe K+55, liegt 20, Aufstehen 18 Frames, G = K+93, danach Aktion 0x0 bis G+77, Bewegung ab G+1
+DR B dr_b_e_w (EDDY): K=46, Ruhe K+70, liegt 36, Aufstehen 18 Frames, G = K+124, danach Aktion 0x0 bis G+40, Bewegung ab G+1
+DR B dr_b_w_k (WOOKY): K=61, Ruhe K+58, liegt 32, Aufstehen 18 Frames, G = K+108, danach Aktion 0x0 bis Laufende, Bewegung ab G+1
+DR B dr_b_w_s (WOOKY): K=32, Ruhe K+55, liegt 32, Aufstehen 18 Frames, G = K+105, danach Aktion 0x0 bis G+159, Bewegung ab G+1
+DR B dr_b_w_w (WOOKY): K=21, Ruhe K+70, liegt 16, Aufstehen 18 Frames, G = K+104, danach Aktion 0x0 bis G+159, Bewegung ab G+1
+DR D1 dr_d_w_s1 (WOOKY): Tod t=14, t+0:3/0.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+49:2/6.0 t+58:2/a.0 t+79:0/0.0; Flug t+3 (vx +2.875, vh +5), Boden t+40, Ruhe t+49, frei t+79
+DR D1 dr_d_w_s2 (WOOKY): Tod t=31, t+0:3/4.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+72:2/6.0 t+90:2/a.0 t+111:0/0.0; Flug t+3 (vx +2.875, vh +5), Boden t+40, Ruhe t+72, frei t+111
+DR D1 dr_d_w_tritt (WOOKY): Tod t=66, t+0:3/c.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+49:2/6.0 t+58:2/a.0 t+79:0/0.0; Flug t+3 (vx +2.875, vh +5), Boden t+40, Ruhe t+49, frei t+79
+DR D1 dr_d_w_wurf (WOOKY): Tod t=21, t+0:3/2.0 t+21:3/4.0 t+79:3/6.0 t+80:3/a.0 t+101:0/0.0; Flug t+22 (vx +5, vh +2), Boden t+58, Ruhe t+79, frei t+101
+DR D1 dr_d_e_s2 (EDDY): Tod t=49, t+0:3/4.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+63:2/6.0 t+72:2/a.0 t+93:0/0.0; Flug t+3 (vx +2.875, vh +5), Boden t+40, Ruhe t+63, frei t+93
+DR D1 dr_d_e_sprung (EDDY): Tod t=32, t+0:3/c.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+49:2/6.0 t+58:2/a.0 t+79:0/0.0; Flug t+3 (vx +2.875, vh +5), Boden t+40, Ruhe t+49, frei t+79
+DR D1 dr_d_e_wurf (EDDY): Tod t=46, t+0:3/2.0 t+21:3/4.0 t+79:3/6.0 t+80:3/a.0 t+101:0/0.0; Flug t+22 (vx +5, vh +2), Boden t+58, Ruhe t+79, frei t+101
+DR D1 dr_d_e_wurfr (EDDY): Tod t=49, t+0:3/2.0 t+21:3/4.0 t+79:3/6.0 t+80:3/a.0 t+101:0/0.0; Flug t+22 (vx -5, vh +2), Boden t+58, Ruhe t+79, frei t+101
+Rang (FFF82A) in allen Laeufen: 10/11: 136 Laeufe; 10: 182 Laeufe; 9/10: 1 Laeufe
+# Einzelwerte: treffer (je Treffer ohne Umwerfen)
+lauf,gegner,slot,h,stufe,p1_aktion,schaden,lp_nachher,art,reaktion_bis,reaktion_frames,s4_1_ab,abbruch_durch_treffer,anim_wechsel,x_je_frame,x_summe,tiefe_summe,erste_bewegung,ausholen_ab,angriff_aktiv_ab,figur_getroffen
+reaktion_m_a_links_e,EDDY,17,8,1,0x10,3,27,reaktion,h+22,23,h+23,-,h+1:0639f4/reaktion h+10:063a2e/reaktion h+22:063a60/reaktion h+23:063746/gehen h+27:063778/gehen h+31:0637a8/gehen h+35:0637d6/gehen h+39:063800/gehen h+43:063830/gehen h+47:063860/gehen h+51:06388c/gehen,h+9:-3 h+10:+3 h+11:-2 h+12:+2 h+13:-1 h+14:+1,+0,+0,h+24,-,-,-
+reaktion_m_a_links_w,WOOKY,18,8,1,0x10,3,13,reaktion,h+22,23,h+23,-,h+1:05efc8/reaktion h+10:05f002/reaktion h+22:05f034/reaktion h+23:05ed1c/gehen h+27:05ed4e/gehen h+31:05ed7e/gehen h+35:05edaa/gehen h+39:05edd4/gehen h+43:05ee04/gehen h+47:05ee34/gehen h+51:05ee60/gehen,h+9:-3 h+10:+3 h+11:-2 h+12:+2 h+13:-1 h+14:+1,+0,+0,h+24,-,-,-
+reaktion_m_a_s1_e_p3,EDDY,17,5,1,0x10,3,27,reaktion,h+22,23,h+23,-,h+1:0639f4/reaktion h+10:063a2e/reaktion h+22:063a60/reaktion h+23:063746/gehen h+27:063778/gehen h+31:0637a8/gehen h+33:0636d4/stand,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,h+24,h+54,h+63,h+63
+reaktion_m_a_s1_e_p14,EDDY,17,16,1,0x10,3,27,reaktion,h+22,23,h+23,-,h+1:0639f4/reaktion h+10:063a2e/reaktion h+22:063a60/reaktion h+23:063746/gehen h+24:0636d4/stand h+45:064688/ausholen h+48:0646c0/ausholen h+49:0646f8/ausholen,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,h+50,h+45,h+54,h+54
+reaktion_m_a_s1_e_p20,EDDY,17,22,1,0x10,3,27,reaktion,h+22,23,h+23,-,h+1:0639f4/reaktion h+10:063a2e/reaktion h+22:063a60/reaktion h+23:063746/gehen h+24:0636d4/stand h+45:0645bc/ausholen h+49:0645f4/ausholen,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,h+45,h+55,h+55
+reaktion_m_a_s1_e_p35,EDDY,17,37,1,0x10,3,27,reaktion,h+22,23,h+23,-,h+1:0639f4/reaktion h+10:063a2e/reaktion h+22:063a60/reaktion h+23:063746/gehen h+24:0636d4/stand h+45:064688/ausholen h+48:0646c0/ausholen h+49:0646f8/ausholen,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,h+50,h+45,h+54,h+54
+reaktion_m_a_s1_w_p3,WOOKY,18,5,1,0x10,3,13,reaktion,h+22,23,h+23,-,h+1:05efc8/reaktion h+10:05f002/reaktion h+22:05f034/reaktion h+23:05ed1c/gehen h+24:05ecaa/stand h+45:05fc18/ausholen h+49:05fc50,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,h+45,h+49,h+49
+reaktion_m_a_s1_w_p10,WOOKY,18,12,1,0x10,3,13,reaktion,h+22,23,h+23,-,h+1:05efc8/reaktion h+10:05f002/reaktion h+22:05f034/reaktion h+23:05ed1c/gehen h+24:05ecaa/stand h+45:05fc18/ausholen h+49:05fc50,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,h+45,h+49,h+49
+reaktion_m_a_s1_w_p18,WOOKY,18,20,1,0x10,3,13,reaktion,h+22,23,h+23,-,h+1:05efc8/reaktion h+10:05f002/reaktion h+22:05f034/reaktion h+23:05ed1c/gehen h+24:05ecaa/stand h+45:05fc18/ausholen h+49:05fc50,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,h+45,h+49,h+49
+reaktion_m_a_s1_w_p26,WOOKY,18,28,1,0x10,3,13,reaktion,h+22,23,h+23,-,h+1:05efc8/reaktion h+10:05f002/reaktion h+22:05f034/reaktion h+23:05ed1c/gehen h+24:05ecaa/stand h+45:05fc18/ausholen h+49:05fc50,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,h+45,h+49,h+49
+reaktion_m_a_s2_e,EDDY,17,5,1,0x10,3,27,reaktion,h+16,17,-,h+17,h+1:0639f4/reaktion h+10:063a2e/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a_s2_e,EDDY,17,22,2,0x10,4,23,reaktion,h+22,23,h+23,-,h+1:0638c0/reaktion h+10:0638fa/reaktion h+22:063926 h+23:063746/gehen h+27:063778/gehen h+31:0637a8/gehen h+34:0636d4/stand,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,h+24,h+55,h+64,h+64
+reaktion_m_a_s2_e_b,EDDY,17,22,1,0x10,3,27,reaktion,h+16,17,-,h+17,h+1:0639f4/reaktion h+10:063a2e/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a_s2_e_b,EDDY,17,39,2,0x10,4,23,reaktion,h+22,23,h+23,-,h+1:0638c0/reaktion h+10:0638fa/reaktion h+22:063926 h+23:063746/gehen h+24:0636d4/stand h+45:0645bc/ausholen h+49:0645f4/ausholen,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,h+45,h+55,h+55
+reaktion_m_a_s2_w,WOOKY,18,5,1,0x10,3,13,reaktion,h+16,17,-,h+17,h+1:05efc8/reaktion h+10:05f002/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a_s2_w,WOOKY,18,22,2,0x10,4,9,reaktion,h+22,23,h+23,-,h+1:05ee94/reaktion h+10:05eece/reaktion h+22:05eefa h+23:05ed1c/gehen h+24:05ecaa/stand h+45:05fc18/ausholen h+49:05fc50,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,h+45,h+49,h+49
+reaktion_m_a_s2_w_b,WOOKY,18,12,1,0x10,3,13,reaktion,h+16,17,-,h+17,h+1:05efc8/reaktion h+10:05f002/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a_s2_w_b,WOOKY,18,29,2,0x10,4,9,reaktion,h+22,23,h+23,-,h+1:05ee94/reaktion h+10:05eece/reaktion h+22:05eefa h+23:05ed1c/gehen h+24:05ecaa/stand h+45:05fc18/ausholen h+49:05fc50,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,h+45,h+49,h+49
+reaktion_m_a_s3_e,EDDY,17,5,1,0x10,3,27,reaktion,h+16,17,-,h+17,h+1:0639f4/reaktion h+10:063a2e/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a_s3_e,EDDY,17,22,2,0x10,4,23,reaktion,h+17,18,-,h+18,h+1:0638c0/reaktion h+10:0638fa/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a_s3_e,EDDY,17,40,3,0x10,5,18,reaktion,h+22,23,h+23,-,h+1:0639f4/reaktion h+10:063a2e/reaktion h+22:063a60/reaktion h+23:063746/gehen h+27:063778/gehen h+31:0637a8/gehen h+33:0636d4/stand,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,h+24,h+54,h+63,h+63
+reaktion_m_a_s3_e_b,EDDY,17,22,1,0x10,3,27,reaktion,h+16,17,-,h+17,h+1:0639f4/reaktion h+10:063a2e/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a_s3_e_b,EDDY,17,39,2,0x10,4,23,reaktion,h+17,18,-,h+18,h+1:0638c0/reaktion h+10:0638fa/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a_s3_e_b,EDDY,17,57,3,0x10,5,18,reaktion,h+22,23,h+23,-,h+1:0639f4/reaktion h+10:063a2e/reaktion h+22:063a60/reaktion h+23:063746/gehen h+24:0636d4/stand h+45:0645bc/ausholen h+49:0645f4/ausholen,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,h+45,h+55,h+55
+reaktion_m_a_s3_w,WOOKY,18,5,1,0x10,3,13,reaktion,h+16,17,-,h+17,h+1:05efc8/reaktion h+10:05f002/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a_s3_w,WOOKY,18,22,2,0x10,4,9,reaktion,h+17,18,-,h+18,h+1:05ee94/reaktion h+10:05eece/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a_s3_w,WOOKY,18,40,3,0x10,5,4,reaktion,h+22,23,h+23,-,h+1:05efc8/reaktion h+10:05f002/reaktion h+22:05f034/reaktion h+23:05ed1c/gehen h+24:05ecaa/stand h+45:05fc18/ausholen h+49:05fc50,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,h+45,h+49,h+49
+reaktion_m_a_s3_w_b,WOOKY,18,12,1,0x10,3,13,reaktion,h+14,15,-,h+15,h+1:05efc8/reaktion h+10:05f002/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a_s3_w_b,WOOKY,18,27,2,0x10,4,9,reaktion,h+16,17,-,h+17,h+1:05ee94/reaktion h+10:05eece/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a_s3_w_b,WOOKY,18,44,3,0x10,5,4,reaktion,h+22,23,h+23,-,h+1:05efc8/reaktion h+10:05f002/reaktion h+22:05f034/reaktion h+23:05ed1c/gehen h+24:05ecaa/stand h+45:05fc18/ausholen h+49:05fc50,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,h+45,h+49,h+49
+reaktion_m_a3_s2_12_e,EDDY,17,5,1,0x10,3,27,reaktion,h+14,15,-,h+15,h+1:0639f4/reaktion h+10:063a2e/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a3_s2_12_e,EDDY,17,20,2,0x10,4,23,reaktion,h+22,23,h+23,-,h+1:0638c0/reaktion h+10:0638fa/reaktion h+22:063926 h+23:063746/gehen h+27:063778/gehen h+31:0637a8/gehen h+34:0636d4/stand,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,h+24,h+55,h+64,h+64
+reaktion_m_a3_s2_12_w,WOOKY,18,5,1,0x10,3,13,reaktion,h+14,15,-,h+15,h+1:05efc8/reaktion h+10:05f002/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a3_s2_12_w,WOOKY,18,20,2,0x10,4,9,reaktion,h+22,23,h+23,-,h+1:05ee94/reaktion h+10:05eece/reaktion h+22:05eefa h+23:05ed1c/gehen h+24:05ecaa/stand h+45:05fc18/ausholen h+49:05fc50,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,h+45,h+49,h+49
+reaktion_m_a3_s2_27_e,EDDY,17,5,1,0x10,3,27,reaktion,h+22,23,h+23,-,h+1:0639f4/reaktion h+10:063a2e/reaktion h+22:063a60/reaktion h+23:063746/gehen h+27:063778/gehen,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,h+24,-,-,-
+reaktion_m_a3_s2_27_e,EDDY,17,35,2,0x10,4,23,reaktion,h+22,23,h+23,-,h+1:0638c0/reaktion h+10:0638fa/reaktion h+22:063926 h+23:063746/gehen h+25:0636d4/stand h+46:0643f8/ausholen h+50:064430/ausholen,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,h+24,h+46,h+55,h+55
+reaktion_m_a3_s2_27_w,WOOKY,18,5,1,0x10,3,13,reaktion,h+22,23,h+23,-,h+1:05efc8/reaktion h+10:05f002/reaktion h+22:05f034/reaktion h+23:05ed1c/gehen h+24:05ecaa/stand,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a3_s2_27_w,WOOKY,18,35,2,0x10,4,9,reaktion,h+22,23,h+23,-,h+1:05ee94/reaktion h+10:05eece/reaktion h+22:05eefa h+23:05ed1c/gehen h+24:05ecaa/stand h+45:05fc18/ausholen h+49:05fc50,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,h+45,h+49,h+49
+reaktion_m_a3_s3_12_e,EDDY,17,5,1,0x10,3,27,reaktion,h+16,17,-,h+17,h+1:0639f4/reaktion h+10:063a2e/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a3_s3_12_e,EDDY,17,22,2,0x10,4,23,reaktion,h+15,16,-,h+16,h+1:0638c0/reaktion h+10:0638fa/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a3_s3_12_e,EDDY,17,38,3,0x10,5,18,reaktion,h+22,23,h+23,-,h+1:0639f4/reaktion h+10:063a2e/reaktion h+22:063a60/reaktion h+23:063746/gehen h+27:063778/gehen h+31:0637a8/gehen h+33:0636d4/stand,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,h+24,h+54,h+63,h+63
+reaktion_m_a3_s3_12_w,WOOKY,18,5,1,0x10,3,13,reaktion,h+16,17,-,h+17,h+1:05efc8/reaktion h+10:05f002/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a3_s3_12_w,WOOKY,18,22,2,0x10,4,9,reaktion,h+15,16,-,h+16,h+1:05ee94/reaktion h+10:05eece/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a3_s3_12_w,WOOKY,18,38,3,0x10,5,4,reaktion,h+22,23,h+23,-,h+1:05efc8/reaktion h+10:05f002/reaktion h+22:05f034/reaktion h+23:05ed1c/gehen h+24:05ecaa/stand h+45:05fc18/ausholen h+49:05fc50,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,h+45,h+49,h+49
+reaktion_m_a3_s3_26_e,EDDY,17,5,1,0x10,3,27,reaktion,h+16,17,-,h+17,h+1:0639f4/reaktion h+10:063a2e/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a3_s3_26_e,EDDY,17,22,2,0x10,4,23,reaktion,h+22,23,h+23,-,h+1:0638c0/reaktion h+10:0638fa/reaktion h+22:063926 h+23:063746/gehen h+27:063778/gehen,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,h+24,-,-,-
+reaktion_m_a3_s3_26_e,EDDY,17,52,3,0x10,5,18,reaktion,h+22,23,h+23,-,h+1:0639f4/reaktion h+10:063a2e/reaktion h+22:063a60/reaktion h+23:063746/gehen h+26:0636d4/stand h+47:064688/ausholen h+50:0646c0/ausholen h+51:0646f8/ausholen,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,h+24,h+47,h+56,h+56
+reaktion_m_a3_s3_26_w,WOOKY,18,5,1,0x10,3,13,reaktion,h+16,17,-,h+17,h+1:05efc8/reaktion h+10:05f002/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a3_s3_26_w,WOOKY,18,22,2,0x10,4,9,reaktion,h+22,23,h+23,-,h+1:05ee94/reaktion h+10:05eece/reaktion h+22:05eefa h+23:05ed1c/gehen h+24:05ecaa/stand,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a3_s3_26_w,WOOKY,18,52,3,0x10,5,4,reaktion,h+22,23,h+23,-,h+1:05efc8/reaktion h+10:05f002/reaktion h+22:05f034/reaktion h+23:05ed1c/gehen h+24:05ecaa/stand h+45:05fc18/ausholen h+49:05fc50,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,h+45,h+49,h+49
+reaktion_m_a3_s4_12_e,EDDY,17,5,1,0x10,3,27,reaktion,h+16,17,-,h+17,h+1:0639f4/reaktion h+10:063a2e/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a3_s4_12_e,EDDY,17,22,2,0x10,4,23,reaktion,h+17,18,-,h+18,h+1:0638c0/reaktion h+10:0638fa/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a3_s4_12_e,EDDY,17,40,3,0x10,5,18,reaktion,h+14,15,-,h+15,h+1:0639f4/reaktion h+10:063a2e/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a3_s4_12_e,EDDY,17,55,4,0x10,10,8,umgeworfen,,,,,,,,,,,,
+reaktion_m_a3_s4_12_w,WOOKY,18,5,1,0x10,3,37,reaktion,h+16,17,-,h+17,h+1:05efc8/reaktion h+10:05f002/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a3_s4_12_w,WOOKY,18,22,2,0x10,4,33,reaktion,h+17,18,-,h+18,h+1:05ee94/reaktion h+10:05eece/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a3_s4_12_w,WOOKY,18,40,3,0x10,5,28,reaktion,h+14,15,-,h+15,h+1:05efc8/reaktion h+10:05f002/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a3_s4_12_w,WOOKY,18,55,4,0x10,10,18,umgeworfen,,,,,,,,,,,,
+reaktion_m_a3_s4_26_e,EDDY,17,5,1,0x10,3,27,reaktion,h+16,17,-,h+17,h+1:0639f4/reaktion h+10:063a2e/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a3_s4_26_e,EDDY,17,22,2,0x10,4,23,reaktion,h+17,18,-,h+18,h+1:0638c0/reaktion h+10:0638fa/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a3_s4_26_e,EDDY,17,40,3,0x10,5,18,reaktion,h+22,23,h+23,-,h+1:0639f4/reaktion h+10:063a2e/reaktion h+22:063a60/reaktion h+23:063746/gehen h+27:063778/gehen,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,h+24,-,-,-
+reaktion_m_a3_s4_26_e,EDDY,17,69,4,0x10,10,8,umgeworfen,,,,,,,,,,,,
+reaktion_m_a3_s4_26_w,WOOKY,18,5,1,0x10,3,37,reaktion,h+16,17,-,h+17,h+1:05efc8/reaktion h+10:05f002/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a3_s4_26_w,WOOKY,18,22,2,0x10,4,33,reaktion,h+17,18,-,h+18,h+1:05ee94/reaktion h+10:05eece/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a3_s4_26_w,WOOKY,18,40,3,0x10,5,28,reaktion,h+22,23,h+23,-,h+1:05efc8/reaktion h+10:05f002/reaktion h+22:05f034/reaktion h+23:05ed1c/gehen h+24:05ecaa/stand,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a3_s4_26_w,WOOKY,18,69,4,0x10,10,18,umgeworfen,,,,,,,,,,,,
+reaktion_m_a4_frueh_e,EDDY,17,5,1,0x10,3,27,reaktion,h+14,15,-,h+15,h+1:0639f4/reaktion h+10:063a2e/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a4_frueh_e,EDDY,17,20,2,0x10,4,23,reaktion,h+14,15,-,h+15,h+1:0638c0/reaktion h+10:0638fa/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a4_frueh_e,EDDY,17,35,3,0x10,5,18,reaktion,h+13,14,-,h+14,h+1:0639f4/reaktion h+10:063a2e/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1,+1,+0,-,-,-,-
+reaktion_m_a4_frueh_e,EDDY,17,49,4,0x10,10,8,umgeworfen,,,,,,,,,,,,
+reaktion_m_a4_frueh_w,WOOKY,18,5,1,0x10,3,37,reaktion,h+14,15,-,h+15,h+1:05efc8/reaktion h+10:05f002/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a4_frueh_w,WOOKY,18,20,2,0x10,4,33,reaktion,h+14,15,-,h+15,h+1:05ee94/reaktion h+10:05eece/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a4_frueh_w,WOOKY,18,35,3,0x10,5,28,reaktion,h+13,14,-,h+14,h+1:05efc8/reaktion h+10:05f002/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1,+1,+0,-,-,-,-
+reaktion_m_a4_frueh_w,WOOKY,18,49,4,0x10,10,18,umgeworfen,,,,,,,,,,,,
+reaktion_m_a4_grenze19_e,EDDY,17,5,1,0x10,3,27,reaktion,h+21,22,-,h+22,h+1:0639f4/reaktion h+10:063a2e/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a4_grenze19_e,EDDY,17,27,2,0x10,4,23,reaktion,h+22,23,h+23,-,h+1:0638c0/reaktion h+10:0638fa/reaktion h+22:063926 h+23:063746/gehen h+27:063778/gehen h+31:0637a8/gehen h+34:0636d4/stand,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,h+24,h+55,h+64,h+64
+reaktion_m_a4_grenze19_w,WOOKY,18,5,1,0x10,3,13,reaktion,h+21,22,-,h+22,h+1:05efc8/reaktion h+10:05f002/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a4_grenze19_w,WOOKY,18,27,2,0x10,4,9,reaktion,h+22,23,h+23,-,h+1:05ee94/reaktion h+10:05eece/reaktion h+22:05eefa h+23:05ed1c/gehen h+24:05ecaa/stand h+45:05fc18/ausholen h+49:05fc50,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,h+45,h+49,h+49
+reaktion_m_a4_grenze20_e,EDDY,17,5,1,0x10,3,27,reaktion,h+22,23,-,h+23,h+1:0639f4/reaktion h+10:063a2e/reaktion h+22:063a60/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a4_grenze20_e,EDDY,17,28,2,0x10,4,23,reaktion,h+22,23,h+23,-,h+1:0638c0/reaktion h+10:0638fa/reaktion h+22:063926 h+23:063746/gehen h+27:063778/gehen h+31:0637a8/gehen h+32:0636d4/stand h+53:0643f8/ausholen,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,h+24,h+53,h+62,h+62
+reaktion_m_a4_grenze20_w,WOOKY,18,5,1,0x10,3,13,reaktion,h+22,23,-,h+23,h+1:05efc8/reaktion h+10:05f002/reaktion h+22:05f034/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a4_grenze20_w,WOOKY,18,28,2,0x10,4,9,reaktion,h+22,23,h+23,-,h+1:05ee94/reaktion h+10:05eece/reaktion h+22:05eefa h+23:05ed1c/gehen h+24:05ecaa/stand h+45:05fc18/ausholen h+49:05fc50,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,h+45,h+49,h+49
+reaktion_m_a4_spaet_e,EDDY,17,5,1,0x10,3,27,reaktion,h+22,23,h+23,-,h+1:0639f4/reaktion h+10:063a2e/reaktion h+22:063a60/reaktion h+23:063746/gehen h+27:063778/gehen,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,h+24,-,-,-
+reaktion_m_a4_spaet_e,EDDY,17,35,2,0x10,4,23,reaktion,h+22,23,h+23,-,h+1:0638c0/reaktion h+10:0638fa/reaktion h+22:063926 h+23:063746/gehen h+25:0636d4/stand,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,h+24,-,-,-
+reaktion_m_a4_spaet_e,EDDY,17,65,3,0x10,5,18,reaktion,h+22,23,h+23,-,h+1:0639f4/reaktion h+10:063a2e/reaktion h+22:063a60/reaktion h+23:063746/gehen h+25:0636d4/stand,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,h+24,-,-,-
+reaktion_m_a4_spaet_e,EDDY,17,94,4,0x10,10,8,umgeworfen,,,,,,,,,,,,
+reaktion_m_a4_spaet_e2,EDDY,17,4,1,0x10,3,27,reaktion,h+22,23,h+23,-,h+1:0639f4/reaktion h+10:063a2e/reaktion h+22:063a60/reaktion h+23:063746/gehen h+27:063778/gehen,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,h+24,-,-,-
+reaktion_m_a4_spaet_e2,EDDY,17,34,2,0x10,4,23,reaktion,h+22,23,h+23,-,h+1:0638c0/reaktion h+10:0638fa/reaktion h+22:063926 h+23:063746/gehen h+26:0636d4/stand,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,h+24,-,-,-
+reaktion_m_a4_spaet_e2,EDDY,17,64,3,0x10,5,18,reaktion,h+22,23,h+23,-,h+1:0639f4/reaktion h+10:063a2e/reaktion h+22:063a60/reaktion h+23:063746/gehen h+25:0636d4/stand,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,h+24,-,-,-
+reaktion_m_a4_spaet_e2,EDDY,17,93,4,0x10,10,8,umgeworfen,,,,,,,,,,,,
+reaktion_m_a4_spaet_w,WOOKY,18,5,1,0x10,3,37,reaktion,h+22,23,h+23,-,h+1:05efc8/reaktion h+10:05f002/reaktion h+22:05f034/reaktion h+23:05ed1c/gehen h+24:05ecaa/stand,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a4_spaet_w,WOOKY,18,35,2,0x10,4,33,reaktion,h+22,23,h+23,-,h+1:05ee94/reaktion h+10:05eece/reaktion h+22:05eefa h+23:05ed1c/gehen h+24:05ecaa/stand,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a4_spaet_w,WOOKY,18,65,3,0x10,5,28,reaktion,h+22,23,h+23,-,h+1:05efc8/reaktion h+10:05f002/reaktion h+22:05f034/reaktion h+23:05ed1c/gehen h+24:05ecaa/stand,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a4_spaet_w,WOOKY,18,94,4,0x10,10,18,umgeworfen,,,,,,,,,,,,
+reaktion_m_a4_spaet_w2,WOOKY,18,8,1,0x10,3,37,reaktion,h+22,23,h+23,-,h+1:05efc8/reaktion h+10:05f002/reaktion h+22:05f034/reaktion h+23:05ed1c/gehen h+24:05ecaa/stand,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a4_spaet_w2,WOOKY,18,38,2,0x10,4,33,reaktion,h+22,23,h+23,-,h+1:05ee94/reaktion h+10:05eece/reaktion h+22:05eefa h+23:05ed1c/gehen h+24:05ecaa/stand,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a4_spaet_w2,WOOKY,18,68,3,0x10,5,28,reaktion,h+22,23,h+23,-,h+1:05efc8/reaktion h+10:05f002/reaktion h+22:05f034/reaktion h+23:05ed1c/gehen h+24:05ecaa/stand,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_a4_spaet_w2,WOOKY,18,97,4,0x10,10,18,umgeworfen,,,,,,,,,,,,
+# Einzelwerte: kette (je Kettendruck)
+lauf,gegner,stufe,h_vorstufe,druck,druck_rel,reaktion_bis,s4_1_ab,aktiv_ab,luecke_frames,s4_im_aktiven_frame,treffer,treffer_rel,gegner_in_luecke
+reaktion_m_a3_s2_12_e,EDDY,2,5,17,h+12,h+14,-,h+15,0,3,20,h+15,
+reaktion_m_a3_s2_12_w,WOOKY,2,5,17,h+12,h+14,-,h+15,0,3,20,h+15,
+reaktion_m_a3_s2_27_e,EDDY,2,5,32,h+27,h+22,h+23,h+30,7,3,35,h+30,h+23:gehen x ab h+24 h+27:gehen
+reaktion_m_a3_s2_27_w,WOOKY,2,5,32,h+27,h+22,h+23,h+30,7,3,35,h+30,h+23:gehen h+24:stand
+reaktion_m_a3_s3_12_e,EDDY,2,5,19,h+14,h+16,-,h+17,0,3,22,h+17,
+reaktion_m_a3_s3_12_e,EDDY,3,22,34,h+12,h+15,-,h+16,0,3,38,h+16,
+reaktion_m_a3_s3_12_w,WOOKY,2,5,19,h+14,h+16,-,h+17,0,3,22,h+17,
+reaktion_m_a3_s3_12_w,WOOKY,3,22,34,h+12,h+15,-,h+16,0,3,38,h+16,
+reaktion_m_a3_s3_26_e,EDDY,2,5,19,h+14,h+16,-,h+17,0,3,22,h+17,
+reaktion_m_a3_s3_26_e,EDDY,3,22,48,h+26,h+22,h+23,h+30,7,3,52,h+30,h+23:gehen x ab h+24 h+27:gehen
+reaktion_m_a3_s3_26_w,WOOKY,2,5,19,h+14,h+16,-,h+17,0,3,22,h+17,
+reaktion_m_a3_s3_26_w,WOOKY,3,22,48,h+26,h+22,h+23,h+30,7,3,52,h+30,h+23:gehen h+24:stand
+reaktion_m_a3_s4_12_e,EDDY,2,5,19,h+14,h+16,-,h+17,0,3,22,h+17,
+reaktion_m_a3_s4_12_e,EDDY,3,22,36,h+14,h+17,-,h+18,0,3,40,h+18,
+reaktion_m_a3_s4_12_e,EDDY,4,40,52,h+12,h+14,-,h+15,0,3,55,h+15,
+reaktion_m_a3_s4_12_w,WOOKY,2,5,19,h+14,h+16,-,h+17,0,3,22,h+17,
+reaktion_m_a3_s4_12_w,WOOKY,3,22,36,h+14,h+17,-,h+18,0,3,40,h+18,
+reaktion_m_a3_s4_12_w,WOOKY,4,40,52,h+12,h+14,-,h+15,0,3,55,h+15,
+reaktion_m_a3_s4_26_e,EDDY,2,5,19,h+14,h+16,-,h+17,0,3,22,h+17,
+reaktion_m_a3_s4_26_e,EDDY,3,22,36,h+14,h+17,-,h+18,0,3,40,h+18,
+reaktion_m_a3_s4_26_e,EDDY,4,40,66,h+26,h+22,h+23,h+29,6,3,69,h+29,h+23:gehen x ab h+24 h+27:gehen
+reaktion_m_a3_s4_26_w,WOOKY,2,5,19,h+14,h+16,-,h+17,0,3,22,h+17,
+reaktion_m_a3_s4_26_w,WOOKY,3,22,36,h+14,h+17,-,h+18,0,3,40,h+18,
+reaktion_m_a3_s4_26_w,WOOKY,4,40,66,h+26,h+22,h+23,h+29,6,3,69,h+29,h+23:gehen h+24:stand
+reaktion_m_a4_frueh_e,EDDY,2,5,17,h+12,h+14,-,h+15,0,3,20,h+15,
+reaktion_m_a4_frueh_e,EDDY,3,20,31,h+11,h+14,-,h+15,0,3,35,h+15,
+reaktion_m_a4_frueh_e,EDDY,4,35,46,h+11,h+13,-,h+14,0,3,49,h+14,
+reaktion_m_a4_frueh_w,WOOKY,2,5,17,h+12,h+14,-,h+15,0,3,20,h+15,
+reaktion_m_a4_frueh_w,WOOKY,3,20,31,h+11,h+14,-,h+15,0,3,35,h+15,
+reaktion_m_a4_frueh_w,WOOKY,4,35,46,h+11,h+13,-,h+14,0,3,49,h+14,
+reaktion_m_a4_grenze19_e,EDDY,2,5,24,h+19,h+21,-,h+22,0,3,27,h+22,
+reaktion_m_a4_grenze19_w,WOOKY,2,5,24,h+19,h+21,-,h+22,0,3,27,h+22,
+reaktion_m_a4_grenze20_e,EDDY,2,5,25,h+20,h+22,-,h+23,0,3,28,h+23,
+reaktion_m_a4_grenze20_w,WOOKY,2,5,25,h+20,h+22,-,h+23,0,3,28,h+23,
+reaktion_m_a4_spaet_e,EDDY,2,5,32,h+27,h+22,h+23,h+30,7,3,35,h+30,h+23:gehen x ab h+24 h+27:gehen
+reaktion_m_a4_spaet_e,EDDY,3,35,61,h+26,h+22,h+23,h+30,7,3,65,h+30,h+23:gehen x ab h+24 h+25:stand
+reaktion_m_a4_spaet_e,EDDY,4,65,91,h+26,h+22,h+23,h+29,6,3,94,h+29,h+23:gehen x ab h+24 h+25:stand
+reaktion_m_a4_spaet_e2,EDDY,2,4,31,h+27,h+22,h+23,h+30,7,3,34,h+30,h+23:gehen x ab h+24 h+27:gehen
+reaktion_m_a4_spaet_e2,EDDY,3,34,60,h+26,h+22,h+23,h+30,7,3,64,h+30,h+23:gehen x ab h+24 h+26:stand
+reaktion_m_a4_spaet_e2,EDDY,4,64,90,h+26,h+22,h+23,h+29,6,3,93,h+29,h+23:gehen x ab h+24 h+25:stand
+reaktion_m_a4_spaet_w,WOOKY,2,5,32,h+27,h+22,h+23,h+30,7,3,35,h+30,h+23:gehen h+24:stand
+reaktion_m_a4_spaet_w,WOOKY,3,35,61,h+26,h+22,h+23,h+30,7,3,65,h+30,h+23:gehen h+24:stand
+reaktion_m_a4_spaet_w,WOOKY,4,65,91,h+26,h+22,h+23,h+29,6,3,94,h+29,h+23:gehen h+24:stand
+reaktion_m_a4_spaet_w2,WOOKY,2,8,35,h+27,h+22,h+23,h+30,7,3,38,h+30,h+23:gehen h+24:stand
+reaktion_m_a4_spaet_w2,WOOKY,3,38,64,h+26,h+22,h+23,h+30,7,3,68,h+30,h+23:gehen h+24:stand
+reaktion_m_a4_spaet_w2,WOOKY,4,68,94,h+26,h+22,h+23,h+29,6,3,97,h+29,h+23:gehen h+24:stand
+# Einzelwerte: umwerfen (Referenzlaeufe b_*)
+lauf,gegner,slot,K,schaden,p1_aktion,flug_ab,vx0,vh0,schwerkraft,vx_aenderung,scheitel,scheitel_hoehe,boden,boden_dx,ruhe,ruhe_dx,aufstehen_ab,s4_1_ab,liegen_ruhe_bis_aufstehen,aufstehen_frames,anim_aufstehen,s4_waehrend,tiefe_summe,aktion_ab_G,erste_bewegung_ab_G
+reaktion_m_b_tritt_w,WOOKY,18,57,10,0x10,K+9,+2.875,+5,-0.2734,+0,K+27,48.2422,K+46,+109.25,K+55,+135.125,K+87,K+105,32,18,+1:05f59c +9:05f5c6 +17:05f5fe +18:05ed1c,2,+0,0x0 bis Laufende,G+1
+reaktion_m_b_tritt_e,EDDY,17,57,10,0x10,K+9,+2.875,+5,-0.2734,+0,K+27,48.2422,K+46,+109.25,K+55,+135.125,K+95,K+113,40,18,+1:063fd2 +9:063ffc +17:064034 +18:063c76,2,+0,0x1c bis G+84,G+86
+reaktion_m_b_sprung_w,WOOKY,18,15,7,0xe,K+9,+2.875,+5,-0.2734,+0,K+27,48.2422,K+46,+109.25,K+55,+135.125,K+87,K+105,32,18,+1:05f59c +9:05f5c6 +17:05f5fe +18:05ed1c,2,+0,0x0 bis G+159,G+1
+reaktion_m_b_sprung_e,EDDY,17,15,7,0xe,K+9,+2.875,+5,-0.2734,+0,K+27,48.2422,K+46,+109.25,K+55,+135.125,K+95,K+113,40,18,+1:063fd2 +9:063ffc +17:064034 +18:063746,2,+0,0x0 bis G+39,G+1
+reaktion_m_b_wurf_w,WOOKY,18,16,14,0x0,K+22,+5,+2,-0.2031,-0.0625,K+31,69.8594,K+58,+147.375,K+70,+175.5,K+86,K+104,16,18,+1:05f59c +9:05f5c6 +17:05f5fe +18:05ed1c,3,+0,0x0 bis G+159,G+1
+reaktion_m_b_wurf_e,EDDY,17,15,14,0x0,K+22,+5,+2,-0.2031,-0.0625,K+31,69.8594,K+58,+147.375,K+70,+173.5,K+106,K+124,36,18,+1:063fd2 +9:063ffc +17:064034 +18:063746,3,+0,0x0 bis G+40,G+1
+reaktion_m_b_knie_w,WOOKY,18,56,4,0x0,K+9,+2.875,+5,-0.2734,+0,K+27,64.2422,K+49,+117.875,K+58,+143.75,K+90,K+108,32,18,+1:05f59c +9:05f5c6 +17:05f5fe +18:05ed1c,2,+0,0x0 bis G+69,G+1
+reaktion_m_b_knie_e,EDDY,17,55,4,0x0,K+9,+2.875,+5,-0.2734,+0,K+27,64.2422,K+49,+117.875,K+58,+143.75,K+78,K+96,20,18,+1:063fd2 +9:063ffc +17:064034 +18:063746,2,+0,0x0 bis G+69,G+1
+reaktion_m_b_tritt_w2,WOOKY,18,64,10,0x10,K+9,+2.875,+5,-0.2734,+0,K+27,48.2422,K+46,+109.25,K+55,+135.125,K+87,K+105,32,18,+1:05f59c +9:05f5c6 +17:05f5fe +18:05ed1c,2,+0,0x0 bis Laufende,G+1
+reaktion_m_b_tritt_e2,EDDY,17,74,10,0x10,K+9,+2.875,+5,-0.2734,+0,K+27,48.2422,K+46,+109.25,K+55,+135.125,K+75,K+93,20,18,+1:063fd2 +9:063ffc +17:064034 +18:063746,2,+0,0x0 bis G+39,G+1
+reaktion_m_b_sprung_w2,WOOKY,18,19,7,0xe,K+9,+2.875,+5,-0.2734,+0,K+27,48.2422,K+46,+109.25,K+55,+135.125,K+87,K+105,32,18,+1:05f59c +9:05f5c6 +17:05f5fe +18:05ed1c,2,+0,0x0 bis G+159,G+1
+reaktion_m_b_sprung_e2,EDDY,17,32,7,0xe,K+9,+2.875,+5,-0.2734,+0,K+27,48.2422,K+46,+109.25,K+55,+135.125,K+75,K+93,20,18,+1:063fd2 +9:063ffc +17:064034 +18:063746,2,+0,0x0 bis G+39,G+1
+reaktion_m_b_wurf_w2,WOOKY,18,26,14,0x0,K+22,-5,+2,-0.2031,+0.0625,K+31,69.8594,K+58,-147.375,K+70,-175.5,K+86,K+104,16,18,+1:05f59c +9:05f5c6 +17:05f5fe +18:05ed1c,3,+0,0x0 bis G+59,G+1
+# Einzelwerte: probe (erste Spalte = Referenz; T_rel_G < 0 vor dem Aufstehen)
+tritt_w,# Referenz reaktion_m_b_tritt_w: Umwerfen K = 57, Aufstehen G (S+4 = 1) = 162
+tritt_w,lauf,druck,T,T_rel_K,T_rel_G,figur_schlaegt,s4_vorher,aktion_phase_vorher,treffer,treffer_frame,schaden,s4_nachher,dx,dz,treffer_rel_G
+tritt_w,reaktion_m_bp_tritt_w_g0,160,162,K+105,G+0,ja,2,0xc.0xa,ja,162,3,3,50,0,G+0
+tritt_w,reaktion_m_bp_tritt_w_g1,161,163,K+106,G+1,ja,1,0x0.0xa,ja,163,3,3,48,0,G+1
+tritt_w,reaktion_m_bp_tritt_w_g2,162,164,K+107,G+2,ja,1,0x0.0xa,ja,164,3,3,48,0,G+2
+tritt_w,reaktion_m_bp_tritt_w_g4,164,166,K+109,G+4,ja,1,0x0.0xa,ja,166,3,3,48,0,G+4
+tritt_w,reaktion_m_bp_tritt_w_g6,166,168,K+111,G+6,ja,1,0x0.0xa,ja,168,3,3,48,0,G+6
+tritt_w,reaktion_m_bp_tritt_w_g8,168,170,K+113,G+8,ja,1,0x0.0xa,ja,170,3,3,48,0,G+8
+tritt_w,reaktion_m_bp_tritt_w_g12,172,174,K+117,G+12,ja,1,0x0.0xa,ja,174,3,3,48,0,G+12
+tritt_w,reaktion_m_bp_tritt_w_g16,176,178,K+121,G+16,ja,1,0x0.0xa,ja,178,3,3,48,0,G+16
+tritt_w,reaktion_m_bp_tritt_w_g20,180,182,K+125,G+20,ja,1,0x0.0xa,ja,182,3,3,48,0,G+20
+tritt_w,reaktion_m_bp_tritt_w_g24,184,186,K+129,G+24,ja,1,0x0.0xa,ja,186,3,3,48,0,G+24
+tritt_w,reaktion_m_bp_tritt_w_g28,188,190,K+133,G+28,ja,1,0x0.0xa,ja,190,3,3,48,0,G+28
+tritt_w,reaktion_m_bp_tritt_w_g32,192,194,K+137,G+32,ja,1,0x0.0xa,ja,194,3,3,48,0,G+32
+tritt_w,reaktion_m_bp_tritt_w_g36,196,198,K+141,G+36,ja,1,0x0.0xa,ja,198,3,3,48,0,G+36
+tritt_w,reaktion_m_bp_tritt_w_g40,200,202,K+145,G+40,ja,1,0x0.0xa,ja,202,3,3,48,0,G+40
+tritt_w,reaktion_m_bp_tritt_w_gm1,159,161,K+104,G-1,ja,2,0xc.0xa,nein,-,0,,50,0,-
+tritt_w,reaktion_m_bp_tritt_w_gm2,158,160,K+103,G-2,ja,2,0xc.0xa,nein,-,0,,50,0,-
+tritt_w,reaktion_m_bp_tritt_w_gm4,156,158,K+101,G-4,ja,2,0xc.0xa,nein,-,0,,50,0,-
+tritt_w,reaktion_m_bp_tritt_w_gm10,150,152,K+95,G-10,ja,2,0xc.0xa,nein,-,0,,50,0,-
+tritt_w,reaktion_m_bp_tritt_w_gm18,142,144,K+87,G-18,ja,2,0xc.0x8,nein,-,0,,50,0,-
+tritt_w,reaktion_m_bp_tritt_w_k40,95,97,K+40,G-65,ja,2,0xc.0x2,nein,-,0,,52,0,-
+tritt_w,reaktion_m_bp_tritt_w_k60,115,117,K+60,G-45,ja,2,0xc.0x8,nein,-,0,,50,0,-
+tritt_w,reaktion_m_bp_tritt_w_k80,135,137,K+80,G-25,ja,2,0xc.0x8,nein,-,0,,50,0,-
+tritt_e,# Referenz reaktion_m_b_tritt_e: Umwerfen K = 57, Aufstehen G (S+4 = 1) = 170
+tritt_e,lauf,druck,T,T_rel_K,T_rel_G,figur_schlaegt,s4_vorher,aktion_phase_vorher,treffer,treffer_frame,schaden,s4_nachher,dx,dz,treffer_rel_G
+tritt_e,reaktion_m_bp_tritt_e_g0,168,170,K+113,G+0,ja,2,0xc.0xa,ja,170,3,3,50,0,G+0
+tritt_e,reaktion_m_bp_tritt_e_g1,169,171,K+114,G+1,ja,1,0x1c.0xc,ja,171,3,3,50,0,G+1
+tritt_e,reaktion_m_bp_tritt_e_g2,170,172,K+115,G+2,ja,1,0x1c.0xc,ja,172,3,3,50,0,G+2
+tritt_e,reaktion_m_bp_tritt_e_g4,172,174,K+117,G+4,ja,1,0x1c.0xc,ja,174,3,3,50,0,G+4
+tritt_e,reaktion_m_bp_tritt_e_g6,174,176,K+119,G+6,ja,1,0x1c.0xc,ja,176,3,3,50,0,G+6
+tritt_e,reaktion_m_bp_tritt_e_g8,176,178,K+121,G+8,ja,1,0x1c.0xc,ja,178,3,3,50,0,G+8
+tritt_e,reaktion_m_bp_tritt_e_g12,180,182,K+125,G+12,ja,1,0x1c.0xc,ja,182,3,3,50,0,G+12
+tritt_e,reaktion_m_bp_tritt_e_g16,184,186,K+129,G+16,ja,1,0x1c.0xc,ja,186,3,3,50,0,G+16
+tritt_e,reaktion_m_bp_tritt_e_g20,188,190,K+133,G+20,ja,1,0x1c.0xc,ja,190,3,3,50,0,G+20
+tritt_e,reaktion_m_bp_tritt_e_g24,192,194,K+137,G+24,ja,1,0x1c.0xc,ja,194,3,3,50,0,G+24
+tritt_e,reaktion_m_bp_tritt_e_g28,196,198,K+141,G+28,ja,1,0x1c.0xc,ja,198,3,3,50,0,G+28
+tritt_e,reaktion_m_bp_tritt_e_g32,200,202,K+145,G+32,ja,1,0x1c.0xc,ja,202,3,3,50,0,G+32
+tritt_e,reaktion_m_bp_tritt_e_g36,204,206,K+149,G+36,ja,1,0x1c.0xc,ja,206,3,3,50,0,G+36
+tritt_e,reaktion_m_bp_tritt_e_g40,208,210,K+153,G+40,ja,1,0x1c.0xc,ja,210,3,3,50,0,G+40
+tritt_e,reaktion_m_bp_tritt_e_gm1,167,169,K+112,G-1,ja,2,0xc.0xa,nein,-,0,,50,0,-
+tritt_e,reaktion_m_bp_tritt_e_gm2,166,168,K+111,G-2,ja,2,0xc.0xa,nein,-,0,,50,0,-
+tritt_e,reaktion_m_bp_tritt_e_gm4,164,166,K+109,G-4,ja,2,0xc.0xa,nein,-,0,,50,0,-
+tritt_e,reaktion_m_bp_tritt_e_gm10,158,160,K+103,G-10,ja,2,0xc.0xa,nein,-,0,,50,0,-
+tritt_e,reaktion_m_bp_tritt_e_gm18,150,152,K+95,G-18,ja,2,0xc.0x8,nein,-,0,,50,0,-
+tritt_e,reaktion_m_bp_tritt_e_k40,95,97,K+40,G-73,ja,2,0xc.0x6,nein,-,0,,50,0,-
+tritt_e,reaktion_m_bp_tritt_e_k60,115,117,K+60,G-53,ja,2,0xc.0x8,nein,-,0,,50,0,-
+tritt_e,reaktion_m_bp_tritt_e_k80,135,137,K+80,G-33,ja,2,0xc.0x8,nein,-,0,,50,0,-
+sprung_w,# Referenz reaktion_m_b_sprung_w: Umwerfen K = 15, Aufstehen G (S+4 = 1) = 120
+sprung_w,lauf,druck,T,T_rel_K,T_rel_G,figur_schlaegt,s4_vorher,aktion_phase_vorher,treffer,treffer_frame,schaden,s4_nachher,dx,dz,treffer_rel_G
+sprung_w,reaktion_m_bp_sprung_w_g0,118,120,K+105,G+0,ja,2,0xc.0xa,ja,120,3,3,50,0,G+0
+sprung_w,reaktion_m_bp_sprung_w_g1,119,121,K+106,G+1,ja,1,0x0.0xa,ja,121,3,3,48,0,G+1
+sprung_w,reaktion_m_bp_sprung_w_g2,120,122,K+107,G+2,ja,1,0x0.0xa,ja,122,3,3,48,0,G+2
+sprung_w,reaktion_m_bp_sprung_w_g4,122,124,K+109,G+4,ja,1,0x0.0xa,ja,124,3,3,48,0,G+4
+sprung_w,reaktion_m_bp_sprung_w_g6,124,126,K+111,G+6,ja,1,0x0.0xa,ja,126,3,3,48,0,G+6
+sprung_w,reaktion_m_bp_sprung_w_g8,126,128,K+113,G+8,ja,1,0x0.0xa,ja,128,3,3,48,0,G+8
+sprung_w,reaktion_m_bp_sprung_w_g12,130,132,K+117,G+12,ja,1,0x0.0xa,ja,132,3,3,48,0,G+12
+sprung_w,reaktion_m_bp_sprung_w_g16,134,136,K+121,G+16,ja,1,0x0.0xa,ja,136,3,3,48,0,G+16
+sprung_w,reaktion_m_bp_sprung_w_g20,138,140,K+125,G+20,ja,1,0x0.0xa,ja,140,3,3,48,0,G+20
+sprung_w,reaktion_m_bp_sprung_w_g24,142,144,K+129,G+24,ja,1,0x0.0xa,ja,144,3,3,48,0,G+24
+sprung_w,reaktion_m_bp_sprung_w_g28,146,148,K+133,G+28,ja,1,0x0.0xa,ja,148,3,3,48,0,G+28
+sprung_w,reaktion_m_bp_sprung_w_g32,150,152,K+137,G+32,ja,1,0x0.0xa,ja,152,3,3,48,0,G+32
+sprung_w,reaktion_m_bp_sprung_w_g36,154,156,K+141,G+36,ja,1,0x0.0xa,ja,156,3,3,48,0,G+36
+sprung_w,reaktion_m_bp_sprung_w_g40,158,160,K+145,G+40,ja,1,0x0.0xa,ja,160,3,3,48,0,G+40
+sprung_w,reaktion_m_bp_sprung_w_gm1,117,119,K+104,G-1,ja,2,0xc.0xa,nein,-,0,,50,0,-
+sprung_w,reaktion_m_bp_sprung_w_gm2,116,118,K+103,G-2,ja,2,0xc.0xa,nein,-,0,,50,0,-
+sprung_w,reaktion_m_bp_sprung_w_gm4,114,116,K+101,G-4,ja,2,0xc.0xa,nein,-,0,,50,0,-
+sprung_w,reaktion_m_bp_sprung_w_gm10,108,110,K+95,G-10,ja,2,0xc.0xa,nein,-,0,,50,0,-
+sprung_w,reaktion_m_bp_sprung_w_gm18,100,102,K+87,G-18,ja,2,0xc.0x8,nein,-,0,,50,0,-
+sprung_w,reaktion_m_bp_sprung_w_k40,53,55,K+40,G-65,nein,2,0xc.0x2,nein,-,0,,52,0,-
+sprung_w,reaktion_m_bp_sprung_w_k60,73,75,K+60,G-45,ja,2,0xc.0x8,nein,-,0,,50,0,-
+sprung_w,reaktion_m_bp_sprung_w_k80,93,95,K+80,G-25,ja,2,0xc.0x8,nein,-,0,,50,0,-
+nat_sprung_w,# Referenz reaktion_m_b_sprung_w: Umwerfen K = 15, Aufstehen G (S+4 = 1) = 120
+nat_sprung_w,lauf,druck,T,T_rel_K,T_rel_G,figur_schlaegt,s4_vorher,aktion_phase_vorher,treffer,treffer_frame,schaden,s4_nachher,dx,dz,treffer_rel_G
+nat_sprung_w,reaktion_m_bn_sprung_w_g0,118,120,K+105,G+0,ja,2,0xc.0xa,ja,120,3,3,82,10,G+0
+nat_sprung_w,reaktion_m_bn_sprung_w_gm1,117,119,K+104,G-1,ja,2,0xc.0xa,ja,120,3,3,82,10,G+0
+sprung_e,# Referenz reaktion_m_b_sprung_e: Umwerfen K = 15, Aufstehen G (S+4 = 1) = 128
+sprung_e,lauf,druck,T,T_rel_K,T_rel_G,figur_schlaegt,s4_vorher,aktion_phase_vorher,treffer,treffer_frame,schaden,s4_nachher,dx,dz,treffer_rel_G
+sprung_e,reaktion_m_bp_sprung_e_g0,126,128,K+113,G+0,ja,2,0xc.0xa,ja,128,3,3,50,0,G+0
+sprung_e,reaktion_m_bp_sprung_e_g1,127,129,K+114,G+1,ja,1,0x0.0x0,ja,129,3,3,48,0,G+1
+sprung_e,reaktion_m_bp_sprung_e_g2,128,130,K+115,G+2,ja,1,0x0.0x0,ja,130,3,3,48,0,G+2
+sprung_e,reaktion_m_bp_sprung_e_g4,130,132,K+117,G+4,ja,1,0x0.0x0,ja,132,3,3,48,0,G+4
+sprung_e,reaktion_m_bp_sprung_e_g6,132,134,K+119,G+6,ja,1,0x0.0x0,ja,134,3,3,48,0,G+6
+sprung_e,reaktion_m_bp_sprung_e_g8,134,136,K+121,G+8,ja,1,0x0.0x0,ja,136,3,3,48,0,G+8
+sprung_e,reaktion_m_bp_sprung_e_g12,138,140,K+125,G+12,ja,1,0x0.0x0,ja,140,3,3,48,0,G+12
+sprung_e,reaktion_m_bp_sprung_e_g16,142,144,K+129,G+16,ja,1,0x0.0x0,ja,144,3,3,48,0,G+16
+sprung_e,reaktion_m_bp_sprung_e_g20,146,148,K+133,G+20,ja,1,0x0.0x0,ja,148,3,3,48,0,G+20
+sprung_e,reaktion_m_bp_sprung_e_g24,150,152,K+137,G+24,ja,1,0x0.0x0,ja,152,3,3,48,0,G+24
+sprung_e,reaktion_m_bp_sprung_e_g28,154,156,K+141,G+28,ja,1,0x0.0x0,ja,156,3,3,48,0,G+28
+sprung_e,reaktion_m_bp_sprung_e_g32,158,160,K+145,G+32,ja,1,0x0.0x0,ja,160,3,3,48,0,G+32
+sprung_e,reaktion_m_bp_sprung_e_g36,162,164,K+149,G+36,ja,1,0x0.0x0,ja,164,3,3,48,0,G+36
+sprung_e,reaktion_m_bp_sprung_e_g40,166,168,K+153,G+40,ja,1,0x0.0x0,ja,168,3,3,50,0,G+40
+sprung_e,reaktion_m_bp_sprung_e_gm1,125,127,K+112,G-1,ja,2,0xc.0xa,nein,-,0,,50,0,-
+sprung_e,reaktion_m_bp_sprung_e_gm2,124,126,K+111,G-2,ja,2,0xc.0xa,nein,-,0,,50,0,-
+sprung_e,reaktion_m_bp_sprung_e_gm4,122,124,K+109,G-4,ja,2,0xc.0xa,nein,-,0,,50,0,-
+sprung_e,reaktion_m_bp_sprung_e_gm10,116,118,K+103,G-10,ja,2,0xc.0xa,nein,-,0,,50,0,-
+sprung_e,reaktion_m_bp_sprung_e_gm18,108,110,K+95,G-18,ja,2,0xc.0x8,nein,-,0,,50,0,-
+sprung_e,reaktion_m_bp_sprung_e_k40,53,55,K+40,G-73,nein,2,0xc.0x6,nein,-,0,,50,0,-
+sprung_e,reaktion_m_bp_sprung_e_k60,73,75,K+60,G-53,ja,2,0xc.0x8,nein,-,0,,50,0,-
+sprung_e,reaktion_m_bp_sprung_e_k80,93,95,K+80,G-33,ja,2,0xc.0x8,nein,-,0,,50,0,-
+nat_sprung_e,# Referenz reaktion_m_b_sprung_e: Umwerfen K = 15, Aufstehen G (S+4 = 1) = 128
+nat_sprung_e,lauf,druck,T,T_rel_K,T_rel_G,figur_schlaegt,s4_vorher,aktion_phase_vorher,treffer,treffer_frame,schaden,s4_nachher,dx,dz,treffer_rel_G
+nat_sprung_e,reaktion_m_bn_sprung_e_g0,126,128,K+113,G+0,ja,2,0xc.0xa,ja,128,3,3,67,2,G+0
+nat_sprung_e,reaktion_m_bn_sprung_e_gm1,125,127,K+112,G-1,ja,2,0xc.0xa,ja,128,3,3,67,2,G+0
+wurf_w,# Referenz reaktion_m_b_wurf_w: Umwerfen K = 16, Aufstehen G (S+4 = 1) = 120
+wurf_w,lauf,druck,T,T_rel_K,T_rel_G,figur_schlaegt,s4_vorher,aktion_phase_vorher,treffer,treffer_frame,schaden,s4_nachher,dx,dz,treffer_rel_G
+wurf_w,reaktion_m_bp_wurf_w_g0,118,120,K+104,G+0,ja,3,0xc.0xa,ja,120,3,2,50,0,G+0
+wurf_w,reaktion_m_bp_wurf_w_g1,119,121,K+105,G+1,ja,1,0x0.0xa,ja,121,3,2,48,0,G+1
+wurf_w,reaktion_m_bp_wurf_w_g2,120,122,K+106,G+2,ja,1,0x0.0xa,ja,122,3,2,48,0,G+2
+wurf_w,reaktion_m_bp_wurf_w_g4,122,124,K+108,G+4,ja,1,0x0.0xa,ja,124,3,2,48,0,G+4
+wurf_w,reaktion_m_bp_wurf_w_g6,124,126,K+110,G+6,ja,1,0x0.0xa,ja,126,3,2,48,0,G+6
+wurf_w,reaktion_m_bp_wurf_w_g8,126,128,K+112,G+8,ja,1,0x0.0xa,ja,128,3,2,48,0,G+8
+wurf_w,reaktion_m_bp_wurf_w_g12,130,132,K+116,G+12,ja,1,0x0.0xa,ja,132,3,2,48,0,G+12
+wurf_w,reaktion_m_bp_wurf_w_g16,134,136,K+120,G+16,ja,1,0x0.0xa,ja,136,3,2,48,0,G+16
+wurf_w,reaktion_m_bp_wurf_w_g20,138,140,K+124,G+20,ja,1,0x0.0xa,ja,140,3,2,48,0,G+20
+wurf_w,reaktion_m_bp_wurf_w_g24,142,144,K+128,G+24,ja,1,0x0.0xa,ja,144,3,2,48,0,G+24
+wurf_w,reaktion_m_bp_wurf_w_g28,146,148,K+132,G+28,ja,1,0x0.0xa,ja,148,3,2,48,0,G+28
+wurf_w,reaktion_m_bp_wurf_w_g32,150,152,K+136,G+32,ja,1,0x0.0xa,ja,152,3,2,48,0,G+32
+wurf_w,reaktion_m_bp_wurf_w_g36,154,156,K+140,G+36,ja,1,0x0.0xa,ja,156,3,2,48,0,G+36
+wurf_w,reaktion_m_bp_wurf_w_g40,158,160,K+144,G+40,ja,1,0x0.0xa,ja,160,3,2,48,0,G+40
+wurf_w,reaktion_m_bp_wurf_w_gm1,117,119,K+103,G-1,ja,3,0xc.0xa,nein,-,0,,50,0,-
+wurf_w,reaktion_m_bp_wurf_w_gm2,116,118,K+102,G-2,ja,3,0xc.0xa,nein,-,0,,50,0,-
+wurf_w,reaktion_m_bp_wurf_w_gm4,114,116,K+100,G-4,ja,3,0xc.0xa,nein,-,0,,50,0,-
+wurf_w,reaktion_m_bp_wurf_w_gm10,108,110,K+94,G-10,ja,3,0xc.0xa,nein,-,0,,50,0,-
+wurf_w,reaktion_m_bp_wurf_w_gm18,100,102,K+86,G-18,ja,3,0xc.0x8,nein,-,0,,50,0,-
+wurf_w,reaktion_m_bp_wurf_w_k40,54,56,K+40,G-64,ja,3,0x4.0x0,nein,-,0,,53,0,-
+wurf_w,reaktion_m_bp_wurf_w_k60,74,76,K+60,G-44,ja,3,0x4.0x0,nein,-,0,,52,0,-
+wurf_w,reaktion_m_bp_wurf_w_k80,94,96,K+80,G-24,ja,3,0xc.0x8,nein,-,0,,50,0,-
+wurf_e,# Referenz reaktion_m_b_wurf_e: Umwerfen K = 15, Aufstehen G (S+4 = 1) = 139
+wurf_e,lauf,druck,T,T_rel_K,T_rel_G,figur_schlaegt,s4_vorher,aktion_phase_vorher,treffer,treffer_frame,schaden,s4_nachher,dx,dz,treffer_rel_G
+wurf_e,reaktion_m_bp_wurf_e_g0,137,139,K+124,G+0,ja,3,0xc.0xa,ja,139,3,3,50,0,G+0
+wurf_e,reaktion_m_bp_wurf_e_g1,138,140,K+125,G+1,ja,1,0x0.0x0,ja,140,3,3,48,0,G+1
+wurf_e,reaktion_m_bp_wurf_e_g2,139,141,K+126,G+2,ja,1,0x0.0x0,ja,141,3,3,48,0,G+2
+wurf_e,reaktion_m_bp_wurf_e_g4,141,143,K+128,G+4,ja,1,0x0.0x0,ja,143,3,3,48,0,G+4
+wurf_e,reaktion_m_bp_wurf_e_g6,143,145,K+130,G+6,ja,1,0x0.0x0,ja,145,3,3,48,0,G+6
+wurf_e,reaktion_m_bp_wurf_e_g8,145,147,K+132,G+8,ja,1,0x0.0x0,ja,147,3,3,48,0,G+8
+wurf_e,reaktion_m_bp_wurf_e_g12,149,151,K+136,G+12,ja,1,0x0.0x0,ja,151,3,3,48,0,G+12
+wurf_e,reaktion_m_bp_wurf_e_g16,153,155,K+140,G+16,ja,1,0x0.0x0,ja,155,3,3,48,0,G+16
+wurf_e,reaktion_m_bp_wurf_e_g20,157,159,K+144,G+20,ja,1,0x0.0x0,ja,159,3,3,48,0,G+20
+wurf_e,reaktion_m_bp_wurf_e_g24,161,163,K+148,G+24,ja,1,0x0.0x0,ja,163,3,3,48,0,G+24
+wurf_e,reaktion_m_bp_wurf_e_g28,165,167,K+152,G+28,ja,1,0x0.0x0,ja,167,3,3,48,0,G+28
+wurf_e,reaktion_m_bp_wurf_e_g32,169,171,K+156,G+32,ja,1,0x0.0x0,ja,171,3,3,48,0,G+32
+wurf_e,reaktion_m_bp_wurf_e_g36,173,175,K+160,G+36,ja,1,0x0.0x0,ja,175,3,3,48,0,G+36
+wurf_e,reaktion_m_bp_wurf_e_g40,177,179,K+164,G+40,ja,1,0x0.0x0,ja,179,3,3,48,0,G+40
+wurf_e,reaktion_m_bp_wurf_e_gm1,136,138,K+123,G-1,ja,3,0xc.0xa,nein,-,0,,50,0,-
+wurf_e,reaktion_m_bp_wurf_e_gm2,135,137,K+122,G-2,ja,3,0xc.0xa,nein,-,0,,50,0,-
+wurf_e,reaktion_m_bp_wurf_e_gm4,133,135,K+120,G-4,ja,3,0xc.0xa,nein,-,0,,50,0,-
+wurf_e,reaktion_m_bp_wurf_e_gm10,127,129,K+114,G-10,ja,3,0xc.0xa,nein,-,0,,50,0,-
+wurf_e,reaktion_m_bp_wurf_e_gm18,119,121,K+106,G-18,ja,3,0xc.0x8,nein,-,0,,50,0,-
+wurf_e,reaktion_m_bp_wurf_e_k40,53,55,K+40,G-84,ja,2,0x4.0x0,nein,-,0,,50,0,-
+wurf_e,reaktion_m_bp_wurf_e_k60,73,75,K+60,G-64,ja,3,0x4.0x0,nein,-,0,,52,0,-
+wurf_e,reaktion_m_bp_wurf_e_k80,93,95,K+80,G-44,ja,3,0xc.0x8,nein,-,0,,50,0,-
+knie_w,# Referenz reaktion_m_b_knie_w: Umwerfen K = 56, Aufstehen G (S+4 = 1) = 164
+knie_w,lauf,druck,T,T_rel_K,T_rel_G,figur_schlaegt,s4_vorher,aktion_phase_vorher,treffer,treffer_frame,schaden,s4_nachher,dx,dz,treffer_rel_G
+knie_w,reaktion_m_bp_knie_w_g0,162,164,K+108,G+0,ja,2,0xc.0xa,ja,164,3,3,50,0,G+0
+knie_w,reaktion_m_bp_knie_w_g1,163,165,K+109,G+1,ja,1,0x0.0xa,ja,165,3,3,48,0,G+1
+knie_w,reaktion_m_bp_knie_w_g2,164,166,K+110,G+2,ja,1,0x0.0xa,ja,166,3,3,48,0,G+2
+knie_w,reaktion_m_bp_knie_w_g4,166,168,K+112,G+4,ja,1,0x0.0xa,ja,168,3,3,48,0,G+4
+knie_w,reaktion_m_bp_knie_w_g6,168,170,K+114,G+6,ja,1,0x0.0xa,ja,170,3,3,48,0,G+6
+knie_w,reaktion_m_bp_knie_w_g8,170,172,K+116,G+8,ja,1,0x0.0xa,ja,172,3,3,48,0,G+8
+knie_w,reaktion_m_bp_knie_w_g12,174,176,K+120,G+12,ja,1,0x0.0xa,ja,176,3,3,48,0,G+12
+knie_w,reaktion_m_bp_knie_w_g16,178,180,K+124,G+16,ja,1,0x0.0xa,ja,180,3,3,48,0,G+16
+knie_w,reaktion_m_bp_knie_w_g20,182,184,K+128,G+20,ja,1,0x0.0xa,ja,184,3,3,48,0,G+20
+knie_w,reaktion_m_bp_knie_w_g24,186,188,K+132,G+24,ja,1,0x0.0xa,ja,188,3,3,48,0,G+24
+knie_w,reaktion_m_bp_knie_w_g28,190,192,K+136,G+28,ja,1,0x0.0xa,ja,192,3,3,48,0,G+28
+knie_w,reaktion_m_bp_knie_w_g32,194,196,K+140,G+32,ja,1,0x0.0xa,ja,196,3,3,48,0,G+32
+knie_w,reaktion_m_bp_knie_w_g36,198,200,K+144,G+36,ja,1,0x0.0xa,ja,200,3,3,48,0,G+36
+knie_w,reaktion_m_bp_knie_w_g40,202,204,K+148,G+40,ja,1,0x0.0xa,ja,204,3,3,48,0,G+40
+knie_w,reaktion_m_bp_knie_w_gm1,161,163,K+107,G-1,ja,2,0xc.0xa,nein,-,0,,50,0,-
+knie_w,reaktion_m_bp_knie_w_gm2,160,162,K+106,G-2,ja,2,0xc.0xa,nein,-,0,,50,0,-
+knie_w,reaktion_m_bp_knie_w_gm4,158,160,K+104,G-4,ja,2,0xc.0xa,nein,-,0,,50,0,-
+knie_w,reaktion_m_bp_knie_w_gm10,152,154,K+98,G-10,ja,2,0xc.0xa,nein,-,0,,50,0,-
+knie_w,reaktion_m_bp_knie_w_gm18,144,146,K+90,G-18,ja,2,0xc.0x8,nein,-,0,,50,0,-
+knie_w,reaktion_m_bp_knie_w_k40,94,96,K+40,G-68,ja,2,0xc.0x2,nein,-,0,,52,0,-
+knie_w,reaktion_m_bp_knie_w_k60,114,116,K+60,G-48,ja,2,0xc.0x8,nein,-,0,,50,0,-
+knie_w,reaktion_m_bp_knie_w_k80,134,136,K+80,G-28,ja,2,0xc.0x8,nein,-,0,,50,0,-
+knie_e,# Referenz reaktion_m_b_knie_e: Umwerfen K = 55, Aufstehen G (S+4 = 1) = 151
+knie_e,lauf,druck,T,T_rel_K,T_rel_G,figur_schlaegt,s4_vorher,aktion_phase_vorher,treffer,treffer_frame,schaden,s4_nachher,dx,dz,treffer_rel_G
+knie_e,reaktion_m_bp_knie_e_g0,149,151,K+96,G+0,ja,2,0xc.0xa,ja,151,3,3,50,0,G+0
+knie_e,reaktion_m_bp_knie_e_g1,150,152,K+97,G+1,ja,1,0x0.0x0,ja,152,3,3,48,0,G+1
+knie_e,reaktion_m_bp_knie_e_g2,151,153,K+98,G+2,ja,1,0x0.0x0,ja,153,3,3,48,0,G+2
+knie_e,reaktion_m_bp_knie_e_g4,153,155,K+100,G+4,ja,1,0x0.0x0,ja,155,3,3,48,0,G+4
+knie_e,reaktion_m_bp_knie_e_g6,155,157,K+102,G+6,ja,1,0x0.0x0,ja,157,3,3,48,0,G+6
+knie_e,reaktion_m_bp_knie_e_g8,157,159,K+104,G+8,ja,1,0x0.0x0,ja,159,3,3,48,0,G+8
+knie_e,reaktion_m_bp_knie_e_g12,161,163,K+108,G+12,ja,1,0x0.0x0,ja,163,3,3,48,0,G+12
+knie_e,reaktion_m_bp_knie_e_g16,165,167,K+112,G+16,ja,1,0x0.0x0,ja,167,3,3,48,0,G+16
+knie_e,reaktion_m_bp_knie_e_g20,169,171,K+116,G+20,ja,1,0x0.0x0,ja,171,3,3,48,0,G+20
+knie_e,reaktion_m_bp_knie_e_g24,173,175,K+120,G+24,ja,1,0x0.0x0,ja,175,3,3,48,0,G+24
+knie_e,reaktion_m_bp_knie_e_g28,177,179,K+124,G+28,ja,1,0x0.0x0,ja,179,3,3,48,0,G+28
+knie_e,reaktion_m_bp_knie_e_g32,181,183,K+128,G+32,ja,1,0x0.0x0,ja,183,3,3,48,0,G+32
+knie_e,reaktion_m_bp_knie_e_g36,185,187,K+132,G+36,ja,1,0x0.0x0,ja,187,3,3,48,0,G+36
+knie_e,reaktion_m_bp_knie_e_g40,189,191,K+136,G+40,ja,1,0x0.0x0,ja,191,3,3,48,0,G+40
+knie_e,reaktion_m_bp_knie_e_gm1,148,150,K+95,G-1,ja,2,0xc.0xa,nein,-,0,,50,0,-
+knie_e,reaktion_m_bp_knie_e_gm2,147,149,K+94,G-2,ja,2,0xc.0xa,nein,-,0,,50,0,-
+knie_e,reaktion_m_bp_knie_e_gm4,145,147,K+92,G-4,ja,2,0xc.0xa,nein,-,0,,50,0,-
+knie_e,reaktion_m_bp_knie_e_gm10,139,141,K+86,G-10,ja,2,0xc.0xa,nein,-,0,,50,0,-
+knie_e,reaktion_m_bp_knie_e_gm18,131,133,K+78,G-18,ja,2,0xc.0x8,nein,-,0,,50,0,-
+knie_e,reaktion_m_bp_knie_e_k40,93,95,K+40,G-56,ja,2,0xc.0x6,nein,-,0,,50,0,-
+knie_e,reaktion_m_bp_knie_e_k60,113,115,K+60,G-36,ja,2,0xc.0x8,nein,-,0,,50,0,-
+tritt_w2,# Referenz reaktion_m_b_tritt_w2: Umwerfen K = 64, Aufstehen G (S+4 = 1) = 169
+tritt_w2,lauf,druck,T,T_rel_K,T_rel_G,figur_schlaegt,s4_vorher,aktion_phase_vorher,treffer,treffer_frame,schaden,s4_nachher,dx,dz,treffer_rel_G
+tritt_w2,reaktion_m_bp_tritt_w2_g0,167,169,K+105,G+0,ja,2,0xc.0xa,ja,169,3,3,50,0,G+0
+tritt_w2,reaktion_m_bp_tritt_w2_g2,169,171,K+107,G+2,ja,1,0x0.0xa,ja,171,3,3,48,0,G+2
+tritt_w2,reaktion_m_bp_tritt_w2_gm1,166,168,K+104,G-1,ja,2,0xc.0xa,nein,-,0,,50,0,-
+tritt_e2,# Referenz reaktion_m_b_tritt_e2: Umwerfen K = 74, Aufstehen G (S+4 = 1) = 167
+tritt_e2,lauf,druck,T,T_rel_K,T_rel_G,figur_schlaegt,s4_vorher,aktion_phase_vorher,treffer,treffer_frame,schaden,s4_nachher,dx,dz,treffer_rel_G
+tritt_e2,reaktion_m_bp_tritt_e2_g0,165,167,K+93,G+0,ja,2,0xc.0xa,ja,167,3,3,50,0,G+0
+tritt_e2,reaktion_m_bp_tritt_e2_g2,167,169,K+95,G+2,ja,1,0x0.0x0,ja,169,3,3,48,-1,G+2
+tritt_e2,reaktion_m_bp_tritt_e2_gm1,164,166,K+92,G-1,ja,2,0xc.0xa,nein,-,0,,50,0,-
+sprung_w2,# Referenz reaktion_m_b_sprung_w2: Umwerfen K = 19, Aufstehen G (S+4 = 1) = 124
+sprung_w2,lauf,druck,T,T_rel_K,T_rel_G,figur_schlaegt,s4_vorher,aktion_phase_vorher,treffer,treffer_frame,schaden,s4_nachher,dx,dz,treffer_rel_G
+sprung_w2,reaktion_m_bp_sprung_w2_g0,122,124,K+105,G+0,ja,2,0xc.0xa,ja,124,3,3,50,0,G+0
+sprung_w2,reaktion_m_bp_sprung_w2_g2,124,126,K+107,G+2,ja,1,0x0.0xa,ja,126,3,3,48,0,G+2
+sprung_w2,reaktion_m_bp_sprung_w2_gm1,121,123,K+104,G-1,ja,2,0xc.0xa,nein,-,0,,50,0,-
+sprung_e2,# Referenz reaktion_m_b_sprung_e2: Umwerfen K = 32, Aufstehen G (S+4 = 1) = 125
+sprung_e2,lauf,druck,T,T_rel_K,T_rel_G,figur_schlaegt,s4_vorher,aktion_phase_vorher,treffer,treffer_frame,schaden,s4_nachher,dx,dz,treffer_rel_G
+sprung_e2,reaktion_m_bp_sprung_e2_g0,123,125,K+93,G+0,ja,2,0xc.0xa,ja,125,3,3,50,0,G+0
+sprung_e2,reaktion_m_bp_sprung_e2_g2,125,127,K+95,G+2,ja,1,0x0.0x0,ja,127,3,3,48,0,G+2
+sprung_e2,reaktion_m_bp_sprung_e2_gm1,122,124,K+92,G-1,ja,2,0xc.0xa,nein,-,0,,50,0,-
+wurf_w2,# Referenz reaktion_m_b_wurf_w2: Umwerfen K = 26, Aufstehen G (S+4 = 1) = 130
+wurf_w2,lauf,druck,T,T_rel_K,T_rel_G,figur_schlaegt,s4_vorher,aktion_phase_vorher,treffer,treffer_frame,schaden,s4_nachher,dx,dz,treffer_rel_G
+wurf_w2,reaktion_m_bp_wurf_w2_g0,128,130,K+104,G+0,ja,3,0xc.0xa,ja,130,3,2,-50,0,G+0
+wurf_w2,reaktion_m_bp_wurf_w2_g2,130,132,K+106,G+2,ja,1,0x0.0xa,ja,132,3,2,-52,0,G+2
+wurf_w2,reaktion_m_bp_wurf_w2_gm1,127,129,K+103,G-1,ja,3,0xc.0xa,nein,-,0,,-50,0,-
+# Einzelwerte: griffprobe
+tritt_w,# Referenz reaktion_m_b_tritt_w: Umwerfen K = 57, Aufstehen G (S+4 = 1) = 162
+tritt_w,lauf,laufen_ab,griff,griff_rel_G,s4_vorher,aktion_vorher,dx,dz
+tritt_w,reaktion_m_bg_tritt_w_gm3,159,162,G+0,2,0xc,18,0
+tritt_w,reaktion_m_bg_tritt_w_gm10,152,162,G+0,2,0xc,28,0
+tritt_e,# Referenz reaktion_m_b_tritt_e: Umwerfen K = 57, Aufstehen G (S+4 = 1) = 170
+tritt_e,lauf,laufen_ab,griff,griff_rel_G,s4_vorher,aktion_vorher,dx,dz
+tritt_e,reaktion_m_bg_tritt_e_gm3,167,170,G+0,2,0xc,18,0
+tritt_e,reaktion_m_bg_tritt_e_gm10,160,170,G+0,2,0xc,28,0
+sprung_w,# Referenz reaktion_m_b_sprung_w: Umwerfen K = 15, Aufstehen G (S+4 = 1) = 120
+sprung_w,lauf,laufen_ab,griff,griff_rel_G,s4_vorher,aktion_vorher,dx,dz
+sprung_w,reaktion_m_bg_sprung_w_gm3,117,120,G+0,2,0xc,18,0
+sprung_w,reaktion_m_bg_sprung_w_gm10,110,120,G+0,2,0xc,28,0
+sprung_e,# Referenz reaktion_m_b_sprung_e: Umwerfen K = 15, Aufstehen G (S+4 = 1) = 128
+sprung_e,lauf,laufen_ab,griff,griff_rel_G,s4_vorher,aktion_vorher,dx,dz
+sprung_e,reaktion_m_bg_sprung_e_gm3,125,128,G+0,2,0xc,18,0
+sprung_e,reaktion_m_bg_sprung_e_gm10,118,128,G+0,2,0xc,28,0
+wurf_w,# Referenz reaktion_m_b_wurf_w: Umwerfen K = 16, Aufstehen G (S+4 = 1) = 120
+wurf_w,lauf,laufen_ab,griff,griff_rel_G,s4_vorher,aktion_vorher,dx,dz
+wurf_w,reaktion_m_bg_wurf_w_gm3,117,121,G+1,1,0x0,16,0
+wurf_w,reaktion_m_bg_wurf_w_gm10,110,121,G+1,1,0x0,26,0
+wurf_e,# Referenz reaktion_m_b_wurf_e: Umwerfen K = 15, Aufstehen G (S+4 = 1) = 139
+wurf_e,lauf,laufen_ab,griff,griff_rel_G,s4_vorher,aktion_vorher,dx,dz
+wurf_e,reaktion_m_bg_wurf_e_gm3,136,140,G+1,1,0x0,18,0
+wurf_e,reaktion_m_bg_wurf_e_gm10,129,140,G+1,1,0x0,28,0
+knie_w,# Referenz reaktion_m_b_knie_w: Umwerfen K = 56, Aufstehen G (S+4 = 1) = 164
+knie_w,lauf,laufen_ab,griff,griff_rel_G,s4_vorher,aktion_vorher,dx,dz
+knie_w,reaktion_m_bg_knie_w_gm3,161,164,G+0,2,0xc,18,0
+knie_w,reaktion_m_bg_knie_w_gm10,154,164,G+0,2,0xc,28,0
+knie_e,# Referenz reaktion_m_b_knie_e: Umwerfen K = 55, Aufstehen G (S+4 = 1) = 151
+knie_e,lauf,laufen_ab,griff,griff_rel_G,s4_vorher,aktion_vorher,dx,dz
+knie_e,reaktion_m_bg_knie_e_gm3,148,151,G+0,2,0xc,18,0
+knie_e,reaktion_m_bg_knie_e_gm10,141,151,G+0,2,0xc,29,0
+# Einzelwerte: mehrere (c_*, dazu a_s1_e_p20 und a_s3_e_b als Einzelgegner zum Vergleich)
+lauf,druck,trefferframe,getroffen,schaden,kombostufe,p1_anim_wechsel_nach_h,trefferstopp_stufe1,p1_phase4_ab
+reaktion_m_c_einzel_b,30,32,17/EDDY,3,1,h+11 h+12,7,h+13
+reaktion_m_c_einzel_b,46,49,17/EDDY,4,2,h+11,-,h+11
+reaktion_m_c_einzel_b,63,67,17/EDDY,5,3,h+11 h+27,-,h+11
+reaktion_m_c_fenster27,20,22,16/WOOKY 17/EDDY,3 3,1,h+11 h+12,7,h+13
+reaktion_m_c_fenster27,49,52,16/WOOKY 17/EDDY,4 4,2,h+11 h+27,-,h+11
+reaktion_m_c_fenster28,20,22,16/WOOKY 17/EDDY,3 3,1,h+11 h+12 h+28,7,h+13
+reaktion_m_c_fenster28,50,52,16/WOOKY 17/EDDY,3 3,1,h+11 h+12 h+28,7,h+13
+reaktion_m_c_kette_a,20,22,16/WOOKY 17/EDDY,3 3,1,h+11 h+12,7,h+13
+reaktion_m_c_kette_a,36,39,16/WOOKY 17/EDDY,4 4,2,h+11,-,h+11
+reaktion_m_c_kette_a,53,57,16/WOOKY 17/EDDY,5 5,3,h+11 h+27,-,h+11
+reaktion_m_c_kette_b,30,32,16/WOOKY 17/EDDY,3 3,1,h+11 h+12,7,h+13
+reaktion_m_c_kette_b,46,49,16/WOOKY 17/EDDY,4 4,2,h+11,-,h+11
+reaktion_m_c_kette_b,63,67,16/WOOKY 17/EDDY,5 5,3,h+11 h+27,-,h+11
+reaktion_m_c_zwei_a,20,22,16/WOOKY 17/EDDY,3 3,1,h+11 h+12 h+28 h+56,7,h+13
+reaktion_m_c_zwei_b,30,32,16/WOOKY 17/EDDY,3 3,1,h+11 h+12 h+28 h+56,7,h+13
+reaktion_m_a_s1_e_p20,20,22,17/EDDY,3,1,h+11 h+12 h+28 h+56,7,h+13
+reaktion_m_a_s3_e_b,20,22,17/EDDY,3,1,h+11 h+12,7,h+13
+reaktion_m_a_s3_e_b,36,39,17/EDDY,4,2,h+11,-,h+11
+reaktion_m_a_s3_e_b,53,57,17/EDDY,5,3,h+11 h+27 h+56 h+69,-,h+11
+# Einzelwerte: tod
+lauf,gegner,slot,tod_frame,schaden,lp,p1_aktion,zustaende,flug_ab,vx0,vh0,boden,ruhe,frei_ab,frames_bis_frei,treffer_nach_tod,angriff_aktiv_nach_tod,figur_lp_verlust_nach_tod,proben_im_bereich
+reaktion_m_d_tritt_w,WOOKY,18,57,10,-6,0x10,t+0:3/c.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+49:2/6.0 t+58:2/a.0 t+79:0/0.0,t+3,+2.875,+5,t+40,t+49,t+79,79,keine,0,keiner,15
+reaktion_m_d_s1_w,WOOKY,18,5,3,-1,0x10,t+0:3/0.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+49:2/6.0 t+58:2/a.0 t+79:0/0.0,t+3,+2.875,+5,t+40,t+49,t+79,79,keine,0,keiner,15
+reaktion_m_d_s1_e,EDDY,17,22,3,-1,0x10,t+0:3/0.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+49:2/6.0 t+58:2/a.0 t+79:0/0.0,t+3,+2.875,+5,t+40,t+49,t+79,79,keine,0,keiner,15
+reaktion_m_d_s3_e,EDDY,17,40,5,-2,0x10,t+0:3/0.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+49:2/6.0 t+58:2/a.0 t+79:0/0.0,t+3,+2.875,+5,t+40,t+49,t+79,79,keine,0,keiner,10
+reaktion_m_d_sprung_w,WOOKY,18,15,7,-2,0xe,t+0:3/c.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+49:2/6.0 t+58:2/a.0 t+79:0/0.0,t+3,+2.875,+5,t+40,t+49,t+79,79,keine,0,keiner,0
+reaktion_m_d_gleich_w,WOOKY,18,28,3,-1,0x10,t+0:3/0.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+49:2/6.0 t+58:2/a.0 t+79:0/0.0,t+3,+2.875,+5,t+40,t+49,t+79,79,keine,1,keiner,15
+reaktion_m_d_probe_w_t20,WOOKY,18,5,3,-1,0x10,t+0:3/0.0 t+1:2/0.0 t+2:2/2.0,t+3,+2.875,+5,-,-,-,-,keine,0,keiner,14
+reaktion_m_d_probe_w_t30,WOOKY,18,5,3,-1,0x10,t+0:3/0.0 t+1:2/0.0 t+2:2/2.0,t+3,+2.875,+5,-,-,-,-,keine,0,keiner,16
+reaktion_m_d_probe_w_t45,WOOKY,18,5,3,-1,0x10,t+0:3/0.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+49:2/6.0,t+3,+2.875,+5,t+40,t+49,-,-,keine,0,keiner,16
+reaktion_m_d_probe_w_t60,WOOKY,18,5,3,-1,0x10,t+0:3/0.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+49:2/6.0 t+58:2/a.0,t+3,+2.875,+5,t+40,t+49,-,-,keine,0,keiner,16
+reaktion_m_d_probe_w_t75,WOOKY,18,5,3,-1,0x10,t+0:3/0.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+49:2/6.0 t+58:2/a.0 t+79:0/0.0,t+3,+2.875,+5,t+40,t+49,t+79,79,keine,0,keiner,16
+reaktion_m_d_probe_e_t40,EDDY,17,22,3,-1,0x10,t+0:3/0.0 t+1:2/0.0 t+2:2/2.0 t+17:2/8.0,t+3,+2.875,+5,-,-,-,-,keine,0,keiner,16
+reaktion_m_d_probe_e_t55,EDDY,17,22,3,-1,0x10,t+0:3/0.0 t+1:2/0.0 t+2:2/2.0 t+32:2/8.0 t+40:2/6.0,t+3,+2.875,+5,t+40,t+40,-,-,keine,0,keiner,16
+reaktion_m_d_probe_e_t70,EDDY,17,22,3,-1,0x10,t+0:3/0.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+47:2/8.0 t+49:2/6.0 t+58:2/a.0,t+3,+2.875,+5,t+40,t+49,-,-,keine,0,keiner,16
+reaktion_m_d_probe_e_t90,EDDY,17,22,3,-1,0x10,t+0:3/0.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+49:2/6.0 t+58:2/a.0,t+3,+2.875,+5,t+40,t+49,-,-,keine,0,keiner,16
+# Einzelwerte dritte Messung (dr_*): treffer
+lauf,gegner,slot,h,stufe,p1_aktion,schaden,lp_nachher,art,reaktion_bis,reaktion_frames,s4_1_ab,abbruch_durch_treffer,anim_wechsel,x_je_frame,x_summe,tiefe_summe,erste_bewegung,ausholen_ab,angriff_aktiv_ab,figur_getroffen
+reaktion_m_dr_a4_e_k,EDDY,17,32,1,0x10,3,27,reaktion,h+16,17,-,h+17,h+1:0639f4/reaktion h+10:063a2e/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_dr_a4_e_k,EDDY,17,49,2,0x10,4,23,reaktion,h+17,18,-,h+18,h+1:0638c0/reaktion h+10:0638fa/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_dr_a4_e_k,EDDY,17,67,3,0x10,5,18,reaktion,h+22,23,h+23,-,h+1:0639f4/reaktion h+10:063a2e/reaktion h+22:063a60/reaktion h+23:063746/gehen h+24:0636d4/stand h+45:0645bc/ausholen h+49:0645f4/ausholen,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,h+45,h+55,h+55
+reaktion_m_dr_a4_e_p30,EDDY,17,32,1,0x10,3,27,reaktion,h+22,23,h+23,-,h+1:0639f4/reaktion h+10:063a2e/reaktion h+22:063a60/reaktion h+23:063746/gehen h+24:0636d4/stand h+45:064688/ausholen h+48:0646c0/ausholen h+49:0646f8/ausholen,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,h+50,h+45,h+54,h+54
+reaktion_m_dr_a4_e_p40,EDDY,17,42,1,0x10,3,27,reaktion,h+22,23,h+23,-,h+1:0639f4/reaktion h+10:063a2e/reaktion h+22:063a60/reaktion h+23:063746/gehen h+24:0636d4/stand h+45:064688/ausholen h+48:0646c0/ausholen h+49:0646f8/ausholen,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,h+50,h+45,h+54,h+54
+reaktion_m_dr_a4_e_p47,EDDY,17,49,1,0x10,3,27,reaktion,h+22,23,h+23,-,h+1:0639f4/reaktion h+10:063a2e/reaktion h+22:063a60/reaktion h+23:063746/gehen h+24:0636d4/stand h+45:064688/ausholen h+48:0646c0/ausholen h+49:0646f8/ausholen,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,h+50,h+45,h+54,h+54
+reaktion_m_dr_a4_e_p52,EDDY,17,54,1,0x10,3,27,reaktion,h+22,23,h+23,-,h+1:0639f4/reaktion h+10:063a2e/reaktion h+22:063a60/reaktion h+23:063746/gehen h+24:0636d4/stand h+45:064688/ausholen h+48:0646c0/ausholen h+49:0646f8/ausholen,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,h+50,h+45,h+54,h+54
+reaktion_m_dr_a4_w_k,WOOKY,18,14,1,0x10,3,13,reaktion,h+16,17,-,h+17,h+1:05efc8/reaktion h+10:05f002/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_dr_a4_w_k,WOOKY,18,31,2,0x10,4,9,reaktion,h+17,18,-,h+18,h+1:05ee94/reaktion h+10:05eece/reaktion,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_dr_a4_w_k,WOOKY,18,49,3,0x10,5,4,reaktion,h+22,23,h+23,-,h+1:05efc8/reaktion h+10:05f002/reaktion h+22:05f034/reaktion h+23:05ed1c/gehen h+24:05ecaa/stand h+45:05fc18/ausholen h+49:05fc50,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,h+45,h+49,h+49
+reaktion_m_dr_a4_w_p2,WOOKY,18,14,1,0x10,3,13,reaktion,h+22,23,h+23,-,h+1:05efc8/reaktion h+10:05f002/reaktion h+22:05f034/reaktion h+23:05ed1c/gehen,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_dr_a4_w_p2,WOOKY,18,38,2,0x10,4,9,reaktion,h+22,23,h+23,-,h+1:05ee94/reaktion h+10:05eece/reaktion h+22:05eefa h+23:05ed1c/gehen h+24:05ecaa/stand h+45:05fc18/ausholen h+49:05fc50,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,h+45,h+49,h+49
+reaktion_m_dr_a4_w_p3a,WOOKY,18,14,1,0x10,3,13,reaktion,h+22,23,h+23,-,h+1:05efc8/reaktion h+10:05f002/reaktion h+22:05f034/reaktion h+23:05ed1c/gehen,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_dr_a4_w_p3a,WOOKY,18,38,2,0x10,4,9,reaktion,h+22,23,h+23,-,h+1:05ee94/reaktion h+10:05eece/reaktion h+22:05eefa h+23:05ed1c/gehen h+24:05ecaa/stand,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_dr_a4_w_p3a,WOOKY,18,63,3,0x10,5,4,reaktion,h+22,23,h+23,-,h+1:05efc8/reaktion h+10:05f002/reaktion h+22:05f034/reaktion h+23:05ed1c/gehen h+24:05ecaa/stand h+45:05fa54/ausholen h+49:05fa8c/ausholen,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,h+45,h+54,h+54
+reaktion_m_dr_a4_w_p3b,WOOKY,18,17,1,0x10,3,13,reaktion,h+22,23,h+23,-,h+1:05efc8/reaktion h+10:05f002/reaktion h+22:05f034/reaktion h+23:05ed1c/gehen,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_dr_a4_w_p3b,WOOKY,18,41,2,0x10,4,9,reaktion,h+22,23,h+23,-,h+1:05ee94/reaktion h+10:05eece/reaktion h+22:05eefa h+23:05ed1c/gehen h+24:05ecaa/stand,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_dr_a4_w_p3b,WOOKY,18,66,3,0x10,5,4,reaktion,h+22,23,h+23,-,h+1:05efc8/reaktion h+10:05f002/reaktion h+22:05f034/reaktion h+23:05ed1c/gehen h+24:05ecaa/stand h+45:05fa54/ausholen h+49:05fa8c/ausholen,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,h+45,h+54,h+54
+reaktion_m_dr_a4_w_p3c,WOOKY,18,14,1,0x10,3,13,reaktion,h+22,23,h+23,-,h+1:05efc8/reaktion h+10:05f002/reaktion h+22:05f034/reaktion h+23:05ed1c/gehen h+24:05ecaa/stand,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_dr_a4_w_p3c,WOOKY,18,43,2,0x10,4,9,reaktion,h+22,23,h+23,-,h+1:05ee94/reaktion h+10:05eece/reaktion h+22:05eefa h+23:05ed1c/gehen h+24:05ecaa/stand,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,-,-,-
+reaktion_m_dr_a4_w_p3c,WOOKY,18,72,3,0x10,5,4,reaktion,h+22,23,h+23,-,h+1:05efc8/reaktion h+10:05f002/reaktion h+22:05f034/reaktion h+23:05ed1c/gehen h+24:05ecaa/stand h+45:05fa54/ausholen h+49:05fa8c/ausholen,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,h+45,h+54,h+54
+reaktion_m_dr_a4_w_p12,WOOKY,18,14,1,0x10,3,13,reaktion,h+22,23,h+23,-,h+1:05efc8/reaktion h+10:05f002/reaktion h+22:05f034/reaktion h+23:05ed1c/gehen h+24:05ecaa/stand h+45:05fc18/ausholen h+49:05fc50,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,h+45,h+49,h+49
+reaktion_m_dr_a4_w_p25,WOOKY,18,27,1,0x10,3,13,reaktion,h+22,23,h+23,-,h+1:05efc8/reaktion h+10:05f002/reaktion h+22:05f034/reaktion h+23:05ed1c/gehen h+24:05ecaa/stand h+45:05fc18/ausholen h+49:05fc50,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,h+45,h+49,h+49
+reaktion_m_dr_a4_w_p33,WOOKY,18,35,1,0x10,3,13,reaktion,h+22,23,h+23,-,h+1:05efc8/reaktion h+10:05f002/reaktion h+22:05f034/reaktion h+23:05ed1c/gehen h+24:05ecaa/stand h+45:05fc18/ausholen h+49:05fc50,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,h+45,h+49,h+49
+reaktion_m_dr_a4_w_p38,WOOKY,18,40,1,0x10,3,13,reaktion,h+22,23,h+23,-,h+1:05efc8/reaktion h+10:05f002/reaktion h+22:05f034/reaktion h+23:05ed1c/gehen h+24:05ecaa/stand h+45:05fc18/ausholen h+49:05fc50,h+9:+3 h+10:-3 h+11:+2 h+12:-2 h+13:+1 h+14:-1,+0,+0,-,h+45,h+49,h+49
+# Einzelwerte dritte Messung: umwerfen
+lauf,gegner,slot,K,schaden,p1_aktion,flug_ab,vx0,vh0,schwerkraft,vx_aenderung,scheitel,scheitel_hoehe,boden,boden_dx,ruhe,ruhe_dx,aufstehen_ab,s4_1_ab,liegen_ruhe_bis_aufstehen,aufstehen_frames,anim_aufstehen,s4_waehrend,tiefe_summe,aktion_ab_G,erste_bewegung_ab_G
+reaktion_m_dr_b_e_k,EDDY,17,86,4,0x0,K+9,+2.875,+5,-0.2734,+0,K+27,64.2422,K+49,+117.875,K+58,+143.75,K+94,K+112,36,18,+1:063fd2 +9:063ffc +17:064034 +18:063746,2,+0,0x0 bis G+69,G+1
+reaktion_m_dr_b_e_s20,EDDY,17,32,7,0xe,K+9,+2.875,+5,-0.2734,+0,K+27,48.2422,K+46,+109.25,K+55,+135.125,K+95,K+113,40,18,+1:063fd2 +9:063ffc +17:064034 +18:063746,2,+0,0x0 bis G+39,G+1
+reaktion_m_dr_b_e_s25,EDDY,17,37,7,0xe,K+9,+2.875,+5,-0.2734,+0,K+27,48.2422,K+46,+109.25,K+55,+135.125,K+95,K+113,40,18,+1:063fd2 +9:063ffc +17:064034 +18:063746,2,+0,0x0 bis G+39,G+1
+reaktion_m_dr_b_e_s31,EDDY,17,43,7,0xe,K+9,+2.875,+5,-0.2734,+0,K+27,48.2422,K+46,+109.25,K+55,+135.125,K+75,K+93,20,18,+1:063fd2 +9:063ffc +17:064034 +18:063746,2,+0,0x0 bis G+39,G+1
+reaktion_m_dr_b_e_t30,EDDY,17,84,10,0x10,K+9,+2.875,+5,-0.2734,+0,K+27,48.2422,K+46,+109.25,K+55,+135.125,K+75,K+93,20,18,+1:063fd2 +9:063ffc +17:064034 +18:063746,2,+0,0x0 bis G+77,G+1
+reaktion_m_dr_b_e_t35,EDDY,17,89,10,0x10,K+9,+2.875,+5,-0.2734,+0,K+27,48.2422,K+46,+109.25,K+55,+135.125,K+75,K+93,20,18,+1:063fd2 +9:063ffc +17:064034 +18:063746,2,+0,0x0 bis G+77,G+1
+reaktion_m_dr_b_e_t40,EDDY,17,94,10,0x10,K+9,+2.875,+5,-0.2734,+0,K+27,48.2422,K+46,+109.25,K+55,+135.125,K+75,K+93,20,18,+1:063fd2 +9:063ffc +17:064034 +18:063746,2,+0,0x0 bis G+77,G+1
+reaktion_m_dr_b_e_w,EDDY,17,46,14,0x0,K+22,+5,+2,-0.2031,-0.0625,K+31,69.8594,K+58,+147.375,K+70,+175.5,K+106,K+124,36,18,+1:063fd2 +9:063ffc +17:064034 +18:063746,3,+0,0x0 bis G+40,G+1
+reaktion_m_dr_b_w_k,WOOKY,18,61,4,0x0,K+9,+2.875,+5,-0.2734,+0,K+27,64.2422,K+49,+117.875,K+58,+143.75,K+90,K+108,32,18,+1:05f59c +9:05f5c6 +17:05f5fe +18:05ed1c,2,+0,0x0 bis Laufende,G+1
+reaktion_m_dr_b_w_s,WOOKY,18,32,7,0xe,K+9,+2.875,+5,-0.2734,+0,K+27,48.2422,K+46,+109.25,K+55,+135.125,K+87,K+105,32,18,+1:05f59c +9:05f5c6 +17:05f5fe +18:05ed1c,2,+0,0x0 bis G+159,G+1
+reaktion_m_dr_b_w_w,WOOKY,18,21,14,0x0,K+22,+5,+2,-0.2031,-0.0625,K+31,69.8594,K+58,+147.375,K+70,+175.5,K+86,K+104,16,18,+1:05f59c +9:05f5c6 +17:05f5fe +18:05ed1c,3,+0,0x0 bis G+159,G+1
+# Einzelwerte dritte Messung: tod
+lauf,gegner,slot,tod_frame,schaden,lp,p1_aktion,zustaende,flug_ab,vx0,vh0,boden,ruhe,frei_ab,frames_bis_frei,treffer_nach_tod,angriff_aktiv_nach_tod,figur_lp_verlust_nach_tod,proben_im_bereich
+reaktion_m_dr_d_w_s1,WOOKY,18,14,3,-1,0x10,t+0:3/0.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+49:2/6.0 t+58:2/a.0 t+79:0/0.0,t+3,+2.875,+5,t+40,t+49,t+79,79,keine,0,keiner,15
+reaktion_m_dr_d_w_s2,WOOKY,18,31,4,-1,0x10,t+0:3/4.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+72:2/6.0 t+90:2/a.0 t+111:0/0.0,t+3,+2.875,+5,t+40,t+72,t+111,111,keine,0,keiner,15
+reaktion_m_dr_d_w_tritt,WOOKY,18,66,10,-6,0x10,t+0:3/c.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+49:2/6.0 t+58:2/a.0 t+79:0/0.0,t+3,+2.875,+5,t+40,t+49,t+79,79,keine,0,keiner,15
+reaktion_m_dr_d_w_wurf,WOOKY,18,21,14,-4,0x0,t+0:3/2.0 t+21:3/4.0 t+79:3/6.0 t+80:3/a.0 t+101:0/0.0,t+22,+5,+2,t+58,t+79,t+101,101,keine,0,keiner,0
+reaktion_m_dr_d_e_s2,EDDY,17,49,4,-1,0x10,t+0:3/4.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+63:2/6.0 t+72:2/a.0 t+93:0/0.0,t+3,+2.875,+5,t+40,t+63,t+93,93,keine,0,keiner,15
+reaktion_m_dr_d_e_sprung,EDDY,17,32,7,-2,0xe,t+0:3/c.0 t+1:2/0.0 t+2:2/2.0 t+40:2/4.0 t+49:2/6.0 t+58:2/a.0 t+79:0/0.0,t+3,+2.875,+5,t+40,t+49,t+79,79,keine,0,keiner,0
+reaktion_m_dr_d_e_wurf,EDDY,17,46,14,-4,0x0,t+0:3/2.0 t+21:3/4.0 t+79:3/6.0 t+80:3/a.0 t+101:0/0.0,t+22,+5,+2,t+58,t+79,t+101,101,keine,0,keiner,0
+reaktion_m_dr_d_e_wurfr,EDDY,17,49,14,-4,0x0,t+0:3/2.0 t+21:3/4.0 t+79:3/6.0 t+80:3/a.0 t+101:0/0.0,t+22,-5,+2,t+58,t+79,t+101,101,keine,0,keiner,0
+# Einzelwerte: Figur im Gleichzeitig-Fall (d_gleich_w, gegnerreaktion Frame 26-32)
+lauf,frame,slot,s4,s5,aktion,phase,x,dx,hoehe,tiefe,lp,anim,anim_art,attr,p1_aktion,p1_phase,p1_anim,kombostufe,p1_x,p1_lp
+reaktion_m_d_gleich_w,26,18,1,1,0x6,0x6,576.3594,+0,0.0000,330.0781,2,05fa8c,ausholen,0000,0x0,0,0aff30,1,530.0000,72
+reaktion_m_d_gleich_w,27,18,1,1,0x6,0x6,576.3594,+0,0.0000,330.0781,2,05fa8c,ausholen,0000,0x10,0,0b2ec4,1,530.0000,72
+reaktion_m_d_gleich_w,28,18,3,1,0x0,0x0,576.3594,+0,0.0000,330.0781,-1,05fab8,,400c,0x10,0,0b2ef2,1,530.0000,72
+reaktion_m_d_gleich_w,29,18,2,1,0x0,0x0,576.3594,+0,0.0000,330.0781,-1,05fab8,,400c,0x10,0,0b2ef2,1,530.0000,72
+reaktion_m_d_gleich_w,30,18,2,1,0x2,0x0,576.3594,+0,0.0000,330.0781,-1,05f308,,0000,0x10,0,0b2ef2,1,530.0000,72
+reaktion_m_d_gleich_w,31,18,2,1,0x2,0x0,579.2344,+2.875,5.0000,330.0781,-1,05f33a,,0000,0x10,0,0b2ef2,1,530.0000,72
+reaktion_m_d_gleich_w,32,18,2,1,0x2,0x0,582.1094,+2.875,9.7266,330.0781,-1,05f33a,,0000,0x10,0,0b2ef2,1,530.0000,72
+# Rang je Lauf (Watch FFF82A)
+reaktion_m_a3_s2_12_e,10/11
+reaktion_m_a3_s2_12_w,10
+reaktion_m_a3_s2_27_e,10/11
+reaktion_m_a3_s2_27_w,10
+reaktion_m_a3_s3_12_e,10/11
+reaktion_m_a3_s3_12_w,10
+reaktion_m_a3_s3_26_e,10/11
+reaktion_m_a3_s3_26_w,10
+reaktion_m_a3_s4_12_e,10/11
+reaktion_m_a3_s4_12_w,10
+reaktion_m_a3_s4_26_e,10/11
+reaktion_m_a3_s4_26_w,10
+reaktion_m_a4_frueh_e,10/11
+reaktion_m_a4_frueh_w,10
+reaktion_m_a4_grenze19_e,10
+reaktion_m_a4_grenze19_w,10
+reaktion_m_a4_grenze20_e,10
+reaktion_m_a4_grenze20_w,10
+reaktion_m_a4_spaet_e2,10/11
+reaktion_m_a4_spaet_e,10/11
+reaktion_m_a4_spaet_w2,10
+reaktion_m_a4_spaet_w,10
+reaktion_m_a_links_e,10
+reaktion_m_a_links_w,10
+reaktion_m_a_s1_e_p3,10
+reaktion_m_a_s1_e_p14,10
+reaktion_m_a_s1_e_p20,10/11
+reaktion_m_a_s1_e_p35,10/11
+reaktion_m_a_s1_w_p3,10
+reaktion_m_a_s1_w_p10,10
+reaktion_m_a_s1_w_p18,10
+reaktion_m_a_s1_w_p26,10
+reaktion_m_a_s2_e,10/11
+reaktion_m_a_s2_e_b,10/11
+reaktion_m_a_s2_w,10
+reaktion_m_a_s2_w_b,10
+reaktion_m_a_s3_e,10/11
+reaktion_m_a_s3_e_b,10/11
+reaktion_m_a_s3_w,10
+reaktion_m_a_s3_w_b,10
+reaktion_m_bg_knie_e_gm3,10/11
+reaktion_m_bg_knie_e_gm10,10/11
+reaktion_m_bg_knie_w_gm3,10
+reaktion_m_bg_knie_w_gm10,10
+reaktion_m_bg_sprung_e_gm3,10/11
+reaktion_m_bg_sprung_e_gm10,10/11
+reaktion_m_bg_sprung_w_gm3,10
+reaktion_m_bg_sprung_w_gm10,10
+reaktion_m_bg_tritt_e_gm3,10/11
+reaktion_m_bg_tritt_e_gm10,10/11
+reaktion_m_bg_tritt_w_gm3,10
+reaktion_m_bg_tritt_w_gm10,10
+reaktion_m_bg_wurf_e_gm3,10/11
+reaktion_m_bg_wurf_e_gm10,10/11
+reaktion_m_bg_wurf_w_gm3,10
+reaktion_m_bg_wurf_w_gm10,10
+reaktion_m_bn_sprung_e_g0,10/11
+reaktion_m_bn_sprung_e_gm1,10/11
+reaktion_m_bn_sprung_w_g0,10
+reaktion_m_bn_sprung_w_gm1,10
+reaktion_m_bp_knie_e_g0,10/11
+reaktion_m_bp_knie_e_g1,10/11
+reaktion_m_bp_knie_e_g2,10/11
+reaktion_m_bp_knie_e_g4,10/11
+reaktion_m_bp_knie_e_g6,10/11
+reaktion_m_bp_knie_e_g8,10/11
+reaktion_m_bp_knie_e_g12,10/11
+reaktion_m_bp_knie_e_g16,10/11
+reaktion_m_bp_knie_e_g20,10/11
+reaktion_m_bp_knie_e_g24,10/11
+reaktion_m_bp_knie_e_g28,10/11
+reaktion_m_bp_knie_e_g32,10/11
+reaktion_m_bp_knie_e_g36,10/11
+reaktion_m_bp_knie_e_g40,10/11
+reaktion_m_bp_knie_e_gm1,10/11
+reaktion_m_bp_knie_e_gm2,10/11
+reaktion_m_bp_knie_e_gm4,10/11
+reaktion_m_bp_knie_e_gm10,10/11
+reaktion_m_bp_knie_e_gm18,10/11
+reaktion_m_bp_knie_e_k40,10
+reaktion_m_bp_knie_e_k60,10/11
+reaktion_m_bp_knie_w_g0,10
+reaktion_m_bp_knie_w_g1,10
+reaktion_m_bp_knie_w_g2,10
+reaktion_m_bp_knie_w_g4,10
+reaktion_m_bp_knie_w_g6,10
+reaktion_m_bp_knie_w_g8,10
+reaktion_m_bp_knie_w_g12,10
+reaktion_m_bp_knie_w_g16,10
+reaktion_m_bp_knie_w_g20,10
+reaktion_m_bp_knie_w_g24,10
+reaktion_m_bp_knie_w_g28,10
+reaktion_m_bp_knie_w_g32,10
+reaktion_m_bp_knie_w_g36,10
+reaktion_m_bp_knie_w_g40,10
+reaktion_m_bp_knie_w_gm1,10
+reaktion_m_bp_knie_w_gm2,10
+reaktion_m_bp_knie_w_gm4,10
+reaktion_m_bp_knie_w_gm10,10
+reaktion_m_bp_knie_w_gm18,10
+reaktion_m_bp_knie_w_k40,10
+reaktion_m_bp_knie_w_k60,10
+reaktion_m_bp_knie_w_k80,10
+reaktion_m_bp_sprung_e2_g0,10/11
+reaktion_m_bp_sprung_e2_g2,10/11
+reaktion_m_bp_sprung_e2_gm1,10/11
+reaktion_m_bp_sprung_e_g0,10/11
+reaktion_m_bp_sprung_e_g1,10/11
+reaktion_m_bp_sprung_e_g2,10/11
+reaktion_m_bp_sprung_e_g4,10/11
+reaktion_m_bp_sprung_e_g6,10/11
+reaktion_m_bp_sprung_e_g8,10/11
+reaktion_m_bp_sprung_e_g12,10/11
+reaktion_m_bp_sprung_e_g16,10/11
+reaktion_m_bp_sprung_e_g20,10/11
+reaktion_m_bp_sprung_e_g24,10/11
+reaktion_m_bp_sprung_e_g28,10/11
+reaktion_m_bp_sprung_e_g32,10/11
+reaktion_m_bp_sprung_e_g36,10/11
+reaktion_m_bp_sprung_e_g40,10/11
+reaktion_m_bp_sprung_e_gm1,10/11
+reaktion_m_bp_sprung_e_gm2,10/11
+reaktion_m_bp_sprung_e_gm4,10/11
+reaktion_m_bp_sprung_e_gm10,10/11
+reaktion_m_bp_sprung_e_gm18,10/11
+reaktion_m_bp_sprung_e_k40,10
+reaktion_m_bp_sprung_e_k60,10
+reaktion_m_bp_sprung_e_k80,10
+reaktion_m_bp_sprung_w2_g0,10
+reaktion_m_bp_sprung_w2_g2,10
+reaktion_m_bp_sprung_w2_gm1,10
+reaktion_m_bp_sprung_w_g0,10
+reaktion_m_bp_sprung_w_g1,10
+reaktion_m_bp_sprung_w_g2,10
+reaktion_m_bp_sprung_w_g4,10
+reaktion_m_bp_sprung_w_g6,10
+reaktion_m_bp_sprung_w_g8,10
+reaktion_m_bp_sprung_w_g12,10
+reaktion_m_bp_sprung_w_g16,10
+reaktion_m_bp_sprung_w_g20,10
+reaktion_m_bp_sprung_w_g24,10
+reaktion_m_bp_sprung_w_g28,10
+reaktion_m_bp_sprung_w_g32,10
+reaktion_m_bp_sprung_w_g36,10
+reaktion_m_bp_sprung_w_g40,10
+reaktion_m_bp_sprung_w_gm1,10
+reaktion_m_bp_sprung_w_gm2,10
+reaktion_m_bp_sprung_w_gm4,10
+reaktion_m_bp_sprung_w_gm10,10
+reaktion_m_bp_sprung_w_gm18,10
+reaktion_m_bp_sprung_w_k40,10
+reaktion_m_bp_sprung_w_k60,10
+reaktion_m_bp_sprung_w_k80,10
+reaktion_m_bp_tritt_e2_g0,10/11
+reaktion_m_bp_tritt_e2_g2,10/11
+reaktion_m_bp_tritt_e2_gm1,10/11
+reaktion_m_bp_tritt_e_g0,10/11
+reaktion_m_bp_tritt_e_g1,10/11
+reaktion_m_bp_tritt_e_g2,10/11
+reaktion_m_bp_tritt_e_g4,10/11
+reaktion_m_bp_tritt_e_g6,10/11
+reaktion_m_bp_tritt_e_g8,10/11
+reaktion_m_bp_tritt_e_g12,10/11
+reaktion_m_bp_tritt_e_g16,10/11
+reaktion_m_bp_tritt_e_g20,10/11
+reaktion_m_bp_tritt_e_g24,10/11
+reaktion_m_bp_tritt_e_g28,10/11
+reaktion_m_bp_tritt_e_g32,10/11
+reaktion_m_bp_tritt_e_g36,10/11
+reaktion_m_bp_tritt_e_g40,10/11
+reaktion_m_bp_tritt_e_gm1,10/11
+reaktion_m_bp_tritt_e_gm2,10/11
+reaktion_m_bp_tritt_e_gm4,10/11
+reaktion_m_bp_tritt_e_gm10,10/11
+reaktion_m_bp_tritt_e_gm18,10/11
+reaktion_m_bp_tritt_e_k40,10
+reaktion_m_bp_tritt_e_k60,10/11
+reaktion_m_bp_tritt_e_k80,10/11
+reaktion_m_bp_tritt_w2_g0,10
+reaktion_m_bp_tritt_w2_g2,10
+reaktion_m_bp_tritt_w2_gm1,10
+reaktion_m_bp_tritt_w_g0,10
+reaktion_m_bp_tritt_w_g1,10
+reaktion_m_bp_tritt_w_g2,10
+reaktion_m_bp_tritt_w_g4,10
+reaktion_m_bp_tritt_w_g6,10
+reaktion_m_bp_tritt_w_g8,10
+reaktion_m_bp_tritt_w_g12,10
+reaktion_m_bp_tritt_w_g16,10
+reaktion_m_bp_tritt_w_g20,10
+reaktion_m_bp_tritt_w_g24,10
+reaktion_m_bp_tritt_w_g28,10
+reaktion_m_bp_tritt_w_g32,10
+reaktion_m_bp_tritt_w_g36,10
+reaktion_m_bp_tritt_w_g40,10
+reaktion_m_bp_tritt_w_gm1,10
+reaktion_m_bp_tritt_w_gm2,10
+reaktion_m_bp_tritt_w_gm4,10
+reaktion_m_bp_tritt_w_gm10,10
+reaktion_m_bp_tritt_w_gm18,10
+reaktion_m_bp_tritt_w_k40,10
+reaktion_m_bp_tritt_w_k60,10
+reaktion_m_bp_tritt_w_k80,10
+reaktion_m_bp_wurf_e_g0,10/11
+reaktion_m_bp_wurf_e_g1,10/11
+reaktion_m_bp_wurf_e_g2,10/11
+reaktion_m_bp_wurf_e_g4,10/11
+reaktion_m_bp_wurf_e_g6,10/11
+reaktion_m_bp_wurf_e_g8,10/11
+reaktion_m_bp_wurf_e_g12,10/11
+reaktion_m_bp_wurf_e_g16,10/11
+reaktion_m_bp_wurf_e_g20,10/11
+reaktion_m_bp_wurf_e_g24,10/11
+reaktion_m_bp_wurf_e_g28,10/11
+reaktion_m_bp_wurf_e_g32,10/11
+reaktion_m_bp_wurf_e_g36,10/11
+reaktion_m_bp_wurf_e_g40,10/11
+reaktion_m_bp_wurf_e_gm1,10/11
+reaktion_m_bp_wurf_e_gm2,10/11
+reaktion_m_bp_wurf_e_gm4,10/11
+reaktion_m_bp_wurf_e_gm10,10/11
+reaktion_m_bp_wurf_e_gm18,10/11
+reaktion_m_bp_wurf_e_k40,10
+reaktion_m_bp_wurf_e_k60,10
+reaktion_m_bp_wurf_e_k80,10
+reaktion_m_bp_wurf_w2_g0,10
+reaktion_m_bp_wurf_w2_g2,10
+reaktion_m_bp_wurf_w2_gm1,10
+reaktion_m_bp_wurf_w_g0,10
+reaktion_m_bp_wurf_w_g1,10
+reaktion_m_bp_wurf_w_g2,10
+reaktion_m_bp_wurf_w_g4,10
+reaktion_m_bp_wurf_w_g6,10
+reaktion_m_bp_wurf_w_g8,10
+reaktion_m_bp_wurf_w_g12,10
+reaktion_m_bp_wurf_w_g16,10
+reaktion_m_bp_wurf_w_g20,10
+reaktion_m_bp_wurf_w_g24,10
+reaktion_m_bp_wurf_w_g28,10
+reaktion_m_bp_wurf_w_g32,10
+reaktion_m_bp_wurf_w_g36,10
+reaktion_m_bp_wurf_w_g40,10
+reaktion_m_bp_wurf_w_gm1,10
+reaktion_m_bp_wurf_w_gm2,10
+reaktion_m_bp_wurf_w_gm4,10
+reaktion_m_bp_wurf_w_gm10,10
+reaktion_m_bp_wurf_w_gm18,10
+reaktion_m_bp_wurf_w_k40,10
+reaktion_m_bp_wurf_w_k60,10
+reaktion_m_bp_wurf_w_k80,10
+reaktion_m_b_knie_e,10/11
+reaktion_m_b_knie_w,10
+reaktion_m_b_sprung_e2,10/11
+reaktion_m_b_sprung_e,10/11
+reaktion_m_b_sprung_w2,10
+reaktion_m_b_sprung_w,10
+reaktion_m_b_tritt_e2,10/11
+reaktion_m_b_tritt_e,10/11
+reaktion_m_b_tritt_w2,10
+reaktion_m_b_tritt_w,10
+reaktion_m_b_wurf_e,10/11
+reaktion_m_b_wurf_w2,10
+reaktion_m_b_wurf_w,10
+reaktion_m_c_einzel_b,10/11
+reaktion_m_c_fenster27,10
+reaktion_m_c_fenster28,10
+reaktion_m_c_kette_a,10
+reaktion_m_c_kette_b,10/11
+reaktion_m_c_zwei_a,10
+reaktion_m_c_zwei_b,10
+reaktion_m_dr_a4_e_k,10/11
+reaktion_m_dr_a4_e_p30,10
+reaktion_m_dr_a4_e_p40,10/11
+reaktion_m_dr_a4_e_p47,10/11
+reaktion_m_dr_a4_e_p52,10/11
+reaktion_m_dr_a4_w_k,10
+reaktion_m_dr_a4_w_p2,10
+reaktion_m_dr_a4_w_p3a,10
+reaktion_m_dr_a4_w_p3b,10
+reaktion_m_dr_a4_w_p3c,10
+reaktion_m_dr_a4_w_p12,10
+reaktion_m_dr_a4_w_p25,10
+reaktion_m_dr_a4_w_p33,10
+reaktion_m_dr_a4_w_p38,10
+reaktion_m_dr_b_e_k,10/11
+reaktion_m_dr_b_e_s20,10/11
+reaktion_m_dr_b_e_s25,10/11
+reaktion_m_dr_b_e_s31,10/11
+reaktion_m_dr_b_e_t30,10/11
+reaktion_m_dr_b_e_t35,10/11
+reaktion_m_dr_b_e_t40,10/11
+reaktion_m_dr_b_e_w,10/11
+reaktion_m_dr_b_w_k,10
+reaktion_m_dr_b_w_s,10
+reaktion_m_dr_b_w_w,10
+reaktion_m_dr_d_e_s2,10/11
+reaktion_m_dr_d_e_sprung,10/11
+reaktion_m_dr_d_e_wurfr,10/11
+reaktion_m_dr_d_e_wurf,10/11
+reaktion_m_dr_d_w_s1,10
+reaktion_m_dr_d_w_s2,10
+reaktion_m_dr_d_w_tritt,10
+reaktion_m_dr_d_w_wurf,10
+reaktion_m_dr_setup,9/10
+reaktion_m_d_gleich_w,10
+reaktion_m_d_probe_e_t40,10
+reaktion_m_d_probe_e_t55,10
+reaktion_m_d_probe_e_t70,10
+reaktion_m_d_probe_e_t90,10
+reaktion_m_d_probe_w_t20,10
+reaktion_m_d_probe_w_t30,10
+reaktion_m_d_probe_w_t45,10
+reaktion_m_d_probe_w_t60,10
+reaktion_m_d_probe_w_t75,10
+reaktion_m_d_s1_e,10/11
+reaktion_m_d_s1_w,10
+reaktion_m_d_s3_e,10/11
+reaktion_m_d_sprung_w,10
+reaktion_m_d_tritt_w,10

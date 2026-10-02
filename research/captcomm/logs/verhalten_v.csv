@@ -1,0 +1,1017 @@
+# Gegenprüfung V2 zu „Verhalten von WOOKY und EDDY“, erzeugt von scripts/belege_verhalten.sh
+# (Läufe verhalten_v_*, Szenarien verhalten_v_frei.lua und verhalten_v_bot.lua, Auswertung
+# messen_verhalten_v.py). Eingriffe siehe Kopf der Szenarien und Kommentar im Skript.
+# dx = x(Gegner) - x(Figur), dz = Tiefe(Gegner) - Tiefe(Figur), Frames lokal je Lauf.
+# zusammenfassung (A1-A4): sicht*, weck*, p_*, e_*, r_*
+A1 sichtbar (stehende Kamera, stehender Gegner):
+  DOLG rechts: S+5=1 bis x-Kamera -, S+5=0 ab 1574
+  andere links: S+5=1 ab x-Kamera -64, S+5=0 bis -65
+  andere rechts: S+5=1 bis x-Kamera 447, S+5=0 ab 448
+A1 Weckreiz bei stehender Kamera: 7 Fälle, x - Kamera(Vorframe) 383-383, x - Kamera(Frame-Ende) 383-383, Abstand zur Figur 183-319
+A1 Weckreiz bei fahrender Kamera: 6 Fälle, x - Kamera(Vorframe) 381-383, x - Kamera(Frame-Ende) 378-381, Abstand zur Figur 178-181
+A1 Reiz bis S+4 = 1: EDDY hockend [69], WOOKY hockend [49], WOOKY versteckt [16]
+A2 Tiefe beim Stillstand: 99 Fälle, |dz| Median 3, Maximum 11
+A2 Stillstand links der Figur nach normalem Gehen: 5:1, 6:1, 7:1, 12:1, 16:1, 24:1, 25:1, 30:1, 37:1, 44:1, 45:1, 46:3, 47:3, 48:5, 55:1
+A2 Stillstand links der Figur nach schnellem Gehen: 23:1, 41:1, 45:1, 47:1, 55:9, 56:7
+A2 Stillstand rechts der Figur nach normalem Gehen: 14:1, 17:3, 32:1, 33:1, 39:1, 40:1, 46:7, 47:11, 55:1
+A2 Stillstand rechts der Figur nach schnellem Gehen: 18:1, 29:1, 35:1, 46:1, 47:3, 55:11, 56:11
+A3 Pause bis zum ersten Angriff je Rang: 7: [25], 8: [21], 9: [21], 10: [21], 11: [21], 12: [17], 13: [17], 14: [17], 15: [17], 16: [13], 17: [13], 18: [13], 19: [13], 20: [9], 23: [9]
+A3 erster Angriff EDDY: E-A 14, E-C 14, E-D 7 (von 35)
+A3 erster Angriff WOOKY: W-A 40, W-C 21, W-E 2 (von 63)
+A4 Abstand in einer Serie, Rang 7: 64-83 (5)
+A4 Abstand in einer Serie, Rang 8: 58-58 (2)
+A4 Abstand in einer Serie, Rang 9: 57-85 (14)
+A4 Abstand in einer Serie, Rang 10: 47-79 (18)
+A4 Abstand in einer Serie, Rang 11: 53-87 (31)
+A4 Abstand in einer Serie, Rang 12: 45-77 (33)
+A4 Abstand in einer Serie, Rang 13: 49-81 (24)
+A4 Abstand in einer Serie, Rang 14: 43-82 (38)
+A4 Abstand in einer Serie, Rang 15: 46-80 (29)
+A4 Abstand in einer Serie, Rang 16: 42-78 (39)
+A4 Abstand in einer Serie, Rang 17: 41-74 (24)
+A4 Abstand in einer Serie, Rang 18: 40-75 (13)
+A4 Abstand in einer Serie, Rang 19: 46-46 (1)
+A4 Abstand in einer Serie, Rang 20: 46-67 (10)
+A4 Abstand in einer Serie, Rang 23: 38-69 (26)
+A4 normale Angriffe vor dem Umwerf-Angriff: Median 2, 0-5 (111 Serien)
+A4 Abstand mit Unterbrechung EDDY: 64-2237, Median 293 (51)
+A4 Abstand mit Unterbrechung WOOKY: 122-2346, Median 292.0 (82)
+# sichtbar (EINGRIFF sicht*, natürlich p_*, d_sprung, Bot)
+lauf,frame,slot,typ,s5_alt,s5_neu,x,kamera,x_minus_kamera,x_minus_kamera_vorframe
+verhalten_v_sicht,22,17,EDDY,0,1,703,256,447,448
+verhalten_v_sicht,82,17,EDDY,1,0,704,256,448,447
+verhalten_v_sicht,142,16,WOOKY,0,1,192,256,-64,-65
+verhalten_v_sicht_s17,46,17,EDDY,1,0,1066,618,448,447
+verhalten_v_sicht_s17,58,17,EDDY,0,1,1065,618,447,448
+verhalten_v_sicht_s17,138,17,EDDY,1,0,553,618,-65,-64
+verhalten_v_sicht_s17,182,17,EDDY,0,1,554,618,-64,-65
+verhalten_v_sicht_s18,46,18,WOOKY,1,0,778,330,448,447
+verhalten_v_sicht_s18,58,18,WOOKY,0,1,777,330,447,448
+verhalten_v_sicht_s18,130,18,WOOKY,1,0,265,330,-65,-64
+verhalten_v_sicht_s18,173,18,WOOKY,0,1,288,330,-42,-69
+verhalten_v_p_eddy,1615,17,EDDY,1,0,556,621,-65,-64
+verhalten_v_p_eddy,1779,17,EDDY,0,1,557,621,-64,-66
+verhalten_v_p_eddy,2739,16,WOOKY,1,0,555,621,-66,-64
+verhalten_v_p_eddy,2862,17,EDDY,1,0,556,621,-65,-63
+verhalten_v_p_eddy,2957,16,WOOKY,0,1,557,621,-64,-66
+verhalten_v_p_eddy,3414,17,EDDY,0,1,558,621,-63,-65
+verhalten_v_p_eddy,3898,17,EDDY,1,0,554,621,-67,-64
+verhalten_v_p_eddy,4086,17,EDDY,0,1,557,621,-64,-66
+verhalten_v_p_eddy,4769,17,EDDY,1,0,556,621,-65,-63
+verhalten_v_p_eddy,4866,17,EDDY,0,1,557,621,-64,-65
+verhalten_v_p_held2,281,17,EDDY,0,1,880,435,445,447
+verhalten_v_p_held2,327,16,WOOKY,0,1,960,515,445,447
+verhalten_v_p_held2,1703,15,WOOKY,0,1,1152,833,319,322
+verhalten_v_p_held2,1733,14,WOOKY,0,1,1152,850,302,302
+verhalten_v_p_held2,2009,17,EDDY,1,0,1298,850,448,446
+verhalten_v_p_held2,2040,18,WOOKY,1,0,1298,850,448,447
+verhalten_v_p_held2,2238,15,WOOKY,1,0,1298,850,448,446
+verhalten_v_p_held2,2272,15,WOOKY,0,1,1297,850,447,449
+verhalten_v_p_held2,2363,18,WOOKY,0,1,1297,850,447,449
+verhalten_v_p_held2,2384,18,WOOKY,1,0,1299,850,449,447
+verhalten_v_p_held2,2392,14,WOOKY,1,0,1298,850,448,446
+verhalten_v_p_held2,2392,17,EDDY,0,1,1297,850,447,449
+verhalten_v_p_held2,2409,17,EDDY,1,0,1299,850,449,447
+verhalten_v_p_held2,2457,14,WOOKY,0,1,1296,850,446,449
+verhalten_v_p_held2,2606,14,WOOKY,1,0,1299,850,449,447
+verhalten_v_p_held2,2620,17,EDDY,0,1,1297,850,447,449
+verhalten_v_p_held2,2641,17,EDDY,1,0,1299,850,449,447
+verhalten_v_p_held2,2695,18,WOOKY,0,1,1297,850,447,448
+verhalten_v_p_held2,2704,18,WOOKY,1,0,1298,850,448,447
+verhalten_v_p_held2,2768,14,WOOKY,0,1,1297,850,447,449
+verhalten_v_p_held2,2881,17,EDDY,0,1,1297,850,447,449
+verhalten_v_p_held2,3126,15,WOOKY,1,0,1298,850,448,447
+verhalten_v_p_held2,3155,15,WOOKY,0,1,1297,850,447,449
+verhalten_v_p_held2,3191,16,WOOKY,1,0,1299,850,449,447
+verhalten_v_p_held2,3220,16,WOOKY,0,1,1297,850,447,449
+verhalten_v_p_held2,3234,18,WOOKY,0,1,1296,850,446,449
+verhalten_v_p_held2,3829,17,EDDY,1,0,1299,850,449,447
+verhalten_v_p_held2,3870,17,EDDY,0,1,1297,850,447,449
+verhalten_v_p_natur,1172,18,WOOKY,1,0,272,338,-66,-64
+verhalten_v_p_natur,1338,18,WOOKY,0,1,274,338,-64,-65
+verhalten_v_p_stage1,709,17,EDDY,0,1,880,436,444,447
+verhalten_v_p_stage1,737,16,WOOKY,0,1,960,516,444,447
+verhalten_v_p_stage1,1921,15,WOOKY,0,1,1152,832,320,323
+verhalten_v_p_stage1,1951,14,WOOKY,0,1,1152,850,302,302
+verhalten_v_p_stage1,2838,16,WOOKY,1,0,784,850,-66,-64
+verhalten_v_p_stage1,2994,18,WOOKY,1,0,785,850,-65,-63
+verhalten_v_p_stage1,3339,18,WOOKY,0,1,787,850,-63,-65
+verhalten_v_p_stage1,3386,16,WOOKY,0,1,786,850,-64,-66
+verhalten_v_p_stage1,3539,14,WOOKY,1,0,785,850,-65,-63
+verhalten_v_p_stage1,3612,18,WOOKY,1,0,784,850,-66,-64
+verhalten_v_p_stage1,3671,15,WOOKY,1,0,784,850,-66,-64
+verhalten_v_p_stage1,3681,15,WOOKY,0,1,787,850,-63,-65
+verhalten_v_p_stage1,3740,14,WOOKY,0,1,786,850,-64,-67
+verhalten_v_p_stage1,3831,16,WOOKY,1,0,785,850,-65,-62
+verhalten_v_p_stage1,3944,18,WOOKY,0,1,786,850,-64,-66
+verhalten_v_p_stage1,3948,16,WOOKY,0,1,786,850,-64,-66
+verhalten_v_p_stage1,4682,18,WOOKY,1,0,1298,850,448,447
+verhalten_v_p_stage1,4693,18,WOOKY,0,1,1297,850,447,448
+verhalten_v_p_stage1,4984,18,WOOKY,1,0,1298,850,448,446
+verhalten_v_p_stage1,5009,18,WOOKY,0,1,1297,850,447,449
+verhalten_v_p_stage1,5020,15,WOOKY,1,0,1299,850,449,447
+verhalten_v_p_stage1,5132,15,WOOKY,0,1,1296,850,446,449
+verhalten_v_p_stage1,5755,18,WOOKY,1,0,1299,850,449,447
+verhalten_v_p_stage1,5987,18,WOOKY,0,1,1296,850,446,448
+verhalten_v_p_tiefe,1933,17,EDDY,1,0,667,736,-69,-66
+verhalten_v_p_tiefe,1948,17,EDDY,0,1,692,756,-64,-66
+verhalten_v_p_tiefe,2790,17,EDDY,1,0,690,756,-66,-64
+verhalten_v_p_tiefe,2958,17,EDDY,0,1,692,756,-64,-66
+verhalten_v_p_tiefe,3203,17,EDDY,1,0,689,756,-67,-64
+verhalten_v_p_tiefe,3232,17,EDDY,0,1,692,756,-64,-67
+verhalten_v_p_tiefe,3536,17,EDDY,1,0,690,756,-66,-63
+verhalten_v_p_tiefe,3552,17,EDDY,0,1,692,756,-64,-66
+verhalten_v_p_tiefe,3734,17,EDDY,1,0,691,756,-65,-63
+verhalten_v_p_tiefe,3911,17,EDDY,0,1,693,756,-63,-65
+verhalten_v_p_tiefe,3922,17,EDDY,1,0,691,756,-65,-63
+verhalten_v_d_sprung,177,17,EDDY,0,1,880,435,445,447
+verhalten_v_d_sprung,213,16,WOOKY,0,1,960,514,446,446
+verhalten_v_d_sprung,383,15,WOOKY,0,1,1152,819,333,336
+verhalten_v_d_sprung,413,14,WOOKY,0,1,1152,848,304,304
+verhalten_v_d_sprung,551,18,WOOKY,1,0,1296,848,448,446
+verhalten_v_d_sprung,660,15,WOOKY,1,0,1298,848,450,447
+verhalten_v_d_sprung,687,15,WOOKY,0,1,1294,848,446,448
+verhalten_v_d_sprung,708,18,WOOKY,0,1,1294,848,446,448
+verhalten_v_d_sprung,1107,17,EDDY,1,0,1297,848,449,446
+verhalten_v_d_sprung,1121,18,WOOKY,1,0,1296,848,448,447
+verhalten_v_d_sprung,1631,16,WOOKY,1,0,1296,848,448,446
+verhalten_v_d_sprung,1643,18,WOOKY,0,1,1294,848,446,448
+verhalten_v_d_sprung,1878,14,WOOKY,1,0,1296,848,448,446
+verhalten_v_d_sprung,1914,17,EDDY,0,1,1295,848,447,450
+verhalten_v_d_sprung,2070,14,WOOKY,0,1,1294,848,446,449
+verhalten_v_d_sprung,2184,15,WOOKY,1,0,1298,848,450,447
+verhalten_v_d_sprung,2187,18,WOOKY,1,0,1296,848,448,446
+verhalten_v_d_sprung,2429,16,WOOKY,0,1,1294,848,446,448
+verhalten_v_d_sprung,2456,18,WOOKY,0,1,1295,848,447,449
+verhalten_v_d_sprung,2555,14,WOOKY,1,0,1296,848,448,446
+verhalten_v_d_sprung,2669,18,WOOKY,1,0,1298,848,450,447
+verhalten_v_d_sprung,2750,14,WOOKY,0,1,1295,848,447,450
+verhalten_v_d_sprung,2763,15,WOOKY,0,1,1294,848,446,448
+verhalten_v_d_sprung,2863,18,WOOKY,0,1,1294,848,446,448
+verhalten_v_d_sprung,3159,15,WOOKY,1,0,1297,848,449,447
+verhalten_v_d_sprung,3348,17,EDDY,1,0,1296,848,448,446
+verhalten_v_d_sprung,3402,17,EDDY,0,1,1294,848,446,448
+verhalten_v_d_sprung,3459,15,WOOKY,0,1,1295,848,447,449
+verhalten_v_d_sprung,4327,14,WOOKY,1,0,1297,848,449,447
+verhalten_v_d_sprung,4346,17,EDDY,1,0,1297,848,449,447
+verhalten_v_d_sprung,4355,14,WOOKY,0,1,1294,848,446,448
+verhalten_v_d_sprung,4392,17,EDDY,0,1,1295,848,447,449
+verhalten_v_d_sprung,4457,16,WOOKY,1,0,1296,848,448,446
+verhalten_v_d_sprung,4524,14,WOOKY,1,0,1296,848,448,446
+verhalten_v_d_sprung,4552,14,WOOKY,0,1,1295,848,447,449
+verhalten_v_d_sprung,4832,16,WOOKY,0,1,1295,848,447,449
+verhalten_v_d_sprung,5193,16,WOOKY,1,0,1297,848,449,447
+verhalten_v_d_sprung,5504,16,WOOKY,0,1,1293,848,445,448
+verhalten_v_d_sprung,5571,17,EDDY,1,0,1298,848,450,447
+verhalten_v_d_sprung,5732,17,EDDY,0,1,1294,848,446,448
+verhalten_v_d_sprung,6223,15,WOOKY,1,0,1297,848,449,447
+verhalten_v_d_sprung,6264,18,WOOKY,1,0,1298,848,450,447
+verhalten_v_d_sprung,6299,18,WOOKY,0,1,1295,848,447,449
+verhalten_v_d_sprung,6330,16,WOOKY,1,0,1297,848,449,447
+verhalten_v_d_sprung,6348,15,WOOKY,0,1,1295,848,447,449
+verhalten_v_d_sprung,6657,15,WOOKY,1,0,1296,848,448,446
+verhalten_v_d_sprung,6709,14,WOOKY,1,0,1296,848,448,446
+verhalten_v_d_sprung,6776,15,WOOKY,0,1,1294,848,446,449
+verhalten_v_d_sprung,6817,14,WOOKY,0,1,1295,848,447,448
+verhalten_v_d_sprung,6879,16,WOOKY,0,1,1294,848,446,448
+verhalten_v_d_sprung,6898,16,WOOKY,1,0,1296,848,448,446
+verhalten_v_d_sprung,7151,16,WOOKY,0,1,1294,848,446,448
+verhalten_v_d_sprung,7170,16,WOOKY,1,0,1296,848,448,446
+verhalten_v_d_sprung,7359,16,WOOKY,0,1,1295,848,447,449
+verhalten_v_d_sprung,7741,16,WOOKY,1,0,1298,848,450,447
+verhalten_v_d_sprung,7864,18,WOOKY,1,0,1296,848,448,447
+verhalten_v_d_sprung,8015,14,WOOKY,1,0,1297,848,449,447
+verhalten_v_d_sprung,8056,16,WOOKY,0,1,1295,848,447,449
+verhalten_v_d_sprung,8056,18,WOOKY,0,1,1295,848,447,449
+verhalten_v_d_sprung,8156,14,WOOKY,0,1,1295,848,447,449
+verhalten_v_d_sprung,8233,14,WOOKY,1,0,1297,848,449,447
+verhalten_v_d_sprung,8395,17,EDDY,1,0,1297,848,449,447
+verhalten_v_d_sprung,8400,14,WOOKY,0,1,1295,848,447,449
+verhalten_v_d_sprung,8500,17,EDDY,0,1,1294,848,446,448
+verhalten_v_d_sprung,8661,17,EDDY,1,0,1296,848,448,446
+verhalten_v_d_sprung,8701,14,WOOKY,1,0,1297,848,449,446
+verhalten_v_d_sprung,8733,14,WOOKY,0,1,1294,848,446,448
+verhalten_v_d_sprung,8735,18,WOOKY,1,0,1296,848,448,446
+verhalten_v_d_sprung,8901,17,EDDY,0,1,1295,848,447,449
+verhalten_v_d_bot_mack,253,17,EDDY,0,1,880,436,444,446
+verhalten_v_d_bot_mack,298,16,WOOKY,0,1,960,515,445,447
+verhalten_v_d_bot_mack,694,15,WOOKY,0,1,1152,814,338,339
+verhalten_v_d_bot_mack,724,14,WOOKY,0,1,1152,833,319,319
+verhalten_v_d_bot_mack,891,17,EDDY,0,1,1344,996,348,350
+verhalten_v_d_bot_mack,921,16,EDDY,0,1,1344,1012,332,332
+verhalten_v_d_bot_mack,1097,18,SKIP,1,0,1462,1012,450,447
+verhalten_v_d_bot_mack,4301,19,DOLG,0,1,2424,1994,430,431
+verhalten_v_d_bot_mack,4342,16,WOOKY,0,1,2020,2048,-28,-32
+verhalten_v_d_bot_mack,4342,17,WOOKY,0,1,2020,2048,-28,-32
+verhalten_v_d_bot_mack,5636,16,EDDY,0,1,2020,2048,-28,-32
+verhalten_v_d_bot_mack,5636,17,EDDY,0,1,2020,2048,-28,-32
+verhalten_v_d_bot_mack,6267,14,WOOKY,0,1,2097,2125,-28,-32
+verhalten_v_d_bot_mack,6267,15,WOOKY,0,1,2097,2125,-28,-32
+verhalten_v_d_bot_mack,7169,15,DICK,0,1,2045,2073,-28,-32
+verhalten_v_d_bot_mack,7209,14,DICK,0,1,2045,2073,-28,-32
+verhalten_v_d_bot_mack,7741,19,DOLG,1,0,2480,2048,432,430
+verhalten_v_d_bot_mack,7776,19,DOLG,0,1,2479,2048,431,433
+verhalten_v_d_bot_s1,270,17,EDDY,0,1,880,436,444,446
+verhalten_v_d_bot_s1,315,16,WOOKY,0,1,960,515,445,447
+verhalten_v_d_bot_s1,671,17,WOOKY,0,1,1152,814,338,340
+verhalten_v_d_bot_s1,701,16,WOOKY,0,1,1152,827,325,325
+verhalten_v_d_bot_s1,949,17,WOOKY,1,0,867,934,-67,-65
+verhalten_v_d_bot_s1,1019,17,WOOKY,0,1,900,963,-63,-65
+verhalten_v_d_bot_s1,1333,17,EDDY,0,1,1344,996,348,349
+verhalten_v_d_bot_s1,1363,16,EDDY,0,1,1344,1049,295,297
+verhalten_v_d_bot_s1,5005,19,DOLG,0,1,2424,1996,428,430
+verhalten_v_d_bot_s1,5046,16,WOOKY,0,1,2020,2048,-28,-32
+verhalten_v_d_bot_s1,5046,17,WOOKY,0,1,2020,2048,-28,-32
+verhalten_v_d_bot_s1,5358,16,WOOKY,1,0,1983,2048,-65,-64
+verhalten_v_d_bot_s1,5369,16,WOOKY,0,1,1984,2048,-64,-65
+verhalten_v_d_bot_s1,5532,17,WOOKY,1,0,1982,2048,-66,-64
+verhalten_v_d_bot_s1,5612,16,WOOKY,1,0,1982,2048,-66,-63
+verhalten_v_d_bot_s1,7254,16,EDDY,0,1,2148,2176,-28,-32
+verhalten_v_d_bot_s1,7254,17,EDDY,0,1,2148,2176,-28,-32
+verhalten_v_d_bot_s1,7936,15,WOOKY,0,1,2119,2147,-28,-32
+verhalten_v_d_bot_s1,7936,18,WOOKY,0,1,2119,2147,-28,-32
+verhalten_v_d_bot_s1,10370,18,DICK,0,1,2148,2176,-28,-32
+verhalten_v_d_bot_s1,10410,15,DICK,0,1,2148,2176,-28,-32
+# wecken (EINGRIFF weck*, natürlich p_*, d_sprung)
+lauf,slot,typ,lp,modus,reizframe,x_minus_kamera,x_minus_kamera_vorframe,kamera,dx_figur,kampffaehig_frame,frames_bis_kampffaehig,kamera_kampffaehig
+verhalten_v_weck_s16_k383,16,WOOKY,16,10,40,383,383,256,319,89,49,256
+verhalten_v_weck_s17_k383,17,EDDY,30,10,40,383,383,256,319,109,69,256
+verhalten_v_weck_s18_k383,18,WOOKY,16,14,40,383,383,256,319,56,16,256
+verhalten_v_weckr_s16_k383,16,WOOKY,16,10,80,383,383,256,214,129,49,256
+verhalten_v_weckr_s17_k383,17,EDDY,30,10,80,383,383,256,214,149,69,256
+verhalten_v_weckr_s18_k383,18,WOOKY,16,14,80,383,383,256,214,96,16,256
+verhalten_v_p_held2,16,WOOKY,16,10,915,380,383,580,180,964,49,657
+verhalten_v_p_held2,17,EDDY,30,10,318,381,382,499,181,387,69,522
+verhalten_v_p_held2,18,WOOKY,16,14,208,381,383,307,181,224,16,335
+verhalten_v_p_stage1,16,WOOKY,16,10,1035,378,381,582,178,1084,49,657
+verhalten_v_p_stage1,17,EDDY,30,10,732,378,381,502,178,801,69,519
+verhalten_v_p_stage1,18,WOOKY,16,14,257,381,383,307,181,273,16,335
+verhalten_v_d_sprung,16,WOOKY,16,10,253,380,383,580,180,302,49,669
+verhalten_v_d_sprung,17,EDDY,30,10,206,379,382,501,179,275,69,629
+verhalten_v_d_sprung,18,WOOKY,16,14,108,381,383,307,181,124,16,343
+# gehen (p_*, e_*, r_*)
+WOOKY: 22877 Gehframes: ? 987 (4 %), normal 14186 (62 %), schnell 7595 (33 %), steht 109 (0 %)
+  normal: max vx 1.7500, max vz 0.8750, vz bei vx = 0: [0.875]
+  schnell: max vx 2.2500, max vz 1.1250, vz bei vx = 0: [1.125]
+  Gehabschnitte (>= 8 Frames): 357, davon überwiegend schnell 91 (25 %)
+  nicht eingeordnet (häufigste): (0.34, 0.145):298, (0.668, 0.195):98, (0.969, 0.273):78, (0.438, 0.102):60, (0.0, 0.125):54, (1.453, 0.516):49
+EDDY: 12264 Gehframes: ? 719 (6 %), normal 6454 (53 %), schnell 5038 (41 %), steht 53 (0 %)
+  normal: max vx 1.7500, max vz 0.8750, vz bei vx = 0: [0.875]
+  schnell: max vx 2.2500, max vz 1.1250, vz bei vx = 0: [1.125]
+  Gehabschnitte (>= 8 Frames): 195, davon überwiegend schnell 63 (32 %)
+  nicht eingeordnet (häufigste): (0.438, 0.102):183, (0.34, 0.145):75, (0.0, 0.125):70, (0.285, 0.168):69, (0.855, 0.035):64, (0.668, 0.195):29
+# angriffe (e_*: ein Gegner, Figur passiv; Raten auch in 3000-F-Fenstern)
+lauf,slot,typ,frame,kennung,dx,dz,rang,abstand_vorher,gehen_dazwischen,figur_status,figur_hoehe
+verhalten_v_e_eddy,17,EDDY,59,E-A,47,-5,10,,,1,0
+verhalten_v_e_eddy,17,EDDY,137,E-A,47,-5,11,78,0,1,0
+verhalten_v_e_eddy,17,EDDY,198,E-A,47,-5,11,61,0,1,0
+verhalten_v_e_eddy,17,EDDY,260,E-B,47,-5,11,62,0,1,0
+verhalten_v_e_eddy,17,EDDY,800,E-C,47,-9,12,540,1,1,0
+verhalten_v_e_eddy,17,EDDY,866,E-C,47,-9,12,66,0,1,0
+verhalten_v_e_eddy,17,EDDY,942,E-A,47,-9,12,76,0,1,0
+verhalten_v_e_eddy,17,EDDY,1000,E-A,47,-9,12,58,0,1,0
+verhalten_v_e_eddy,17,EDDY,1060,E-B,47,-9,12,60,0,1,0
+verhalten_v_e_eddy,17,EDDY,1209,E-C,-37,-6,12,149,1,3,0
+verhalten_v_e_eddy,17,EDDY,1284,E-C,-37,-6,12,75,0,1,0
+verhalten_v_e_eddy,17,EDDY,1350,E-C,-37,-6,13,66,0,1,0
+verhalten_v_e_eddy,17,EDDY,1431,E-A,-37,-6,13,81,0,1,0
+verhalten_v_e_eddy,17,EDDY,1489,E-A,-37,-6,13,58,0,1,0
+verhalten_v_e_eddy,17,EDDY,1893,E-D,14,11,10,404,1,1,0
+verhalten_v_e_eddy,17,EDDY,2609,E-A,55,0,12,716,1,1,0
+verhalten_v_e_eddy,17,EDDY,3459,E-C,-23,11,13,850,1,1,0
+verhalten_v_e_eddy,17,EDDY,3524,E-C,-23,11,13,65,0,1,0
+verhalten_v_e_eddy,17,EDDY,3603,E-C,-23,11,13,79,0,1,0
+verhalten_v_e_eddy,17,EDDY,3684,E-C,-23,11,13,81,0,1,0
+verhalten_v_e_eddy,17,EDDY,3766,E-D,-23,11,14,82,0,1,0
+verhalten_v_e_eddy_lp,17,EDDY,59,E-A,47,0,10,,,1,0
+verhalten_v_e_eddy_lp,17,EDDY,137,E-A,47,0,11,78,0,1,0
+verhalten_v_e_eddy_lp,17,EDDY,198,E-A,47,0,11,61,0,1,0
+verhalten_v_e_eddy_lp,17,EDDY,260,E-B,47,0,11,62,0,1,0
+verhalten_v_e_eddy_lp,17,EDDY,801,E-C,46,-9,12,541,1,1,0
+verhalten_v_e_eddy_lp,17,EDDY,867,E-C,46,-9,12,66,0,1,0
+verhalten_v_e_eddy_lp,17,EDDY,943,E-A,46,-9,12,76,0,1,0
+verhalten_v_e_eddy_lp,17,EDDY,1001,E-A,46,-9,12,58,0,1,0
+verhalten_v_e_eddy_lp,17,EDDY,1061,E-B,46,-9,12,60,0,1,0
+verhalten_v_e_eddy_lp,17,EDDY,1210,E-C,-37,-6,12,149,1,3,0
+verhalten_v_e_eddy_lp,17,EDDY,1285,E-C,-37,-6,12,75,0,1,0
+verhalten_v_e_eddy_lp,17,EDDY,1351,E-C,-37,-6,13,66,0,1,0
+verhalten_v_e_eddy_lp,17,EDDY,1432,E-A,-37,-6,13,81,0,1,0
+verhalten_v_e_eddy_lp,17,EDDY,1490,E-A,-37,-6,13,58,0,1,0
+verhalten_v_e_eddy_lp,17,EDDY,1550,E-B,-37,-6,13,60,0,1,0
+verhalten_v_e_eddy_lp,17,EDDY,1698,E-D,-3,9,13,148,1,3,0
+verhalten_v_e_eddy_lp,17,EDDY,1899,E-C,46,-8,13,201,1,1,0
+verhalten_v_e_eddy_lp,17,EDDY,1963,E-C,46,-8,14,64,0,1,0
+verhalten_v_e_eddy_lp,17,EDDY,2040,E-A,46,-8,14,77,0,1,0
+verhalten_v_e_eddy_lp,17,EDDY,2098,E-A,46,-8,14,58,0,1,0
+verhalten_v_e_eddy_lp,17,EDDY,2153,E-B,46,-8,14,55,0,1,0
+verhalten_v_e_eddy_lp,17,EDDY,2301,E-D,43,-8,14,148,1,3,0
+verhalten_v_e_eddy_lp,17,EDDY,3296,E-C,18,-10,16,995,1,1,0
+verhalten_v_e_eddy_lp,17,EDDY,3374,E-D,18,-10,16,78,0,1,0
+verhalten_v_e_eddy_lp,17,EDDY,4126,E-A,55,3,17,752,1,1,0
+verhalten_v_e_eddy_lp,17,EDDY,4182,E-A,55,3,17,56,0,1,0
+verhalten_v_e_eddy_lp,17,EDDY,4234,E-B,55,3,17,52,0,1,0
+verhalten_v_e_eddy_lp,17,EDDY,4423,E-C,-56,0,18,189,1,1,0
+verhalten_v_e_eddy_lp,17,EDDY,4484,E-C,-56,0,18,61,0,1,0
+verhalten_v_e_wooky,18,WOOKY,19,W-A,46,10,10,,,1,0
+verhalten_v_e_wooky,18,WOOKY,167,W-A,-56,3,10,148,1,1,0
+verhalten_v_e_wooky,18,WOOKY,1752,W-A,-55,0,13,1585,1,1,0
+verhalten_v_e_wooky,18,WOOKY,2045,W-A,-48,-1,13,293,1,1,0
+verhalten_v_e_wooky,18,WOOKY,2119,W-C,-48,-1,13,74,0,1,0
+verhalten_v_e_wooky,18,WOOKY,2171,W-C,-48,-1,13,52,0,1,0
+verhalten_v_e_wooky,18,WOOKY,2224,W-A,-48,-1,14,53,0,1,0
+verhalten_v_e_wooky,18,WOOKY,2285,W-D,-48,-1,14,61,0,1,0
+verhalten_v_e_wooky,18,WOOKY,2840,W-E,17,-10,15,555,1,1,0
+verhalten_v_e_wooky,18,WOOKY,2920,W-C,17,-10,15,80,0,1,0
+verhalten_v_e_wooky,18,WOOKY,2976,W-C,17,-10,15,56,0,1,0
+verhalten_v_e_wooky,18,WOOKY,3029,W-B,17,-10,15,53,0,1,0
+verhalten_v_e_wooky,18,WOOKY,3198,W-A,47,-3,15,169,1,1,0
+verhalten_v_e_wooky,18,WOOKY,3256,W-A,47,-3,15,58,0,1,0
+verhalten_v_e_wooky,18,WOOKY,3317,W-B,47,-3,15,61,0,1,0
+verhalten_v_e_wooky_lp,18,WOOKY,19,W-A,46,10,10,,,1,0
+verhalten_v_e_wooky_lp,18,WOOKY,81,W-A,46,10,10,62,0,1,0
+verhalten_v_e_wooky_lp,18,WOOKY,145,W-B,46,10,10,64,0,1,0
+verhalten_v_e_wooky_lp,18,WOOKY,404,W-A,46,-3,11,259,1,1,0
+verhalten_v_e_wooky_lp,18,WOOKY,483,W-A,46,-3,11,79,0,1,0
+verhalten_v_e_wooky_lp,18,WOOKY,543,W-A,46,-3,11,60,0,1,0
+verhalten_v_e_wooky_lp,18,WOOKY,607,W-B,46,-3,11,64,0,1,0
+verhalten_v_e_wooky_lp,18,WOOKY,1976,W-A,55,0,13,1369,1,1,0
+verhalten_v_e_wooky_lp,18,WOOKY,2270,W-A,47,-1,14,294,1,1,0
+verhalten_v_e_wooky_lp,18,WOOKY,2329,W-A,47,-1,14,59,0,1,0
+verhalten_v_e_wooky_lp,18,WOOKY,2388,W-B,47,-1,14,59,0,1,0
+verhalten_v_e_wooky_lp,18,WOOKY,2616,W-A,56,-1,14,228,1,1,0
+verhalten_v_e_wooky_lp,18,WOOKY,3107,W-C,-47,4,15,491,1,1,0
+verhalten_v_e_wooky_lp,18,WOOKY,3161,W-C,-47,4,15,54,0,1,0
+verhalten_v_e_wooky_lp,18,WOOKY,3214,W-A,-47,4,15,53,0,1,0
+verhalten_v_e_wooky_lp,18,WOOKY,3269,W-D,-47,4,15,55,0,1,0
+verhalten_v_e_wooky_lp,18,WOOKY,4138,W-C,-56,-3,17,869,1,1,0
+verhalten_v_e_wooky_lp,18,WOOKY,4187,W-C,-56,-3,17,49,0,1,0
+verhalten_v_e_wooky_lp,18,WOOKY,4233,W-B,-56,-3,17,46,0,1,0
+
+Serien (Angriffe desselben Slots ohne Gehen dazwischen):
+  verhalten_v_e_eddy Slot 17 EDDY: E-A/E-A/E-A/E-B Rang 10-11, Abstände [78, 61, 62], normale vor Umwerfen 3, bis zur nächsten Serie 540
+  verhalten_v_e_eddy Slot 17 EDDY: E-C/E-C/E-A/E-A/E-B Rang 12-12, Abstände [66, 76, 58, 60], normale vor Umwerfen 4, bis zur nächsten Serie 149
+  verhalten_v_e_eddy Slot 17 EDDY: E-C/E-C/E-C/E-A/E-A Rang 12-13, Abstände [75, 66, 81, 58], normale vor Umwerfen None, bis zur nächsten Serie 404
+  verhalten_v_e_eddy Slot 17 EDDY: E-D Rang 10-10, Abstände [], normale vor Umwerfen 0, bis zur nächsten Serie 716
+  verhalten_v_e_eddy Slot 17 EDDY: E-A Rang 12-12, Abstände [], normale vor Umwerfen None, bis zur nächsten Serie 850
+  verhalten_v_e_eddy Slot 17 EDDY: E-C/E-C/E-C/E-C/E-D Rang 13-14, Abstände [65, 79, 81, 82], normale vor Umwerfen 4, bis zur nächsten Serie 
+  verhalten_v_e_eddy_lp Slot 17 EDDY: E-A/E-A/E-A/E-B Rang 10-11, Abstände [78, 61, 62], normale vor Umwerfen 3, bis zur nächsten Serie 541
+  verhalten_v_e_eddy_lp Slot 17 EDDY: E-C/E-C/E-A/E-A/E-B Rang 12-12, Abstände [66, 76, 58, 60], normale vor Umwerfen 4, bis zur nächsten Serie 149
+  verhalten_v_e_eddy_lp Slot 17 EDDY: E-C/E-C/E-C/E-A/E-A/E-B Rang 12-13, Abstände [75, 66, 81, 58, 60], normale vor Umwerfen 5, bis zur nächsten Serie 148
+  verhalten_v_e_eddy_lp Slot 17 EDDY: E-D Rang 13-13, Abstände [], normale vor Umwerfen 0, bis zur nächsten Serie 201
+  verhalten_v_e_eddy_lp Slot 17 EDDY: E-C/E-C/E-A/E-A/E-B Rang 13-14, Abstände [64, 77, 58, 55], normale vor Umwerfen 4, bis zur nächsten Serie 148
+  verhalten_v_e_eddy_lp Slot 17 EDDY: E-D Rang 14-14, Abstände [], normale vor Umwerfen 0, bis zur nächsten Serie 995
+  verhalten_v_e_eddy_lp Slot 17 EDDY: E-C/E-D Rang 16-16, Abstände [78], normale vor Umwerfen 1, bis zur nächsten Serie 752
+  verhalten_v_e_eddy_lp Slot 17 EDDY: E-A/E-A/E-B Rang 17-17, Abstände [56, 52], normale vor Umwerfen 2, bis zur nächsten Serie 189
+  verhalten_v_e_eddy_lp Slot 17 EDDY: E-C/E-C Rang 18-18, Abstände [61], normale vor Umwerfen None, bis zur nächsten Serie 
+  verhalten_v_e_wooky Slot 18 WOOKY: W-A Rang 10-10, Abstände [], normale vor Umwerfen None, bis zur nächsten Serie 148
+  verhalten_v_e_wooky Slot 18 WOOKY: W-A Rang 10-10, Abstände [], normale vor Umwerfen None, bis zur nächsten Serie 1585
+  verhalten_v_e_wooky Slot 18 WOOKY: W-A Rang 13-13, Abstände [], normale vor Umwerfen None, bis zur nächsten Serie 293
+  verhalten_v_e_wooky Slot 18 WOOKY: W-A/W-C/W-C/W-A/W-D Rang 13-14, Abstände [74, 52, 53, 61], normale vor Umwerfen 4, bis zur nächsten Serie 555
+  verhalten_v_e_wooky Slot 18 WOOKY: W-E/W-C/W-C/W-B Rang 15-15, Abstände [80, 56, 53], normale vor Umwerfen 3, bis zur nächsten Serie 169
+  verhalten_v_e_wooky Slot 18 WOOKY: W-A/W-A/W-B Rang 15-15, Abstände [58, 61], normale vor Umwerfen 2, bis zur nächsten Serie 
+  verhalten_v_e_wooky_lp Slot 18 WOOKY: W-A/W-A/W-B Rang 10-10, Abstände [62, 64], normale vor Umwerfen 2, bis zur nächsten Serie 259
+  verhalten_v_e_wooky_lp Slot 18 WOOKY: W-A/W-A/W-A/W-B Rang 11-11, Abstände [79, 60, 64], normale vor Umwerfen 3, bis zur nächsten Serie 1369
+  verhalten_v_e_wooky_lp Slot 18 WOOKY: W-A Rang 13-13, Abstände [], normale vor Umwerfen None, bis zur nächsten Serie 294
+  verhalten_v_e_wooky_lp Slot 18 WOOKY: W-A/W-A/W-B Rang 14-14, Abstände [59, 59], normale vor Umwerfen 2, bis zur nächsten Serie 228
+  verhalten_v_e_wooky_lp Slot 18 WOOKY: W-A Rang 14-14, Abstände [], normale vor Umwerfen None, bis zur nächsten Serie 491
+  verhalten_v_e_wooky_lp Slot 18 WOOKY: W-C/W-C/W-A/W-D Rang 15-15, Abstände [54, 53, 55], normale vor Umwerfen 3, bis zur nächsten Serie 869
+  verhalten_v_e_wooky_lp Slot 18 WOOKY: W-C/W-C/W-B Rang 17-17, Abstände [49, 46], normale vor Umwerfen 2, bis zur nächsten Serie 
+
+lauf,slot,typ,von,bis,angriffe,je_1000
+verhalten_v_e_eddy,17,EDDY,1,4000,21,5.2
+verhalten_v_e_eddy,17,EDDY[3000],1,3000,16,5.3
+verhalten_v_e_eddy_lp,17,EDDY,1,5000,29,5.8
+verhalten_v_e_eddy_lp,17,EDDY[3000],1,3000,22,7.3
+verhalten_v_e_wooky,18,WOOKY,1,4000,15,3.8
+verhalten_v_e_wooky,18,WOOKY[3000],1,3000,11,3.7
+verhalten_v_e_wooky_lp,18,WOOKY,1,5000,19,3.8
+verhalten_v_e_wooky_lp,18,WOOKY[3000],1,3000,12,4.0
+# angriffe, nur Raten (p_*: mehrere Gegner; b3_*dauer: Figur springt im Takt)
+lauf,slot,typ,von,bis,angriffe,je_1000
+verhalten_v_p_eddy,16,WOOKY,13,5000,7,1.4
+verhalten_v_p_eddy,17,EDDY,1,5000,16,3.2
+verhalten_v_p_held2,14,WOOKY,1780,6000,32,7.6
+verhalten_v_p_held2,15,WOOKY,1759,6000,26,6.1
+verhalten_v_p_held2,16,WOOKY,964,6000,13,2.6
+verhalten_v_p_held2,17,EDDY,387,6000,24,4.3
+verhalten_v_p_held2,18,WOOKY,224,6000,31,5.4
+verhalten_v_p_natur,18,WOOKY,1,3000,7,2.3
+verhalten_v_p_stage1,14,WOOKY,1998,6000,39,9.7
+verhalten_v_p_stage1,15,WOOKY,1977,6000,33,8.2
+verhalten_v_p_stage1,16,WOOKY,1084,6000,11,2.2
+verhalten_v_p_stage1,17,EDDY,801,6000,12,2.3
+verhalten_v_p_stage1,18,WOOKY,273,6000,20,3.5
+verhalten_v_p_tiefe,16,WOOKY,27,4000,16,4.0
+verhalten_v_p_tiefe,17,EDDY,1,3921,15,3.8
+verhalten_v_b3_anlaufb_dauer,18,WOOKY,1,2000,3,1.5
+verhalten_v_b3_anlaufc_dauer,17,EDDY,1,2499,8,3.2
+verhalten_v_b3_anlaufc_spr,17,EDDY,1,1500,5,3.3
+verhalten_v_b3_kontakt_spr,18,WOOKY,1,1500,14,9.3
+verhalten_v_b3_kontaktb_dauer,16,WOOKY,13,2000,7,3.5
+verhalten_v_b3_kontaktb_dauer,17,EDDY,1,2000,4,2.0
+verhalten_v_b3_tiefeb_dauer,16,WOOKY,27,2500,6,2.4
+verhalten_v_b3_tiefeb_dauer,17,EDDY,1,2500,2,0.8
+verhalten_v_b3_tiefeb_dauer,18,SKIP,1038,2500,0,0.0
+# reakt (b1l_*: Figur läuft nach links weg, b1r_*: nach rechts)
+lauf,ausloeser,slot,typ,dx0,dz0,anim0,modus0,eingabe_von,eingabe_bis,gehframes_in_eingabe,vx_gehen,dx_ende_eingabe,dz_ende_eingabe,letzter_gehframe,erste_reaktion,zurueck_haltung_nach_eingabe,angriffe_im_fenster,erster_angriff_nach_eingabe,modi_nach_eingabe,figur_getroffen_in_eingabe,gehframes_bis_haltung,dx_min,dx_max
+verhalten_v_b1l_anlauf_k3,42,18,WOOKY,46,10,5ECAA,6,44,153,92,1.75,63,12,623,17:5FA54:6,99,6,120,0/2/0/6/0/6,0,139,-15,80
+verhalten_v_b1l_anlaufb_k3,42,18,WOOKY,46,10,5ECAA,6,44,143,82,1.74,80,12,734,17:5FA54:6,108,4,129,0/2/0/6/0/4/0/4,0,138,-14,80
+verhalten_v_b1l_anlaufb_n,97,18,WOOKY,46,10,5FB18,6,99,188,40,1.74,135,12,668,19:5ED1C:0,277,4,298,2/0/2/0/6/0/2/6,0,97,40,135
+verhalten_v_b1l_anlaufc_k3,40,17,EDDY,47,0,636D4,6,42,151,28,0.33,214,-19,732,17:643F8:6,337,3,358,4/0/2/0/4/0/6/22,0,157,47,214
+verhalten_v_b1l_anlaufc_n,95,17,EDDY,47,0,644BC,6,97,196,0,,222,0,625,18:6369A:22,201,4,222,22/0/2/0/6/22/6/0,0,102,45,222
+verhalten_v_b1l_anlaufc_n40,119,17,EDDY,47,0,636D4,6,121,230,92,1.74,65,-9,647,16:643F8:6,13,7,34,0/6/22/6/0/6/22/6,0,103,46,82
+verhalten_v_b1l_held2_n,793,17,EDDY,47,-4,644BC,6,795,894,26,1.72,70,-1,1236,15:6369A:22,108,3,129,0/4/0/6/0/2/0/6,0,42,44,71
+verhalten_v_b1l_kontakt_k8,120,18,WOOKY,46,10,5FB18,6,122,231,42,0.76,153,3,819,19:5ED1C:0,360,4,381,0/4/0/6/0,0,290,46,157
+verhalten_v_b1l_kontakt_n,55,18,WOOKY,46,10,5FB18,6,57,156,40,1.74,153,12,726,19:5ED1C:0,571,1,592,2/0/2/0/4/0/6,0,291,46,157
+verhalten_v_b1l_kontaktb_k3,4,17,EDDY,62,2,63746,0,6,105,71,1.21,112,2,703,2:63778:0,44,4,65,0/6/22/6/0/4/0/6,0,113,47,112
+verhalten_v_b1l_kontaktb_n,71,17,EDDY,46,2,644BC,6,73,162,0,,203,2,684,17:6369A:22,228,3,249,22/0/2/0/6/0/4,0,90,46,203
+verhalten_v_b1l_tiefeb_k3,47,17,EDDY,17,11,636D4,6,49,148,35,0.29,202,-5,746,17:643F8:6,211,3,232,4/0/6/0/6/0/4/0,0,231,-74,213
+verhalten_v_b1l_tiefeb_n,102,17,EDDY,17,11,644BC,6,104,203,35,0.29,202,-5,801,19:63746:0,295,1,316,4/0/2/0/6/22/0/4,0,165,17,213
+verhalten_v_b1r_kontakt_e,81,18,WOOKY,-55,1,5ECAA,6,83,182,86,1.72,-84,-12,678,15:5ED1C:0,339,2,360,0/2/0/2/0/6/30/6,0,233,-84,112
+verhalten_v_b1r_kontaktb_e,116,17,EDDY,-55,0,644BC,6,118,207,41,0.30,-131,5,689,14:63746:0,131,4,152,4/0/6/0/2/0/6/0,0,116,-133,-54
+verhalten_v_b1r_stage1_k3,539,18,WOOKY,-46,5,5ECAA,6,541,640,82,1.72,-82,-9,1238,17:5FC18:6,,1,,0/2/0/2/0/4/0/2,0,299,-82,127
+verhalten_v_b1r_stage1_n,589,18,WOOKY,-46,5,5FB18,6,591,690,80,1.76,-82,5,1288,19:5ED1C:0,101,3,122,2/0/6/0/2/0/2/0,0,101,-82,-46
+# tiefe (b2_*)
+lauf,ausloeser,slot,typ,dz0,phase_ausloeser,frame_dz12,dz_vorher,phase_bei_dz12,reaktion_frame,reaktion_minus_dz12,dz_bei_reaktion,phase_vorher,reaktion_in_phase,naechste_haltung_dx,naechste_haltung_modus,naechster_angriff_nach_schritt,dz_beim_angriff,figur_getroffen_bis_angriff
+verhalten_v_b2_anlauf_d5_k3,42,18,WOOKY,10,haltung,46,11,gehen,46,0,12,haltung,gehen,-56,6,144,4,0
+verhalten_v_b2_anlaufb_u26_k5,44,18,WOOKY,10,haltung,68,-11,gehen,68,0,-12,gehen,gehen,33,6,29,-10,0
+verhalten_v_b2_anlaufc_d14_n,95,17,EDDY,0,angriff,109,11,gehen,109,0,12,angriff,gehen,62,2,506,11,0
+verhalten_v_b2_aus2_kontakt_d8,23,18,WOOKY,10,angriff,27,11,gehen,27,0,12,angriff,gehen,-56,6,145,3,0
+verhalten_v_b2_aus2_tiefeb_d9,70,17,EDDY,11,angriff,73,11,gehen,73,0,12,angriff,gehen,3,6,37,11,0
+verhalten_v_b2_aus_kontakt_d8,81,18,WOOKY,10,angriff,85,11,gehen,85,0,12,angriff,gehen,-22,2,430,5,0
+verhalten_v_b2_aus_tiefeb_d9,66,17,EDDY,11,angriff,69,11,gehen,69,0,12,angriff,gehen,3,6,37,11,0
+verhalten_v_b2_erh_anlaufb_d6,97,18,WOOKY,10,angriff,101,11,gehen,101,0,12,angriff,gehen,-22,2,424,5,0
+verhalten_v_b2_erh_eddy_u16,95,17,EDDY,0,angriff,109,-11,gehen,109,0,-12,gehen,gehen,31,6,33,-10,0
+verhalten_v_b2_held2_d16_k5,2168,14,WOOKY,11,haltung,2181,11,gehen,2181,0,12,gehen,gehen,-73,2,214,3,3
+verhalten_v_b2_kontakt_d6_n,55,18,WOOKY,10,angriff,59,11,gehen,59,0,12,angriff,gehen,-22,2,426,5,0
+verhalten_v_b2_kontaktb_u18_k3,4,17,EDDY,2,gehen,20,-11,gehen,20,0,-13,gehen,gehen,61,2,,,0
+verhalten_v_b2_stage1_u18_n,1739,16,WOOKY,-1,angriff,1752,-11,gehen,1752,0,-12,gehen,gehen,-30,6,37,-10,1
+verhalten_v_b2_tiefeb_d20_k4,48,17,EDDY,11,haltung,51,11,gehen,51,0,12,haltung,gehen,44,6,66,11,0
+# sprung (b3_*)
+lauf,sprung_von,sprung_bis,angriffe_aktiv_in_luft,kennungen,aus_haltung,treffer,umgeworfen,lp_verlust,hoehe_beim_treffer,gegner_haltung_bei_absprung,max_hoehe_aktiv_ohne_treffer
+verhalten_v_b3_anlaufb_dauer,42,122,1,W-A,1,1,1,5,41,1,
+verhalten_v_b3_anlaufb_dauer,222,261,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufb_dauer,282,321,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufb_dauer,342,381,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufb_dauer,402,441,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufb_dauer,462,501,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufb_dauer,522,561,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufb_dauer,582,621,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufb_dauer,642,681,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufb_dauer,702,741,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufb_dauer,762,801,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufb_dauer,822,861,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufb_dauer,882,921,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufb_dauer,942,981,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufb_dauer,1002,1041,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufb_dauer,1062,1101,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufb_dauer,1122,1161,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufb_dauer,1182,1221,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufb_dauer,1242,1281,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufb_dauer,1362,1401,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufb_dauer,1422,1461,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufb_dauer,1482,1521,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufb_dauer,1542,1626,1,W-A,1,1,1,5,7,0,
+verhalten_v_b3_anlaufb_dauer,1722,1761,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufb_dauer,1782,1821,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufb_dauer,1842,1881,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufb_dauer,1902,1941,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufb_dauer,1962,2000,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_dauer,52,91,1,E-A,1,0,0,0,,1,50
+verhalten_v_b3_anlaufc_dauer,107,188,1,E-A,1,1,1,6,37,0,
+verhalten_v_b3_anlaufc_dauer,272,311,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_dauer,327,366,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_dauer,382,421,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_dauer,437,494,1,E-D,1,1,1,6,32,0,
+verhalten_v_b3_anlaufc_dauer,602,641,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_dauer,657,696,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_dauer,712,751,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_dauer,767,806,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_dauer,822,861,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_dauer,877,916,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_dauer,932,971,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_dauer,987,1026,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_dauer,1042,1081,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_dauer,1097,1136,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_dauer,1152,1230,1,E-A,1,1,1,6,46,0,
+verhalten_v_b3_anlaufc_dauer,1317,1356,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_dauer,1372,1411,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_dauer,1427,1466,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_dauer,1482,1521,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_dauer,1537,1576,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_dauer,1592,1631,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_dauer,1647,1686,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_dauer,1702,1741,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_dauer,1757,1796,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_dauer,1812,1851,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_dauer,1867,1951,1,E-A,1,1,1,6,20,0,
+verhalten_v_b3_anlaufc_dauer,2032,2071,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_dauer,2087,2126,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_dauer,2142,2181,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_dauer,2197,2236,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_dauer,2252,2291,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_dauer,2307,2391,1,E-D,1,1,1,6,17,0,
+verhalten_v_b3_anlaufc_dauer,2472,2500,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_spr,46,123,1,E-A,1,1,1,6,48,1,
+verhalten_v_b3_anlaufc_spr,256,295,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_spr,326,365,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_spr,396,435,0,,0,0,0,0,,0,
+verhalten_v_b3_anlaufc_spr,1368,1407,1,E-A,1,0,0,0,,1,50
+verhalten_v_b3_kontakt_spr,10,49,1,W-A,1,0,0,0,,1,50
+verhalten_v_b3_kontakt_spr,65,104,1,W-A,1,0,0,0,,1,51
+verhalten_v_b3_kontakt_spr,120,197,1,W-B,1,1,1,5,48,1,
+verhalten_v_b3_kontakt_spr,662,701,0,,0,0,0,0,,0,
+verhalten_v_b3_kontakt_spr,717,756,0,,0,0,0,0,,0,
+verhalten_v_b3_kontakt_spr,772,820,1,W-C,1,1,1,5,10,0,
+verhalten_v_b3_kontaktb_dauer,32,96,1,E-A,1,1,1,6,44,1,
+verhalten_v_b3_kontaktb_dauer,182,221,0,,0,0,0,0,,0,
+verhalten_v_b3_kontaktb_dauer,232,271,0,,0,0,0,0,,0,
+verhalten_v_b3_kontaktb_dauer,282,360,1,E-D,1,1,1,6,45,1,
+verhalten_v_b3_kontaktb_dauer,482,521,0,,0,0,0,0,,0,
+verhalten_v_b3_kontaktb_dauer,532,571,0,,0,0,0,0,,0,
+verhalten_v_b3_kontaktb_dauer,582,621,0,,0,0,0,0,,0,
+verhalten_v_b3_kontaktb_dauer,632,671,0,,0,0,0,0,,0,
+verhalten_v_b3_kontaktb_dauer,682,721,0,,0,0,0,0,,0,
+verhalten_v_b3_kontaktb_dauer,732,771,0,,0,0,0,0,,0,
+verhalten_v_b3_kontaktb_dauer,782,821,0,,0,0,0,0,,0,
+verhalten_v_b3_kontaktb_dauer,832,871,0,,0,0,0,0,,0,
+verhalten_v_b3_kontaktb_dauer,882,921,0,,0,0,0,0,,0,
+verhalten_v_b3_kontaktb_dauer,932,971,0,,0,0,0,0,,0,
+verhalten_v_b3_kontaktb_dauer,982,1021,0,,0,0,0,0,,0,
+verhalten_v_b3_kontaktb_dauer,1032,1071,0,,0,0,0,0,,0,
+verhalten_v_b3_kontaktb_dauer,1082,1121,0,,0,0,0,0,,0,
+verhalten_v_b3_kontaktb_dauer,1132,1171,0,,0,0,0,0,,0,
+verhalten_v_b3_kontaktb_dauer,1182,1266,1,E-D,1,1,1,6,16,0,
+verhalten_v_b3_kontaktb_dauer,1382,1421,0,,0,0,0,0,,0,
+verhalten_v_b3_kontaktb_dauer,1482,1530,1,W-B,1,1,1,5,10,0,
+verhalten_v_b3_kontaktb_dauer,1632,1671,1,W-A,1,0,0,0,,0,9
+verhalten_v_b3_kontaktb_dauer,1682,1721,1,W-A,1,0,0,0,,1,50
+verhalten_v_b3_kontaktb_dauer,1732,1771,1,W-A,1,0,0,0,,1,49
+verhalten_v_b3_kontaktb_dauer,1782,1849,1,W-D,0,1,1,5,48,0,
+verhalten_v_b3_kontaktb_dauer,1932,1971,0,,0,0,0,0,,0,
+verhalten_v_b3_kontaktb_dauer,1982,2000,0,,0,0,0,0,,0,
+verhalten_v_b3_tiefeb_dauer,37,121,1,E-A,1,1,1,6,7,0,
+verhalten_v_b3_tiefeb_dauer,232,271,0,,0,0,0,0,,0,
+verhalten_v_b3_tiefeb_dauer,297,336,0,,0,0,0,0,,0,
+verhalten_v_b3_tiefeb_dauer,362,401,0,,0,0,0,0,,0,
+verhalten_v_b3_tiefeb_dauer,427,466,0,,0,0,0,0,,0,
+verhalten_v_b3_tiefeb_dauer,492,531,0,,0,0,0,0,,0,
+verhalten_v_b3_tiefeb_dauer,557,596,0,,0,0,0,0,,0,
+verhalten_v_b3_tiefeb_dauer,622,661,0,,0,0,0,0,,0,
+verhalten_v_b3_tiefeb_dauer,687,726,0,,0,0,0,0,,0,
+verhalten_v_b3_tiefeb_dauer,752,829,2,W-C/E-C,2,1,1,5,48,1,
+verhalten_v_b3_tiefeb_dauer,947,1031,1,W-A,1,1,1,5,16,0,
+verhalten_v_b3_tiefeb_dauer,1142,1190,1,W-C,1,1,1,5,10,0,
+verhalten_v_b3_tiefeb_dauer,1272,1311,0,,0,0,0,0,,0,
+verhalten_v_b3_tiefeb_dauer,1337,1376,0,,0,0,0,0,,0,
+verhalten_v_b3_tiefeb_dauer,1398,1434,0,,0,0,1,0,,0,
+verhalten_v_b3_tiefeb_dauer,1436,1442,0,,0,0,1,0,,0,
+verhalten_v_b3_tiefeb_dauer,1532,1571,0,,0,0,0,0,,0,
+verhalten_v_b3_tiefeb_dauer,1597,1636,0,,0,0,0,0,,0,
+verhalten_v_b3_tiefeb_dauer,1662,1701,0,,0,0,0,0,,0,
+verhalten_v_b3_tiefeb_dauer,1792,1831,0,,0,0,0,0,,0,
+verhalten_v_b3_tiefeb_dauer,1857,1896,0,,0,0,0,0,,0,
+verhalten_v_b3_tiefeb_dauer,1922,1979,1,W-A,1,1,1,5,32,0,
+verhalten_v_b3_tiefeb_dauer,2117,2195,0,,0,1,1,8,45,0,
+verhalten_v_b3_tiefeb_dauer,2312,2351,0,,0,0,0,0,,0,
+verhalten_v_b3_tiefeb_dauer,2377,2416,0,,0,0,0,0,,0,
+verhalten_v_b3_tiefeb_dauer,2442,2481,0,,0,0,0,0,,0,
+Summe: spruenge 127, mit_angriff 27, treffer 21, umgeworfen 21, haltung 12, haltung_mit_angriff 12
+Phasen der kampffähigen WOOKY/EDDY ab Frame 201 (Anteil der Frames, Median |dx|):
+  verhalten_v_b3_anlaufb_dauer Slot 18 WOOKY: abwarten 50 % (121), gehen 20 % (121), modus2 18 % (151.0), haltung 4 % (56.0), angriff 3 % (56.0), spott 2 % (98.0), kampfhaltung 2 % (51.0), aktiv 1 % (56.0)
+  verhalten_v_b3_anlaufc_dauer Slot 17 EDDY: gehen 42 % (73), abwarten 15 % (127.0), modus2 12 % (54.0), angriff 9 % (56), aktiv 7 % (28.0), haltung 7 % (56.0), kampfhaltung 6 % (55.0), spott 3 % (54.0)
+  verhalten_v_b3_anlaufc_spr Slot 17 EDDY: gehen 43 % (73.0), modus2 15 % (22.0), abwarten 15 % (112.0), angriff 10 % (56), kampfhaltung 9 % (56.0), aktiv 8 % (41)
+  verhalten_v_b3_kontakt_spr Slot 18 WOOKY: gehen 33 % (66.0), modus2 20 % (64), angriff 18 % (32), kampfhaltung 13 % (32.0), aktiv 12 % (32.0), spott 4 % (148.0)
+  verhalten_v_b3_kontaktb_dauer Slot 16 WOOKY: gehen 37 % (62.0), angriff 15 % (3.0), modus2 15 % (14), abwarten 13 % (56.5), spott 8 % (203.0), kampfhaltung 8 % (1.5), aktiv 4 % (0.0), haltung 0 % (3)
+  verhalten_v_b3_kontaktb_dauer Slot 17 EDDY: gehen 38 % (90), abwarten 33 % (125.0), modus2 9 % (64), aktiv 6 % (33.0), haltung 5 % (56.0), angriff 5 % (56.0), kampfhaltung 3 % (48)
+  verhalten_v_b3_tiefeb_dauer Slot 16 WOOKY: gehen 43 % (74), modus2 20 % (70.0), abwarten 17 % (127), haltung 7 % (56.0), kampfhaltung 5 % (42), angriff 5 % (56), aktiv 3 % (45), spott 0 % (214.0)
+  verhalten_v_b3_tiefeb_dauer Slot 17 EDDY: gehen 44 % (116.5), abwarten 37 % (125.0), modus2 12 % (60.0), spott 5 % (43.0), angriff 1 % (50.0), kampfhaltung 1 % (56), aktiv 0 % (56.0)
+# schutz (p_*, e_*)
+lauf,art,beginn,dauer_s4_3,angriffsbeginne,aktive_frames,lp_verlust_im_fenster,treffer_im_frame_danach,gegner_in_reichweite
+verhalten_v_p_eddy,treffer,44,27,0,0,0,0,1
+verhalten_v_p_eddy,treffer,121,27,1,5,0,0,1
+verhalten_v_p_eddy,aufstehen,316,35,1,5,0,1,1
+verhalten_v_p_eddy,treffer,351,27,0,0,0,0,1
+verhalten_v_p_eddy,treffer,414,27,0,0,0,0,1
+verhalten_v_p_eddy,aufstehen,598,35,0,0,0,0,0
+verhalten_v_p_eddy,treffer,1076,27,0,0,0,0,1
+verhalten_v_p_eddy,treffer,1141,27,0,0,0,0,1
+verhalten_v_p_eddy,aufstehen,1339,35,1,8,0,0,1
+verhalten_v_p_eddy,treffer,1469,27,0,0,0,0,1
+verhalten_v_p_eddy,aufstehen,1665,35,0,0,0,0,0
+verhalten_v_p_eddy,treffer,2327,27,1,5,0,0,1
+verhalten_v_p_eddy,treffer,2389,27,0,0,0,0,1
+verhalten_v_p_eddy,treffer,2483,27,0,0,0,0,1
+verhalten_v_p_eddy,treffer,2538,27,0,0,0,0,1
+verhalten_v_p_eddy,treffer,2597,27,0,0,0,0,1
+verhalten_v_p_eddy,aufstehen,2776,35,0,0,0,0,0
+verhalten_v_p_eddy,aufstehen,3966,35,0,0,0,0,0
+verhalten_v_p_eddy,aufstehen,4835,35,0,0,0,0,0
+verhalten_v_p_held2,treffer,766,27,1,10,0,0,1
+verhalten_v_p_held2,treffer,823,27,1,8,0,0,1
+verhalten_v_p_held2,aufstehen,1009,35,0,0,0,0,0
+verhalten_v_p_held2,treffer,1188,27,0,0,0,0,1
+verhalten_v_p_held2,treffer,1244,27,0,0,0,0,1
+verhalten_v_p_held2,treffer,1306,27,0,0,0,0,1
+verhalten_v_p_held2,aufstehen,1490,35,1,4,0,1,1
+verhalten_v_p_held2,treffer,1525,27,0,0,0,0,1
+verhalten_v_p_held2,treffer,1608,27,0,0,0,0,1
+verhalten_v_p_held2,aufstehen,1804,35,2,18,0,0,1
+verhalten_v_p_held2,treffer,1845,27,1,0,0,0,1
+verhalten_v_p_held2,treffer,1873,27,2,10,0,1,1
+verhalten_v_p_held2,treffer,1900,27,1,0,0,0,1
+verhalten_v_p_held2,aufstehen,2053,35,0,0,0,0,0
+verhalten_v_p_held2,treffer,2190,27,0,0,0,0,1
+verhalten_v_p_held2,treffer,2247,27,0,0,0,0,1
+verhalten_v_p_held2,aufstehen,2429,35,1,5,0,0,1
+verhalten_v_p_held2,treffer,2498,27,0,0,0,0,1
+verhalten_v_p_held2,aufstehen,2676,35,0,0,0,0,0
+verhalten_v_p_held2,treffer,2914,27,1,17,0,0,1
+verhalten_v_p_held2,treffer,2955,27,1,10,0,0,1
+verhalten_v_p_held2,treffer,3007,27,1,5,0,0,1
+verhalten_v_p_held2,treffer,3051,27,2,13,0,1,1
+verhalten_v_p_held2,aufstehen,3200,35,1,8,0,0,1
+verhalten_v_p_held2,treffer,3275,27,1,6,0,0,1
+verhalten_v_p_held2,treffer,3333,27,0,0,0,0,1
+verhalten_v_p_held2,aufstehen,3512,35,0,0,0,0,1
+verhalten_v_p_held2,treffer,3653,27,1,5,0,0,1
+verhalten_v_p_held2,treffer,3701,27,1,1,0,1,1
+verhalten_v_p_held2,treffer,3728,27,1,0,0,0,1
+verhalten_v_p_held2,aufstehen,3882,35,0,0,0,0,0
+verhalten_v_p_held2,treffer,4025,27,1,10,0,0,1
+verhalten_v_p_held2,treffer,4075,27,2,10,0,0,1
+verhalten_v_p_held2,treffer,4110,27,4,20,0,0,1
+verhalten_v_p_held2,treffer,4169,27,3,20,0,0,1
+verhalten_v_p_held2,treffer,4233,27,2,10,0,0,1
+verhalten_v_p_held2,treffer,4281,27,3,15,0,0,1
+verhalten_v_p_held2,aufstehen,4457,35,1,5,0,0,1
+verhalten_v_p_held2,treffer,4508,27,1,5,0,0,1
+verhalten_v_p_held2,treffer,4545,27,2,11,0,1,1
+verhalten_v_p_held2,aufstehen,4694,35,1,5,0,0,1
+verhalten_v_p_held2,treffer,4768,27,0,0,0,0,1
+verhalten_v_p_held2,aufstehen,4945,35,3,15,0,1,1
+verhalten_v_p_held2,treffer,4980,27,2,1,0,1,1
+verhalten_v_p_held2,treffer,5007,27,0,0,0,0,1
+verhalten_v_p_held2,treffer,5052,27,2,10,0,0,1
+verhalten_v_p_held2,treffer,5107,27,3,22,0,1,1
+verhalten_v_p_held2,treffer,5134,27,4,14,0,1,1
+verhalten_v_p_held2,aufstehen,5283,35,3,18,0,0,1
+verhalten_v_p_held2,treffer,5342,27,3,5,0,1,1
+verhalten_v_p_held2,treffer,5369,27,2,0,0,1,1
+verhalten_v_p_held2,aufstehen,5518,35,1,5,0,0,1
+verhalten_v_p_held2,treffer,5601,27,0,0,0,0,1
+verhalten_v_p_held2,treffer,5656,27,1,10,0,0,1
+verhalten_v_p_held2,treffer,5708,27,0,0,0,0,1
+verhalten_v_p_held2,treffer,5758,27,0,0,0,0,1
+verhalten_v_p_held2,aufstehen,5936,35,1,5,0,0,1
+verhalten_v_p_natur,treffer,70,27,0,0,0,0,1
+verhalten_v_p_natur,treffer,132,27,0,0,0,0,1
+verhalten_v_p_natur,aufstehen,318,35,0,0,0,0,0
+verhalten_v_p_natur,treffer,454,27,0,0,0,0,1
+verhalten_v_p_natur,treffer,533,27,0,0,0,0,1
+verhalten_v_p_natur,treffer,593,27,0,0,0,0,1
+verhalten_v_p_natur,aufstehen,780,35,0,0,0,0,0
+verhalten_v_p_stage1,treffer,562,27,0,0,0,0,1
+verhalten_v_p_stage1,treffer,620,27,0,0,0,0,1
+verhalten_v_p_stage1,aufstehen,805,35,0,0,0,0,1
+verhalten_v_p_stage1,treffer,880,27,0,0,0,0,1
+verhalten_v_p_stage1,treffer,943,27,0,0,0,0,1
+verhalten_v_p_stage1,aufstehen,1128,35,0,0,0,0,0
+verhalten_v_p_stage1,treffer,1336,27,0,0,0,0,1
+verhalten_v_p_stage1,treffer,1393,27,1,0,0,0,1
+verhalten_v_p_stage1,treffer,1423,27,1,0,0,0,1
+verhalten_v_p_stage1,treffer,1455,27,1,0,0,0,1
+verhalten_v_p_stage1,treffer,1488,27,1,0,0,1,1
+verhalten_v_p_stage1,aufstehen,1637,35,0,0,0,0,1
+verhalten_v_p_stage1,treffer,1712,27,0,0,0,0,1
+verhalten_v_p_stage1,treffer,1774,27,0,0,0,0,1
+verhalten_v_p_stage1,treffer,1837,27,0,0,0,0,1
+verhalten_v_p_stage1,aufstehen,2021,35,1,0,0,0,1
+verhalten_v_p_stage1,treffer,2059,27,0,0,0,0,1
+verhalten_v_p_stage1,treffer,2114,27,1,5,0,0,1
+verhalten_v_p_stage1,treffer,2172,27,1,5,0,0,1
+verhalten_v_p_stage1,treffer,2236,27,0,0,0,0,1
+verhalten_v_p_stage1,aufstehen,2416,35,0,0,0,0,1
+verhalten_v_p_stage1,treffer,2485,27,0,0,0,0,1
+verhalten_v_p_stage1,treffer,2525,27,2,5,0,0,1
+verhalten_v_p_stage1,treffer,2557,27,2,2,0,1,1
+verhalten_v_p_stage1,treffer,2584,27,2,5,0,0,1
+verhalten_v_p_stage1,treffer,2618,27,2,10,0,0,1
+verhalten_v_p_stage1,aufstehen,2798,35,0,0,0,0,0
+verhalten_v_p_stage1,treffer,2926,27,0,0,0,0,1
+verhalten_v_p_stage1,treffer,2963,27,1,10,0,0,1
+verhalten_v_p_stage1,treffer,3026,27,0,0,0,0,1
+verhalten_v_p_stage1,treffer,3077,27,0,0,0,0,1
+verhalten_v_p_stage1,treffer,3135,27,0,0,0,0,1
+verhalten_v_p_stage1,aufstehen,3314,35,1,5,0,0,1
+verhalten_v_p_stage1,treffer,3375,27,1,5,0,0,1
+verhalten_v_p_stage1,treffer,3428,27,1,9,0,1,1
+verhalten_v_p_stage1,aufstehen,3577,35,0,0,0,0,0
+verhalten_v_p_stage1,treffer,3725,27,0,0,0,0,1
+verhalten_v_p_stage1,treffer,3777,27,0,0,0,0,1
+verhalten_v_p_stage1,treffer,3820,27,1,5,0,0,1
+verhalten_v_p_stage1,treffer,3880,27,0,0,0,0,1
+verhalten_v_p_stage1,aufstehen,4056,35,1,5,0,0,1
+verhalten_v_p_stage1,treffer,4116,27,1,2,0,1,1
+verhalten_v_p_stage1,treffer,4143,27,0,0,0,0,1
+verhalten_v_p_stage1,treffer,4189,27,1,10,0,0,1
+verhalten_v_p_stage1,treffer,4230,27,2,5,0,0,1
+verhalten_v_p_stage1,treffer,4258,27,1,3,0,1,1
+verhalten_v_p_stage1,treffer,4285,27,2,11,0,1,1
+verhalten_v_p_stage1,treffer,4312,27,1,0,0,0,1
+verhalten_v_p_stage1,treffer,4342,27,2,6,0,1,1
+verhalten_v_p_stage1,aufstehen,4492,35,1,5,0,0,1
+verhalten_v_p_stage1,treffer,4581,27,0,0,0,0,1
+verhalten_v_p_stage1,treffer,4644,27,0,0,0,0,1
+verhalten_v_p_stage1,treffer,4694,27,1,0,0,0,1
+verhalten_v_p_stage1,treffer,4723,27,1,0,0,0,1
+verhalten_v_p_stage1,treffer,4753,27,0,0,0,0,1
+verhalten_v_p_stage1,treffer,4793,27,1,10,0,0,1
+verhalten_v_p_stage1,treffer,4848,27,1,0,0,0,1
+verhalten_v_p_stage1,treffer,4877,27,1,0,0,0,1
+verhalten_v_p_stage1,aufstehen,5027,35,1,5,0,0,1
+verhalten_v_p_stage1,treffer,5102,27,0,0,0,0,1
+verhalten_v_p_stage1,treffer,5153,27,0,0,0,0,1
+verhalten_v_p_stage1,treffer,5207,27,0,0,0,0,1
+verhalten_v_p_stage1,aufstehen,5383,35,0,0,0,0,1
+verhalten_v_p_stage1,treffer,5497,27,1,3,0,1,1
+verhalten_v_p_stage1,treffer,5524,27,2,8,0,0,1
+verhalten_v_p_stage1,treffer,5554,27,1,10,0,0,1
+verhalten_v_p_stage1,treffer,5595,27,2,10,0,0,1
+verhalten_v_p_stage1,aufstehen,5790,35,1,8,0,0,1
+verhalten_v_p_stage1,treffer,5841,27,0,0,0,0,1
+verhalten_v_p_stage1,treffer,5882,27,1,10,0,0,1
+verhalten_v_p_stage1,treffer,5937,27,1,5,0,0,1
+verhalten_v_p_tiefe,treffer,137,27,0,0,0,0,1
+verhalten_v_p_tiefe,aufstehen,341,35,0,0,0,0,0
+verhalten_v_p_tiefe,treffer,916,27,0,0,0,0,1
+verhalten_v_p_tiefe,treffer,983,27,0,0,0,0,1
+verhalten_v_p_tiefe,treffer,1212,27,0,0,0,0,1
+verhalten_v_p_tiefe,treffer,1267,27,0,0,0,0,1
+verhalten_v_p_tiefe,aufstehen,1448,35,0,0,0,0,0
+verhalten_v_p_tiefe,treffer,1652,27,0,0,0,0,1
+verhalten_v_p_tiefe,treffer,1769,27,0,0,0,0,1
+verhalten_v_p_tiefe,treffer,1825,27,0,0,0,0,1
+verhalten_v_p_tiefe,aufstehen,2007,35,0,0,0,0,0
+verhalten_v_p_tiefe,treffer,2267,27,1,10,0,0,1
+verhalten_v_p_tiefe,treffer,2326,27,0,0,0,0,1
+verhalten_v_p_tiefe,aufstehen,2503,35,1,10,0,0,1
+verhalten_v_p_tiefe,treffer,2571,27,0,0,0,0,1
+verhalten_v_p_tiefe,treffer,2629,27,0,0,0,0,1
+verhalten_v_p_tiefe,aufstehen,2802,35,0,0,0,0,0
+verhalten_v_p_tiefe,treffer,3095,27,0,0,0,0,1
+verhalten_v_p_tiefe,aufstehen,3283,35,1,5,0,0,1
+verhalten_v_p_tiefe,treffer,3365,27,0,0,0,0,1
+verhalten_v_p_tiefe,treffer,3427,27,0,0,0,0,1
+verhalten_v_p_tiefe,aufstehen,3620,35,0,0,0,0,0
+verhalten_v_p_tiefe,treffer,3956,27,0,0,0,0,1
+verhalten_v_e_eddy,treffer,68,27,0,0,0,0,1
+verhalten_v_e_eddy,treffer,146,27,0,0,0,0,1
+verhalten_v_e_eddy,treffer,207,27,0,0,0,0,1
+verhalten_v_e_eddy,aufstehen,391,35,0,0,0,0,0
+verhalten_v_e_eddy,treffer,810,27,0,0,0,0,1
+verhalten_v_e_eddy,treffer,876,27,0,0,0,0,1
+verhalten_v_e_eddy,treffer,951,27,0,0,0,0,1
+verhalten_v_e_eddy,treffer,1009,27,0,0,0,0,1
+verhalten_v_e_eddy,aufstehen,1192,35,1,8,0,0,1
+verhalten_v_e_eddy,treffer,1294,27,0,0,0,0,1
+verhalten_v_e_eddy,treffer,1360,27,0,0,0,0,1
+verhalten_v_e_eddy,treffer,1440,27,0,0,0,0,1
+verhalten_v_e_eddy,aufstehen,1619,252,0,0,0,0,0
+verhalten_v_e_eddy,treffer,2618,27,0,0,0,0,1
+verhalten_v_e_eddy,treffer,3469,27,0,0,0,0,1
+verhalten_v_e_eddy,treffer,3534,27,0,0,0,0,1
+verhalten_v_e_eddy,treffer,3613,27,0,0,0,0,1
+verhalten_v_e_eddy,treffer,3694,27,0,0,0,0,1
+verhalten_v_e_eddy,aufstehen,3897,35,0,0,0,0,1
+verhalten_v_e_eddy_lp,treffer,68,27,0,0,0,0,1
+verhalten_v_e_eddy_lp,treffer,146,27,0,0,0,0,1
+verhalten_v_e_eddy_lp,treffer,207,27,0,0,0,0,1
+verhalten_v_e_eddy_lp,aufstehen,391,35,0,0,0,0,0
+verhalten_v_e_eddy_lp,treffer,811,27,0,0,0,0,1
+verhalten_v_e_eddy_lp,treffer,877,27,0,0,0,0,1
+verhalten_v_e_eddy_lp,treffer,952,27,0,0,0,0,1
+verhalten_v_e_eddy_lp,treffer,1010,27,0,0,0,0,1
+verhalten_v_e_eddy_lp,aufstehen,1193,35,1,8,0,0,1
+verhalten_v_e_eddy_lp,treffer,1295,27,0,0,0,0,1
+verhalten_v_e_eddy_lp,treffer,1361,27,0,0,0,0,1
+verhalten_v_e_eddy_lp,treffer,1441,27,0,0,0,0,1
+verhalten_v_e_eddy_lp,treffer,1499,27,0,0,0,0,1
+verhalten_v_e_eddy_lp,aufstehen,1681,35,1,9,0,0,1
+verhalten_v_e_eddy_lp,treffer,1909,27,0,0,0,0,1
+verhalten_v_e_eddy_lp,treffer,1973,27,0,0,0,0,1
+verhalten_v_e_eddy_lp,treffer,2049,27,0,0,0,0,1
+verhalten_v_e_eddy_lp,treffer,2107,27,0,0,0,0,1
+verhalten_v_e_eddy_lp,aufstehen,2284,35,1,9,0,1,1
+verhalten_v_e_eddy_lp,aufstehen,2441,35,0,0,0,0,0
+verhalten_v_e_eddy_lp,treffer,3306,27,0,0,0,0,1
+verhalten_v_e_eddy_lp,aufstehen,3505,35,0,0,0,0,0
+verhalten_v_e_eddy_lp,treffer,4135,27,0,0,0,0,1
+verhalten_v_e_eddy_lp,treffer,4191,27,0,0,0,0,1
+verhalten_v_e_eddy_lp,aufstehen,4365,35,0,0,0,0,0
+verhalten_v_e_eddy_lp,treffer,4433,27,0,0,0,0,1
+verhalten_v_e_eddy_lp,treffer,4494,27,0,0,0,0,1
+verhalten_v_e_wooky,treffer,176,27,0,0,0,0,1
+verhalten_v_e_wooky,treffer,1761,27,0,0,0,0,1
+verhalten_v_e_wooky,treffer,2054,27,0,0,0,0,1
+verhalten_v_e_wooky,treffer,2123,27,0,0,0,0,1
+verhalten_v_e_wooky,treffer,2175,27,0,0,0,0,1
+verhalten_v_e_wooky,treffer,2233,27,0,0,0,0,1
+verhalten_v_e_wooky,aufstehen,2415,35,0,0,0,0,0
+verhalten_v_e_wooky,treffer,2850,27,0,0,0,0,1
+verhalten_v_e_wooky,treffer,2924,27,0,0,0,0,1
+verhalten_v_e_wooky,treffer,2980,27,0,0,0,0,1
+verhalten_v_e_wooky,aufstehen,3161,35,0,0,0,0,1
+verhalten_v_e_wooky,treffer,3207,27,0,0,0,0,1
+verhalten_v_e_wooky,treffer,3265,27,0,0,0,0,1
+verhalten_v_e_wooky,aufstehen,3448,35,0,0,0,0,0
+verhalten_v_e_wooky_lp,treffer,28,27,0,0,0,0,1
+verhalten_v_e_wooky_lp,treffer,90,27,0,0,0,0,1
+verhalten_v_e_wooky_lp,aufstehen,276,35,0,0,0,0,0
+verhalten_v_e_wooky_lp,treffer,413,27,0,0,0,0,1
+verhalten_v_e_wooky_lp,treffer,492,27,0,0,0,0,1
+verhalten_v_e_wooky_lp,treffer,552,27,0,0,0,0,1
+verhalten_v_e_wooky_lp,aufstehen,739,35,0,0,0,0,0
+verhalten_v_e_wooky_lp,treffer,1985,27,0,0,0,0,1
+verhalten_v_e_wooky_lp,treffer,2279,27,0,0,0,0,1
+verhalten_v_e_wooky_lp,treffer,2338,27,0,0,0,0,1
+verhalten_v_e_wooky_lp,aufstehen,2519,35,0,0,0,0,0
+verhalten_v_e_wooky_lp,treffer,2625,27,0,0,0,0,1
+verhalten_v_e_wooky_lp,treffer,3111,27,0,0,0,0,1
+verhalten_v_e_wooky_lp,treffer,3165,27,0,0,0,0,1
+verhalten_v_e_wooky_lp,treffer,3223,27,0,0,0,0,1
+verhalten_v_e_wooky_lp,aufstehen,3399,35,0,0,0,0,0
+verhalten_v_e_wooky_lp,treffer,4142,27,0,0,0,0,1
+verhalten_v_e_wooky_lp,treffer,4191,27,0,0,0,0,1
+verhalten_v_e_wooky_lp,aufstehen,4364,35,0,0,0,0,0
+# gruppe (p_stage1, p_held2, c_* ab Frame 1000)
+verhalten_v_p_stage1: 4907 Frames mit >= 3 kampffähigen Gegnern (ab 1000)
+  im Angriff: 0: 63.7 %, 1: 26.7 %, 2: 8.0 %, 3: 1.5 %, 4: 0.1 %
+  aktiv     : 0: 78.1 %, 1: 19.5 %, 2: 2.3 %, 3: 0.1 %
+  nah_haltung: Median |dx| 45.0 (3718 Frames)
+  abwarten: Median |dx| 125 (3711 Frames)
+  spott: Median |dx| 103.0 (3354 Frames)
+  gehen: Median |dx| 79.0 (7076 Frames)
+  beide Seiten in Reichweite: 36.3 %
+  Angriffe: 109, von rechts 55 %
+  zweiter Angreifer (anderer Slot): Median 24.0 F, Bereich 0-283, unter 30 F: 54 von 94; andere Seite binnen 60 F: 45
+verhalten_v_p_held2: 4787 Frames mit >= 3 kampffähigen Gegnern (ab 1000)
+  im Angriff: 0: 65.6 %, 1: 22.8 %, 2: 8.6 %, 3: 2.0 %, 4: 0.7 %, 5: 0.3 %
+  aktiv     : 0: 79.4 %, 1: 17.3 %, 2: 2.9 %, 3: 0.3 %, 4: 0.0 %
+  nah_haltung: Median |dx| 46.0 (3500 Frames)
+  abwarten: Median |dx| 121.0 (3202 Frames)
+  spott: Median |dx| 76.0 (3540 Frames)
+  gehen: Median |dx| 77.5 (7692 Frames)
+  beide Seiten in Reichweite: 34.3 %
+  Angriffe: 120, von rechts 34 %
+  zweiter Angreifer (anderer Slot): Median 12 F, Bereich 0-269, unter 30 F: 69 von 99; andere Seite binnen 60 F: 40
+verhalten_v_c_gully: 4727 Frames mit >= 3 kampffähigen Gegnern (ab 1000)
+  im Angriff: 0: 64.5 %, 1: 28.6 %, 2: 6.7 %, 3: 0.3 %
+  aktiv     : 0: 78.4 %, 1: 20.1 %, 2: 1.5 %
+  nah_haltung: Median |dx| 47.0 (3022 Frames)
+  abwarten: Median |dx| 121 (4177 Frames)
+  spott: Median |dx| 47 (3319 Frames)
+  gehen: Median |dx| 77.0 (7546 Frames)
+  beide Seiten in Reichweite: 35.4 %
+  Angriffe: 95, von rechts 23 %
+  zweiter Angreifer (anderer Slot): Median 27.0 F, Bereich 0-287, unter 30 F: 39 von 70; andere Seite binnen 60 F: 26
+verhalten_v_c_tief: 2130 Frames mit >= 3 kampffähigen Gegnern (ab 1000)
+  im Angriff: 0: 88.3 %, 1: 11.2 %, 2: 0.6 %
+  aktiv     : 0: 93.4 %, 1: 6.5 %, 2: 0.1 %
+  nah_haltung: Median |dx| 30.0 (274 Frames)
+  abwarten: Median |dx| 123.0 (1650 Frames)
+  spott: Median |dx| 73.0 (1686 Frames)
+  gehen: Median |dx| 73.0 (2500 Frames)
+  beide Seiten in Reichweite: 1.3 %
+  Angriffe: 47, von rechts 70 %
+  zweiter Angreifer (anderer Slot): Median 28 F, Bereich 3-822, unter 30 F: 10 von 17; andere Seite binnen 60 F: 12
+# wellen (d_*, Bot)
+lauf,slot,typ,maxlp,belegt_frame,kamera_belegt,x,x_minus_kamera,s5_frame,kamera_s5,weck_frame,kamera_weck,kampffaehig_frame,kamera_kampffaehig,lebende_beim_belegen,rang,dolg_lp_vorframe,dolg_lp_zwei_frames_vorher
+verhalten_v_d_e16,13,WOOKY,24,412,848,1152,304,413,848,,,460,848,4,8,,
+verhalten_v_d_e16,14,WOOKY,24,382,816,1152,336,383,819,,,439,848,3,8,,
+verhalten_v_d_e16,15,SKIP,34,350,771,1185,414,350,771,393,841,350,771,2,8,,
+verhalten_v_d_e16,16,WOOKY,16,1,256,960,704,213,514,253,580,302,669,1,7,,
+verhalten_v_d_e16,17,EDDY,30,1,256,880,624,177,435,206,501,275,629,1,7,,
+verhalten_v_d_e16,18,WOOKY,16,1,256,688,432,1,256,108,307,124,343,0,7,,
+verhalten_v_d_e16,19,DOLG,0,1,256,2424,2168,,,,,,,1,7,,
+verhalten_v_d_e16_17,11,EDDY,34,503,1046,1344,298,504,1048,,,551,1134,5,8,,
+verhalten_v_d_e16_17,12,EDDY,34,473,994,1344,350,474,997,,,530,1087,4,8,,
+verhalten_v_d_e16_17,13,WOOKY,24,412,884,1152,268,413,886,,,460,965,3,8,,
+verhalten_v_d_e16_17,14,WOOKY,24,382,816,1152,336,383,819,,,439,926,2,8,,
+verhalten_v_d_e16_17,15,SKIP,34,350,771,1185,414,350,771,393,841,350,771,1,8,,
+verhalten_v_d_e16_17,16,WOOKY,16,1,256,960,704,213,514,253,580,302,669,1,7,,
+verhalten_v_d_e16_17,17,EDDY,30,1,256,880,624,177,435,206,501,275,629,1,7,,
+verhalten_v_d_e16_17,18,WOOKY,16,1,256,688,432,1,256,108,307,124,343,0,7,,
+verhalten_v_d_e16_17,19,DOLG,0,1,256,2424,2168,,,,,,,1,7,,
+verhalten_v_d_e_alle,11,EDDY,34,503,1046,1344,298,504,1048,,,551,1120,4,8,,
+verhalten_v_d_e_alle,12,EDDY,34,473,994,1344,350,474,997,,,530,1073,3,8,,
+verhalten_v_d_e_alle,13,WOOKY,24,412,884,1152,268,413,886,,,460,965,2,8,,
+verhalten_v_d_e_alle,14,WOOKY,24,382,816,1152,336,383,819,,,439,926,1,8,,
+verhalten_v_d_e_alle,15,SKIP,34,350,771,1185,414,350,771,393,841,350,771,0,8,,
+verhalten_v_d_e_alle,16,WOOKY,16,1,256,960,704,213,514,253,580,302,669,1,7,,
+verhalten_v_d_e_alle,17,EDDY,30,1,256,880,624,177,435,206,501,275,629,1,7,,
+verhalten_v_d_e_alle,18,WOOKY,16,1,256,688,432,1,256,108,307,124,343,0,7,,
+verhalten_v_d_e_alle,19,DOLG,0,1,256,2424,2168,,,,,,,1,7,,
+verhalten_v_d_e_mech2,10,WOOKY,24,720,1346,1780,434,720,1346,,,,,1,8,,
+verhalten_v_d_e_mech2,11,EDDY,34,503,1046,1344,298,504,1048,,,551,1120,4,8,,
+verhalten_v_d_e_mech2,12,EDDY,34,473,994,1344,350,474,997,,,530,1073,3,8,,
+verhalten_v_d_e_mech2,13,WOOKY,24,412,884,1152,268,413,886,,,460,965,2,8,,
+verhalten_v_d_e_mech2,14,WOOKY,24,382,816,1152,336,383,819,,,439,926,1,8,,
+verhalten_v_d_e_mech2,15,SKIP,34,350,771,1185,414,350,771,393,841,350,771,0,8,,
+verhalten_v_d_e_mech2,16,WOOKY,16,1,256,960,704,213,514,253,580,302,669,1,7,,
+verhalten_v_d_e_mech2,17,EDDY,30,1,256,880,624,177,435,206,501,275,629,1,7,,
+verhalten_v_d_e_mech2,18,WOOKY,16,1,256,688,432,1,256,108,307,124,343,0,7,,
+verhalten_v_d_e_mech2,19,DOLG,0,1,256,2424,2168,,,,,,,1,7,,
+verhalten_v_d_e_mech3,11,EDDY,34,503,1046,1344,298,504,1048,,,551,1120,4,8,,
+verhalten_v_d_e_mech3,12,EDDY,34,473,994,1344,350,474,997,,,530,1073,3,8,,
+verhalten_v_d_e_mech3,13,WOOKY,24,412,884,1152,268,413,886,,,460,965,2,8,,
+verhalten_v_d_e_mech3,14,WOOKY,24,382,816,1152,336,383,819,,,439,926,1,8,,
+verhalten_v_d_e_mech3,15,SKIP,34,350,771,1185,414,350,771,393,841,350,771,0,8,,
+verhalten_v_d_e_mech3,16,WOOKY,16,1,256,960,704,213,514,253,580,302,669,1,7,,
+verhalten_v_d_e_mech3,17,EDDY,30,1,256,880,624,177,435,206,501,275,629,1,7,,
+verhalten_v_d_e_mech3,18,WOOKY,16,1,256,688,432,1,256,108,307,124,343,0,7,,
+verhalten_v_d_e_mech3,19,DOLG,0,1,256,2424,2168,,,,,,,1,7,,
+verhalten_v_d_e_mech4,10,WOOKY,24,720,1346,1780,434,720,1346,,,,,3,8,,
+verhalten_v_d_e_mech4,11,EDDY,34,503,1046,1344,298,504,1048,,,551,1120,4,8,,
+verhalten_v_d_e_mech4,12,EDDY,34,473,994,1344,350,474,997,,,530,1073,3,8,,
+verhalten_v_d_e_mech4,13,WOOKY,24,412,884,1152,268,413,886,,,460,965,2,8,,
+verhalten_v_d_e_mech4,14,WOOKY,24,382,816,1152,336,383,819,,,439,926,1,8,,
+verhalten_v_d_e_mech4,15,SKIP,34,350,771,1185,414,350,771,393,841,350,771,0,8,,
+verhalten_v_d_e_mech4,16,WOOKY,16,1,256,960,704,213,514,253,580,302,669,1,7,,
+verhalten_v_d_e_mech4,17,EDDY,30,1,256,880,624,177,435,206,501,275,629,1,7,,
+verhalten_v_d_e_mech4,18,WOOKY,16,1,256,688,432,1,256,108,307,124,343,0,7,,
+verhalten_v_d_e_mech4,19,DOLG,0,1,256,2424,2168,,,,,,,1,7,,
+verhalten_v_d_sprung,14,WOOKY,24,412,848,1152,304,413,848,,,460,848,4,8,,
+verhalten_v_d_sprung,15,WOOKY,24,382,816,1152,336,383,819,,,439,848,3,8,,
+verhalten_v_d_sprung,16,WOOKY,16,1,256,960,704,213,514,253,580,302,669,1,7,,
+verhalten_v_d_sprung,17,EDDY,30,1,256,880,624,177,435,206,501,275,629,1,7,,
+verhalten_v_d_sprung,18,WOOKY,16,1,256,688,432,1,256,108,307,124,343,0,7,,
+verhalten_v_d_sprung,19,DOLG,0,1,256,2424,2168,,,,,,,1,7,,
+verhalten_v_d_bot_mack,14,WOOKY,24,723,833,1152,319,724,833,,,771,833,2,10,,
+verhalten_v_d_bot_mack,14,WOOKY,30,6266,2125,2093,-32,6267,2125,,,6267,2125,1,19,46,46
+verhalten_v_d_bot_mack,14,DICK,26,7208,2073,2041,-32,7209,2073,,,7209,2073,1,21,26,26
+verhalten_v_d_bot_mack,15,WOOKY,24,693,813,1152,339,694,814,,,750,833,1,10,,
+verhalten_v_d_bot_mack,15,WOOKY,30,6266,2125,2093,-32,6267,2125,,,6267,2125,1,19,46,46
+verhalten_v_d_bot_mack,15,DICK,26,7168,2073,2041,-32,7169,2073,,,7169,2073,0,21,26,30
+verhalten_v_d_bot_mack,16,WOOKY,16,1,256,960,704,298,515,335,579,384,639,1,9,,
+verhalten_v_d_bot_mack,16,EDDY,34,920,1012,1344,332,921,1012,,,968,1012,4,10,,
+verhalten_v_d_bot_mack,16,WOOKY,28,4341,2048,2016,-32,4342,2048,,,4342,2048,0,16,110,110
+verhalten_v_d_bot_mack,16,EDDY,38,5635,2048,2016,-32,5636,2048,,,5636,2048,0,18,49,57
+verhalten_v_d_bot_mack,17,EDDY,30,1,256,880,624,253,436,289,499,358,620,1,9,,
+verhalten_v_d_bot_mack,17,EDDY,34,890,994,1344,350,891,996,,,947,1012,3,10,,
+verhalten_v_d_bot_mack,17,WOOKY,26,1808,1346,1780,434,1808,1346,,,2171,1413,0,12,,
+verhalten_v_d_bot_mack,17,WOOKY,28,4341,2048,2016,-32,4342,2048,,,4342,2048,0,16,110,110
+verhalten_v_d_bot_mack,17,EDDY,38,5635,2048,2016,-32,5636,2048,,,5716,2048,0,18,49,57
+verhalten_v_d_bot_mack,18,WOOKY,16,1,256,688,432,1,256,109,307,125,335,0,9,,
+verhalten_v_d_bot_mack,18,SKIP,36,660,770,1184,414,660,770,709,832,660,770,0,10,,
+verhalten_v_d_bot_mack,19,DOLG,0,1,256,2424,2168,4301,1994,4339,2048,4301,1994,1,9,,
+verhalten_v_d_bot_s1,15,WOOKY,32,7935,2147,2115,-32,7936,2147,,,7936,2147,0,20,34,34
+verhalten_v_d_bot_s1,15,DICK,28,10409,2176,2144,-32,10410,2176,,,10410,2176,1,24,27,27
+verhalten_v_d_bot_s1,16,WOOKY,16,1,256,960,704,315,515,352,579,401,639,1,7,,
+verhalten_v_d_bot_s1,16,WOOKY,24,700,827,1152,325,701,827,,,748,827,2,8,,
+verhalten_v_d_bot_s1,16,EDDY,34,1362,1047,1344,297,1363,1049,,,1410,1105,1,9,,
+verhalten_v_d_bot_s1,16,WOOKY,24,1819,1346,1780,434,1819,1346,,,2048,1421,0,10,,
+verhalten_v_d_bot_s1,16,WOOKY,28,5045,2048,2016,-32,5046,2048,,,5046,2048,0,16,110,110
+verhalten_v_d_bot_s1,16,EDDY,38,7253,2176,2144,-32,7254,2176,,,7254,2176,0,19,52,56
+verhalten_v_d_bot_s1,17,EDDY,30,1,256,880,624,270,436,306,499,375,620,1,7,,
+verhalten_v_d_bot_s1,17,WOOKY,24,670,812,1152,340,671,814,,,727,827,1,8,,
+verhalten_v_d_bot_s1,17,EDDY,34,1332,995,1344,349,1333,996,,,1389,1094,0,9,,
+verhalten_v_d_bot_s1,17,WOOKY,28,5045,2048,2016,-32,5046,2048,,,5046,2048,0,16,110,110
+verhalten_v_d_bot_s1,17,EDDY,38,7253,2176,2144,-32,7254,2176,,,7254,2176,0,19,52,56
+verhalten_v_d_bot_s1,18,WOOKY,16,1,256,688,432,1,256,109,307,125,335,0,7,,
+verhalten_v_d_bot_s1,18,SKIP,34,637,770,1184,414,637,770,,,637,770,0,8,,
+verhalten_v_d_bot_s1,18,WOOKY,32,7935,2147,2115,-32,7936,2147,,,7936,2147,0,20,34,34
+verhalten_v_d_bot_s1,18,DICK,28,10369,2176,2144,-32,10370,2176,,,10370,2176,0,24,27,31
+verhalten_v_d_bot_s1,19,DOLG,0,1,256,2424,2168,5005,1996,5043,2048,5005,1996,1,7,,
+# kamera (Halte ab 200 F; d_*, Bot)
+verhalten_v_d_e16: Kamera 848 steht 396-7000 (6605 F), lebend beim Halt 4 (14:WOOKY 15:SKIP 17:EDDY 18:WOOKY), am Ende 5, Figur x-Kamera am Ende 276
+verhalten_v_d_e16_17: Kamera 1378 steht 732-7000 (6269 F), lebend beim Halt 5 (11:EDDY 12:EDDY 13:WOOKY 14:WOOKY 15:SKIP), am Ende 6, Figur x-Kamera am Ende 232
+verhalten_v_d_e_alle: Kamera 1377 steht 737-7000 (6264 F), lebend beim Halt 5 (11:EDDY 12:EDDY 13:WOOKY 14:WOOKY 15:SKIP), am Ende 5, Figur x-Kamera am Ende 233
+verhalten_v_d_e_mech2: Kamera 1410 steht 752-3000 (2249 F), lebend beim Halt 2 (10:WOOKY 15:SKIP), am Ende 2, Figur x-Kamera am Ende 200
+verhalten_v_d_e_mech3: Kamera 1377 steht 737-3000 (2264 F), lebend beim Halt 4 (11:EDDY 12:EDDY 14:WOOKY 15:SKIP), am Ende 4, Figur x-Kamera am Ende 233
+verhalten_v_d_e_mech4: Kamera 1410 steht 752-3000 (2249 F), lebend beim Halt 4 (10:WOOKY 11:EDDY 12:EDDY 15:SKIP), am Ende 4, Figur x-Kamera am Ende 200
+verhalten_v_d_sprung: Kamera 848 steht 396-9000 (8605 F), lebend beim Halt 4 (15:WOOKY 16:WOOKY 17:EDDY 18:WOOKY), am Ende 4, Figur x-Kamera am Ende 224
+verhalten_v_d_bot_mack: Kamera 1012 steht 900-1623 (724 F), lebend beim Halt 4 (14:WOOKY 15:WOOKY 17:EDDY 18:SKIP), am Ende 0, Figur x-Kamera am Ende 199
+verhalten_v_d_bot_mack: Kamera 1413 steht 1857-2306 (450 F), lebend beim Halt 1 (17:WOOKY), am Ende 1, Figur x-Kamera am Ende 199
+verhalten_v_d_bot_mack: Kamera 1472 steht 2340-2733 (394 F), lebend beim Halt 1 (17:WOOKY), am Ende 0, Figur x-Kamera am Ende 200
+verhalten_v_d_bot_mack: Kamera 1672 steht 2850-4121 (1272 F), lebend beim Halt 0 (), am Ende 0, Figur x-Kamera am Ende 200
+verhalten_v_d_bot_mack: Kamera 2164 steht 4616-4942 (327 F), lebend beim Halt 2 (16:WOOKY 17:WOOKY), am Ende 2, Figur x-Kamera am Ende 255
+verhalten_v_d_bot_mack: Kamera 2176 steht 4952-5394 (443 F), lebend beim Halt 2 (16:WOOKY 17:WOOKY), am Ende 0, Figur x-Kamera am Ende 130
+verhalten_v_d_bot_mack: Kamera 2048 steht 5530-6024 (495 F), lebend beim Halt 0 (), am Ende 2, Figur x-Kamera am Ende 256
+verhalten_v_d_bot_mack: Kamera 2048 steht 6313-7124 (812 F), lebend beim Halt 3 (14:WOOKY 15:WOOKY 16:EDDY), am Ende 0, Figur x-Kamera am Ende 255
+verhalten_v_d_bot_mack: Kamera 2048 steht 7740-8074 (335 F), lebend beim Halt 2 (14:DICK 15:DICK), am Ende 1, Figur x-Kamera am Ende 74
+verhalten_v_d_bot_mack: Kamera 2048 steht 8526-8791 (266 F), lebend beim Halt 0 (), am Ende 0, Figur x-Kamera am Ende 227
+verhalten_v_d_bot_mack: Kamera 2176 steht 9039-11663 (2625 F), lebend beim Halt 0 (), am Ende 0, Figur x-Kamera am Ende 294
+verhalten_v_d_bot_s1: Kamera 975 steht 1071-1321 (251 F), lebend beim Halt 2 (16:WOOKY 17:WOOKY), am Ende 0, Figur x-Kamera am Ende 200
+verhalten_v_d_bot_s1: Kamera 1421 steht 1875-2199 (325 F), lebend beim Halt 1 (16:WOOKY), am Ende 0, Figur x-Kamera am Ende 199
+verhalten_v_d_bot_s1: Kamera 1517 steht 2255-2636 (382 F), lebend beim Halt 0 (), am Ende 0, Figur x-Kamera am Ende 199
+verhalten_v_d_bot_s1: Kamera 1527 steht 2641-4158 (1518 F), lebend beim Halt 0 (), am Ende 0, Figur x-Kamera am Ende 200
+verhalten_v_d_bot_s1: Kamera 1532 steht 4161-4736 (576 F), lebend beim Halt 0 (), am Ende 0, Figur x-Kamera am Ende 199
+verhalten_v_d_bot_s1: Kamera 2048 steht 5042-6002 (961 F), lebend beim Halt 0 (), am Ende 0, Figur x-Kamera am Ende 255
+verhalten_v_d_bot_s1: Kamera 2176 steht 6148-7854 (1707 F), lebend beim Halt 0 (), am Ende 2, Figur x-Kamera am Ende 130
+verhalten_v_d_bot_s1: Kamera 2147 steht 7864-8083 (220 F), lebend beim Halt 2 (16:EDDY 17:EDDY), am Ende 2, Figur x-Kamera am Ende 130
+verhalten_v_d_bot_s1: Kamera 2058 steht 8114-8479 (366 F), lebend beim Halt 2 (15:WOOKY 18:WOOKY), am Ende 1, Figur x-Kamera am Ende 130
+verhalten_v_d_bot_s1: Kamera 2100 steht 8821-9074 (254 F), lebend beim Halt 1 (18:WOOKY), am Ende 0, Figur x-Kamera am Ende 129
+verhalten_v_d_bot_s1: Kamera 2176 steht 9566-10452 (887 F), lebend beim Halt 0 (), am Ende 2, Figur x-Kamera am Ende 129
+verhalten_v_d_bot_s1: Kamera 2048 steht 10667-11316 (650 F), lebend beim Halt 2 (15:DICK 18:DICK), am Ende 0, Figur x-Kamera am Ende 256
+verhalten_v_d_bot_s1: Kamera 2074 steht 11335-11651 (317 F), lebend beim Halt 0 (), am Ende 0, Figur x-Kamera am Ende 256

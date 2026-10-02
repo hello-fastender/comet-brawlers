@@ -38,6 +38,23 @@ Unterbefehle:
                   wird gehalten, Aktion 0x02): die Frames davor mit Abstand,
                   Tiefe, Eingaben; danach Treffer im Griff, Wechsel der
                   Gegneraktion und das Ende von Gegnerstatus 2/3
+  gegnerangriff PREFIX..  je Angriff eines Gegners gegen die Figur: Beginn der
+                  Angriffsanimation, aktive Frames (S+0x24) je Schlag, Treffer,
+                  Abstand, Umwerfen, Nachlauf bis zur Steh-/Gehanimation;
+                  --zeitachse: dazu je Frame Animation, S+0x24, Abstand, Treffer
+                  (Umsetzung in messen_greichweite.py)
+  gegnerzusammenfassung CSV..  fasst gegnerangriff-Ausgaben zusammen (je
+                  Angriffsart und je Probe; messen_greichweite.py)
+  gegnerreaktion PREFIX..  je Frame Slot-Zustand (S+4/S+5, Aktion/Phase), x 16.16,
+                  Hoehe, Tiefe, LP, Animationszeiger und Attribut eines Gegners
+                  (Umsetzung und weitere Auswertungen in messen_reaktion.py)
+  spezial PREFIX..  Spezialangriff (Angriff + Sprung im selben Frame): Ereignisse je
+                  Lauf (Aktion, Status, Timer FFAA69, Treffer, Umwerfen, Ruhelage,
+                  LP der Figur); --frames: je Frame Bildnummer und Lage der Gegner
+                  (Umsetzung in messen_spezial.py)
+  sprint PREFIX..  Sprint (Doppeltipp), Sprintangriff, Sprintsprung: Ereignisse wie
+                  spezial; --tempo: Geschwindigkeit je Abschnitt; --frames: je
+                  Frame Lage der Gegner (Umsetzung in messen_spezial.py)
 """
 
 import argparse
@@ -755,6 +772,35 @@ def main():
     p = sub.add_parser("griff")
     p.add_argument("prefix", nargs="+")
     p.set_defaults(fn=cmd_griff)
+    # Reichweite der Gegnerangriffe (Praefix greichweite): Umsetzung in
+    # messen_greichweite.py
+    import messen_greichweite  # noqa: E402
+    messen_greichweite.argumente(sub)
+    # Trefferreaktion der Gegner (Praefix reaktion): Umsetzung und weitere
+    # Auswertungen (treffer, kette, umwerfen, probe, ...) in messen_reaktion.py
+    import messen_reaktion  # noqa: E402
+    p = sub.add_parser("gegnerreaktion", help="je Frame Slot-Zustand, x 16.16, Hoehe, Tiefe, LP, "
+                       "Animationszeiger des Gegners (weitere Auswertungen: messen_reaktion.py)")
+    p.add_argument("prefix", nargs="+")
+    p.add_argument("--slot", type=int, default=None, help="Gegnerslot (Standard: der zuerst getroffene)")
+    p.add_argument("--von", type=int, default=0)
+    p.add_argument("--bis", type=int, default=0)
+    p.set_defaults(fn=messen_reaktion.cmd_gegnerreaktion)
+    # Spezialangriff und Sprint (Praefixe spezial, sprint): Umsetzung und
+    # Zusammenfassungen in messen_spezial.py
+    import messen_spezial  # noqa: E402
+    p = sub.add_parser("spezial", help="Spezialangriff: Ereignisse je Lauf bzw. (--frames) Lage der "
+                       "Gegner je Frame")
+    p.add_argument("prefix", nargs="+")
+    p.add_argument("--frames", action="store_true", help="je Frame Bildnummer und Lage der Gegner")
+    p.set_defaults(fn=messen_spezial.cmd_spezial)
+    p = sub.add_parser("sprint", help="Sprint: Ereignisse je Lauf, (--tempo) Geschwindigkeit je "
+                       "Abschnitt bzw. (--frames) Lage der Gegner je Frame")
+    p.add_argument("prefix", nargs="+")
+    p.add_argument("--frames", action="store_true", help="je Frame ab dem Bezugsdruck Lage der Gegner")
+    p.add_argument("--tempo", action="store_true", help="Geschwindigkeit je Abschnitt gleicher Eingabe")
+    p.add_argument("--nach", type=int, default=0, help="mit --frames: Frames ueber das Aktionsende hinaus")
+    p.set_defaults(fn=messen_spezial.cmd_sprint)
     args = ap.parse_args()
     args.fn(args)
 
