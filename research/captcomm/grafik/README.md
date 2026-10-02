@@ -32,9 +32,9 @@ Alle Bilder lassen sich mit `scripts/grafik/alle.sh` neu erzeugen (etwa
   Spielen ohne Hilfe möglich).
 - **Status der Beschreibungen**: Panoramen, Szenen, Streifen und die
   Dauern darin sind eigene Aufnahmen. Die Texte zu Schauplätzen, Gegnern
-  und Bossen stammen aus dem Grafik-Workflow (je Stage und Figur ein Agent,
-  Gegenprüfung durch einen zweiten Agenten noch ausstehend) und sind so
-  gekennzeichnet.
+  und Bossen stammen aus dem Grafik-Workflow (je Stage und Figur ein
+  Agent). Ein zweiter Agent hat je Stage und Figur Stichproben nachgemessen
+  (129 Angaben, 115 bestätigt); die 14 Korrekturen sind eingearbeitet.
 
 ## Dateien
 
@@ -70,7 +70,11 @@ je Typ und Stage. Bosse (ab 72 Max-LP) haben größere Kacheln.
 
 Konventionen: px = Pixel; Frames bei 59,64 Hz; Kamera-x = linker Bildrand in Welt-x; Tiefe = Tiefenkoordinate des Fußpunkts; LP = Lebenspunkte. „Anzeige-Max“ ist der vom Spiel geführte Max-LP-Wert; bei starken Gegnern steht dort 72, der Überschuss erscheint als zusätzliche Balkenschichten im HUD. Animationen: „8×4“ = 8 Schritte zu je 4 Frames, „5/3/3“ = Einzeldauern in Frames. In allen Analyse-Läufen wurden die Spieler-LP laufend aufgefüllt; Bot-Dauern enthalten zusätzlich die je Stage genannten Eingriffe.
 
-Die Texte je Stage stammen aus dem Grafik-Workflow (Gegenprüfung ausstehend); Bilder, Panoramen und Galerien sind eigene Aufnahmen.
+Die Texte je Stage stammen aus dem Grafik-Workflow. Ein zweiter Agent hat je Stage 6 bis 9 Angaben nachgemessen; die dabei korrigierten Werte sind eingearbeitet und mit „Gegenprüfung“ markiert, alles Übrige ist ungeprüft. Bilder, Panoramen und Galerien sind eigene Aufnahmen.
+
+Zwei Hinweise gelten für alle Stages:
+- Die LP eines Gegners hängen nicht nur vom Typ ab, sondern vom Rang beim Erscheinen (Schwierigkeitswert, steigt mit der Spielzeit; siehe `../notes.md`, „Nachtrag: Schaden der Gegner“). Deshalb nennen die Tabellen mehrere Werte je Typ, und eine Stage, die direkt angewählt wird (niedriger Rang), hat schwächere Gegner als eine, die man durchgespielt erreicht.
+- „Max-LP“ ist der Wert S+0x9A. Bei normalen Gegnern sind das die LP beim Erscheinen. Bei Bossen und dem Roboter steht dort 72 (Skala des Lebensbalkens); ihre tatsächlichen LP stehen im Text.
 
 | Stage | Name | Panorama-Abschnitte | Gegner-Galerien |
 |---|---|---|---|
@@ -107,21 +111,21 @@ Metro City bei Nacht bzw. im Winter, sechs Bereiche von links nach rechts. Die S
 
 | Größe | Wert |
 |---|---|
-| Länge | Kamera-x 256–2176 (1920 px Scroll), sichtbar Welt-x ca. 256–2560; kurzes Überschießen bis 2182 |
+| Länge | Kamera-x 256–2176 (1920 px Scroll), sichtbar Welt-x ca. 256–2560. Kamera-x 2169–2182 in elf Frames ist kein Überschießen, sondern ein waagrechtes Bildschütteln (±2 bis ±7 px), wenn DOLG die Figur wirft (Gegenprüfung) |
 | Vertikales Scrollen | Ja: Kamera-y 256 bis Kamera-x 896, dann linear 1 px pro 4 px Kamera-x (896→256, 1152→192, 1409→128), danach 128 bis zum Ende; Explosionen wackeln +2 px |
 | Kamerasperren/Arenen | Vor dem Boss keine; Scrollen nur nach rechts, Spieler wird bei Bildschirm-x 200 gehalten, linker Rand wirkt als Wand. Bossarena ab Kamera-x 2048: Folgepunkt bei Bildschirm-x 256, Totzone 128–256, Kamera-x 2124–2182; Arena wird nicht erzwungen |
 | Begehbarer Tiefenbereich | Untergrenze überall der Bildrand (Füße y 224). Obergrenze: x 320–ca. 600 Tiefe 341 (Band 75); x ca. 608–1000 Tiefe 357 (Band 91); Hang und Platz x ca. 1088–1600 Tiefe 325 (Platz 187 Einheiten tief); Bankeingang x ca. 1700–1740 Tiefe 261; Bankhalle/Tresor x ≥ 1728 Tiefe 229 (Band 91 px). Fest: Polizeiwagen, Ölfässer, Schaltertresen (diagonale Wand ab Tiefe ca. 186; darunter oder per Sprung passierbar). Gehen x 1,75, Tiefe ca. 0,95 px/Frame |
 | Scroll-Ebenen und Parallaxe | Keine Parallaxe, alle Grafiken 1:1 in x und y. Vor den Figuren: Sandsackstreifen, Polizeiwagen (auch fest), Bank-Säulen. HUD fest |
-| Objekte | Glasscheiben (HP 1): Bankglastür (15 Scherben, wenn der Mech durchbricht), zwei weitere in TV-Schaufenstern (nicht zerbrochen). Ölfass-Paar „DRUMCAN“ (HP-Wert 777, fest, ein Schlag zerbricht beide): Brathähnchen (heilt voll, 20→72) und MISSILE-Werfer. Drei Geldkassetten (von DOLG zerschlagen): 2× MISSILE, 1× LASER. Waffen der DICKs fallen als Pickups. Items liegen ca. 700 Frames, blinken 91, gesamt ca. 840. Fahrzeug: Mech (nach Abwurf des Fahrers „RIDE ON“). Keine Gefahren |
+| Objekte | Glasscheiben (HP 1): Bankglastür (15 Scherben, wenn der Mech durchbricht), zwei weitere in TV-Schaufenstern (nicht zerbrochen). Zwei Ölfässer „DRUMCAN“ (zwei eigene Objekte, HP-Wert 777, fest; jedes gibt einen Gegenstand frei, Gegenstände steigen auf etwa 35 px Höhe): Brathähnchen (heilt voll, 20→72) und ein Raketenwerfer („MISSILE“, Name nicht bestätigt). Drei Geldkassetten (von DOLG zerschlagen): 2× MISSILE, 1× LASER. Waffen der DICKs fallen als Pickups. Items liegen ca. 700 Frames, blinken 91, gesamt ca. 840. Fahrzeug: Mech (nach Abwurf des Fahrers „RIDE ON“). Keine Gefahren |
 | Dauer | Reines Gehen ca. 1097 Frames ≈ 18,4 s. Bot: Kamera-x 2176 bei Frame 4357 (inkl. 1266 Frames am Tresen), Boss besiegt bei 6047, Stagewechsel bei 6587 (110 s) |
 
 ### Gegner
 
 | Gegner (HUD-Name) | Typ S+0x38 | Max-LP | Aussehen | Auftreten | Animationen (Frames × Dauer) |
 |---|---|---|---|---|---|
-| WOOKY | 0x0005A97E | 16 / 24 / 28 | Kahler, gelbhäutiger, gebückter Schläger in olivgrüner Tarnkleidung mit braunem Gürtel und Taschen, hellbraune Stiefel; ca. 67 px hoch, Box mit Schatten ca. 57×73 | 7: einer versteckt am rechten Rand (16), einer hockend vor dem TV-Laden (16), 2 aus Gully x 1152 (24), Mech-Fahrer (24), 2 von links beim Auftritt von DOLG (28) | Gehen 8×4 (1,75 px/Frame); Haltung 3×5; Spott 10/8/8/8/7/1; Gully-Ausstieg 47 (9/9/9/9/5/5/1); Schlagkombo nach Ausholen 21: Jab, Jab, Niederschlag, ca. 58–63 je Schlag (5 LP früh, 8–10 LP später); Griff mit Knie; Tod ca. 86–90 |
+| WOOKY | 0x0005A97E | 16 / 24 / 28 | Kahler, gelbhäutiger, gebückter Schläger in olivgrüner Tarnkleidung mit braunem Gürtel und Taschen, hellbraune Stiefel; ca. 67 px hoch, Box mit Schatten ca. 57×73 | 7: einer versteckt am rechten Rand (16), einer hockend vor dem TV-Laden (16), 2 aus Gully x 1152 (24), Mech-Fahrer (24), 2 von links beim Auftritt von DOLG (28) | Gehen 8×4 (1,75 px/Frame); Haltung 3×5; Spott 10/8/8/8/7/1; Gully-Ausstieg 47 (9/9/9/9/5/5/1); Schläge nach Ausholen 21, ca. 58–63 je Schlag (5 LP früh, 8–10 LP später); umgeworfen wird die Figur nur von bestimmten Schlaganimationen, nicht nach einer festen Trefferzahl (Gegenprüfung); Griff mit Knie; Tod ca. 86–90 |
 | EDDY | 0x00060CA0 | 30 / 34 / 38 | Kahler, gelbhäutiger, kräftiger Schläger im pink-magentafarbenen Trainingsanzug mit dunkellila Besatz; ca. 66 px hoch, Box ca. 49×71 | 5: hockend vor dem TV-Laden (30), 2 aus Gully x 1344 (34), 2 von links als letzte Bosswelle (38) | Schema wie WOOKY: Gehen 8×4; Haltung 3×5; Gully 47; Schlagkombo nach Ausholen 21, ca. 60 je Schlag (5–9 LP); Sprungknie aus ca. 30 px (9 LP); Tod 4×6 |
-| SKIP | 0x00025086 | 34 | Messer-Punk: lange blonde Haare unter rotem Bandana, offene gelbe Jacke, hellblaue gemusterte Strumpfhose, rote Schuhe, Messer; ca. 71 px hoch, Box ca. 62×77 | 1: rennt bei Kamera-x ca. 768 von rechts herein | Rennen 8×4 (2,5 px/Frame); Gehen 6×6; Messerwirbeln 4×4; Messerhagel 25 + 12 Pause (7–9 LP); Ausfallstich 34 (10 LP); Messerwurf 4/3/1/1/32, Messer 4 px/Frame (10 LP); Aufstehen 27 |
+| SKIP | 0x00025086 | 34 | Messer-Punk: lange blonde Haare unter rotem Bandana, offene gelbe Jacke, hellblaue gemusterte Strumpfhose, rote Schuhe, Messer; ca. 71 px hoch, Box ca. 62×77 | 1: rennt bei Kamera-x ca. 768 von rechts herein | Rennen 8×4 (2,5 px/Frame); Gehen 8×6 (ca. 1,5 px/Frame; laut Gegenprüfung, nicht 6×6); Messerwirbeln 4×4; Messerhagel 25 + 12 Pause (7–9 LP); Ausfallstich 34 (10 LP); Messerwurf 4/3/1/1/32, Messer 4 px/Frame (10 LP); Aufstehen 27 |
 | DICK | 0x00064E7A | 23 / 24 | Schütze in hellblauer Arbeitskleidung, blaue Mütze, blond, gelbe Handschuhe und Stiefel; #1 silberne Pistole, #2 grüner Raketenwerfer; ca. 68 px hoch, Box ca. 65×74 | 2 in der Bossarena von links: #1 nach dem Tod eines Arena-WOOKY, #2 mit der letzten EDDY-Welle | Gehen 8×4 (ca. 1,6 px/Frame); Zielen 60–120; Schuss 5/1/10/1 (17), Salven zu 3 Kugeln, 8 px/Frame, 6 LP; Rakete ca. 5 px/Frame, explodiert; hält Abstand 100–140 px; Tod ca. 90; Waffe wird Pickup |
 | MECH (Ride Armor) | 0x0009ADEA | 85 (Anzeige-Max 72) | Olivgrüner zweibeiniger Walker mit orangebraunen Füßen und schweren Armen, WOOKY im offenen Cockpit; ca. 90×105 px | 1: bricht bei Kamera-x 1344 durch die Bank-Glastür | Einbruch 7 + 6×4; Gehen 6×7 (ca. 2 px/Frame); Armschlag ca. 24, Reichweite 87–88 px (12 LP); Griff (15 LP); Zusammensacken 10/10/10; Explosion 40 + 30 mit 20 Trümmern |
 
@@ -157,7 +161,7 @@ Panorama:
 
 ### Schauplatz
 
-„Capcom The Dinosaurs Museum“ in zwei Abschnitten, verbunden durch einen geskripteten Sturz durch ein Bodenloch. Abschnitt A, Museumshalle (Kamera-x 256–1152): dunkle anthrazitgraue Wand mit oliv-khakifarbenem Moos-/Grasstreifen am Fuß, hellgrauer gesprenkelter Terrazzoboden mit diagonalen blau-weißen Musterbändern, ovale Messingtafel „CAPCOM / THE DINOSAURS / MUSEUM“, ganz links eine rote Samtkordel an Messingpfosten. Zwei goldbraune verzierte Marmorsäulen (ca. 46 px breit, volle Bildhöhe, Welt-x ca. 268–314 und 434–479) stehen vor den Figuren. Dann folgt eine lange erhöhte Ausstellungsplattform (grauer Steinrand, Gras, Felsen) mit einem lebensgroßen T-Rex-/Allosaurus-Modell hinter Glas, einem kleinen Theropodenskelett, einem riesigen Stegosaurus-artigen Skelett, blau-lila Trilobiten/Ammoniten, roten Seelilien und einem riesigen grauen Urfischschädel. Die Vorderkante der Plattform verläuft diagonal (x ca. 767–815). Die Halle endet an einer hellbeigen Wand mit einem dunklen rechteckigen Bodenloch vorn rechts. Stimmung: kühles Grau und Blau, warme Exponate, ruhig.
+„Capcom The Dinosaurs Museum“ in zwei Abschnitten, verbunden durch einen geskripteten Sturz durch ein Bodenloch. Abschnitt A, Museumshalle (Kamera-x 256–1152): dunkle anthrazitgraue Wand mit oliv-khakifarbenem Moos-/Grasstreifen am Fuß, hellgrauer gesprenkelter Terrazzoboden mit diagonalen blau-weißen Musterbändern, ovale Messingtafel „CAPCOM / THE DINOSAURS / MUSEUM“, ganz links eine rote Samtkordel an Messingpfosten. Zwei goldbraune verzierte Marmorsäulen, je ca. 46 px breit: Die zweite (Welt-x ca. 432–479, volle Bildhöhe) steht vor den Figuren; die erste (Welt-x ca. 272–317) steht hinten an der Wand, endet bei Bild-y ca. 138, und die Figuren laufen vor ihr (Gegenprüfung). Dann folgt eine lange erhöhte Ausstellungsplattform (grauer Steinrand, Gras, Felsen) mit einem lebensgroßen T-Rex-/Allosaurus-Modell hinter Glas, einem kleinen Theropodenskelett, einem riesigen Stegosaurus-artigen Skelett, blau-lila Trilobiten/Ammoniten, roten Seelilien und einem riesigen grauen Urfischschädel. Die Vorderkante der Plattform verläuft diagonal (x ca. 767–815). Die Halle endet an einer hellbeigen Wand mit einem dunklen rechteckigen Bodenloch vorn rechts. Stimmung: kühles Grau und Blau, warme Exponate, ruhig.
 
 Nach der letzten Museumswelle springt Captain automatisch ins Loch; schwarzes Bild mit kleinem weißem Stern, dann öffnet eine Stern-Irisblende. Abschnitt B, unterirdische Höhle mit prähistorischem Diorama (Kamera-x 2048–2688): dunkelbraun-mauve, Stalaktiten und Tropfsteinsäulen, schwarze Öffnungen; Höhlenmenschen auf Felsen und eine stehende Frau, ein großer brauner felliger Mammut-Kadaver mit Brustkorb, Holzstämme, Knochen, ein flackerndes Lagerfeuer und ein hölzernes „EXIT“-Pfeilschild. Eine hohe lila Tropfsteinsäule (Welt-x ca. 2223) steht vor den Figuren, ein lila Stalagmitensaum läuft am unteren Rand. Im Bossraum stehen ein Holzfass mit „CAPCOM“ und rechts eine verzierte vergoldete/bronzene Doppeltür (Welt-x ca. 3000) in lila Fels. Abschluss: „STAGE 2 CLEAR / CAPTAIN DEFEATED THE SHTROM.Jr / CAPTAIN EARNED 3000 PTS“, Captain geht automatisch zur Tür.
 
@@ -169,7 +173,7 @@ Nach der letzten Museumswelle springt Captain automatisch ins Loch; schwarzes Bi
 | Vertikales Scrollen | Keines (Kamera-y 0); 4-px-Wackeln nach dem Bosstod |
 | Kamerasperren/Arenen | Kamera-x 897: Museumswelle (2 CAROL, BRENDA, 3 SONIE), danach automatische Lochsequenz (202–278 Frames) und Sturz in die Höhle, Kontrolle 56 Frames nach dem Auftauchen. Kamera-x 2432: Höhlenwelle 2 (2 MARBIN, dann ORGANO + 2 SAMSON). Bossarena Kamera-x 2560–2688 (Welt-x 2584–2991). Erste Museumswelle (2 SKIP) und erste Höhlenwelle ohne harte Sperre |
 | Begehbarer Tiefenbereich | Museum x ≤ 767: 10–101 (Füße y 224–133); x 767–815: Obergrenze folgt der Plattformdiagonale (Tiefe = 868 − x); x 815–1257: 10–53. Höhle und Arena: 10–85 (Füße y 224–149) |
-| Scroll-Ebenen und Parallaxe | Keine Parallaxe, alle Ebenen 1:1. Vor den Figuren: die zwei Eingangssäulen und die lila Höhlensäule. HUD fest |
+| Scroll-Ebenen und Parallaxe | Keine Parallaxe, alle Ebenen 1:1. Vor den Figuren: die zweite Eingangssäule und die lila Höhlensäule. HUD fest |
 | Objekte | Glasscheibe der T-Rex-Vitrine (HP 1): zerbricht, wenn ein Gegner hineingeschleudert wird (22 Splitter, Exponat bleibt). Fass (HP-Wert 777) neben der Bosstür: Braten auf Teller. Ein Trupp-MARBIN ließ eine goldene Schale fallen (Essen). Keine Waffen-Pickups, Fahrzeuge oder Bodengefahren; das Loch dient nur dem Skriptsturz |
 | Dauer | Reines Gehen ca. 1100 Frames ≈ 18,5 s. Bot 8627 Frames (144,7 s), Walker-Lauf 8124 Frames (136,2 s), beide mit LP-Eingriffen. Vom Todesschlag bis Stage 3: 592 Frames |
 
@@ -279,7 +283,7 @@ Panorama:
 
 ### Schauplatz
 
-Vier getrennte Abschnitte, verbunden durch Skript-Ausgänge und eine Stern-Irisblende (schließt in ca. 35 Frames, schwarz, öffnet wieder). A) Vor dem Zirkus bei Tageslicht in sattem Grün, Braun und Karmin: links eine rotbraune Ziegelsäule, dahinter Rasen mit Hecke, ein Holzwegweiser „CIRCUS CIRCUS CIRCUS“ in gelben Buchstaben, ein rot-hölzerner Zirkuswagen mit „Ice Cream“-Schild und ein schlafender grauer Hund; brauner Erdweg mit Steinkante, sechs Holzkisten in zwei Reihen, rechts gelb-karminrote Zeltvorhänge. Eine Clown-Statue auf Sockel (gelber Punkteanzug, grüner Hut) am Zelteingang steht vor den Figuren. B) Im Zirkus: cremebeige Wände mit zwei großen Bögen, dahinter eine magenta-lila beleuchtete Bühne mit Clowns in Rot (einer auf einem Topf, ein Stelzenclown im rot gepunkteten Anzug); blaugraue Rautenfliesen. Rechts führt ein diagonaler Steg zu einem Sims mit goldener Kordel über einer schwarzen Grube, in die der Spieler automatisch springt.
+Vier getrennte Abschnitte, verbunden durch Skript-Ausgänge und eine Stern-Irisblende (Bild steht 3–5 Frames, Stern schließt in 7 Stufen zu 4 Frames = 28 Frames, 78 Frames schwarz in Farbe (17,17,17), öffnet in 28 Frames; Gegenprüfung). A) Vor dem Zirkus bei Tageslicht in sattem Grün, Braun und Karmin: links eine rotbraune Ziegelsäule, dahinter Rasen mit Hecke, ein Holzwegweiser „CIRCUS CIRCUS CIRCUS“ in gelben Buchstaben, ein rot-hölzerner Zirkuswagen mit „Ice Cream“-Schild und ein schlafender grauer Hund; brauner Erdweg mit Steinkante, sechs Holzkisten in zwei Reihen, rechts gelb-karminrote Zeltvorhänge. Eine Clown-Statue auf Sockel (gelber Punkteanzug, grüner Hut) am Zelteingang steht vor den Figuren. B) Im Zirkus: cremebeige Wände mit zwei großen Bögen, dahinter eine magenta-lila beleuchtete Bühne mit Clowns in Rot (einer auf einem Topf, ein Stelzenclown im rot gepunkteten Anzug); blaugraue Rautenfliesen. Rechts führt ein diagonaler Steg zu einem Sims mit goldener Kordel über einer schwarzen Grube, in die der Spieler automatisch springt.
 
 C) Manege, sehr bunt: limettengrüner Stern auf lila Ringboden mit dunklem Oval in der Mitte, Ringwand mit rot-grünem Zickzack, darüber Ränge voller identischer sitzender WOOKY-Soldaten (statisches Publikum); roter Teppich links, rechts eine orange „DANGER“-Tür mit Clownsgesicht in limettengrünen Wänden. D) Kaltes Cyan-/Türkis-Labor vor dunkel lila Rückwand: Reihen hoher Glasröhren mit leuchtend gelbgrünen embryoartigen Kreaturen, Rohre und Maschinen, in der Mitte eine große rosa beleuchtete Brutkapsel mit runder Haube (der Boss); rechts eine Plattform aus cyanfarbenen Glasblöcken vor einer Konsolenwand mit Skalen und LED-Balken, darauf der Wissenschaftler. Abschluss: „STAGE 4 CLEAR / CAPTAIN DEFEATED THE MONSTER / CAPTAIN EARNED 5000 PTS“.
 
@@ -345,7 +349,7 @@ Abschnitt 2, unterirdischer Kanal, düster und kränklich grün: olivgrünes Sch
 | Länge | Abschnitt 1 Kamera-x 0–14945 (Welt 0–15329). Abschnitt 2 ab 15360; Ende hängt vom Bosskampf ab: Bot-Lauf bis 23944 (gesamt ca. 23500 px), Leerlauf bis 32134, ohne Boss kein Ende (über 39800) |
 | Vertikales Scrollen | Keines (Kamera-y 0) |
 | Kamerasperren/Arenen | Keine; Autoscroll beschleunigt auf 6 px/Frame (ab ca. Frame 25) und hält das Tempo, Stopp bei 14945 nach 42,0 s. Bosskampf als bewegte Arena unter Zeitlimit; danach noch ca. 2100–3100 px bis zum Ausgang |
-| Begehbarer Tiefenbereich | Auf dem Board 10–117 (Füße y 117–224), Bildschirm-x 24–288. Tiefe exakt 2/Frame; rechts +1,75, links −4 px/Frame relativ zum Bild; Sprung 40 Frames, Scheitel 52 |
+| Begehbarer Tiefenbereich | Auf dem Board Tiefe 10–117 im Hafen (Kamera-x < 2063) und an den Plakatreihen, auf offenem Wasser 10–149 (Gegenprüfung); Bildschirm-x 24–288. Tiefe exakt 2/Frame (diagonal 1,5); rechts +1,75, links −4 px/Frame relativ zum Bild; Sprung 40 Frames, Scheitel 52 |
 | Scroll-Ebenen und Parallaxe | Abschnitt 1: Hauptebene 1:1 (Wasser, Kai, Stege, Yachten, Turm, Tafeln, Bogen), ferne Ebene exakt 1/8 (Himmel, Skyline). Abschnitt 2: Hauptebene 1:1 (Kanal, grüne Tunnelwand), Maschinenhalle exakt 1/4 (wiederholt sich alle 3072 Kamera-px). Kein Zeilenscroll. Vor den Figuren nur der rechte Pfeiler des Tunnelbogens |
 | Objekte | 10 „KIKI 98 FM“-Tafeln (Kachelgrafik, ca. 150×150 px, wirken als diagonale 60×60-Barriere): Aufprall 8 LP mit Niederschlag, 122 Frames bis zur Kontrolle, Tafel bricht zum Stumpf, +500 Punkte. Pickups auf treibenden pinken Brettern (ca. 140 Frames im Bild): Sturmgewehr, Raketenwerfer, Riesen-Shuriken, Essen (Reisschale mit Garnelen), kleine Waffe. Fahrzeuge: Board des Helden, pinke Gegner-Boards, Dr. T.W.s Rennboot. Keine Kisten oder Fässer |
 | Dauer | Bot 4940 Frames (82,8 s), Boss besiegt bei Frame 3953; Endsequenz Abschnitt 1: 420 Frames (Bot) bzw. 243 (Leerlauf). Keine Gegner-Eingriffe |
@@ -515,7 +519,7 @@ Panorama:
 
 Drei Bereiche. A) Raumschiff-Korridor (Kamera-x 256 bis ca. 1250, Welt-x 256–1540): warme goldene, Giger-artige biomechanische Wände mit organischen Goldskulpturen, Rohren und rippen- oder schädelartigen Formen, gerahmt von polierten Goldsäulen. Dunkle Türnischen liegen hinter dem Startpunkt (Welt ca. 360–470) und bei ca. 1300–1420 (dort erscheint das GO-Schild). Von ca. 560 bis 1130 läuft hinter einem Goldgeländer ein langes Fenster mit schwarzem Weltraum, einer riesigen goldenen Spiralgalaxie, blau-weißen Sternen und treibenden braunen Asteroiden; eine verzierte Goldstrebe kreuzt es bei ca. 770–830. Boden: türkises Riffelgitter hinten, dunkelblaue Paneele mit rot-blauen Leiterbahnen vorn; zwischen ca. 590 und 1000 Glasbodenplatten, durch die Weltraum und Asteroiden zu sehen sind. Stimmung: kalter türkiser Boden gegen warme Goldwände und schwarzen Weltraum. Ein gold-türkiser Schottrahmen (ca. 1490–1540) führt weiter.
 
-B) Industriehalle (Kamera-x ca. 1250–1920, Welt 1540–2304): sepia-kupfernes Gerüst mit Rohren, Laufstegtreppen, Plattformen und beleuchteten cremefarbenen Fenstern, hinten ein Bronzegeländer; ein Stapel silberner genieteter Metallkisten (Welt-x 1632). Die Halle endet an einem riesigen türkisen genieteten Schutztor, das nach dem letzten Gegner mit gezacktem Loch aufgerissen wird; der Held geht automatisch hinein, eine Stern-Iris schließt (ca. 28 Frames), bleibt ca. 80 Frames schwarz und öffnet (ca. 28 Frames). C) Liftschacht (Kamera-x 2816–3200, Welt 2816–3585), ganz in warmem Sepia: genietete Holzplankenplattform mit dunklem Balken am unteren Rand, Holzgeländer hinten, links ein Treppengeländer und eine Wandplatte mit Fächeremblem. Hinter dem Geländer gleitet das Kupfergerüst des Schachts ca. 16 s nach oben, die Plattform sinkt wie ein Aufzug und stoppt mit kleinem Ruck. Das rechte Ende ist die Bossarena. Nichts läuft vor den Figuren vorbei; darüber liegen nur HUD, GO-Schild, 1P-Pfeil, Treffereffekte, Feuerbälle, Rauch, Flammen und brennende Figuren. Abschluss: „CAPTAIN DEFEATED THE DOPPEL“, 8000 Punkte.
+B) Industriehalle (Kamera-x ca. 1250–1920, Welt 1540–2304): sepia-kupfernes Gerüst mit Rohren, Laufstegtreppen, Plattformen und beleuchteten cremefarbenen Fenstern, hinten ein Bronzegeländer; ein Stapel silberner genieteter Metallkisten (Welt-x 1632). Die Halle endet an einem riesigen türkisen genieteten Schutztor, das nach dem letzten Gegner mit gezacktem Loch aufgerissen wird; der Held geht automatisch hinein, eine Stern-Iris schließt in 25 Frames (7 Stufen zu 4 Frames), bleibt ca. 80 Frames schwarz und öffnet in 25 Frames (Gegenprüfung). C) Liftschacht (Kamera-x 2816–3200, Welt 2816–3585), ganz in warmem Sepia: genietete Holzplankenplattform mit dunklem Balken am unteren Rand, Holzgeländer hinten, links ein Treppengeländer und eine Wandplatte mit Fächeremblem. Hinter dem Geländer gleitet das Kupfergerüst des Schachts ca. 16 s nach oben, die Plattform sinkt wie ein Aufzug und stoppt mit kleinem Ruck. Das rechte Ende ist die Bossarena. Nichts läuft vor den Figuren vorbei; darüber liegen nur HUD, GO-Schild, 1P-Pfeil, Treffereffekte, Feuerbälle, Rauch, Flammen und brennende Figuren. Abschluss: „CAPTAIN DEFEATED THE DOPPEL“, 8000 Punkte.
 
 ### Kennwerte
 
@@ -587,9 +591,10 @@ Dauern stehen auch in `figuren/ablaeufe.csv`.
 
 Die Schrittdauern in den Streifen sind eigene Messungen. Die Beschreibungen
 und Zahlen in den Absätzen je Figur (Schaden, Haltepose, Würfe,
-Spezialangriff) stammen aus der Zugangs-Analyse des Grafik-Workflows; die
-Gegenprüfung dazu steht noch aus. Für Captain Commando sind die Werte in
-`../notes.md` gesichert.
+Spezialangriff) stammen aus den Analysen des Grafik-Workflows; ein zweiter
+Agent hat je Figur Stichproben nachgemessen und nur Einzelheiten korrigiert
+(Spritegrößen um 1 px, Frame der LP-Buchung beim Spezialangriff). Für
+Captain Commando sind die Werte in `../notes.md` gesichert.
 
 Aufgenommen wurde jede Bewegung in einem eigenen Lauf (`scripts/grafik/helden.sh`):
 
@@ -692,7 +697,7 @@ Weitere Streifen: `baby_stand`, `baby_gehen`, `baby_sprint`, `baby_sprung`,
 `baby_sprungtritt_richtung`, `baby_sprungtritt_hoch`, `baby_sprungtritt_unten`,
 `baby_sprintangriff`, `baby_griff_knie`, `baby_wurf`, `baby_getroffen`.
 
-### Gemeinsame Bewegungen (Workflow, Gegenprüfung ausstehend)
+### Gemeinsame Bewegungen (Workflow)
 
 | Bewegung | Werte |
 |---|---|
@@ -707,7 +712,7 @@ Weitere Streifen: `baby_stand`, `baby_gehen`, `baby_sprint`, `baby_sprung`,
 
 Pose-Galerien je Stage und Gegnertyp (Typkennung S+0x38). Derselbe Typ kommt in mehreren Stages vor, oft mit anderen Farben (Palettentausch) und Max-LP; die Max-LP später erscheinender Gegner hängen vom Rang ab. „gekürzt“: mehr als 40 Posen, nur die ersten 40 nach Animationszeiger. Namen aus den Stage-Analysen.
 
-| Datei | Typ | Name | Max-LP | Posen |
+| Datei | Typ | Name | Max-LP (S+0x9A; 72 bei Bossen = Balkenskala) | Posen |
 |---|---|---|---|---|
 | [`stage1_025086.png`](gegner/stage1_025086.png) | 0x25086 | SKIP | 34 | 29 |
 | [`stage1_046da4.png`](gegner/stage1_046da4.png) | 0x46da4 | DOLG (Boss) | 72 | 38 |
