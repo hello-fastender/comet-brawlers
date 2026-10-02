@@ -1,0 +1,283 @@
+# Einzelschlag: je aktivem Frame (P+2..P+5) Abstand zum naechsten Gegner (ganzzahlige
+# Positionen am Frame-Ende, dx = Gegner - Figur, dz = Tiefe Gegner - Figur) und Treffer.
+# anlauf/anlauf_b: Gegner 16 LP laeuft heran; anlauf_c: Gegner 30 LP laeuft heran;
+# tiefe_v*: ab kontakt (16 LP) hoch/runter; tiefeA_v*: ab anlauf hoch; tiefeB_v*: ab tiefe_b (30 LP)
+# Zusammenfassung
+x: |dz| <= 11: groesstes dx mit Treffer 85, kleinstes dx ohne Treffer 86
+|dz| =  0 (dx <= 85): 18 aktive Frames mit Treffer, 0 ohne
+|dz| =  2 (dx <= 85): 2 aktive Frames mit Treffer, 0 ohne
+|dz| =  4 (dx <= 85): 2 aktive Frames mit Treffer, 0 ohne
+|dz| =  5 (dx <= 85): 1 aktive Frames mit Treffer, 0 ohne
+|dz| =  6 (dx <= 85): 12 aktive Frames mit Treffer, 0 ohne
+|dz| =  7 (dx <= 85): 10 aktive Frames mit Treffer, 0 ohne
+|dz| =  8 (dx <= 85): 9 aktive Frames mit Treffer, 0 ohne
+|dz| =  9 (dx <= 85): 5 aktive Frames mit Treffer, 0 ohne
+|dz| = 10 (dx <= 85): 12 aktive Frames mit Treffer, 0 ohne
+|dz| = 11 (dx <= 85): 6 aktive Frames mit Treffer, 0 ohne
+|dz| = 12 (dx <= 85): 7 aktive Frames mit Treffer, 1 ohne
+|dz| = 13 (dx <= 85): 0 aktive Frames mit Treffer, 10 ohne
+|dz| = 14 (dx <= 85): 0 aktive Frames mit Treffer, 9 ohne
+|dz| = 15 (dx <= 85): 0 aktive Frames mit Treffer, 8 ohne
+|dz| = 16 (dx <= 85): 0 aktive Frames mit Treffer, 8 ohne
+|dz| = 18 (dx <= 85): 0 aktive Frames mit Treffer, 4 ohne
+|dz| = 20 (dx <= 85): 0 aktive Frames mit Treffer, 4 ohne
+|dz| = 22 (dx <= 85): 0 aktive Frames mit Treffer, 4 ohne
+|dz| = 24 (dx <= 85): 0 aktive Frames mit Treffer, 4 ohne
+|dz| = 26 (dx <= 85): 0 aktive Frames mit Treffer, 4 ohne
+Treffer nach Frame relativ zur Eingabe: {'P+2': 72, 'P+3': 5, 'P+4': 4, 'P+5': 3}
+# Einzelwerte
+lauf,eingabe,frame,frame_rel,dx,dz,gegner_slot,treffer
+anlaufb_p2,2,4,P+2,106,4,18,nein
+anlaufb_p2,2,5,P+3,105,4,18,nein
+anlaufb_p2,2,6,P+4,103,5,18,nein
+anlaufb_p2,2,7,P+5,101,5,18,nein
+anlaufb_p3,3,5,P+2,105,4,18,nein
+anlaufb_p3,3,6,P+3,103,5,18,nein
+anlaufb_p3,3,7,P+4,101,5,18,nein
+anlaufb_p3,3,8,P+5,99,5,18,nein
+anlaufb_p4,4,6,P+2,103,5,18,nein
+anlaufb_p4,4,7,P+3,101,5,18,nein
+anlaufb_p4,4,8,P+4,99,5,18,nein
+anlaufb_p4,4,9,P+5,98,5,18,nein
+anlaufb_p5,5,7,P+2,101,5,18,nein
+anlaufb_p5,5,8,P+3,99,5,18,nein
+anlaufb_p5,5,9,P+4,98,5,18,nein
+anlaufb_p5,5,10,P+5,96,5,18,nein
+anlaufb_p6,6,8,P+2,99,5,18,nein
+anlaufb_p6,6,9,P+3,98,5,18,nein
+anlaufb_p6,6,10,P+4,96,5,18,nein
+anlaufb_p6,6,11,P+5,94,5,18,nein
+anlaufb_p7,7,9,P+2,98,5,18,nein
+anlaufb_p7,7,10,P+3,96,5,18,nein
+anlaufb_p7,7,11,P+4,94,5,18,nein
+anlaufb_p7,7,12,P+5,93,6,18,nein
+anlaufb_p8,8,10,P+2,96,5,18,nein
+anlaufb_p8,8,11,P+3,94,5,18,nein
+anlaufb_p8,8,12,P+4,93,6,18,nein
+anlaufb_p8,8,13,P+5,91,6,18,nein
+anlaufb_p9,9,11,P+2,94,5,18,nein
+anlaufb_p9,9,12,P+3,93,6,18,nein
+anlaufb_p9,9,13,P+4,91,6,18,nein
+anlaufb_p9,9,14,P+5,89,6,18,nein
+anlaufb_p10,10,12,P+2,93,6,18,nein
+anlaufb_p10,10,13,P+3,91,6,18,nein
+anlaufb_p10,10,14,P+4,89,6,18,nein
+anlaufb_p10,10,15,P+5,87,6,18,nein
+anlaufb_p11,11,13,P+2,91,6,18,nein
+anlaufb_p11,11,14,P+3,89,6,18,nein
+anlaufb_p11,11,15,P+4,87,6,18,nein
+anlaufb_p11,11,16,P+5,86,6,18,nein
+anlaufb_p12,12,14,P+2,89,6,18,nein
+anlaufb_p12,12,15,P+3,87,6,18,nein
+anlaufb_p12,12,16,P+4,86,6,18,nein
+anlaufb_p12,12,17,P+5,84,6,18,ja
+anlaufb_p13,13,15,P+2,87,6,18,nein
+anlaufb_p13,13,16,P+3,86,6,18,nein
+anlaufb_p13,13,17,P+4,84,6,18,ja
+anlaufb_p14,14,16,P+2,86,6,18,nein
+anlaufb_p14,14,17,P+3,84,6,18,ja
+anlaufb_p15,15,17,P+2,84,6,18,ja
+anlaufb_p16,16,18,P+2,82,7,18,ja
+anlaufb_p17,17,19,P+2,81,7,18,ja
+anlaufb_p18,18,20,P+2,79,7,18,ja
+anlaufb_p19,19,21,P+2,77,7,18,ja
+anlaufb_p20,20,22,P+2,75,7,18,ja
+anlaufb_p21,21,23,P+2,74,7,18,ja
+anlaufb_p22,22,24,P+2,72,8,18,ja
+anlaufb_p23,23,25,P+2,70,8,18,ja
+anlaufb_p24,24,26,P+2,69,8,18,ja
+anlaufc_p2,2,4,P+2,105,0,17,nein
+anlaufc_p2,2,5,P+3,103,0,17,nein
+anlaufc_p2,2,6,P+4,101,0,17,nein
+anlaufc_p2,2,7,P+5,99,0,17,nein
+anlaufc_p3,3,5,P+2,103,0,17,nein
+anlaufc_p3,3,6,P+3,101,0,17,nein
+anlaufc_p3,3,7,P+4,99,0,17,nein
+anlaufc_p3,3,8,P+5,98,0,17,nein
+anlaufc_p4,4,6,P+2,101,0,17,nein
+anlaufc_p4,4,7,P+3,99,0,17,nein
+anlaufc_p4,4,8,P+4,98,0,17,nein
+anlaufc_p4,4,9,P+5,96,0,17,nein
+anlaufc_p5,5,7,P+2,99,0,17,nein
+anlaufc_p5,5,8,P+3,98,0,17,nein
+anlaufc_p5,5,9,P+4,96,0,17,nein
+anlaufc_p5,5,10,P+5,94,0,17,nein
+anlaufc_p6,6,8,P+2,98,0,17,nein
+anlaufc_p6,6,9,P+3,96,0,17,nein
+anlaufc_p6,6,10,P+4,94,0,17,nein
+anlaufc_p6,6,11,P+5,92,0,17,nein
+anlaufc_p7,7,9,P+2,96,0,17,nein
+anlaufc_p7,7,10,P+3,94,0,17,nein
+anlaufc_p7,7,11,P+4,92,0,17,nein
+anlaufc_p7,7,12,P+5,91,0,17,nein
+anlaufc_p8,8,10,P+2,94,0,17,nein
+anlaufc_p8,8,11,P+3,92,0,17,nein
+anlaufc_p8,8,12,P+4,91,0,17,nein
+anlaufc_p8,8,13,P+5,89,0,17,nein
+anlaufc_p9,9,11,P+2,92,0,17,nein
+anlaufc_p9,9,12,P+3,91,0,17,nein
+anlaufc_p9,9,13,P+4,89,0,17,nein
+anlaufc_p9,9,14,P+5,87,0,17,nein
+anlaufc_p10,10,12,P+2,91,0,17,nein
+anlaufc_p10,10,13,P+3,89,0,17,nein
+anlaufc_p10,10,14,P+4,87,0,17,nein
+anlaufc_p10,10,15,P+5,85,0,17,ja
+anlaufc_p11,11,13,P+2,89,0,17,nein
+anlaufc_p11,11,14,P+3,87,0,17,nein
+anlaufc_p11,11,15,P+4,85,0,17,ja
+anlaufc_p12,12,14,P+2,87,0,17,nein
+anlaufc_p12,12,15,P+3,85,0,17,ja
+anlaufc_p13,13,15,P+2,85,0,17,ja
+anlaufc_p14,14,16,P+2,84,0,17,ja
+anlaufc_p15,15,17,P+2,82,0,17,ja
+anlaufc_p16,16,18,P+2,80,0,17,ja
+anlaufc_p17,17,19,P+2,78,0,17,ja
+anlaufc_p18,18,20,P+2,77,0,17,ja
+anlaufc_p19,19,21,P+2,75,0,17,ja
+anlaufc_p20,20,22,P+2,73,0,17,ja
+anlaufc_p21,21,23,P+2,71,0,17,ja
+anlaufc_p22,22,24,P+2,70,0,17,ja
+anlaufc_p23,23,25,P+2,68,0,17,ja
+anlaufc_p24,24,26,P+2,66,0,17,ja
+anlaufc_p25,25,27,P+2,64,0,17,ja
+anlaufc_p26,26,28,P+2,63,0,17,ja
+anlauf_p2,2,4,P+2,106,4,18,nein
+anlauf_p2,2,5,P+3,104,4,18,nein
+anlauf_p2,2,6,P+4,102,4,18,nein
+anlauf_p2,2,7,P+5,101,4,18,nein
+anlauf_p4,4,6,P+2,102,4,18,nein
+anlauf_p4,4,7,P+3,101,4,18,nein
+anlauf_p4,4,8,P+4,99,4,18,nein
+anlauf_p4,4,9,P+5,97,5,18,nein
+anlauf_p6,6,8,P+2,99,4,18,nein
+anlauf_p6,6,9,P+3,97,5,18,nein
+anlauf_p6,6,10,P+4,96,5,18,nein
+anlauf_p6,6,11,P+5,94,5,18,nein
+anlauf_p8,8,10,P+2,96,5,18,nein
+anlauf_p8,8,11,P+3,94,5,18,nein
+anlauf_p8,8,12,P+4,92,5,18,nein
+anlauf_p8,8,13,P+5,90,5,18,nein
+anlauf_p9,9,11,P+2,94,5,18,nein
+anlauf_p9,9,12,P+3,92,5,18,nein
+anlauf_p9,9,13,P+4,90,5,18,nein
+anlauf_p9,9,14,P+5,89,5,18,nein
+anlauf_p10,10,12,P+2,92,5,18,nein
+anlauf_p10,10,13,P+3,90,5,18,nein
+anlauf_p10,10,14,P+4,89,5,18,nein
+anlauf_p10,10,15,P+5,87,6,18,nein
+anlauf_p11,11,13,P+2,90,5,18,nein
+anlauf_p11,11,14,P+3,89,5,18,nein
+anlauf_p11,11,15,P+4,87,6,18,nein
+anlauf_p11,11,16,P+5,85,6,18,ja
+anlauf_p12,12,14,P+2,89,5,18,nein
+anlauf_p12,12,15,P+3,87,6,18,nein
+anlauf_p12,12,16,P+4,85,6,18,ja
+anlauf_p13,13,15,P+2,87,6,18,nein
+anlauf_p13,13,16,P+3,85,6,18,ja
+anlauf_p14,14,16,P+2,85,6,18,ja
+anlauf_p16,16,18,P+2,82,6,18,ja
+anlauf_p18,18,20,P+2,78,6,18,ja
+anlauf_p20,20,22,P+2,75,7,18,ja
+anlauf_p22,22,24,P+2,72,7,18,ja
+anlauf_p24,24,26,P+2,68,7,18,ja
+anlauf_p26,26,28,P+2,65,8,18,ja
+anlauf_p28,28,30,P+2,61,8,18,ja
+anlauf_p30,30,32,P+2,58,8,18,ja
+anlauf_p32,32,34,P+2,54,9,18,ja
+anlauf_p34,34,36,P+2,51,9,18,ja
+anlauf_p36,36,38,P+2,48,9,18,ja
+anlauf_p38,38,40,P+2,46,10,18,ja
+anlauf_p40,40,42,P+2,46,10,18,ja
+tiefeA_v16,18,20,P+2,78,-10,18,ja
+tiefeA_v18,20,22,P+2,75,-11,18,ja
+tiefeA_v20,22,24,P+2,72,-12,18,ja
+tiefeA_v21,23,25,P+2,70,-13,18,nein
+tiefeA_v21,23,26,P+3,69,-13,18,nein
+tiefeA_v21,23,27,P+4,67,-12,18,ja
+tiefeA_v22,24,26,P+2,69,-13,18,nein
+tiefeA_v22,24,27,P+3,67,-12,18,ja
+tiefeA_v23,25,27,P+2,67,-12,18,ja
+tiefeA_v24,26,28,P+2,65,-12,18,ja
+tiefeA_v26,28,30,P+2,62,-11,18,ja
+tiefeA_v28,30,32,P+2,59,-11,18,ja
+tiefeA_v30,32,34,P+2,56,-10,18,ja
+tiefeA_v32,34,36,P+2,53,-9,18,ja
+tiefeB_v0,2,4,P+2,62,16,17,nein
+tiefeB_v0,2,5,P+3,62,16,17,nein
+tiefeB_v0,2,6,P+4,62,16,17,nein
+tiefeB_v0,2,7,P+5,62,16,17,nein
+tiefeB_v1,3,5,P+2,62,15,17,nein
+tiefeB_v1,3,6,P+3,62,15,17,nein
+tiefeB_v1,3,7,P+4,62,15,17,nein
+tiefeB_v1,3,8,P+5,62,15,17,nein
+tiefeB_v2,4,6,P+2,62,14,17,nein
+tiefeB_v2,4,7,P+3,62,14,17,nein
+tiefeB_v2,4,8,P+4,62,14,17,nein
+tiefeB_v2,4,9,P+5,62,14,17,nein
+tiefeB_v3,5,7,P+2,62,13,17,nein
+tiefeB_v3,5,8,P+3,62,13,17,nein
+tiefeB_v3,5,9,P+4,62,13,17,nein
+tiefeB_v3,5,10,P+5,62,13,17,nein
+tiefeB_v4,6,8,P+2,62,12,17,nein
+tiefeB_v4,6,9,P+3,62,12,17,ja
+tiefeB_v5,7,9,P+2,62,11,17,ja
+tiefeB_v6,8,10,P+2,62,10,17,ja
+tiefeB_v8,10,12,P+2,62,8,17,ja
+tiefe_v0,2,4,P+2,46,10,18,ja
+tiefe_v1,3,5,P+2,46,9,18,ja
+tiefe_v2,4,6,P+2,46,8,18,ja
+tiefe_v3,5,7,P+2,46,7,18,ja
+tiefe_v4,6,8,P+2,46,6,18,ja
+tiefe_v5,7,9,P+2,46,5,18,ja
+tiefe_v6,8,10,P+2,46,4,18,ja
+tiefe_v8,10,12,P+2,46,2,18,ja
+tiefe_v10,12,14,P+2,46,0,18,ja
+tiefe_v12,14,16,P+2,46,-2,18,ja
+tiefe_v14,16,18,P+2,46,-4,18,ja
+tiefe_v16,18,20,P+2,46,-6,18,ja
+tiefe_v18,20,22,P+2,46,-8,18,ja
+tiefe_v20,22,24,P+2,46,-10,18,ja
+tiefe_v21,23,25,P+2,43,-11,18,ja
+tiefe_v22,24,26,P+2,41,-10,18,ja
+tiefe_v23,25,27,P+2,41,-10,18,ja
+tiefe_v24,26,28,P+2,41,-10,18,ja
+tiefe_v26,28,30,P+2,41,-10,18,ja
+tiefe_v28,30,32,P+2,41,-10,18,ja
+tiefe_vm1,3,5,P+2,46,11,18,ja
+tiefe_vm2,4,6,P+2,42,12,18,ja
+tiefe_vm3,5,7,P+2,41,13,18,nein
+tiefe_vm3,5,8,P+3,39,13,18,nein
+tiefe_vm3,5,9,P+4,37,13,18,nein
+tiefe_vm3,5,10,P+5,36,14,18,nein
+tiefe_vm4,6,8,P+2,39,14,18,nein
+tiefe_vm4,6,9,P+3,37,14,18,nein
+tiefe_vm4,6,10,P+4,36,14,18,nein
+tiefe_vm4,6,11,P+5,34,14,18,nein
+tiefe_vm5,7,9,P+2,37,15,18,nein
+tiefe_vm5,7,10,P+3,35,15,18,nein
+tiefe_vm5,7,11,P+4,34,15,18,nein
+tiefe_vm5,7,12,P+5,32,15,18,nein
+tiefe_vm6,8,10,P+2,35,16,18,nein
+tiefe_vm6,8,11,P+3,34,16,18,nein
+tiefe_vm6,8,12,P+4,32,16,18,nein
+tiefe_vm6,8,13,P+5,30,16,18,nein
+tiefe_vm8,10,12,P+2,32,18,18,nein
+tiefe_vm8,10,13,P+3,30,18,18,nein
+tiefe_vm8,10,14,P+4,28,18,18,nein
+tiefe_vm8,10,15,P+5,27,18,18,nein
+tiefe_vm10,12,14,P+2,28,20,18,nein
+tiefe_vm10,12,15,P+3,27,20,18,nein
+tiefe_vm10,12,16,P+4,25,20,18,nein
+tiefe_vm10,12,17,P+5,23,20,18,nein
+tiefe_vm12,14,16,P+2,25,22,18,nein
+tiefe_vm12,14,17,P+3,23,22,18,nein
+tiefe_vm12,14,18,P+4,21,22,18,nein
+tiefe_vm12,14,19,P+5,20,22,18,nein
+tiefe_vm14,16,18,P+2,21,24,18,nein
+tiefe_vm14,16,19,P+3,20,24,18,nein
+tiefe_vm14,16,20,P+4,18,24,18,nein
+tiefe_vm14,16,21,P+5,16,24,18,nein
+tiefe_vm16,18,20,P+2,18,26,18,nein
+tiefe_vm16,18,21,P+3,16,26,18,nein
+tiefe_vm16,18,22,P+4,14,26,18,nein
+tiefe_vm16,18,23,P+5,13,26,18,nein

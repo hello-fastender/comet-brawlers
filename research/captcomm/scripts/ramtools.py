@@ -6,6 +6,7 @@ Unterbefehle:
   search  Adresskandidaten per verketteten Filtern eingrenzen
   track   Zeitreihe einzelner Adressen als CSV
   changes Nur Wertaenderungen (Frame, Adresse, alt, neu) – fuer Belege
+  enemies Gegnerzahl je Frame aus der Objekttabelle (nur bei Aenderung)
 
 Frames sind immer die lokalen Frames des Runners (Spalte "frame").
 Der 68000 ist Big Endian; Woerter (Breite 2) werden entsprechend gelesen.
@@ -15,6 +16,7 @@ Filter fuer search (beliebig kombinierbar, werden der Reihe nach angewandt):
   val:F:lt|gt|eq|ne:V Wert in Frame F verglichen mit Konstante V
   same:A:B            unveraendert in allen Frames A..B
   inc:A:B / dec:A:B   streng steigend/fallend von Frame zu Frame in A..B
+  nodec:A:B / noinc:A:B  nie fallend/nie steigend in A..B (Gleichstand erlaubt)
   step:A:B:D          aendert sich in A..B pro Frame um genau D
   diff:A:B:D          Wert(B) - Wert(A) == D
 
@@ -82,7 +84,7 @@ def apply_filter(dump, cands, spec, width, signed):
     if p[0] == "val":
         f, op, const = int(p[1]), OPS[p[2]], int(p[3], 0)
         return [a for a in cands if op(v(f, a), const)]
-    if p[0] in ("same", "inc", "dec", "step"):
+    if p[0] in ("same", "inc", "dec", "nodec", "noinc", "step"):
         fr = frames_between(dump, int(p[1]), int(p[2]))
         if p[0] == "same":
             ok = lambda x, y: x == y
@@ -90,6 +92,10 @@ def apply_filter(dump, cands, spec, width, signed):
             ok = lambda x, y: y > x
         elif p[0] == "dec":
             ok = lambda x, y: y < x
+        elif p[0] == "nodec":
+            ok = lambda x, y: y >= x
+        elif p[0] == "noinc":
+            ok = lambda x, y: y <= x
         else:
             d = int(p[3], 0)
             ok = lambda x, y: y - x == d
@@ -121,7 +127,8 @@ def cmd_info(args):
 
 def cmd_search(args):
     d = Dump(args.prefix)
-    step = args.width if args.width > 1 else 1
+    # Der 68000 liest Woerter und Langwoerter an jeder geraden Adresse
+    step = 1 if args.width == 1 else 2
     cands = list(range(d.start, d.start + d.size - args.width + 1, step))
     for spec in args.filters:
         cands = apply_filter(d, cands, spec, args.width, args.signed)
@@ -141,6 +148,34 @@ def cmd_track(args):
     for f in frames_between(d, args.start, args.end):
         vals = ",".join(str(d.value(f, a, w, s)) for a, w, s in addrs)
         print(f"{f},{d.screen_frame[f]},{vals}")
+
+
+# Objekttabelle (siehe notes.md, "Objekt-Slots"): Slot n beginnt bei
+# SLOT_BASE + n * SLOT_SIZE; Gegner lagen bisher immer in Slots 0-19.
+# S+4 (Grundzustand): 0 frei, 1 normal, 2 am Boden bzw. wartend,
+# 3 Trefferreaktion. S+5: wird 1, bevor der Gegner ins Bild kommt (er kann
+# dann noch am Bildrand warten). Ausgabe: belegt = S+4 != 0, s5 = zusaetzlich S+5 == 1,
+# kampffaehig = zusaetzlich S+4 in (1, 3); slots = Slot:<S+4><S+5>.
+SLOT_BASE = 0xFFBC90
+SLOT_SIZE = 0xC0
+ENEMY_SLOTS = range(20)
+
+
+def cmd_enemies(args):
+    d = Dump(args.prefix)
+    print("frame,screen_frame,belegt,s5,kampffaehig,slots")
+    last = None
+    for f in frames_between(d, args.start, args.end):
+        heads = [(n, d.value(f, SLOT_BASE + n * SLOT_SIZE + 4),
+                  d.value(f, SLOT_BASE + n * SLOT_SIZE + 5)) for n in ENEMY_SLOTS]
+        used = [(n, hi, lo) for n, hi, lo in heads if hi]
+        s5 = [h for h in used if h[2] == 1]
+        able = [h for h in s5 if h[1] in (1, 3)]
+        row = (len(used), len(s5), len(able),
+               " ".join(f"{n}:{hi}{lo}" for n, hi, lo in used))
+        if row != last:
+            print(f"{f},{d.screen_frame[f]},{row[0]},{row[1]},{row[2]},{row[3]}")
+            last = row
 
 
 def cmd_changes(args):
@@ -181,6 +216,12 @@ def main():
         p.add_argument("--from", dest="start", type=int, default=0)
         p.add_argument("--to", dest="end", type=int, default=1 << 31)
         p.set_defaults(fn=fn)
+
+    p = sub.add_parser("enemies")
+    p.add_argument("prefix")
+    p.add_argument("--from", dest="start", type=int, default=0)
+    p.add_argument("--to", dest="end", type=int, default=1 << 31)
+    p.set_defaults(fn=cmd_enemies)
 
     # Filter duerfen auch nach Optionen stehen (search --width 2 inc:1:9)
     args, extra = ap.parse_known_args()

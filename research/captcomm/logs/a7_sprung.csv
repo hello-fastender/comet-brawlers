@@ -1,0 +1,55 @@
+# Spruenge (Hoehe, x, Tiefe als 16.16). taste_ab = P; Weite = x(Landung) - x(Aktionsbeginn).
+# dx/dz_je_frame ueber die Luftframes und den Landeframe; eingaben_in_luft = gehaltene Eingaben
+# jump
+aktion_ab,taste_ab,absprung,scheitel_frame,steighoehe,landung,aktion_ende,frames_in_luft,vy0,schwerkraft,dx_je_frame,dz_je_frame,weite_x,eingaben_in_luft
+62,61,63,82,51.25,103,109,40,4.9375,-0.25x39,+0x41,+0x41,+0,
+182,181,183,202,51.25,223,229,40,4.9375,-0.25x39,+2.25x41,+0x41,+92.25,P1 Right
+302,301,303,323,51.25,344,350,41,4.9375,-0.25x38,+0x42,+0x42,+0,P1 Button 1
+# jump_b
+aktion_ab,taste_ab,absprung,scheitel_frame,steighoehe,landung,aktion_ende,frames_in_luft,vy0,schwerkraft,dx_je_frame,dz_je_frame,weite_x,eingaben_in_luft
+82,81,83,102,51.25,123,129,40,4.9375,-0.25x39,+0x41,+0x41,+0,
+162,161,163,182,51.25,203,209,40,4.9375,-0.25x39,-2.25x33 -0.75x1 +0x7,+0x41,-75,P1 Left
+252,251,253,273,51.25,294,300,41,4.9375,-0.25x38,+0x42,+0x42,+0,P1 Button 1
+# sprung_c
+aktion_ab,taste_ab,absprung,scheitel_frame,steighoehe,landung,aktion_ende,frames_in_luft,vy0,schwerkraft,dx_je_frame,dz_je_frame,weite_x,eingaben_in_luft
+102,101,103,122,51.25,143,149,40,4.9375,-0.25x39,-2.25x41,+0x41,-92.25,P1 Left
+182,181,183,202,51.25,223,229,40,4.9375,-0.25x39,+0x41,+0x41,+0,P1 Right
+262,261,263,282,51.25,303,309,40,4.9375,-0.25x39,+2.25x41,+0x41,+92.25,P1 Left P1 Right
+342,341,343,362,51.25,383,389,40,4.9375,-0.25x39,-2.25x41,+0x41,-92.25,P1 Left
+422,421,423,442,51.25,463,469,40,4.9375,-0.25x39,+0x41,+0.5x41,+0,P1 Up
+502,501,503,522,51.25,543,549,40,4.9375,-0.25x39,+0x41,+0x41,+0,P1 Button 2
+582,581,583,602,51.25,623,629,40,4.9375,-0.25x39,+2.25x41,-0.5x9 +0x32,+92.25,P1 Down P1 Right
+# sprung_d
+aktion_ab,taste_ab,absprung,scheitel_frame,steighoehe,landung,aktion_ende,frames_in_luft,vy0,schwerkraft,dx_je_frame,dz_je_frame,weite_x,eingaben_in_luft
+92,91,93,112,51.25,133,139,40,4.9375,-0.25x39,-2.25x41,+0x41,-92.25,
+172,171,173,192,51.25,213,219,40,4.9375,-0.25x39,+0x41,+0x41,+0,P1 Right
+252,251,253,272,51.25,293,299,40,4.9375,-0.25x39,-2.25x18 +0x23,+0.5x41,-40.5,P1 Left P1 Up
+332,331,333,352,51.25,373,379,40,4.9375,-0.25x39,+0x41,+0x30 +0.5x11,+0,P1 Up
+412,411,413,432,51.25,453,459,40,4.9375,-0.25x39,+0x41,-0.5x41,+0,P1 Down
+492,491,493,512,51.25,533,539,40,4.9375,-0.25x39,+0x41,+0x41,+0,
+# Landung nicht abbrechbar: Richtung durchgehend gehalten (sprung_c ab 421 hoch, sprung_d ab 411 runter)
+frame,screen_frame,FFA99A,FFA99C,FFA9A6,FFA9A2
+461,2860,10,0,323,7
+462,2861,10,0,324,2
+463,2862,10,2,324,0
+464,2863,10,2,324,0
+465,2864,10,2,324,0
+466,2865,10,2,324,0
+467,2866,10,2,324,0
+468,2867,10,2,324,0
+469,2868,0,0,324,0
+470,2869,0,0,325,0
+471,2870,0,0,326,0
+472,2871,0,0,326,0
+451,2850,10,0,306,7
+452,2851,10,0,306,2
+453,2852,10,2,305,0
+454,2853,10,2,305,0
+455,2854,10,2,305,0
+456,2855,10,2,305,0
+457,2856,10,2,305,0
+458,2857,10,2,305,0
+459,2858,0,0,305,0
+460,2859,0,0,304,0
+461,2860,0,0,303,0
+462,2861,0,0,303,0

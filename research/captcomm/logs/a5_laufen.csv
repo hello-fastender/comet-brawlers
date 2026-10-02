@@ -1,0 +1,18 @@
+# Laufgeschwindigkeit je Eingabesegment (x und Tiefe als 16.16, Einheit = Bildschirmpixel).
+# von/bis = Eingabe gedrueckt; bewegt_von/bis = Frames mit Positionsaenderung
+# walk
+eingabe,von,bis,frames,bewegt_von,bewegt_bis,dx_je_frame,dz_je_frame,dx_summe,dz_summe
+P1 Up,61,100,40,62,98,+0x37,+1x37,+0,+37
+P1 Down,161,200,40,162,201,+0x40,-1x40,+0,-40
+P1 Right,261,300,40,262,301,+1.75x40,+0x40,+70,+0
+P1 Left,361,400,40,362,401,-1.75x40,+0x40,-70,+0
+P1 Right|P1 Up,461,480,20,462,481,+1.25x20,+0.75x20,+25,+15
+P1 Down|P1 Left,541,560,20,542,561,-1.25x20,-0.75x20,-25,-15
+# walk_b
+eingabe,von,bis,frames,bewegt_von,bewegt_bis,dx_je_frame,dz_je_frame,dx_summe,dz_summe
+P1 Down,41,70,30,42,71,+0x30,-1x30,+0,-30
+P1 Right,101,125,25,102,126,+1.75x25,+0x25,+43.75,+0
+P1 Up,151,170,20,152,171,+0x20,+1x20,+0,+20
+P1 Left,201,215,15,202,216,-1.75x15,+0x15,-26.25,+0
+P1 Down|P1 Right,241,260,20,242,261,+1.25x20,-0.75x20,+25,-15
+P1 Left|P1 Up,291,300,10,292,301,-1.25x10,+0.75x10,-12.5,+7.5

@@ -1,0 +1,128 @@
+# Treffer gegen P1: Abstand zum vorigen Treffer und zum Aufstehen (Status 2 -> 3)
+# hurt
+frame,schaden,status_vorher,seit_letztem_treffer,seit_aufstehen,timer_aufstehen
+450,5,1,-,-,0
+510,5,1,60,-,0
+574,5,1,64,-,0
+731,5,3,157,35,1
+803,5,1,72,107,0
+864,5,1,61,168,0
+924,5,1,60,228,0
+1131,5,1,207,84,0
+1158,6,3,27,111,0
+1188,5,1,30,141,0
+1217,6,1,29,170,0
+1249,5,1,32,202,0
+1277,5,1,28,230,0
+1434,5,3,157,35,1
+# hurt_b
+frame,schaden,status_vorher,seit_letztem_treffer,seit_aufstehen,timer_aufstehen
+422,5,1,-,-,0
+480,5,1,58,-,0
+543,5,1,63,-,0
+741,5,1,198,76,0
+817,5,1,76,152,0
+878,5,1,61,213,0
+938,5,1,60,273,0
+1220,5,1,282,159,0
+1284,5,1,64,223,0
+# hurt_c
+frame,schaden,status_vorher,seit_letztem_treffer,seit_aufstehen,timer_aufstehen
+959,6,1,-,-,0
+1035,6,1,76,-,0
+1108,6,1,73,-,0
+1265,6,3,157,35,1
+1299,8,1,34,69,0
+1336,8,1,37,106,0
+1373,8,1,37,143,0
+1410,8,1,37,180,0
+1437,5,3,27,207,0
+1497,5,1,60,267,0
+1741,8,1,244,121,0
+# Dauer der Schutzzustaende (Status S+4 = 3) und des Liegens
+# hurt
+art,von,bis,frames,bemerkung
+Trefferreaktion (5 Schaden),450,477,27,
+Trefferreaktion (5 Schaden),510,537,27,
+liegt (Wurf bis Aufstehen),575,696,121,
+Aufsteh-Schutz,696,731,35,durch Treffer beendet
+Trefferreaktion (5 Schaden),731,758,27,
+Trefferreaktion (5 Schaden),803,830,27,
+Trefferreaktion (5 Schaden),864,891,27,
+liegt (Wurf bis Aufstehen),925,1047,122,
+Aufsteh-Schutz,1047,1082,35,
+Trefferreaktion (5 Schaden),1131,1158,27,durch Treffer beendet
+Trefferreaktion (6 Schaden),1158,1185,27,
+Trefferreaktion (5 Schaden),1188,1215,27,
+Trefferreaktion (6 Schaden),1217,1244,27,
+Trefferreaktion (5 Schaden),1249,1276,27,
+liegt (Wurf bis Aufstehen),1278,1399,121,
+Aufsteh-Schutz,1399,1434,35,durch Treffer beendet
+Trefferreaktion (5 Schaden),1434,1461,27,
+# hurt_b
+art,von,bis,frames,bemerkung
+Trefferreaktion (5 Schaden),422,449,27,
+Trefferreaktion (5 Schaden),480,507,27,
+liegt (Wurf bis Aufstehen),544,665,121,
+Aufsteh-Schutz,665,700,35,
+Trefferreaktion (5 Schaden),741,768,27,
+Trefferreaktion (5 Schaden),817,844,27,
+Trefferreaktion (5 Schaden),878,905,27,
+liegt (Wurf bis Aufstehen),939,1061,122,
+Aufsteh-Schutz,1061,1096,35,
+Trefferreaktion (5 Schaden),1220,1247,27,
+# hurt_c
+art,von,bis,frames,bemerkung
+Trefferreaktion (6 Schaden),959,986,27,
+Trefferreaktion (6 Schaden),1035,1062,27,
+liegt (Wurf bis Aufstehen),1109,1230,121,
+Aufsteh-Schutz,1230,1265,35,durch Treffer beendet
+Trefferreaktion (6 Schaden),1265,1292,27,
+Trefferreaktion (8 Schaden),1299,1326,27,
+Trefferreaktion (8 Schaden),1336,1363,27,
+Trefferreaktion (8 Schaden),1373,1400,27,
+Trefferreaktion (8 Schaden),1410,1437,27,durch Treffer beendet
+Trefferreaktion (5 Schaden),1437,1464,27,
+liegt (Wurf bis Aufstehen),1498,1620,122,
+Aufsteh-Schutz,1620,1655,35,
+# Aufsteh-Fenster mit Gegner in Reichweite (|dx| <= 60, |dz| <= 8)
+# hurt
+von,bis,art,frames,frames_mit_gegner_nah
+696,730,aufstehen,35,35
+1047,1081,aufstehen,35,0
+1399,1433,aufstehen,35,35
+# hurt_b
+von,bis,art,frames,frames_mit_gegner_nah
+665,699,aufstehen,35,0
+1061,1095,aufstehen,35,0
+# hurt_c
+von,bis,art,frames,frames_mit_gegner_nah
+1230,1264,aufstehen,35,35
+1620,1654,aufstehen,35,0
+# EINGRIFF schutz_eingriff.lua: Timer FFAA69 ab 697 auf 0 (null) bzw. bis 830 auf 35 (halten).
+# fenster = Frames mit P1-Status 3; frames_mit_gegner_nah = Gegner in |dx| <= 60 und |dz| <= 8
+# schutz_null: Treffer
+frame,schaden,status_vorher,seit_letztem_treffer,seit_aufstehen,timer_aufstehen
+450,5,1,-,-,0
+510,5,1,60,-,0
+574,5,1,64,-,0
+# schutz_null: Schutzfenster
+von,bis,art,frames,frames_mit_gegner_nah
+450,476,reaktion,27,27
+510,536,reaktion,27,27
+574,574,reaktion,1,1
+696,696,aufstehen,1,1
+697,900,reaktion,204,204
+# schutz_halten: Treffer
+frame,schaden,status_vorher,seit_letztem_treffer,seit_aufstehen,timer_aufstehen
+450,5,1,-,-,0
+510,5,1,60,-,0
+574,5,1,64,-,0
+892,5,1,318,196,0
+# schutz_halten: Schutzfenster
+von,bis,art,frames,frames_mit_gegner_nah
+450,476,reaktion,27,27
+510,536,reaktion,27,27
+574,574,reaktion,1,1
+696,863,aufstehen,168,168
+892,900,reaktion,9,9

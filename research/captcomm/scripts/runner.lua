@@ -15,6 +15,13 @@
 -- Der Header (_ram.hdr) haelt start/stop fest, damit die Python-Werkzeuge
 -- Adressen zurueckrechnen koennen.
 --
+-- Eingriffe (nur fuer gekennzeichnete Experimente): Das Szenario-Feld
+-- "pokes" = { { von, bis, addr, wert [, breite] }, ... } schreibt den Wert
+-- vor jedem Frame von..bis in den Arbeitsspeicher (breite 1 oder 2, Standard
+-- 1). "wert" darf auch eine Funktion function(space) sein; sie wird vor
+-- jedem Schreiben aufgerufen (z. B. Position relativ zur Figur).
+-- Protokolliert wird jeweils der Zustand am Frame-Ende.
+--
 -- Zeitbezug: "lokaler Frame" zaehlt die Frame-Callbacks seit Skriptstart
 -- (Frame 1 = erster Callback). Eingaben, die im Callback von Frame f gesetzt
 -- werden, wirken ab Frame f+1. Die Szenario-Angaben {von, bis} beziehen sich
@@ -154,8 +161,9 @@ local function on_frame()
 		screen:snapshot(string.format("%s_%06d.png", sc.snaps[frame], frame))
 	end
 	if sc.save_states and sc.save_states[frame] then
-		-- Slot-Pfad, den "-state <name>" beim Start erwartet
-		machine:save(string.format("%s/%s.sta", machine.system.name, sc.save_states[frame]))
+		-- Nur der Name: MAME (0.264) ergaenzt selbst "<state_directory>/captcomm/"
+		-- und ".sta", genau wie beim Laden mit "-state <name>"
+		machine:save(sc.save_states[frame])
 	end
 
 	if frame >= sc.frames then
@@ -174,6 +182,16 @@ local function on_frame()
 		if not active[name] then fields[name]:set_value(1) end
 	end
 	active = want
+
+	-- Eingriffe fuer den naechsten Frame
+	for _, pk in ipairs(sc.pokes or {}) do
+		if frame + 1 >= pk[1] and frame + 1 <= pk[2] then
+			local v = pk[4]
+			if type(v) == "function" then v = v(space) end
+			if (pk[5] or 1) == 2 then space:write_u16(pk[3], v)
+			else space:write_u8(pk[3], v) end
+		end
+	end
 end
 
 -- Referenz halten, sonst wird die Anmeldung vom GC aufgehoben
