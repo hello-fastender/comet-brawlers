@@ -25,6 +25,8 @@ inspiriert, soll sich aber nicht 1:1 so spielen. Daraus folgt:
 |---|---|
 | `docs/mechanik.md` | verbindliche Zahlenwerte für das Spiel, nur gesicherte Messungen |
 | `docs/erkenntnisse.md` | dieses Dokument: Überblick, Erkenntnisse, Richtwerte, offene Punkte |
+| `docs/design.md` | Designdokument Kern (Entwurf): Vision, Welt, technische Grundlage, Grundkit der Spielfigur, Helden, Lebenspunkte und Schwierigkeit, Rahmen, vertikale Scheibe, offene Entscheidungen |
+| `docs/design-gegner-stages.md` | Designdokument Gegner, Bosse und Stages (Entwurf): Gegnerrollen, Verhaltensmodell, Wiederverwendung, Bosse, Stage-Schablone, acht Stages, erste Stage im Detail, Gegenstände, Animationsplan |
 | `research/captcomm/notes.md` | Methode, alle Messungen mit Status und Belegen, Speicheradressen |
 | `research/captcomm/grafik/README.md` | Stages, Spielfiguren und Gegner mit Bildern, Kennwerten und Animationsdauern |
 | `research/captcomm/logs/` | Belege der Messungen (CSV) |
