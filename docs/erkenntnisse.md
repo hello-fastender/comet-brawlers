@@ -22,7 +22,7 @@ inspiriert, soll sich aber nicht 1:1 so spielen. Daraus folgt:
 ## Entscheidungen
 
 Entscheidungen des Nutzers vom 2026-10-02 (E1 bis E9, Auftrag 2) und vom
-2026-10-03 (E10 bis E22, Auftrag 3; E23 nach den Stilproben), verbindlich; eingearbeitet in
+2026-10-03 (E10 bis E22, Auftrag 3; E23 nach den Stilproben; E24 an Haltepunkt 1 von Auftrag 4), verbindlich; eingearbeitet in
 `docs/design.md` und `docs/design-gegner-stages.md`, E10 bis E22 auch in
 den beiden Spezifikationen:
 
@@ -51,6 +51,7 @@ den beiden Spezifikationen:
 | E21 | 2026-10-03 | Griff mit Wurf des Bosses im Vollspiel ja (nach `mechanik.md`, „Boss“), in der Scheibe nein | Der Griff ist gemessen und gehört zum Boss; die Scheibe kommt mit drei Angriffen aus |
 | E22 | 2026-10-03 | Technik: TypeScript, reiner Logikkern ohne Browser, Darstellung über Canvas 2D in einer HTML-Seite, Prüfläufe und Abnahmetests in Node, Bildschirmfotos über Playwright, keine npm-Abhängigkeiten | Der Kern lässt sich ohne Browser in Node prüfen, und ohne Abhängigkeiten baut das Projekt auch ohne Zugang zur npm-Registry |
 | E23 | 2026-10-03 | Grafikstil Arcade-Pixel: Pixelgrafik im Spielraster 384 × 224 wie auf Spielautomaten um 1991. Je Material eine Farbtreppe aus fünf Tönen mit Farbverschiebung (Schatten Richtung Blau, Lichter Richtung Gelb), Übergänge mit geordnetem Raster (Bayer 4 × 4), Licht von links oben vorn, dunkle farbige Konturen (Teilgrenzen im dunkelsten Ton des Materials, Außenkontur dunkles Violett), Glanzlichter nur auf glänzendem Material; Hintergründe mit Rasterverläufen und Neonschein. Figurengrößen nach E9, Animationstakt nach den Abläufen des Vorbilds (meist 4 bis 8 Frames je Bild). Referenz: `docs/bilder/stil_1_arcade_szene.png` und `stil_1_arcade_nah.png` | Vom Nutzer aus drei Stilproben derselben Szene gewählt (Arcade-Pixel, Comic-Pixel, gezeichnet); am nächsten am Vorbild. Gegen das Risiko, dass das Bild mit vielen Figuren unruhig wird: Figuren kontrastreicher als der Hintergrund, Hintergründe gedämpfter |
+| E24 | 2026-10-03 | Gliederpuppe als Standardweg für Figuren und Objekte (Grafik als Code, Auftrag 4). Grok-Blätter bleiben Vorlage: Die Posen für Getroffen, Umgeworfen, Liegen, Aufstehen, Spott und Sprungtritt werden nach den Grok-Blättern des Rammbocks gebaut, damit die Puppen weniger steif wirken; beim Rammbock die Arme schlanker und die Figur mehr in Dreiviertelansicht wie ein Automatenspiel. Hintergründe nach Grok-Konzeptbildern als Vorlage, wenn der Nutzer welche liefert, sonst nach Auftrag 4, Abschnitt 4. Velas Stiefel bleiben graublau (Farbbudget) | Am Haltepunkt 1 verglichen (docs/bilder/vergleich_rammbock.png): Die Gliederpuppe ist in Spielgröße klarer lesbar, hält Palette und Fußkontakt genau und braucht keine Bestellungen; die Grok-Figur hat ausdrucksstärkere Posen, wirkt in Spielgröße aber schmal und dunkel und ist auf jedem Blatt anders groß |
 
 ## Wo was steht
 

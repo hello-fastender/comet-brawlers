@@ -1001,6 +1001,7 @@ Schatten in Farben und Maßen aus `masse.ts`).
 | Phase | Stand |
 |---|---|
 | 0 Einrichtung | Ausgangslage geprüft: `npm run pruefen` grün, `npm test` 214 von 214 grün; Animationszeiger geprüft (Abschnitt 3) |
+| 1 Werkzeugkasten, Umsetzer, Vergleich | Werkzeugkasten, Vela (Stand, Gehen, Kette), Rammbock als Gliederpuppe und aus Grok-Blättern; Haltepunkt 1 am 2026-10-03: E24 (Gliederpuppe als Standardweg, Grok als Vorlage) |
 
 ## 7. Abweichungen und Lücken
 
@@ -1038,3 +1039,29 @@ Schatten in Farben und Maßen aus `masse.ts`).
 | G0c-3 | Auftrag 4, 1.4 (Standfuß rückt je Bild um 4 · 1,6 = 6,4 px zurück) | Knöchel des Standfußes auf ganze px nach `round(n · 6,4)`, n = 0 … 8: 0, 6, 13, 19, 26, 32, 38, 45, 51; Schritte 6, 7, 6, 7, 6, 6, 7, 6 = 51 px je Zyklus. `bauen.ts` prüft mit `schritt` 6,4 ± 1, der Test exakt | 51,2 px je Zyklus gehen in ganzen Pixeln nicht auf. Die Rundung über den Zyklus hält den Fehler unter 0,5 px je Bild und bei 0,2 px je Zyklus (0,025 px je Frame); streng abwechselnd 6 und 7 ergäbe 52 px |
 | G0c-4 | Auftrag 4, 2.4 (Teile je Pose) | Ein Knieschützer, der nur als Streifen von höchstens 4 px Stahl hinter dem anderen Bein hervorschaut, entfällt im Bild (`KNIE_SPLITTER`; betrifft `gehen` Bild 3 und 4) | Ein schmaler Stahlstreifen neben der Faust las sich als Stab (Lesbarkeit, Auftrag 4, 1.4) |
 | G0c-5 | Auftrag 4, 3 (Rammbock `kampfhaltung` 2, Schleife; keine Dauer genannt) | `kampfhaltung` 8/8 als Richtwert wie `hocke_ankuendigung` in `fremd/rammbock/zuordnung.txt`; zwei Bilder der Hocke im Wechsel, Bild 1 eine Spur höher | Die Logik hält die Kampfhaltung 25 bis 5 Frames je nach Rang (design-gegner-stages.md 1.2); die Darstellung schleift |
+
+## 8. Weg nach E24
+
+Entscheidung des Nutzers an Haltepunkt 1 (2026-10-03, `docs/erkenntnisse.md`,
+E24):
+
+- Figuren und Objekte entstehen als Gliederpuppe aus dem Werkzeugkasten.
+- Die Grok-Blätter des Rammbocks (`spiel/grafik/quelle/fremd/rammbock/`)
+  sind Vorlage für die Posen Getroffen, Umgeworfen, Liegen, Aufstehen,
+  Spott und Sprungtritt aller Figuren, damit die Puppen weniger steif
+  wirken: Haltung von Kopf, Rumpf und Gliedern nachbauen, nicht abpausen.
+- Rammbock: Arme etwas schlanker, Figur mehr in Dreiviertelansicht wie in
+  einem Automatenspiel (Brust und Schultern halb zum Betrachter gedreht).
+- Hintergründe: Liefert der Nutzer Grok-Konzeptbilder, sind sie Vorlage
+  für Aufbau und Farben; sonst nach Auftrag 4, Abschnitt 4.
+- Velas Stiefel bleiben graublau (G0-3).
+- Das Blatt `rammbock_fremd` und der Umsetzer bleiben im Bau als Vorlage
+  und Vergleich; die Darstellung nutzt sie nicht.
+
+Registrierung im Bau (Phase 2): Jede Figurendatei liefert ihre Figuren
+über eine feste Funktion (`bolzerFiguren` in `figuren/bolzer.ts`,
+`zuenderFiguren`, `ballastFiguren`), Objekte, Hintergründe und Anzeige
+liefern `Erzeugnis`se (`erzeugnis.ts`) über `objekteErzeugnisse`
+(`objekte.ts`), `hintergrundErzeugnisse` (`hintergrund/hintergruende.ts`)
+und `anzeigeErzeugnisse` (`anzeige.ts`); `bauen.ts` prüft und schreibt
+alles.

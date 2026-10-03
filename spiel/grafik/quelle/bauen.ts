@@ -15,6 +15,13 @@ import type { Animation } from './blatt.ts';
 import { blattBytes, blattPacken, blattSchreiben, zugeschnitten } from './blatt.ts';
 import { GEHEN_SCHRITT, velaAnimationen } from './figuren/vela.ts';
 import { GEHEN_SCHRITT as RAMMBOCK_SCHRITT, GLANZ_RAMMBOCK, rammbockAnimationen } from './figuren/rammbock.ts';
+import { bolzerFiguren } from './figuren/bolzer.ts';
+import { zuenderFiguren } from './figuren/zuender.ts';
+import { ballastFiguren } from './figuren/ballast.ts';
+import type { Erzeugnis } from './erzeugnis.ts';
+import { objekteErzeugnisse } from './objekte.ts';
+import { hintergrundErzeugnisse } from './hintergrund/hintergruende.ts';
+import { anzeigeErzeugnisse } from './anzeige.ts';
 import { kontaktBogen, kontaktSchreiben } from './kontakt.ts';
 import { konturLuecken, streupixel } from './kontur.ts';
 import type { Leinwand, Pixel } from './leinwand.ts';
@@ -156,7 +163,10 @@ export function figurPruefen(figur: Figur): Befund[] {
   return befunde;
 }
 
-/** Alle Figuren der Erzeugung (Phase 1: Vela; Rammbock als Gliederpuppe für den Vergleich an Haltepunkt 1, Auftrag 4, 9.4). */
+/**
+ * Alle Figuren der Erzeugung: Vela und Rammbock (Phase 1), dazu die Figuren der Dateien von G2
+ * (Bolzer, Puppe) und G3 (Zünder, Ballast) in Phase 2 (Auftrag 4, E24).
+ */
 export function figuren(): Figur[] {
   return [
     {
@@ -177,7 +187,15 @@ export function figuren(): Figur[] {
       gehen: 'gehen',
       schritt: RAMMBOCK_SCHRITT,
     },
+    ...bolzerFiguren(),
+    ...zuenderFiguren(),
+    ...ballastFiguren(),
   ];
+}
+
+/** Erzeugnisse außer Figuren (Phase 2): Objekte und Effekte (G4), Hintergründe (G5), Anzeige (G6). */
+export function erzeugnisse(): Erzeugnis[] {
+  return [...objekteErzeugnisse(), ...hintergrundErzeugnisse(), ...anzeigeErzeugnisse()];
 }
 
 /** Ordner der Fremdblätter je Figur (Auftrag 4, 9.3; docs/grafik.md 5.3). */
@@ -246,6 +264,24 @@ export function bauen(optionen: { nurKontakt?: boolean; hinweis?: (zeile: string
       throw new Error(`Stilprüfung verletzt (${befunde.length}):\n${text}`);
     }
     for (const [k, v] of figurAusgeben(f, { blatt: optionen.nurKontakt !== true })) alle.set(k, v);
+  }
+  for (const e of erzeugnisse()) {
+    if (e.befunde.length > 0) {
+      const text = e.befunde.map((b) => `  ${b.figur} / ${b.animation} / Bild ${b.bild}: ${b.regel}: ${b.text}`).join('\n');
+      throw new Error(`Stilprüfung verletzt (${e.befunde.length}):\n${text}`);
+    }
+    if (optionen.nurKontakt !== true) {
+      mkdirSync(AUSGABE, { recursive: true });
+      for (const [datei, inhalt] of e.ausgabe) {
+        writeFileSync(join(AUSGABE, datei), inhalt);
+        alle.set(datei, md5(typeof inhalt === 'string' ? new TextEncoder().encode(inhalt) : inhalt));
+      }
+    }
+    mkdirSync(BILDER, { recursive: true });
+    for (const [datei, inhalt] of e.bilder) {
+      writeFileSync(join(BILDER, datei), inhalt);
+      alle.set(datei, md5(inhalt));
+    }
   }
   const vergleich = vergleichBytes(gebaut);
   if (vergleich !== null) {

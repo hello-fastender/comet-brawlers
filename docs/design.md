@@ -566,6 +566,7 @@ Abschnitt 1). Die Begründungen stehen in `docs/erkenntnisse.md`,
 | E21 | Griff des Bosses | im Vollspiel ja (Griff mit Wurf nach `mechanik.md`, „Boss“), in der Scheibe nein | Abschnitt 8; `design-gegner-stages.md`, Abschnitte 4 und 7 |
 | E22 | Technik | TypeScript, reiner Logikkern ohne Browser, Canvas 2D in einer HTML-Seite, Prüfläufe und Abnahmetests in Node, Bildschirmfotos über Playwright, keine npm-Abhängigkeiten | Abschnitt 8; `docs/scheibe.md` |
 | E23 | Grafikstil | Arcade-Pixel, gewählt aus drei Stilproben derselben Szene (Arcade-Pixel, Comic-Pixel, gezeichnet); Einzelheiten in `docs/erkenntnisse.md`, „Entscheidungen“ | Abschnitt 3; Stilproben `docs/bilder/stil_*.png`, Werkzeug `spiel/werkzeuge/stilproben.html` |
+| E24 | Weg der Grafik | Gliederpuppe als Standardweg für Figuren und Objekte, Grok-Blätter als Vorlage für Reaktionsposen, Spott und Sprungtritt; Rammbock schlanker in Dreiviertelansicht; Hintergründe nach Grok-Konzeptbildern, wenn geliefert; Einzelheiten in `docs/erkenntnisse.md`, „Entscheidungen“ | `docs/grafik.md`; Vergleich `docs/bilder/vergleich_rammbock.png` |
 
 ### Offen
 
