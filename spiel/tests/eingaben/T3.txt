@@ -1,0 +1,6 @@
+# Eingabe zu Abnahmetest T3 (Kampf 12; Format Kampf 11.1: von,bis,tasten)
+# A 10, 24, 38, 53
+10,10,A
+24,24,A
+38,38,A
+53,53,A

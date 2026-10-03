@@ -1,0 +1,4 @@
+# Eingabe zu Abnahmetest T13_c (Kampf 12; Format Kampf 11.1: von,bis,tasten)
+# A und S 10, dazu A 61
+10,10,AS
+61,61,A

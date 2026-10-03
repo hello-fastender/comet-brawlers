@@ -1,0 +1,4 @@
+# Eingabe zu Abnahmetest T6_a (Kampf 12; Format Kampf 11.1: von,bis,tasten)
+# R 10–21, A und R 27
+10,21,R
+27,27,AR

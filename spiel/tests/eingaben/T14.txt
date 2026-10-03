@@ -1,0 +1,3 @@
+# Eingabe zu Abnahmetest T14 (Kampf 12; Format Kampf 11.1: von,bis,tasten)
+# A und S 10
+10,10,AS

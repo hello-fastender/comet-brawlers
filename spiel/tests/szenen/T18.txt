@@ -1,0 +1,9 @@
+# Abnahmetest T18 nach docs/spezifikation-kampf.md, Abschnitt 12 (K5, Stufe 3).
+# Umwerfen, Aufstehen, E4 (7): Puppe leicht s0 x 146, 30 LP; in 150 f_x := 231.
+# Standard (Kampf 12): Prüfbühne, Seed 1, Rang 9 fest, Figur x 100, z 100,
+# Blick rechts, 72 LP, ohne Waffe; Puppen in z 100.
+szene name=T18 endframe=170 seed=1 buehne=pruefbuehne
+pruefstart rang=9 rang.fest
+figur x=100 z=100 blick=R lp=72
+gegner slot=0 typ=Puppe rolle=leicht x=146 z=100 lp=30
+eingriff frame=150 ziel=f feld=x wert=231

@@ -1,0 +1,10 @@
+# Abnahmetest W-T6 nach docs/spezifikation-welt.md, Abschnitt 12 (dort T6; K5, Stufe 3).
+# Angriffserlaubnis und Schutz (5.7). Prüfstart PS6: figur (500, 178); kamera.x 300; welle.1, 2 aus; sperre.S1 aus; Bolzer vorplatziert, Logik an, in s1 (600, 178), s2 (620, 178), s3 (640, 178), s4 (390, 178); rang.fest; fest.gehstufe=normal; fest.angriff=BA.
+# Standard (Welt 12): Bühne scheibe, Seed 12345, Rang 9, Rang-Uhr läuft.
+szene name=W-T6 endframe=300 seed=12345 buehne=scheibe
+pruefstart welle.1=aus welle.2=aus sperre.S1=aus kamera.x=300 rang.fest fest.gehstufe=normal fest.angriff=BA
+figur x=500 z=178
+gegner slot=1 typ=Bolzer x=600 z=178 vorplatziert=ja logik=an
+gegner slot=2 typ=Bolzer x=620 z=178 vorplatziert=ja logik=an
+gegner slot=3 typ=Bolzer x=640 z=178 vorplatziert=ja logik=an
+gegner slot=4 typ=Bolzer x=390 z=178 vorplatziert=ja logik=an

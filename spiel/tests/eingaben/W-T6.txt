@@ -1,0 +1,2 @@
+# Eingabe zu Abnahmetest W-T6 (Welt 12; Format Kampf 11.1: von,bis,tasten)
+# keine Taste

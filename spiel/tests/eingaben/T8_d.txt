@@ -1,0 +1,3 @@
+# Eingabe zu Abnahmetest T8_d (Kampf 12; Format Kampf 11.1: von,bis,tasten)
+# A 18
+18,18,A

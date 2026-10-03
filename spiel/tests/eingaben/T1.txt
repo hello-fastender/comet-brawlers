@@ -1,0 +1,6 @@
+# Eingabe zu Abnahmetest T1 (Kampf 12; Format Kampf 11.1: von,bis,tasten)
+# R 10–29, O 40–49, R und O 60–69, L 80
+10,29,R
+40,49,O
+60,69,RO
+80,80,L

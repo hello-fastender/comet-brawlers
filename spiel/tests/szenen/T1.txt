@@ -1,0 +1,7 @@
+# Abnahmetest T1 nach docs/spezifikation-kampf.md, Abschnitt 12 (K5, Stufe 3).
+# Kriterium 1, Bewegung.
+# Standard (Kampf 12): Prüfbühne, Seed 1, Rang 9 fest, Figur x 100, z 100,
+# Blick rechts, 72 LP, ohne Waffe; Puppen in z 100.
+szene name=T1 endframe=90 seed=1 buehne=pruefbuehne
+pruefstart rang=9 rang.fest
+figur x=100 z=100 blick=R lp=72

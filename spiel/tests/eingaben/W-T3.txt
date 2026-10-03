@@ -1,0 +1,6 @@
+# Eingabe zu Abnahmetest W-T3 (Welt 12; Format Kampf 11.1: von,bis,tasten)
+# R 1–150, R 170–200, R 330–460, L 470–560
+1,150,R
+170,200,R
+330,460,R
+470,560,L

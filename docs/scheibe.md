@@ -42,7 +42,73 @@ Folgt mit den Abnahmetests (Stufe 3).
 
 ## Abnahme
 
-Folgt mit den Abnahmetests (Stufe 3).
+Stand 2026-10-03 (Stufe 3): alle 31 Abnahmetests der Spezifikationen grün,
+dazu der Determinismus- und der Referenztest (`npm test`: 202 Tests grün).
+
+| Datei in `spiel/tests/` | Inhalt |
+|---|---|
+| `abnahme_kampf.test.ts` | Kampf 12: T1 bis T20 und D1, je ein `test()` mit dem Namen der Spezifikation |
+| `abnahme_welt.test.ts` | Welt 12: dort T1 bis T10, hier W-T1 bis W-T10 |
+| `abnahme_determinismus.test.ts` | jede Abnahmeszene (50 Kampf-, 15 Weltszenen) zweimal, gleiche MD5 von `protokoll.csv` und `objekte.csv` (Kampf 11.6) |
+| `abnahme_referenz.test.ts` | `protokoll.csv` und `objekte.csv` der Szene W-T8_a bitgleich zu `tests/referenz/W-T8_a.protokoll.csv` und `W-T8_a.objekte.csv` |
+| `abnahme_hilfe.ts` | Prüflauf über `src/pruef/` (`pruefLauf`), Zugriff auf die Protokollzellen, Sammeln aller Abweichungen eines Tests |
+
+Je Lauf gibt es genau eine Prüfszene `tests/szenen/<Test>.txt` und eine
+Eingabedatei `tests/eingaben/<Test>.txt`, bei Läufen mit Buchstaben
+(`T5_e.txt`, `W-T8_a.txt`); ein Test ohne Tasten hat eine Eingabedatei nur
+mit Kommentar. Die Läufe a, b, c … sind Teilprüfungen in dem einen `test()`.
+Verglichen wird der Text der genannten Protokollzellen, Toleranz keine; ein
+Test meldet alle Abweichungen auf einmal (Lauf, Frame, Spalte, erwartet,
+ist). Nennt die Spezifikation eine Größe, die keine Spalte ist, rechnet der
+Test sie aus den Zellen: dz in W-T5 als ⌊s1_z⌋ − ⌊f_z⌋ (Welt 1), die Fläche
+des Prüfangriffs in T7 nach Kampf 11.2 (Ereignis genau in den Frames, in
+denen die Figur darin steht), Sichtbarkeit in W-T10 b über `liegezeit`
+(L108). Erwartungen, die nach Auftrag 3, Abschnitt 2.6 festgelegt sind,
+nennen im Kommentar ihre Nummer (L69, L100 bis L108).
+
+Einen Lauf ansehen: `npm run lauf -- --szene tests/szenen/T7_a.txt
+--eingabe tests/eingaben/T7_a.txt --aus aus/T7_a`. Die Referenz entstand
+beim ersten grünen Lauf am 2026-10-03 (MD5 `protokoll.csv`
+c6fcf2d154fcd5b8038989979e1ce3ef, `objekte.csv`
+a8d88cc60583061f6deaaacb4a21f1fc). Nur bei einer gewollten Änderung des
+Verhaltens neu schreiben, mit `ABNAHME_REFERENZ_SCHREIBEN=1 npm test`, und
+den Unterschied hier begründen.
+
+| Test | prüft | Läufe | Stand |
+|---|---|---|---|
+| T1 | Kriterium 1, Bewegung | – | grün |
+| T2 | Kriterium 2, Sprung | – | grün |
+| T3 | Kriterium 3, volle Kette | – | grün; Frame 135 „Slot frei“ als leere Felder (L100) |
+| T4 | Kriterium 4, Kombofenster | a bis d | grün |
+| T5 | Kriterium 5, Reichweite | a bis h | grün |
+| T6 | Kriterium 6, Griff und Wurf | a, b | grün |
+| T7 | Kriterium 7, Schutzfenster | a, b | grün |
+| T8 | Kriterium 8, 0 LP und gleichzeitiger Treffer | a bis d | grün |
+| T9 | Kriterium 9, Rang | a bis c | grün; Lauf c mit dem Nahkämpfer in s1 (L101) |
+| T10 | Kriterium 10, Sperre und Boss | a bis c | grün; Läufe und Prüfungen nach L102 |
+| T11 | Sprint | a bis c | grün |
+| T12 | Sprintangriff | a, b | grün; Puppe in Lauf b mit 16 LP (L103) |
+| T13 | Spezialangriff ohne Treffer | a bis c | grün; Frame 81 nach L104 |
+| T14 | Spezialangriff mit Treffern | – | grün; Puppen mit 16 LP (L103) |
+| T15 | Sprungangriff | a, b | grün |
+| T16 | Kniestoß, Haltedauer | a, b | grün; Lauf a mit der Eingabe nach L69 |
+| T17 | Neustart der Reaktion | – | grün |
+| T18 | Umwerfen, Aufstehen | – | grün; Frame 161 nach L105 |
+| T19 | Raketenwerfer | a bis d | grün |
+| T20 | Verlieren, Aufnehmen, Essen | a, b | grün; Kometenbraten in z 100 (L106) |
+| D1 | Determinismus | alle Szenen von T1 bis T20 | grün; zweiter Rechner nicht prüfbar, Ersatz Referenztest (L107) |
+| W-T1 | Kamera folgt, linker Rand | – | grün |
+| W-T2 | Weckreiz, Aufwachen, Sperre | – | grün |
+| W-T3 | Halt, Schnitt, Arena | – | grün |
+| W-T4 | Versteck, Annähern, Pause, Treffer | – | grün |
+| W-T5 | Zielpunkt und Abbruch | a, b | grün |
+| W-T6 | Angriffserlaubnis und Schutz | – | grün |
+| W-T7 | Super-Armor | a, b | grün |
+| W-T8 | Schwelle, Zünder und Fall | a, b | grün |
+| W-T9 | Rang, Tod und Neueinstieg | – | grün; Puppe mit 16 LP (L103) |
+| W-T10 | Gegenstände | a bis c | grün; Lauf b „sichtbar“ und „blinkt“ über `liegezeit` (L108) |
+| Determinismus | Kampf 11.6 für alle Abnahmeszenen | 65 Szenen | grün (zusätzlich zur Spezifikation) |
+| Referenz | Protokolle von W-T8_a gegen `tests/referenz/` | – | grün (zusätzlich zur Spezifikation) |
 
 ## Formate
 
@@ -278,3 +344,12 @@ Festlegung, Grund, ob die Spezifikation anzupassen ist.
 | L90 | Kampf 6.5: letztes Leben | LP 72 in N nur, wenn noch ein Leben bleibt; Erscheinen in N+1 nur dann und nicht bei GAMEOVER | offen | Klarstellung |
 | L91 | Kampf 8.3: Kniestoß, der den Gehaltenen tötet | endet wie der dritte: STAND ab K+23, Drücke ab K+18 | notes.md „offen“ | ja |
 | L92 | Kampf 4.3: Sprungangriff hoch nach A+29 | SPRUNG (Fallpose), uhr beginnt neu, kein weiterer Angriff bis zur Landung | offen | Klarstellung |
+| L100 | Kampf 12, T3 Frame 135 („s0_zst 0 (Slot frei)“) | geprüft: s0_typ und s0_zst leer, Ereignis FR:s0 | Kampf 11.3 schreibt bei freien Slots leere Felder; Zustand 0 erscheint nie als Zahl | ja: „Spalten von s0 leer (Slot frei), Ereignis FR:s0“ |
+| L101 | Kampf 12, T9 Lauf c | der erscheinende Nahkämpfer liegt in s1, z 100 | Slot und Tiefe nicht genannt; Welt 4.1 hält s0 für den Boss frei, z wie die Puppen | Klarstellung |
+| L102 | Kampf 12, T10 („Eingabedatei nach Welt 12“) | drei Läufe mit Prüfstart und Eingabe aus Welt 12: a = T2 (Sperre), b = T7 a (Kette gegen den Boss), c = T8 b (Fall). Geprüft: a kamera_x 400 von der Ankunft an der Sperre bis zum Frame, in dem der letzte Gegner der Welle 2 stirbt, im Frame danach größer; b drei Kettentreffer KT1 bis KT3 ohne Umwerfen, danach STOSS mit s0_lp 100 (lp_folge) und SA:s0:100, s0_lp 100 bis zum Endframe; c im Frame, in dem s0_lp unter 0 fällt, alle übrigen belegten Slots mit sn_akt TOT | T10 nennt weder Läufe noch Frames; Welt 12 verweist auf ihre Tests T2, T7, T8 | ja: Läufe und Frames nennen |
+| L103 | Kampf 12, T12 Lauf b und T14; Welt 12, PS9: Puppen ohne LP-Angabe | die Szenen geben ihnen 16 LP (T12 b, T14 `lp=16`; PS9 `vorplatziert=ja`, Startwerte) | die Erwartungen brauchen 16 LP (T12 b s0_lp 7 nach 9 Schaden, T14 10 nach 6, Welt-T9 s1_lp 11 nach 5); 16 LP hat der Startgegner im Vorbild (mechanik.md, „Lebenspunkte“; 2.6 Regel 1); nach L18 hätte eine nicht vorplatzierte Puppe die LP nach Rang (23). In T7, T9 b, T13 a und T20 a spielen die LP der Puppen keine Rolle | ja: „16 LP“ in T12 b, T14 und PS9 |
+| L104 | Kampf 12, T13 Frame 81 („f_schutz 0, f_zst 1, f_lp 67“) | f_schutz 27, f_zst 3, f_lp 67, Ereignis T:s0>F:PA:5:R | schutz zählt in KS2 auf 0, der Treffer in 81 ist wirksam und setzt in KS7 schutz = 27 (Kampf 6.3: „schutz = 27 in H“; 4.1: Zustand 3, solange schutz > 0); die Zeile beschreibt den Stand vor dem Treffer | ja: „f_schutz 27, f_zst 3, f_lp 67 (Treffer in H = 81 wirksam)“ |
+| L105 | Kampf 12, T18 Frame 161 („s0_zst 1, s0_lp 5“) | s0_zst 3, s0_lp 5, Ereignis T:F>s0:KT1:3:R | der Treffer in G = 161 ist wirksam; im Trefferframe gilt Zustand 3 (Kampf 7, GETROFFEN: 3 von h bis h+22; wie T3 Frame 12 „s0_zst 3“); „sofort verwundbar“ zeigt der LP-Verlust in G | ja: „s0_zst 3, s0_lp 5“ |
+| L106 | Kampf 12, T20 Lauf b | Kometenbraten in z 100 | Tiefe nicht genannt; Standard der Puppen (Kampf 12) | Klarstellung |
+| L107 | Kampf 12, D1 („und auf einem zweiten Rechner“) | im Test zweimal auf demselben Rechner; dazu der Vergleich mit dem Referenzprotokoll von W-T8_a in `spiel/tests/referenz/` (`abnahme_referenz.test.ts`) | ein zweiter Rechner steht im Testlauf nicht zur Verfügung | nein, Hinweis |
+| L108 | Welt 12, T10 b („sichtbar“, „blinkt“) | geprüft über `liegezeit` im Objektprotokoll: 699 in 760 (sichtbar), 700 in 761 und 791 in 852 (Blinken nach Welt 9.3) | die Sichtbarkeit ist keine Spalte (Kampf 11.5) | Klarstellung |

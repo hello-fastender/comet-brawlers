@@ -1,0 +1,6 @@
+# Abnahmetest W-T4 nach docs/spezifikation-welt.md, Abschnitt 12 (dort T4; K5, Stufe 3).
+# Versteck, Annähern, Pause, Treffer (4.2, 5.3, 5.4). Prüfstart PS4: figur.z 206; welle.2 aus; sperre.S1 aus; rang.fest; fest.gehstufe=normal; fest.angriff=BA.
+# Standard (Welt 12): Bühne scheibe, Seed 12345, Rang 9, Rang-Uhr läuft.
+szene name=W-T4 endframe=200 seed=12345 buehne=scheibe
+pruefstart welle.2=aus sperre.S1=aus rang.fest fest.gehstufe=normal fest.angriff=BA
+figur z=206

@@ -1,0 +1,5 @@
+# Eingabe zu Abnahmetest T10_b (Kampf 12; Format Kampf 11.1: von,bis,tasten)
+# wie Welt 12, T7 a: A 10, A 24, A 40
+10,10,A
+24,24,A
+40,40,A

@@ -1,0 +1,11 @@
+# Abnahmetest T8_a nach docs/spezifikation-kampf.md, Abschnitt 12 (K5, Stufe 3).
+# Kriterium 8, 0 LP und gleichzeitiger Treffer, Lauf a: Puppe leicht s0 x 146, 16 LP; in 1: f_lp := 5; Prüfangriffe 5 in 20 und 5 in 50.
+# Standard (Kampf 12): Prüfbühne, Seed 1, Rang 9 fest, Figur x 100, z 100,
+# Blick rechts, 72 LP, ohne Waffe; Puppen in z 100.
+szene name=T8_a endframe=60 seed=1 buehne=pruefbuehne
+pruefstart rang=9 rang.fest
+figur x=100 z=100 blick=R lp=72
+gegner slot=0 typ=Puppe rolle=leicht x=146 z=100 lp=16
+eingriff frame=1 ziel=f feld=lp wert=5
+pruefangriff slot=0 von=20 bis=20 schaden=5 umwerfen=nein
+pruefangriff slot=0 von=50 bis=50 schaden=5 umwerfen=nein

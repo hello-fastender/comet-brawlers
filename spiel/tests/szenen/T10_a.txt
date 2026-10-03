@@ -1,0 +1,9 @@
+# Abnahmetest T10 nach docs/spezifikation-kampf.md, Abschnitt 12 (K5, Stufe 3).
+# Kriterium 10, Sperre und Boss, Lauf a (Sperre): Bühne scheibe, Prüfstart PS2
+# und Eingabe wie Welt 12, T2 (Kampf 12: „Eingabedatei nach Welt 12“).
+# PS2: welle.1 aus; gegner.s2 und s3 erlaubnis aus; fest.gehstufe=normal.
+szene name=T10_a endframe=375 seed=12345 buehne=scheibe
+pruefstart rang=9
+pruefstart welle.1=aus gegner.s2.erlaubnis=aus gegner.s3.erlaubnis=aus fest.gehstufe=normal
+eingriff frame=360 ziel=s2 feld=lp wert=-1
+eingriff frame=360 ziel=s3 feld=lp wert=-1

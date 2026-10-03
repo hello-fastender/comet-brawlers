@@ -136,10 +136,14 @@ export function gegnerZufallGeben(welt: Welt, g: Gegner): void {
   g.zufall = gegnerZufall(welt.zufall);
 }
 
-/** Übergibt einen frisch angelegten Gegner an seine Logik: Boss an K4, Logik an an K3; Puppen brauchen nichts. */
+/**
+ * Übergibt einen frisch angelegten Gegner an seine Logik: Boss an K4, alle
+ * anderen an K3. Für Puppen (Logik aus) setzt gegnerAngelegt nur die LP nach
+ * Rang, wenn die Szene keine nennt (Lücke L18; Kernfehler aus Stufe 3).
+ */
 export function gegnerUebergeben(welt: Welt, g: Gegner): void {
   if (g.typ === 'Ballast') bossAngelegt(welt, g);
-  else if (g.logik) gegnerAngelegt(welt, g);
+  else gegnerAngelegt(welt, g);
 }
 
 /** Legt einen Behälter in Objektslot o an (Welt 9.1, 9.2). */

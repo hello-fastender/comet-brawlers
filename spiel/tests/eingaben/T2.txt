@@ -1,0 +1,5 @@
+# Eingabe zu Abnahmetest T2 (Kampf 12; Format Kampf 11.1: von,bis,tasten)
+# S 10, R 30–70, R und S 100
+10,10,S
+30,70,R
+100,100,RS

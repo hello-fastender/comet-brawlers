@@ -1,0 +1,8 @@
+# Abnahmetest W-T3 nach docs/spezifikation-welt.md, Abschnitt 12 (dort T3; K5, Stufe 3).
+# Halt, Schnitt, Arena (KA6, KA7, KA8, KA13). Prüfstart PS3: figur (600, 180); kamera.x 400; welle.1, 2, 7 aus; sperre.S1 aus; s1 Bolzer (460, 180), vorplatziert, Logik an, erlaubnis aus; fest.gehstufe=normal. Eingriff in 160: s1 lp := −1.
+# Standard (Welt 12): Bühne scheibe, Seed 12345, Rang 9, Rang-Uhr läuft.
+szene name=W-T3 endframe=561 seed=12345 buehne=scheibe
+pruefstart welle.1=aus welle.2=aus welle.7=aus sperre.S1=aus kamera.x=400 fest.gehstufe=normal gegner.s1.erlaubnis=aus
+figur x=600 z=180
+gegner slot=1 typ=Bolzer x=460 z=180 vorplatziert=ja logik=an erlaubnis=aus
+eingriff frame=160 ziel=s1 feld=lp wert=-1

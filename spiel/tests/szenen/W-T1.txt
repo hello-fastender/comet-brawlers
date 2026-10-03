@@ -1,0 +1,5 @@
+# Abnahmetest W-T1 nach docs/spezifikation-welt.md, Abschnitt 12 (dort T1; K5, Stufe 3).
+# Kamera folgt, linker Rand (KA1, KA2, 2.2). Prüfstart PS1: welle.1 und welle.2 aus; sperre.S1 aus.
+# Standard (Welt 12): Bühne scheibe, Seed 12345, Rang 9, Rang-Uhr läuft.
+szene name=W-T1 endframe=301 seed=12345 buehne=scheibe
+pruefstart welle.1=aus welle.2=aus sperre.S1=aus

@@ -1,0 +1,8 @@
+# Eingabe zu Abnahmetest T7_b (Kampf 12; Format Kampf 11.1: von,bis,tasten)
+# A 154, 156, 158, 160, 162, 164
+154,154,A
+156,156,A
+158,158,A
+160,160,A
+162,162,A
+164,164,A

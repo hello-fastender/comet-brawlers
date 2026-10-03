@@ -1,0 +1,8 @@
+# Eingabe zu Abnahmetest T16_a (Kampf 12; Format Kampf 11.1: von,bis,tasten)
+# R 10–21, A 23, 39, 41, 59 (Spezifikation: A 23, 40, 41, 59; 40 und 41 wären ein gehaltener Druck,
+# Kampf 2.1; docs/scheibe.md, L69)
+10,21,R
+23,23,A
+39,39,A
+41,41,A
+59,59,A

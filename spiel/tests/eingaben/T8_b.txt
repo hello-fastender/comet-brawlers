@@ -1,0 +1,3 @@
+# Eingabe zu Abnahmetest T8_b (Kampf 12; Format Kampf 11.1: von,bis,tasten)
+# A und S 48
+48,48,AS

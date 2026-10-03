@@ -1,0 +1,8 @@
+# Abnahmetest W-T7 nach docs/spezifikation-welt.md, Abschnitt 12 (dort T7; K5, Stufe 3).
+# Super-Armor (7.4), Lauf a. Prüfstart PS7: figur (2000, 50) Blick rechts; kamera.x 1792, modus ARENA; welle.1, 2, 9 aus; welle.7=nur_boss, Boss in (2060, 50) Blick links; boss.angriffe und boss.bewegung aus; rang.fest.
+# Standard (Welt 12): Bühne scheibe, Seed 12345, Rang 9, Rang-Uhr läuft.
+szene name=W-T7_a endframe=140 seed=12345 buehne=scheibe
+pruefstart welle.1=aus welle.2=aus welle.9=aus welle.7=nur_boss rang.fest
+pruefstart kamera.x=1792 kamera.modus=ARENA boss.angriffe=aus boss.bewegung=aus
+figur x=2000 z=50 blick=R
+gegner slot=0 typ=Ballast x=2060 z=50 blick=L

@@ -1,0 +1,6 @@
+# Abnahmetest W-T5 nach docs/spezifikation-welt.md, Abschnitt 12 (dort T5; K5, Stufe 3).
+# Zielpunkt und Abbruch (5.4), Lauf b. Prüfstart PS4 wie W-T4.
+# Standard (Welt 12): Bühne scheibe, Seed 12345, Rang 9, Rang-Uhr läuft.
+szene name=W-T5_b endframe=200 seed=12345 buehne=scheibe
+pruefstart welle.2=aus sperre.S1=aus rang.fest fest.gehstufe=normal fest.angriff=BA
+figur z=206

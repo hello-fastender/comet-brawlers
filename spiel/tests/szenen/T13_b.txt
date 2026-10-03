@@ -1,0 +1,7 @@
+# Abnahmetest T13_b nach docs/spezifikation-kampf.md, Abschnitt 12 (K5, Stufe 3).
+# Spezialangriff ohne Treffer (6.3, 9.4), Lauf b: ohne Puppe.
+# Standard (Kampf 12): Prüfbühne, Seed 1, Rang 9 fest, Figur x 100, z 100,
+# Blick rechts, 72 LP, ohne Waffe; Puppen in z 100.
+szene name=T13_b endframe=70 seed=1 buehne=pruefbuehne
+pruefstart rang=9 rang.fest
+figur x=100 z=100 blick=R lp=72

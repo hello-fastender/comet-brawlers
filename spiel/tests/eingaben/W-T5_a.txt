@@ -1,0 +1,4 @@
+# Eingabe zu Abnahmetest W-T5_a (Welt 12; Format Kampf 11.1: von,bis,tasten)
+# R 1–88 (wie W-T4), dazu L 185–193
+1,88,R
+185,193,L

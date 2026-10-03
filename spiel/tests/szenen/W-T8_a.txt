@@ -1,0 +1,9 @@
+# Abnahmetest W-T8 nach docs/spezifikation-welt.md, Abschnitt 12 (dort T8; K5, Stufe 3).
+# Schwelle, Zünder (6, 7.5), Lauf a. Prüfstart PS8a: wie PS7, figur.z 55, boss.lp 30, welle.9 an; fest.gehstufe=normal; fest.zielpunkt=128.
+# Standard (Welt 12): Bühne scheibe, Seed 12345, Rang 9, Rang-Uhr läuft.
+szene name=W-T8_a endframe=220 seed=12345 buehne=scheibe
+pruefstart welle.1=aus welle.2=aus welle.7=nur_boss rang.fest
+pruefstart kamera.x=1792 kamera.modus=ARENA boss.angriffe=aus boss.bewegung=aus boss.lp=30
+pruefstart fest.gehstufe=normal fest.zielpunkt=128
+figur x=2000 z=55 blick=R
+gegner slot=0 typ=Ballast x=2060 z=50 blick=L

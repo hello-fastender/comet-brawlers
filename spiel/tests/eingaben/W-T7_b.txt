@@ -1,0 +1,6 @@
+# Eingabe zu Abnahmetest W-T7_b (Welt 12; Format Kampf 11.1: von,bis,tasten)
+# A 10, A 24, A 40, A 57
+10,10,A
+24,24,A
+40,40,A
+57,57,A

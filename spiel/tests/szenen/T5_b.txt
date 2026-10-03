@@ -1,0 +1,8 @@
+# Abnahmetest T5_b nach docs/spezifikation-kampf.md, Abschnitt 12 (K5, Stufe 3).
+# Kriterium 5, Reichweite, Lauf b: Puppe schwer s0 x 186, z 100, 30 LP.
+# Standard (Kampf 12): Prüfbühne, Seed 1, Rang 9 fest, Figur x 100, z 100,
+# Blick rechts, 72 LP, ohne Waffe; Puppen in z 100.
+szene name=T5_b endframe=40 seed=1 buehne=pruefbuehne
+pruefstart rang=9 rang.fest
+figur x=100 z=100 blick=R lp=72
+gegner slot=0 typ=Puppe rolle=schwer x=186 z=100 lp=30

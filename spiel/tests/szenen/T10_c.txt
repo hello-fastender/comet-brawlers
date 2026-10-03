@@ -1,0 +1,13 @@
+# Abnahmetest T10 nach docs/spezifikation-kampf.md, Abschnitt 12 (K5, Stufe 3).
+# Kriterium 10, Sperre und Boss, Lauf c (Fall des Bosses): Bühne scheibe,
+# Prüfstart PS8b und Eingabe wie Welt 12, T8 b.
+# PS8b: wie PS7, boss.lp 2; Puppen (Logik aus, Rolle leicht) s1 Bolzer
+# (2150, 50), s2 Bolzer (1880, 50), s3 Bolzer (1860, 70).
+szene name=T10_c endframe=30 seed=12345 buehne=scheibe
+pruefstart rang=9 rang.fest welle.1=aus welle.2=aus welle.9=aus welle.7=nur_boss
+pruefstart kamera.x=1792 kamera.modus=ARENA boss.angriffe=aus boss.bewegung=aus boss.lp=2
+figur x=2000 z=50 blick=R
+gegner slot=0 typ=Ballast x=2060 z=50 blick=L
+gegner slot=1 typ=Bolzer rolle=leicht x=2150 z=50 logik=aus lp=16
+gegner slot=2 typ=Bolzer rolle=leicht x=1880 z=50 logik=aus lp=16
+gegner slot=3 typ=Bolzer rolle=leicht x=1860 z=70 logik=aus lp=16

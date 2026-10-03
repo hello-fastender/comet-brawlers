@@ -1,0 +1,4 @@
+# Eingabe zu Abnahmetest T4_c (Kampf 12; Format Kampf 11.1: von,bis,tasten)
+# A 10 und zweiter Druck in 39
+10,10,A
+39,39,A

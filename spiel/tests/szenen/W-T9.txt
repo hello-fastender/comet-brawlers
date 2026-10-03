@@ -1,0 +1,8 @@
+# Abnahmetest W-T9 nach docs/spezifikation-welt.md, Abschnitt 12 (dort T9; K5, Stufe 3).
+# Rang (8, 10.3). Prüfstart PS9: alle Wellen, Sperre und Halt aus; Puppe s1 Bolzer (30, 170). Eingriffe: in 1100 Prüfangriff s1 1100–1100 Schaden 80 umwerfen; in 1700 erscheint ein Bolzer (nicht vorplatziert, Logik an) in s2 bei (416, 170). Die Puppe hat 16 LP (vorplatziert), siehe docs/scheibe.md, L103.
+# Standard (Welt 12): Bühne scheibe, Seed 12345, Rang 9, Rang-Uhr läuft.
+szene name=W-T9 endframe=2000 seed=12345 buehne=scheibe
+pruefstart welle.1=aus welle.2=aus welle.7=aus welle.9=aus sperre.S1=aus halt.H1=aus
+gegner slot=1 typ=Bolzer rolle=leicht x=30 z=170 logik=aus vorplatziert=ja
+pruefangriff slot=1 von=1100 bis=1100 schaden=80 umwerfen=ja
+gegner slot=2 typ=Bolzer x=416 z=170 vorplatziert=nein logik=an erscheint=1700

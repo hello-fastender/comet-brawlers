@@ -1,0 +1,3 @@
+# Eingabe zu Abnahmetest T19_d (Kampf 12; Format Kampf 11.1: von,bis,tasten)
+# A 10
+10,10,A

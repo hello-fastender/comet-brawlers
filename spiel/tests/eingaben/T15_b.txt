@@ -1,0 +1,4 @@
+# Eingabe zu Abnahmetest T15_b (Kampf 12; Format Kampf 11.1: von,bis,tasten)
+# S 10, A 30
+10,10,S
+30,30,A

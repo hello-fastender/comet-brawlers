@@ -1,0 +1,11 @@
+# Abnahmetest T10 nach docs/spezifikation-kampf.md, Abschnitt 12 (K5, Stufe 3).
+# Kriterium 10, Sperre und Boss, Lauf b (Kette gegen den Boss): Bühne scheibe,
+# Prüfstart PS7 und Eingabe wie Welt 12, T7 a.
+# PS7: Figur (2000, 50) Blick rechts; Kamera 1792 ARENA; Wellen 1, 2, 9 aus;
+# Welle 7 nur Boss, Boss in (2060, 50) Blick links; Angriffe und Bewegung des
+# Bosses aus; Rang 9 fest.
+szene name=T10_b endframe=140 seed=12345 buehne=scheibe
+pruefstart rang=9 rang.fest welle.1=aus welle.2=aus welle.9=aus welle.7=nur_boss
+pruefstart kamera.x=1792 kamera.modus=ARENA boss.angriffe=aus boss.bewegung=aus
+figur x=2000 z=50 blick=R
+gegner slot=0 typ=Ballast x=2060 z=50 blick=L

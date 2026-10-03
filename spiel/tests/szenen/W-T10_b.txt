@@ -1,0 +1,7 @@
+# Abnahmetest W-T10 nach docs/spezifikation-welt.md, Abschnitt 12 (dort T10; K5, Stufe 3).
+# Gegenstände (9), Lauf b. Prüfstart PS10b: figur (210, 158); kamera.x 10; alle Wellen, Sperre und Halt aus; behaelter.F1 aus; behaelter.F9=fass,250,158,Raketenwerfer.
+# Standard (Welt 12): Bühne scheibe, Seed 12345, Rang 9, Rang-Uhr läuft.
+szene name=W-T10_b endframe=860 seed=12345 buehne=scheibe
+pruefstart welle.1=aus welle.2=aus welle.7=aus welle.9=aus sperre.S1=aus halt.H1=aus kamera.x=10
+pruefstart behaelter.F1=aus behaelter.F9=fass,250,158,Raketenwerfer
+figur x=210 z=158

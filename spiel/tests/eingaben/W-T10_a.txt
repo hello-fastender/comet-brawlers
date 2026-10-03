@@ -1,0 +1,5 @@
+# Eingabe zu Abnahmetest W-T10_a (Welt 12; Format Kampf 11.1: von,bis,tasten)
+# A 10, R 62–68, A 72
+10,10,A
+62,68,R
+72,72,A

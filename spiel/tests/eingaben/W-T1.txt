@@ -1,0 +1,4 @@
+# Eingabe zu Abnahmetest W-T1 (Welt 12; Format Kampf 11.1: von,bis,tasten)
+# R 1–120, L 121–300
+1,120,R
+121,300,L

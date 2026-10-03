@@ -1,0 +1,7 @@
+# Abnahmetest W-T2 nach docs/spezifikation-welt.md, Abschnitt 12 (dort T2; K5, Stufe 3).
+# Weckreiz, Aufwachen, Sperre (4.2, KA4, KA5). Prüfstart PS2: welle.1 aus; gegner.s2 und s3 erlaubnis aus; fest.gehstufe=normal. Eingriffe in 360: s2 lp := −1, s3 lp := −1.
+# Standard (Welt 12): Bühne scheibe, Seed 12345, Rang 9, Rang-Uhr läuft.
+szene name=W-T2 endframe=375 seed=12345 buehne=scheibe
+pruefstart welle.1=aus gegner.s2.erlaubnis=aus gegner.s3.erlaubnis=aus fest.gehstufe=normal
+eingriff frame=360 ziel=s2 feld=lp wert=-1
+eingriff frame=360 ziel=s3 feld=lp wert=-1

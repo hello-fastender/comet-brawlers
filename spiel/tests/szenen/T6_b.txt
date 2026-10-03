@@ -1,0 +1,9 @@
+# Abnahmetest T6_b nach docs/spezifikation-kampf.md, Abschnitt 12 (K5, Stufe 3).
+# Kriterium 6, Griff und Wurf, Lauf b: Figur x 300, Blick links (E14), Puppe leicht s0 x 240, Puppe leicht s1 x 160, je 16 LP.
+# Standard (Kampf 12): Prüfbühne, Seed 1, Rang 9 fest, Figur x 100, z 100,
+# Blick rechts, 72 LP, ohne Waffe; Puppen in z 100.
+szene name=T6_b endframe=110 seed=1 buehne=pruefbuehne
+pruefstart rang=9 rang.fest
+figur x=300 z=100 blick=L lp=72
+gegner slot=0 typ=Puppe rolle=leicht x=240 z=100 lp=16
+gegner slot=1 typ=Puppe rolle=leicht x=160 z=100 lp=16
