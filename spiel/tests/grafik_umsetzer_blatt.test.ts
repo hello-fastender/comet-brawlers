@@ -1,25 +1,30 @@
-// Gesamtablauf des Umsetzers (Auftrag 4, 9.3; docs/grafik.md 5) an einem
+// Gesamtablauf des Umsetzers (Auftrag 4, 9.3; docs/grafik.md 5; angepasst an
+// die Fassung v2, Auftrag 5, Phase 1, docs/grafik.md 5.8) an einem
 // synthetischen Blatt, das der Test selbst erzeugt: 3 × 2 Zellen mit
 // einfachen, absichtlich unsauberen Figuren in großem Maßstab (Stand 250 px
-// statt 71): Kantenglättung am Rand, eine Außenlinie fast in
+// statt 142): Kantenglättung am Rand, eine Außenlinie fast in
 // Hintergrundfarbe, Fremdfarben, unsaubere Farbtöne, je Zelle eine kleine
 // Nummer und ein Staubkorn, die verworfen werden müssen. Das Blatt geht als
 // PNG durch Encoder und Decoder (png.ts). Farben nur aus palette.ts.
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { blattBytes } from '../grafik/quelle/blatt.ts';
 import { mischen } from '../grafik/quelle/farbe.ts';
-import { konturAussen, konturGeschlossen, streupixel } from '../grafik/quelle/kontur.ts';
+import { konturAussen } from '../grafik/quelle/kontur.ts';
 import type { Pixel } from '../grafik/quelle/leinwand.ts';
 import { deckend, Leinwand } from '../grafik/quelle/leinwand.ts';
+import { farbAbstand } from '../grafik/quelle/farbe.ts';
+import { helligkeit } from '../grafik/quelle/medianschnitt.ts';
 import {
-  FARBBUDGET, farbenZaehlen, HAAR_DUNKEL, HAUT_HELL, HAUT_MITTEL, HOSE_BRAUN, KONTUR, LEDER, LEISTE_TEXT, NACHTHIMMEL, SIGNAL_ORANGE, STAHL,
+  farbenZaehlen, HAAR_DUNKEL, HAUT_HELL, HAUT_MITTEL, HOSE_BRAUN, KONTUR, LEDER, LEISTE_TEXT, NACHTHIMMEL, SIGNAL_ORANGE, STAHL,
   STAUB, STERNBEERE, TON_GLANZ, TON_GRUND, TON_LICHT, TON_SCHATTEN, WESTE_OLIV,
 } from '../grafik/quelle/palette.ts';
 import { md5, pngLesen, pngSchreiben } from '../grafik/quelle/png.ts';
 import type { Ergebnis } from '../grafik/quelle/umsetzer.ts';
-import { findeZellen, freistellen, glanzToene, leseQuelle, leseZuordnung, protokoll, setzeUm, STANDARD } from '../grafik/quelle/umsetzer.ts';
+import {
+  dunkelPruefer, findeZellen, freistellen, grokBytes, konturLueckenDunkel, leseQuelle, leseZuordnung, MASSSTAB, protokoll, setzeUm, STANDARD,
+  streupixelAehnlich,
+} from '../grafik/quelle/umsetzer.ts';
 
 const GRUND = NACHTHIMMEL.treppe[TON_GRUND];
 /** Zellen 280 × 300, Grundlinie 280 px unter der Oberkante der Zelle, Stand 250 px hoch. */
@@ -27,7 +32,8 @@ const ZB = 280;
 const ZH = 300;
 const FUSS = 280;
 const STAND = 250;
-const ZIEL = 71;
+/** Zielhöhe in Bildpixeln samt Kontur: 2 × (76 − 5) (Auftrag 5, 1). */
+const ZIEL = 142;
 
 interface Pose {
   readonly vorne?: number;
@@ -143,11 +149,10 @@ function synthetischesBlatt(): Uint8Array {
   return pngSchreiben(blatt);
 }
 
-const ZUORDNUNG = `# synthetischer Test (Auftrag 4, 9.3)
-figur test_fremd
+const ZUORDNUNG = `# synthetischer Test (Auftrag 4, 9.3; Auftrag 5, 1)
+figur test_grok
 typ Rammbock
 zielhoehe ${ZIEL}
-materialien HAUT_MITTEL WESTE_OLIV HOSE_BRAUN STAHL LEDER
 massstab blatt_a.png 1
 gehen gehen RAMMBOCK_GEHEN_X
 animation stand schleife 0
@@ -206,7 +211,7 @@ test('Blatt: festes Raster aus quelle.txt ergibt dieselben Zellen', () => {
   assert.deepEqual(b.raster, { spalten: 3, zeilen: 2 });
   assert.deepEqual(b.zellen.map((c) => c.nr), [1, 2, 3, 4, 5, 6]);
   assert.equal(b.verworfen.length, 12);
-  assert.deepEqual(blattBytes(e.blatt).png, blattBytes(ERGEBNIS.blatt).png);
+  assert.deepEqual(grokBytes(e).png, grokBytes(ERGEBNIS).png);
 });
 
 test('Blatt: freigestellt ohne Halbtransparenz, Stand genau auf Zielhöhe, ein Faktor für alle', () => {
@@ -216,42 +221,53 @@ test('Blatt: freigestellt ohne Halbtransparenz, Stand genau auf Zielhöhe, ein F
   }
   const hoehe = (name: string): number => e.animationen.find((a) => a.name === name)!.bilder[0]!.leinwand.begrenzung()!.h;
   assert.equal(hoehe('stand'), ZIEL);
-  assert.ok(Math.abs(e.faktor - ZIEL / STAND) <= (ZIEL / STAND) * (1.5 / ZIEL));
-  // Gehen ist so hoch wie der Stand, die Hocke (180 px in der Quelle) im selben Maßstab
+  assert.ok(Math.abs(e.faktor - ZIEL / STAND) <= (ZIEL / STAND) * (3 / ZIEL), `Faktor ${e.faktor}`);
+  // Gehen ist so hoch wie der Stand, die Hocke (180 px in der Quelle) im selben Maßstab, je 1 Bildpixel Kontur oben und unten
   assert.ok(Math.abs(hoehe('gehen') - ZIEL) <= 1);
-  assert.ok(Math.abs(hoehe('hocke') - Math.round((STAND - 70) * e.faktor)) <= 1, `Hocke ${hoehe('hocke')}`);
-  // Umriss des Rammbocks (60 × 76) im Stand eingehalten
+  assert.ok(Math.abs(hoehe('hocke') - (Math.round((STAND - 70) * e.faktor) + 2)) <= 1, `Hocke ${hoehe('hocke')}`);
+  // Umriss des Rammbocks (60 × 76 Spielpixel) im Stand bei 2× eingehalten
   const stand = e.animationen.find((a) => a.name === 'stand')!.bilder[0]!.leinwand.begrenzung()!;
-  assert.ok(stand.b <= 60, `Stand ${stand.b} px breit`);
+  assert.ok(stand.b <= MASSSTAB * 60, `Stand ${stand.b} Bildpixel breit`);
 });
 
-test('Blatt: Palette mit höchstens 15 Farben, Abstand je Quellfarbe protokolliert, Fremdfarben als Befund', () => {
+test('Blatt: Palette per Medianschnitt, höchstens 64 Farben mit durchsichtig, keine Hintergrundfarbe, Fremdfarben erhalten', () => {
   const e = ERGEBNIS;
   const alle = e.animationen.flatMap((a) => a.bilder.map((b) => b.leinwand));
-  assert.ok(farbenZaehlen(alle) <= FARBBUDGET.figur, `${farbenZaehlen(alle)} Farben einschließlich durchsichtig`);
-  const erlaubt = new Set(e.palette.stufen.map((s) => s.farbe));
-  assert.ok(e.palette.stufen.length <= 15);
-  for (const l of alle) for (const p of l.daten) if (p !== 0) assert.ok(erlaubt.has(p), 'nur Stufen der Palette');
-  assert.ok(e.palette.abbildungen.length > 20, 'Flächenmittel erzeugt viele Quellfarben, jede protokolliert');
-  for (const a of e.palette.abbildungen) assert.ok(Number.isFinite(a.abstand) && a.pixel > 0);
-  assert.ok(e.palette.befundAnteil > 0, 'Fremdfarben (Magenta, Orange) liegen weit von jeder Stufe');
-  assert.ok(e.befunde.some((b) => !b.hart && b.text.includes('der Pixel weiter als')));
+  assert.ok(farbenZaehlen(alle) <= 64, `${farbenZaehlen(alle)} Farben einschließlich durchsichtig`);
+  assert.ok(e.palette.palette.length <= STANDARD.hoechstFarben);
+  const erlaubt = new Set(e.palette.palette);
+  for (const l of alle) for (const p of l.daten) if (p !== 0) assert.ok(erlaubt.has(p), 'nur Farben der Palette');
+  assert.ok(e.palette.quellfarben > 20, 'Flächenmittel erzeugt viele Quellfarben');
+  // Die Hintergrundfarbe ist vor dem Schnitt entfernt: keine Palettenfarbe liegt im Bereich des Grunds (bis zur Toleranz)
+  for (const p of e.palette.palette) assert.ok(farbAbstand(p, GRUND) > STANDARD.toleranzHintergrund, 'Palettenfarbe nahe am Grund');
+  // Keine Abbildung auf palette.ts: die Fremdfarben Magenta und Orange bleiben (nächste Palettenfarbe nah an der Quelle)
+  for (const f of [STERNBEERE.treppe[TON_GRUND], SIGNAL_ORANGE.treppe[TON_GRUND]]) {
+    const naechste = Math.min(...e.palette.palette.map((p) => farbAbstand(p, f)));
+    assert.ok(naechste < 40, `Fremdfarbe erhalten (Abstand ${naechste.toFixed(1)})`);
+  }
   const text = protokoll(e);
-  assert.match(text, /\| HAUT_MITTEL:2 \| #C98E68 \|/);
-  assert.match(text, /Quellfarbe \| Stufe \| Abstand \| Pixel/);
+  assert.match(text, /Palette: \d+ Farben \(Medianschnitt aus \d+ Quellfarben, davon \d+ im Bereich des Grunds ohne Schnitt\)/);
+  // Pixel, die das Schließen mit der Farbe des Grunds in die Figur nahm, gehen nicht in den Schnitt (U2-7)
+  assert.ok(e.palette.ohneSchnitt > 0);
+  assert.match(text, /\| Farbe \| Helligkeit \| Pixel \|/);
 });
 
-test('Blatt: Kontur geschlossen, keine Streupixel, keine harten Befunde; Fußkontakt als Befund (figurPruefen)', () => {
+test('Blatt: Kontur geschlossen aus dunklem Ton, keine Streupixel, keine harten Befunde; Fußkontakt protokolliert', () => {
   const e = ERGEBNIS;
-  // Die Testfigur schreitet nicht: der Fußkontakt (bauen.ts) meldet das als weichen Befund
-  assert.ok(e.befunde.some((b) => !b.hart && b.text.startsWith('gehen Bild') && b.text.includes('Fußkontakt')));
-  const glanz = glanzToene(e.palette.stufen);
+  // gehen hat Kopien (gleich, ersatz): die Anker bleiben, der Rest wird nur gemessen und protokolliert
+  const f = e.fusskontakt.find((x) => x.animation === 'gehen')!;
+  assert.equal(f.verschoben, false);
+  assert.ok(Number.isFinite(f.rest));
+  assert.ok(e.befunde.some((b) => !b.hart && b.text.startsWith('Fußkontakt gehen')));
+  const dunkel = dunkelPruefer();
   for (const a of e.animationen) {
     for (const b of a.bilder) {
-      assert.ok(konturGeschlossen(b.leinwand, KONTUR), `${a.name}: Kontur geschlossen`);
-      assert.equal(streupixel(b.leinwand, glanz).length, 0, `${a.name}: keine Streupixel`);
+      assert.equal(konturLueckenDunkel(b.leinwand, dunkel).length, 0, `${a.name}: Kontur geschlossen aus dunklem Ton`);
+      assert.equal(streupixelAehnlich(b.leinwand, STANDARD.streuAbstand, e.ausnahmen).length, 0, `${a.name}: keine Streupixel`);
     }
   }
+  // Die nachgesetzte Kontur ist der dunkelste Ton der Figur
+  assert.ok(helligkeit(e.palette.dunkelster) <= STANDARD.konturHelligkeit);
   assert.deepEqual(e.befunde.filter((b) => b.hart), []);
 });
 
@@ -259,21 +275,23 @@ test('Blatt: Anker am Fußpunkt (Mitte der Füße), liegend in der Mitte; Atlas 
   const e = ERGEBNIS;
   const stand = e.animationen.find((a) => a.name === 'stand')!.bilder[0]!;
   const g = stand.leinwand.begrenzung()!;
-  assert.equal(stand.ankerY, g.y + g.h - 1, 'unterste Zeile');
-  // Stiefel von cx − 36 bis cx + 35 in der Quelle, Zelle beginnt beim hinteren Arm (cx − 59)
-  const erwartet = g.x + ((-36 + 59 + (35 + 59)) / 2) * e.faktor;
-  assert.ok(Math.abs(stand.ankerX - erwartet) <= 1.5, `Anker x ${stand.ankerX}, erwartet etwa ${erwartet.toFixed(1)}`);
+  // Anker = linker oberer Bildpixel des Spielpixels am Fußpunkt (Schnittstelle U1): unterste Zeile − 1
+  assert.equal(stand.ankerY, g.y + g.h - MASSSTAB, 'unterstes Spielpixel');
+  // Stiefel von cx − 36 bis cx + 35 in der Quelle, Zelle beginnt beim hinteren Arm (cx − 59), Kontur 1 Bildpixel links
+  const erwartet = g.x + 1 + ((-36 + 59 + (35 + 59)) / 2) * e.faktor;
+  assert.ok(Math.abs(stand.ankerX + 0.5 - erwartet) <= 1.5, `Anker x ${stand.ankerX}, erwartet etwa ${erwartet.toFixed(1)}`);
   const liegen = e.animationen.find((a) => a.name === 'liegen')!.bilder[0]!;
   const gl = liegen.leinwand.begrenzung()!;
   assert.equal(liegen.ankerX, (2 * gl.x + gl.b - 1) >> 1);
-  assert.equal(liegen.ankerY, gl.y + gl.h - 1);
+  assert.equal(liegen.ankerY, gl.y + gl.h - MASSSTAB);
   const atlas = e.blatt.atlas.animationen;
   for (const name of ['stand', 'gehen', 'schlag', 'getroffen', 'hocke']) {
-    for (const b of atlas[name]!.bilder) assert.equal(b.ankerY, b.h - 1, `${name}: Anker auf der untersten Zeile`);
+    for (const b of atlas[name]!.bilder) assert.equal(b.ankerY, b.h - MASSSTAB, `${name}: Anker im untersten Spielpixel`);
   }
   assert.deepEqual(atlas['schlag']!.aktiv, [2]);
   assert.equal(atlas['gehen']!.bilder.length, 4);
-  assert.equal(e.blatt.atlas.blatt, 'test_fremd.png');
+  assert.equal(e.blatt.atlas.blatt, 'test_grok.png');
+  assert.match(grokBytes(e).json, /^\{\n  "blatt": "test_grok.png",\n  "massstab": 2,\n/);
 });
 
 test('Blatt: Lücken durch Wiederholung oder Spiegelung ersetzt und als Nachbestellung gemeldet', () => {
@@ -290,12 +308,13 @@ test('Blatt: Lücken durch Wiederholung oder Spiegelung ersetzt und als Nachbest
   const gehen = e.animationen.find((a) => a.name === 'gehen')!.bilder;
   assert.equal(gehen[2]!.leinwand, gehen[0]!.leinwand, 'gleich: gewollte Wiederholung');
   assert.ok(gehen[3]!.leinwand.gleich(gehen[1]!.leinwand.gespiegelt()), 'ersatz gespiegelt');
-  assert.equal(gehen[3]!.ankerX, gehen[1]!.leinwand.breite - 1 - gehen[1]!.ankerX);
+  // Achse rechts neben der Ankerspalte bleibt an derselben Stelle der Figur (Spiegeln um 2 · bildX + 1, U1-2)
+  assert.equal(gehen[3]!.ankerX, gehen[1]!.leinwand.breite - 2 - gehen[1]!.ankerX);
 });
 
 test('Blatt: deterministisch, zwei Läufe ergeben gleiche Bytes', () => {
-  const a = blattBytes(ERGEBNIS.blatt);
-  const b = blattBytes(umsetzen().blatt);
+  const a = grokBytes(ERGEBNIS);
+  const b = grokBytes(umsetzen());
   assert.equal(md5(a.png), md5(b.png));
   assert.deepEqual(a.png, b.png);
   assert.equal(a.json, b.json);

@@ -1,52 +1,63 @@
-// Umsetzer für Bildblätter (Auftrag 4, Abschnitt 9.3, Weg C).
+// Umsetzer für Bildblätter, Fassung v2 (Auftrag 5, Abschnitt 1 und Phase 1, U2;
+// E25: Grafik aus Grok-Bildern bei doppelter Darstellung).
 //
-// Macht aus Bildblättern eines fremden Werkzeugs (Grok) Sprites im
-// Atlas-Format (Auftrag 4, 2.3). Ablauf je Figur:
+// Macht aus Bildblättern eines fremden Werkzeugs (Grok) Sprites in
+// Bildpixeln der doppelten Darstellung (2 Bildpixel = 1 Spielpixel) im
+// Atlas-Format (Auftrag 4, 2.3) mit dem Feld "massstab": 2. Ablauf je Figur:
 //   1. Hintergrund aus den vier Ecken, Freistellen mit Toleranz und
-//      Randentscheidung nach dem Mehrheitsnachbarn (keine Halbtransparenz).
+//      Randentscheidung nach dem Mehrheitsnachbarn (keine Halbtransparenz),
+//      Schließen schmaler Innenlinien, Füllen eingeschlossener dunkler Flächen.
 //   2. Zellen per Flutfüllung (oder festes Raster aus quelle.txt), kleine
 //      Bereiche (Nummern, Staub) verwerfen, Reihenfolge zeilenweise.
-//   3. Maßstab: ein Faktor je Figur aus der Stand-Zelle auf die Zielhöhe,
-//      Verkleinern mit Flächenmittel, Deckung ab 1/2.
-//   4. Palette: jede Farbe auf die nächste Stufe der Materialtreppen der
-//      Figur (palette.ts), höchstens 15 Farben, Abstand je Farbe im Protokoll.
-//   5. Kontur: Innenkonturen im dunkelsten Materialton, Außenkontur in
-//      KONTUR neu (kontur.ts), Streupixel entfernen (Stilhandbuch 1.3).
-//   6. Anker: unterste Zeile, x Mitte der Füße (liegend: Mitte der Figur).
-//   7. Zuordnung Zelle → Animation, Bildindex aus fremd/<figur>/zuordnung.txt,
-//      fehlende Bilder durch Wiederholung, Ausgabe als Blatt mit Atlas.
+//   3. Maßstab: Zielhöhe 2 × (Umrisshöhe − 5) aus der Stand-Zelle, ein Faktor
+//      je Figur, Blätter mit anderer Figurgröße über eine Bezugszelle neu
+//      kalibriert; Verkleinern mit Flächenmittel, Deckung ab 1/2.
+//   4. Palette je Figur per Medianschnitt über alle Bilder, höchstens 63
+//      Farben (64 mit durchsichtig), ohne Raster, keine Abbildung auf
+//      palette.ts; Figurenpixel nicht dunkler als der dunkelste Bodenton.
+//   5. Streupixel entfernen, Kontur: dunkle Außenkante bleibt, sonst 1
+//      Bildpixel im dunkelsten Ton der Figur nachsetzen.
+//   6. Anker: unterste Zeile, x Mitte der Füße (liegend: Mitte der Figur);
+//      Gehbilder so verschoben, dass der Standfuß je Bild um die Gehstrecke
+//      zurückwandert, Rest protokolliert.
+//   7. Zuordnung Zelle → Animation aus fremd/<ordner>/zuordnung.txt, fehlende
+//      Bilder durch Wiederholung (Nachbestellung), Ausgabe als Blatt mit Atlas.
 //
-// PNG lesen, Treppen, Palette, Kontur, Blatt und Kontaktbogen kommen aus dem
-// Werkzeugkasten (png.ts, farbe.ts, palette.ts, kontur.ts, blatt.ts,
-// kontakt.ts). Deterministisch: kein Math.random, kein Date, feste
-// Reihenfolgen. Ablauf, Parameter und Grenzen: docs/grafik.md, Abschnitt 5.
+// PNG lesen, Abstand, Kontur, Blatt und Schrift kommen aus dem Werkzeugkasten
+// (png.ts, farbe.ts, kontur.ts, blatt.ts, kontakt.ts), der Medianschnitt aus
+// medianschnitt.ts. Deterministisch: kein Math.random, kein Date, feste
+// Reihenfolgen. Ablauf, Parameter und Grenzen: docs/grafik.md, Abschnitt 5.8.
 //
 // Aufruf: node --experimental-strip-types grafik/quelle/umsetzer.ts
 //         grafik/quelle/fremd/rammbock [--aus grafik/ausgabe] [--kontakt ../docs/bilder]
 
-import { existsSync, readFileSync } from 'node:fs';
-import { join, resolve } from 'node:path';
-import { pathToFileURL } from 'node:url';
-import type { Befund as Stilbefund, Figur } from './bauen.ts';
-import { figurPruefen } from './bauen.ts';
-import type { Animation, Bild, GepacktesBlatt } from './blatt.ts';
-import { blattBytes, blattPacken, blattSchreiben } from './blatt.ts';
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import type { Animation, Atlas, Bild, GepacktesBlatt } from './blatt.ts';
+import { atlasText, BLATT_MAX, blattPacken, zugeschnitten } from './blatt.ts';
 import { farbAbstand, pixelZuHex, rgbZuPixel } from './farbe.ts';
-import { kontaktSchreiben } from './kontakt.ts';
-import { randFaerben, streupixel, streupixelEntfernen } from './kontur.ts';
+import type { Punkt } from './geometrie.ts';
+import { textBreite, textZeichnen, ZEICHEN_HOEHE } from './kontakt.ts';
+import { streupixel } from './kontur.ts';
 import type { Pixel } from './leinwand.ts';
 import { deckend, kanaele, Leinwand } from './leinwand.ts';
-import type { TonIndex } from './palette.ts';
-import { FARBBUDGET, KONTUR, MATERIALIEN, naechsteFarbe, TON_DUNKEL, TON_GLANZ } from './palette.ts';
-import { md5, pngDateiLesen } from './png.ts';
+import { farbHaeufigkeit, helligkeit, medianschnitt } from './medianschnitt.ts';
+import { farbenZaehlen, KONTAKT_AKTIV, KONTAKT_ANKER, KONTAKT_BODEN, KONTAKT_GRUND, KONTAKT_TEXT, KONTAKT_ZELLE } from './palette.ts';
+import { md5, pngDateiLesen, pngLesen, pngSchreiben } from './png.ts';
 import type { Umriss } from '../../src/darstellung/masse.ts';
-import { UMRISS_FIGUR, UMRISS_GEGNER } from '../../src/darstellung/masse.ts';
+import { SCHATTEN_HOEHE, UMRISS_FIGUR, UMRISS_GEGNER } from '../../src/darstellung/masse.ts';
 import { EINS } from '../../src/kern/festkomma.ts';
 import * as werte from '../../src/kern/werte.ts';
 
 // ===========================================================================
 // Grundlagen
 // ===========================================================================
+
+/** Bildpixel je Spielpixel der Darstellung (E25: 768 × 448 Bildpixel für 384 × 224 Einheiten). */
+export const MASSSTAB = 2;
+/** Endung der Blätter des Umsetzers v2: <figur>_grok.png mit <figur>_grok.json (Auftrag 5, Phase 1). */
+export const BLATT_ENDUNG = '_grok';
 
 /** Deckkraft, unter der ein Pixel eines Quellblatts als durchsichtig gilt (Hälfte von 255). */
 const HALB_DECKEND = 128;
@@ -58,9 +69,6 @@ const NACHBARN: readonly (readonly [number, number])[] = [
 ];
 /** Anzahl der Kantennachbarn am Anfang von NACHBARN. */
 const KANTEN = 4;
-
-/** Ton der Kontur in der Stufenliste (gehört zu keiner Treppe). */
-const KONTUR_TON = -1;
 
 /** Deckender Pixel ohne Deckkraftanteil der Quelle. */
 function deckendVon(p: Pixel): Pixel {
@@ -74,7 +82,7 @@ function median(werte: readonly number[]): number {
 }
 
 // ===========================================================================
-// Parameter (Auftrag 4, 9.3; Festlegungen G0b in docs/grafik.md, 5 und 7)
+// Parameter (Auftrag 5, 1; Festlegungen G0b und U2 in docs/grafik.md, 5 und 7)
 // ===========================================================================
 
 export interface Parameter {
@@ -86,34 +94,54 @@ export interface Parameter {
   readonly mindestAnteil: number;
   /** Ausnahme G0b-1: eine Zelle bleibt, wenn ihr Rechteck mindestens dieser Anteil der größten Zelle ist (liegende Posen). */
   readonly vergleichsAnteil: number;
-  /** Deckung (Anteil der Fläche), ab der ein verkleinerter Pixel deckend wird (9.3: keine Halbtransparenz). */
+  /** Deckung (Anteil der Fläche), ab der ein verkleinerter Pixel deckend wird (keine Halbtransparenz). */
   readonly deckung: number;
-  /** Höhe des Fußbands als Anteil der Figurhöhe; Mitte der Füße = Mitte der Pixel in diesem Band (9.3, Anker). */
+  /** Höhe des Fußbands als Anteil der Figurhöhe; Mitte der Füße = Mitte der Pixel in diesem Band (Anker). */
   readonly fussband: number;
-  /** Abstand (farbAbstand), ab dem eine Farbabbildung ein Befund ist (9.3: große Abstände sind ein Befund). */
-  readonly befundAbstand: number;
-  /** Zusammenhängende Inseln unter dieser Pixelzahl werden nach dem Verkleinern entfernt (Streupixel, 1.3). */
+  /** Zusammenhängende Inseln unter dieser Pixelzahl werden nach dem Verkleinern entfernt. */
   readonly mindestInsel: number;
-  /** Höchstzahl deckender Farben je Figur (palette.ts FARBBUDGET.figur ohne durchsichtig). */
+  /** Höchstzahl deckender Farben je Figur (E25: 64 einschließlich durchsichtig). */
   readonly hoechstFarben: number;
-  /** Abweichung der Grundlinie in einer Blattzeile, ab der sie ein Befund ist, als Anteil der Zeilenhöhe (9.3, Anker). */
+  /** Runden Nachschärfen nach dem Medianschnitt (medianschnitt.ts). */
+  readonly nachschaerfen: number;
+  /** Abweichung der Grundlinie in einer Blattzeile, ab der sie ein Befund ist, als Anteil der Zeilenhöhe. */
   readonly grundlinienToleranz: number;
   /** Höchstzahl der Durchgänge der Randentscheidung (größte Tiefe eines Randbereichs in Quellpixeln). */
   readonly durchgaenge: number;
   /**
    * Radius des Schließens in Quellpixeln (G0b-10): Lücken bis 2 · Radius zwischen Figurteilen werden
-   * Figur. Fremde Blätter zeichnen Innenlinien oft genau in der Hintergrundfarbe; 0 schaltet ab.
+   * Figur. Fremde Blätter zeichnen Innenlinien oft fast in der Hintergrundfarbe; 0 schaltet ab.
    */
   readonly schliessen: number;
-  /** Höchstzahl der Runden beim Entfernen von Streupixeln (kontur.ts streupixelEntfernen). */
+  /**
+   * Löcher (U2-2): Ein vom Hintergrund eingeschlossener Bereich der Maske wird Figur, wenn der mittlere
+   * Abstand seiner Pixel zur Hintergrundfarbe über diesem Wert liegt (dunkle Fläche der Figur);
+   * echte Lücken (Arm und Rumpf) zeigen den Grund selbst und bleiben durchsichtig.
+   */
+  readonly lochToleranz: number;
+  /** Höchstzahl der Runden beim Entfernen von Streupixeln. */
   readonly streuRunden: number;
+  /**
+   * Streupixel bei 64 Farben (U2-1): Ein Pixel steht allein, wenn keiner seiner acht Nachbarn ihm
+   * ähnlich ist (farbAbstand höchstens dieser Wert); 0 ist die strenge Regel von v1 (gleiche Farbe).
+   */
+  readonly streuAbstand: number;
+  /** Helligkeit (Luma 0 bis 255), bis zu der ein Pixel der Außenkante als dunkle Kontur gilt (U2-3). */
+  readonly konturHelligkeit: number;
+  /** Zeilen über der untersten Zeile, deren Pixel noch Bodenkontakt haben (Fußkontakt beim Gehen, Bildpixel). */
+  readonly kontaktBand: number;
+  /** Höhe des Fußes in Bildpixeln: Lage eines Fußes = Mitte seiner Pixel in diesen untersten Zeilen (Fußkontakt). */
+  readonly fussHoehe: number;
+  /** Lücken bis zu dieser Breite (Profil der Sohle) trennen keine Füße (Fußkontakt, Bildpixel). */
+  readonly kontaktLuecke: number;
+  /** Oberer Anteil der Figurhöhe, dessen Schwerpunkt die Körpermitte beim Gehen bestimmt (Fußkontakt). */
+  readonly koerperAnteil: number;
 }
 
 /**
- * Standardwerte (Festlegungen G0b, begründet in docs/grafik.md 5). Abstände
- * in der Einheit von farbAbstand (farbe.ts): Grau um n Stufen je Kanal
- * verschoben ergibt etwa 3n. Hintergrund bis etwa 15 Stufen je Kanal
- * (Rauschen eines einfarbigen Grunds), Figur ab etwa 30.
+ * Standardwerte (Festlegungen G0b und U2, begründet in docs/grafik.md 5.2 und
+ * 5.8). Abstände in der Einheit von farbAbstand (farbe.ts): Grau um n Stufen
+ * je Kanal verschoben ergibt etwa 3n.
  */
 export const STANDARD: Parameter = {
   toleranzHintergrund: 45,
@@ -122,13 +150,20 @@ export const STANDARD: Parameter = {
   vergleichsAnteil: 1 / 4,
   deckung: 1 / 2,
   fussband: 1 / 8,
-  befundAbstand: 72,
   mindestInsel: 4,
-  hoechstFarben: FARBBUDGET.figur - 1,
+  hoechstFarben: 63,
+  nachschaerfen: 2,
   grundlinienToleranz: 1 / 50,
   durchgaenge: 256,
   schliessen: 4,
+  lochToleranz: 12,
   streuRunden: 8,
+  streuAbstand: 60,
+  konturHelligkeit: 40,
+  kontaktBand: 2,
+  fussHoehe: 8,
+  kontaktLuecke: 3,
+  koerperAnteil: 2 / 5,
 };
 
 // ===========================================================================
@@ -147,7 +182,7 @@ export interface Hintergrund {
   readonly streuung: number;
 }
 
-/** Hintergrundfarbe aus den vier Ecken: Median je Kanal über vier Eckfelder (9.3, Zellen finden). */
+/** Hintergrundfarbe aus den vier Ecken: Median je Kanal über vier Eckfelder. */
 export function hintergrundAusEcken(bild: Leinwand): Hintergrund {
   const k = Math.min(ECKFELD, bild.breite, bild.hoehe);
   const ecken: readonly (readonly [number, number])[] = [
@@ -192,6 +227,11 @@ export interface Freistellung {
   readonly randHintergrund: number;
   /** Pixel, die das Schließen zur Figur nahm (Innenlinien in Hintergrundfarbe). */
   readonly geschlossen: number;
+  /** Eingeschlossene Bereiche, die als dunkle Fläche Figur wurden (U2-2), und ihre Pixel. */
+  readonly loecherGefuellt: number;
+  readonly loecherPixel: number;
+  /** Eingeschlossene Bereiche, die als echte Lücke durchsichtig blieben. */
+  readonly loecherOffen: number;
 }
 
 /** Abstand eines Pixels zum Hintergrund; durchsichtige Pixel gelten als Hintergrund. */
@@ -208,13 +248,14 @@ function abstandZumHintergrund(px: Pixel, hg: Hintergrund, p: Parameter): number
 }
 
 /**
- * Freistellen (9.3): Hintergrund mit Toleranz durchsichtig, sichere Figur ab
+ * Freistellen: Hintergrund mit Toleranz durchsichtig, sichere Figur ab
  * `toleranzFigur`, dazwischen Randpixel. Randpixel nehmen in Durchgängen die
  * Klasse der Mehrheit ihrer entschiedenen Nachbarn an (außerhalb des Blatts
  * zählt als Hintergrund). Ein Randpixel, das Figur wird und am Hintergrund
  * liegt, bekommt die häufigste Farbe seiner Figurnachbarn (Kantenglättung
  * entfernt); eines im Inneren behält seine Farbe (Innenlinien). Gleichstand
  * nach allen Durchgängen: Abstand über der Mitte beider Toleranzen ist Figur.
+ * Danach Schließen (G0b-10) und Löcher füllen (U2-2).
  */
 export function freistellen(bild: Leinwand, p: Parameter = STANDARD): Freistellung {
   const { breite, hoehe } = bild;
@@ -289,7 +330,60 @@ export function freistellen(bild: Leinwand, p: Parameter = STANDARD): Freistellu
   const maske = schliesse(offenMaske, breite, hoehe, p.schliessen);
   let geschlossen = 0;
   for (let j = 0; j < n; j++) if (maske[j] !== offenMaske[j]) geschlossen++;
-  return { breite, hoehe, maske, farbe, hintergrund: hg, randFigur, randHintergrund, geschlossen };
+  const loecher = fuelleLoecher(maske, abst, breite, hoehe, p.lochToleranz);
+  return {
+    breite, hoehe, maske, farbe, hintergrund: hg, randFigur, randHintergrund, geschlossen,
+    loecherGefuellt: loecher.gefuellt, loecherPixel: loecher.pixel, loecherOffen: loecher.offen,
+  };
+}
+
+/**
+ * Löcher füllen (U2-2): Bereiche der Gegenmaske (4er-Nachbarschaft), die den
+ * Blattrand nicht berühren, sind von Figur eingeschlossen. Liegt der mittlere
+ * Abstand ihrer Pixel zur Hintergrundfarbe über `toleranz`, sind sie eine
+ * dunkle Fläche der Figur (Grok zeichnet tiefe Schatten fast in der
+ * Grundfarbe) und werden Figur mit ihrer eigenen Farbe; sonst bleiben sie
+ * eine echte Lücke. Ändert die Maske.
+ */
+export function fuelleLoecher(maske: Uint8Array, abst: Float64Array, breite: number, hoehe: number, toleranz: number): { gefuellt: number; pixel: number; offen: number } {
+  const marke = new Uint8Array(maske.length);
+  const stapel: number[] = [];
+  let gefuellt = 0;
+  let pixel = 0;
+  let offen = 0;
+  for (let j0 = 0; j0 < maske.length; j0++) {
+    if (maske[j0] !== 0 || marke[j0] !== 0) continue;
+    const bereich: number[] = [];
+    let amRand = false;
+    let summe = 0;
+    marke[j0] = 1;
+    stapel.push(j0);
+    while (stapel.length > 0) {
+      const q = stapel.pop() as number;
+      bereich.push(q);
+      summe += abst[q] as number;
+      const qx = q % breite;
+      const qy = (q - qx) / breite;
+      if (qx === 0 || qy === 0 || qx === breite - 1 || qy === hoehe - 1) amRand = true;
+      for (let i = 0; i < KANTEN; i++) {
+        const [dx, dy] = NACHBARN[i] as readonly [number, number];
+        const nx = qx + dx;
+        const ny = qy + dy;
+        if (nx < 0 || ny < 0 || nx >= breite || ny >= hoehe) continue;
+        const m = ny * breite + nx;
+        if (maske[m] !== 0 || marke[m] !== 0) continue;
+        marke[m] = 1;
+        stapel.push(m);
+      }
+    }
+    if (amRand) continue;
+    if (summe / bereich.length > toleranz) {
+      for (const q of bereich) maske[q] = 1;
+      gefuellt++;
+      pixel += bereich.length;
+    } else offen++;
+  }
+  return { gefuellt, pixel, offen };
 }
 
 /**
@@ -516,7 +610,7 @@ function alsVerworfen(k: Komponente): Verworfen {
 }
 
 /**
- * Zellen finden (9.3): zusammenhängende Bereiche der Maske; Bereiche, deren
+ * Zellen finden: zusammenhängende Bereiche der Maske; Bereiche, deren
  * Rechteck kleiner als `mindestAnteil` der Blattfläche ist (und kleiner als
  * `vergleichsAnteil` der größten Zelle), schließen sich einer großen Zelle
  * an, deren Rechteck sie schneiden, sonst werden sie verworfen. Reihenfolge
@@ -613,7 +707,7 @@ export interface Grundlinienbefund {
   readonly abweichung: number;
 }
 
-/** Grundlinie je Blattzeile prüfen (9.3, Anker: „Grundlinie je Blatt gleich, sonst Befund“). */
+/** Grundlinie je Blattzeile prüfen („Grundlinie je Blatt gleich, sonst Befund“). */
 export function pruefeGrundlinie(z: Zellen, p: Parameter = STANDARD): Grundlinienbefund[] {
   const befunde: Grundlinienbefund[] = [];
   const zeilen = new Map<number, Zelle[]>();
@@ -642,8 +736,8 @@ export function pruefeGrundlinie(z: Zellen, p: Parameter = STANDARD): Grundlinie
 const EPSILON = 1e-9;
 /** Schritte der Halbierungssuche nach dem Faktor, der die Stand-Zelle genau auf die Zielhöhe bringt. */
 const SUCHSCHRITTE = 32;
-/** Suchbereich um den Rohfaktor in Zielzeilen (eine Zeile mehr oder weniger durch Deckung und Rundung). */
-const SUCHZEILEN = 1.5;
+/** Suchbereich um den Rohfaktor in Zielzeilen (Deckung, Rundung und Kontur kosten oder bringen bis zu zwei Zeilen). */
+const SUCHZEILEN = 3;
 
 /** Gewicht einer Zielspalte (oder -zeile): Quellindex und Überdeckungslänge. */
 interface Gewicht {
@@ -663,12 +757,12 @@ function gewichte(a0: number, a1: number, laenge: number): Gewicht[] {
 }
 
 /**
- * Verkleinern mit Flächenmittel (9.3): Jeder Zielpixel deckt eine Fläche
- * von 1/faktor × 1/faktor Quellpixeln. Deckung = Anteil deckender
- * Quellfläche; ab `deckung` wird der Pixel deckend mit dem gewichteten
- * Mittel der deckenden Quellfarben, gerundet (keine Halbtransparenz).
- * Ausrichtung: Unterkante und linke Kante des Ausschnitts liegen auf dem
- * Raster, damit die Fußzeile ganz bleibt.
+ * Verkleinern mit Flächenmittel: Jeder Zielpixel deckt eine Fläche von
+ * 1/faktor × 1/faktor Quellpixeln. Deckung = Anteil deckender Quellfläche;
+ * ab `deckung` wird der Pixel deckend mit dem gewichteten Mittel der
+ * deckenden Quellfarben, gerundet (keine Halbtransparenz, kein Abdunkeln
+ * durch den Grund). Ausrichtung: Unterkante und linke Kante des Ausschnitts
+ * liegen auf dem Raster, damit die Fußzeile ganz bleibt.
  */
 export function verkleinere(bild: Leinwand, faktor: number, p: Parameter = STANDARD): Leinwand {
   const zb = Math.max(1, Math.ceil(bild.breite * faktor - EPSILON));
@@ -739,8 +833,8 @@ export function entferneInseln(bild: Leinwand, p: Parameter = STANDARD): number 
   return entfernt;
 }
 
-/** Verkleinert und entfernt Inseln (der Teil der Kette, der die Höhe bestimmt). */
-function verkleinertBereinigt(bild: Leinwand, faktor: number, p: Parameter): Leinwand {
+/** Verkleinert und entfernt Inseln (der Teil der Kette, der die Höhe ohne Kontur bestimmt). */
+export function verkleinertBereinigt(bild: Leinwand, faktor: number, p: Parameter = STANDARD): Leinwand {
   const v = verkleinere(bild, faktor, p);
   entferneInseln(v, p);
   return v;
@@ -751,279 +845,419 @@ function deckendeHoehe(bild: Leinwand): number {
 }
 
 /**
- * Maßstab (9.3): Faktor aus der Stand-Zelle auf die Zielhöhe. Rohfaktor =
- * Zielhöhe / Quellhöhe; weil Deckung und Rundung oben oder unten eine Zeile
- * kosten können, sucht eine Halbierung im Bereich ±1,5 Zeilen den kleinsten
- * Faktor, bei dem die verkleinerte Stand-Zelle genau die Zielhöhe hat
- * („Rundung auf das Raster“). Gelingt das nicht, gilt der Rohfaktor.
+ * Höhe eines verkleinerten Bildes samt nachgesetzter Kontur (5): Wo die
+ * Außenkante nicht dunkel ist, wächst die Figur um 1 Bildpixel. Für die
+ * Suche nach dem Faktor zählt die Helligkeit der Mischfarben vor der
+ * Palette (die Palette verschiebt sie nur wenig).
  */
-export function bestimmeFaktor(stand: Leinwand, zielhoehe: number, p: Parameter = STANDARD): number {
-  const roh = zielhoehe / stand.hoehe;
-  if (deckendeHoehe(verkleinertBereinigt(stand, roh, p)) === zielhoehe) return roh;
-  let lo = (roh * (zielhoehe - SUCHZEILEN)) / zielhoehe;
-  let hi = (roh * (zielhoehe + SUCHZEILEN)) / zielhoehe;
-  if (deckendeHoehe(verkleinertBereinigt(stand, lo, p)) >= zielhoehe) return roh;
-  if (deckendeHoehe(verkleinertBereinigt(stand, hi, p)) < zielhoehe) return roh;
-  for (let i = 0; i < SUCHSCHRITTE; i++) {
-    const mitte = (lo + hi) / 2;
-    if (deckendeHoehe(verkleinertBereinigt(stand, mitte, p)) >= zielhoehe) hi = mitte;
-    else lo = mitte;
-  }
-  return deckendeHoehe(verkleinertBereinigt(stand, hi, p)) === zielhoehe ? hi : roh;
-}
-
-// ===========================================================================
-// 4. Palette
-// ===========================================================================
-
-/** Eine Stufe der Figurenpalette: Ton einer Materialtreppe oder die Kontur. */
-export interface Stufe {
-  readonly farbe: Pixel;
-  /** Material aus palette.ts oder 'KONTUR'. */
-  readonly material: string;
-  /** Ton 0 … 4 der Treppe; Kontur −1. */
-  readonly ton: number;
-}
-
-/** Name einer Stufe für Protokolle: 'HAUT_MITTEL:2' oder 'KONTUR'. */
-export function stufenName(s: Stufe): string {
-  return s.ton === KONTUR_TON ? s.material : `${s.material}:${s.ton}`;
+export function hoeheMitKontur(verkleinert: Leinwand, p: Parameter = STANDARD): number {
+  return deckendeHoehe(konturNachsetzen(verkleinert, dunkelPruefer(p), 0x000000ff).bild);
 }
 
 /**
- * Stufen der Figur (9.3, Palette): je Material die Töne 0 bis 3, bei
- * glänzendem Material auch 4 (docs/grafik.md 1.2), in der Reihenfolge der
- * Materialliste; zuletzt KONTUR. Gleiche Farben nur einmal.
+ * Maßstab: Faktor aus der Stand-Zelle auf die Zielhöhe (Auftrag 5, 1:
+ * 2 × (Umrisshöhe − 5) Bildpixel, gemessen samt Kontur). Rohfaktor =
+ * Zielhöhe / Quellhöhe; weil Deckung, Rundung und die nachgesetzte Kontur
+ * oben oder unten eine Zeile kosten oder bringen können, sucht eine
+ * Halbierung im Bereich ±3 Zeilen den kleinsten Faktor, bei dem die
+ * verkleinerte Stand-Zelle genau die Zielhöhe hat (G0b-3). Gelingt das
+ * nicht, gilt der Rohfaktor. `hoehe` misst ein verkleinertes Bild.
  */
-export function stufenFuer(materialien: readonly string[]): Stufe[] {
-  const liste: Stufe[] = [];
-  const gesehen = new Set<Pixel>();
-  for (const name of materialien) {
-    const m = MATERIALIEN[name];
-    if (m === undefined) throw new Error(`Umsetzer: Material ${name} fehlt in palette.ts`);
-    const hoechster: TonIndex = m.glanz ? TON_GLANZ : 3;
-    for (let t = TON_DUNKEL as number; t <= hoechster; t++) {
-      const f = m.treppe[t as TonIndex];
-      if (gesehen.has(f)) continue;
-      gesehen.add(f);
-      liste.push({ farbe: f, material: name, ton: t });
-    }
+export function bestimmeFaktor(
+  stand: Leinwand, zielhoehe: number, p: Parameter = STANDARD, hoehe: (verkleinert: Leinwand) => number = (v) => hoeheMitKontur(v, p),
+): number {
+  const h = (f: number): number => hoehe(verkleinertBereinigt(stand, f, p));
+  const roh = zielhoehe / stand.hoehe;
+  if (h(roh) === zielhoehe) return roh;
+  let lo = (roh * (zielhoehe - SUCHZEILEN)) / zielhoehe;
+  let hi = (roh * (zielhoehe + SUCHZEILEN)) / zielhoehe;
+  if (h(lo) >= zielhoehe) return roh;
+  if (h(hi) < zielhoehe) return roh;
+  for (let i = 0; i < SUCHSCHRITTE; i++) {
+    const mitte = (lo + hi) / 2;
+    if (h(mitte) >= zielhoehe) hi = mitte;
+    else lo = mitte;
   }
-  if (!gesehen.has(KONTUR)) liste.push({ farbe: KONTUR, material: 'KONTUR', ton: KONTUR_TON });
-  return liste;
+  return h(hi) === zielhoehe ? hi : roh;
 }
 
-/** Abbildung einer Quellfarbe auf eine Stufe, mit Abstand und Pixelzahl (Protokoll). */
-export interface FarbAbbildung {
-  readonly quelle: Pixel;
-  readonly stufe: Stufe;
-  /** farbAbstand(quelle, stufe.farbe). */
-  readonly abstand: number;
-  readonly pixel: number;
-}
+// ===========================================================================
+// 4. Palette je Figur (Medianschnitt) und Bodenton
+// ===========================================================================
 
 export interface Palettenergebnis {
   /** Abgebildete Bilder (gleiche Reihenfolge wie die Eingabe). */
   readonly bilder: Leinwand[];
-  /** Je Quellfarbe die Abbildung, nach Pixelzahl absteigend, dann nach Farbe. */
-  readonly abbildungen: FarbAbbildung[];
-  /** Verwendete Stufen (höchstens hoechstFarben, KONTUR immer dabei), in Stufenreihenfolge. */
-  readonly stufen: Stufe[];
-  /** Wegen des Farbbudgets gestrichene Stufen, in der Reihenfolge des Streichens. */
-  readonly gestrichen: Stufe[];
-  /** Pixelgewichteter mittlerer und größter Abstand. */
+  /** Palette der Figur, nach Helligkeit aufsteigend; höchstens hoechstFarben. */
+  readonly palette: readonly Pixel[];
+  /** Dunkelster Ton der Figur (palette[0]): Farbe der nachgesetzten Kontur. */
+  readonly dunkelster: Pixel;
+  /** Zahl der Quellfarben vor dem Schnitt. */
+  readonly quellfarben: number;
+  /** Quellfarben im Bereich der Hintergrundfarbe (bis toleranzHintergrund), die nicht am Schnitt teilnahmen. */
+  readonly ohneSchnitt: number;
+  /** Pixelgewichteter mittlerer und größter Abstand Quelle → Palette (farbAbstand). */
   readonly mittlererAbstand: number;
   readonly groessterAbstand: number;
-  /** Anteil der Pixel mit Abstand über befundAbstand. */
-  readonly befundAnteil: number;
+  /** Pixel je Palettenfarbe in den abgebildeten Bildern (vor Kontur und Streupixeln). */
+  readonly pixel: readonly number[];
 }
 
 /**
- * Palette (9.3): Jede Quellfarbe geht auf die nächste Stufe (naechsteFarbe,
- * palette.ts). Sind mehr als `hoechstFarben` Stufen belegt (KONTUR zählt
- * immer, weil die Außenkontur sie setzt), wird die am wenigsten belegte
- * gestrichen (Gleichstand: die spätere) und neu abgebildet, bis das Budget
- * passt. Eine Palette für alle Bilder der Figur.
+ * Palette (Auftrag 5, 1): eine Palette je Figur aus allen Bildern per
+ * Medianschnitt (medianschnitt.ts), höchstens `hoechstFarben` Farben, jede
+ * Farbe auf die nächste Palettenfarbe ohne Raster. Die Bilder enthalten nur
+ * freigestellte Figurpixel; Farben bis `toleranzHintergrund` an einer der
+ * `hintergruende` (Grund der Blätter: Pixel, die das Schließen in die Figur
+ * nahm) sind vor dem Schnitt entfernt und gehen danach auf die nächste
+ * Palettenfarbe (U2-7).
  */
-export function bildePalette(bilder: readonly Leinwand[], stufen: readonly Stufe[], p: Parameter = STANDARD): Palettenergebnis {
-  const zahl = new Map<Pixel, number>();
-  for (const b of bilder) {
-    for (const px of b.daten) if (deckend(px as Pixel)) zahl.set(px as Pixel, (zahl.get(px as Pixel) ?? 0) + 1);
-  }
-  const farben = [...zahl.keys()].sort((a, b) => a - b);
-  let erlaubt = stufen.slice();
-  const gestrichen: Stufe[] = [];
-  let ziel = new Map<Pixel, number>();
-  let nutzung: number[] = [];
-  for (;;) {
-    const auswahl = erlaubt.map((s) => s.farbe);
-    ziel = new Map();
-    nutzung = erlaubt.map(() => 0);
-    for (const f of farben) {
-      const n = naechsteFarbe(f, auswahl);
-      ziel.set(f, n.index);
-      nutzung[n.index] = (nutzung[n.index] as number) + (zahl.get(f) as number);
-    }
-    const belegt = erlaubt.filter((s, i) => (nutzung[i] as number) > 0 || s.farbe === KONTUR).length;
-    if (belegt <= p.hoechstFarben) break;
-    let weg = -1;
-    erlaubt.forEach((s, i) => {
-      const u = nutzung[i] as number;
-      if (s.farbe === KONTUR || u === 0) return;
-      if (weg < 0 || u <= (nutzung[weg] as number)) weg = i;
-    });
-    gestrichen.push(erlaubt[weg] as Stufe);
-    erlaubt = erlaubt.filter((_, i) => i !== weg);
-  }
-  const verwendet = erlaubt.filter((s, i) => (nutzung[i] as number) > 0 || s.farbe === KONTUR);
-  const abbildungen: FarbAbbildung[] = farben.map((f) => {
-    const s = erlaubt[ziel.get(f) as number] as Stufe;
-    return { quelle: f, stufe: s, abstand: farbAbstand(f, s.farbe), pixel: zahl.get(f) as number };
-  });
-  abbildungen.sort((a, b) => b.pixel - a.pixel || a.quelle - b.quelle);
-  let summe = 0;
-  let pixel = 0;
-  let groesster = 0;
-  let befund = 0;
-  for (const a of abbildungen) {
-    summe += a.abstand * a.pixel;
-    pixel += a.pixel;
-    groesster = Math.max(groesster, a.abstand);
-    if (a.abstand > p.befundAbstand) befund += a.pixel;
-  }
+export function bildePalette(bilder: readonly Leinwand[], p: Parameter = STANDARD, hintergruende: readonly Pixel[] = []): Palettenergebnis {
+  const zahl = farbHaeufigkeit(bilder);
+  const ohne = (f: Pixel): boolean => hintergruende.some((h) => farbAbstand(f, h) <= p.toleranzHintergrund);
+  const s = medianschnitt(zahl, p.hoechstFarben, p.nachschaerfen, ohne);
+  const pixel = s.palette.map(() => 0);
   const aus = bilder.map((b) => {
     const neu = new Leinwand(b.breite, b.hoehe);
     for (let j = 0; j < b.daten.length; j++) {
       const px = b.daten[j] as Pixel;
-      if (deckend(px)) neu.daten[j] = (erlaubt[ziel.get(px) as number] as Stufe).farbe;
+      if (!deckend(px)) continue;
+      const i = s.abbildung.get(px) as number;
+      neu.daten[j] = s.palette[i] as Pixel;
+      pixel[i] = (pixel[i] as number) + 1;
     }
     return neu;
   });
   return {
-    bilder: aus,
-    abbildungen,
-    stufen: verwendet,
-    gestrichen,
-    mittlererAbstand: pixel > 0 ? summe / pixel : 0,
-    groessterAbstand: groesster,
-    befundAnteil: pixel > 0 ? befund / pixel : 0,
+    bilder: aus, palette: s.palette, dunkelster: s.palette[0] ?? 0, quellfarben: s.quellfarben, ohneSchnitt: s.ohneSchnitt,
+    mittlererAbstand: s.mittlererAbstand, groessterAbstand: s.groessterAbstand, pixel,
   };
 }
 
-// ===========================================================================
-// 5. Kontur
-// ===========================================================================
+/** Dunkelster Bodenton (Auftrag 5, 4): Farbe, Helligkeit und Herkunft. */
+export interface Bodenton {
+  readonly farbe: Pixel;
+  readonly helligkeit: number;
+  /** z. B. 'hintergrund_f (traenenblech)'. */
+  readonly herkunft: string;
+}
+
+/** Ein Hintergrundblatt mit Atlas, wie bauen.ts es schreibt (docs/grafik.md 4.8). */
+export interface Hintergrundblatt {
+  readonly name: string;
+  readonly atlas: string;
+  readonly blatt: Leinwand;
+}
 
 /**
- * Innenkonturen (9.3; Stilhandbuch 1.2): Ein Pixel in KONTUR im Inneren (alle
- * vier Kantennachbarn deckend) bekommt den dunkelsten Ton (0) des Materials,
- * das unter seinen acht Nachbarn am häufigsten ist (Gleichstand: früheres
- * Material der Liste), sofern dieser Ton zur Palette gehört; sonst bleibt
- * KONTUR (Innenkontur sehr dunkler Materialien, Pupillen). Innenlinien in
- * Ton 0 eines Materials bleiben, wie sie sind. Gibt die Zahl der Änderungen zurück.
+ * Dunkelster Bodenton aller Hintergrundblätter (Auftrag 5, 4; U2-5): alle
+ * Pixel der Kacheln, die eine Karte der Ebene `boden` verwendet. Solange die
+ * Hintergründe aus Code kommen, gilt der dunkelste Ton aller Abschnitte für
+ * alle Figuren. Ohne Bodenkarte: null.
  */
-export function innenkonturen(bild: Leinwand, stufen: readonly Stufe[]): number {
-  const vonFarbe = new Map<Pixel, Stufe>();
-  for (const s of stufen) vonFarbe.set(s.farbe, s);
-  const dunkel = new Map<string, Pixel>();
-  const rang = new Map<string, number>();
-  for (const s of stufen) {
-    if (s.ton === KONTUR_TON) continue;
-    if (!rang.has(s.material)) rang.set(s.material, rang.size);
-    if (s.ton === TON_DUNKEL) dunkel.set(s.material, s.farbe);
-  }
-  const aenderungen: [number, Pixel][] = [];
-  for (let y = 0; y < bild.hoehe; y++) {
-    for (let x = 0; x < bild.breite; x++) {
-      if (bild.hole(x, y) !== KONTUR) continue;
-      let innen = true;
-      for (let i = 0; i < KANTEN; i++) {
-        const [dx, dy] = NACHBARN[i] as readonly [number, number];
-        if (!deckend(bild.hole(x + dx, y + dy))) innen = false;
+export function dunkelsterBodenton(blaetter: readonly Hintergrundblatt[]): Bodenton | null {
+  let bester: Bodenton | null = null;
+  for (const h of [...blaetter].sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))) {
+    const atlas = JSON.parse(h.atlas) as {
+      kachel?: number; kacheln?: number[][]; karten?: { ebene: string; name: string; kacheln: number[][] }[];
+    };
+    const k = atlas.kachel;
+    if (k === undefined || atlas.kacheln === undefined || atlas.karten === undefined) continue;
+    for (const karte of atlas.karten) {
+      if (karte.ebene !== 'boden') continue;
+      const ids = [...new Set(karte.kacheln.flat())].filter((i) => i >= 0).sort((a, b) => a - b);
+      for (const id of ids) {
+        const lage = atlas.kacheln[id];
+        if (lage === undefined) continue;
+        for (let y = 0; y < k; y++) {
+          for (let x = 0; x < k; x++) {
+            const px = h.blatt.hole((lage[0] as number) + x, (lage[1] as number) + y);
+            if (!deckend(px)) continue;
+            const l = helligkeit(px);
+            if (bester === null || l < bester.helligkeit || (l === bester.helligkeit && deckendVon(px) < bester.farbe)) {
+              bester = { farbe: deckendVon(px), helligkeit: l, herkunft: `${h.name} (${karte.name})` };
+            }
+          }
+        }
       }
-      if (!innen) continue;
-      const zahl = new Map<string, number>();
-      for (const [dx, dy] of NACHBARN) {
-        const s = vonFarbe.get(bild.hole(x + dx, y + dy));
-        if (s === undefined || s.ton === KONTUR_TON) continue;
-        zahl.set(s.material, (zahl.get(s.material) ?? 0) + 1);
-      }
-      let bestes: string | undefined;
-      for (const [m, z] of zahl) {
-        const b = bestes === undefined ? 0 : (zahl.get(bestes) as number);
-        if (bestes === undefined || z > b || (z === b && (rang.get(m) as number) < (rang.get(bestes) as number))) bestes = m;
-      }
-      const ton0 = bestes === undefined ? undefined : dunkel.get(bestes);
-      if (ton0 !== undefined) aenderungen.push([y * bild.breite + x, ton0]);
     }
   }
-  for (const [j, f] of aenderungen) bild.daten[j] = f;
-  return aenderungen.length;
+  return bester;
 }
 
-/** Glanztöne der Palette: Ausnahmen der Streupixelregel (Glanzpunkte genau 1 px, Stilhandbuch 1.3). */
-export function glanzToene(stufen: readonly Stufe[]): Set<Pixel> {
-  return new Set(stufen.filter((s) => s.ton === TON_GLANZ).map((s) => s.farbe));
-}
-
-/**
- * Kontur und Streupixel (9.3): Innenkonturen, dann Außenkontur neu (Rand in
- * KONTUR umfärben, die Figur wird nicht größer; kontur.ts randFaerben), dann
- * Streupixel entfernen, ohne die Kontur anzutasten (kontur.ts
- * streupixelEntfernen mit KONTUR geschützt). Ändert das Bild.
- */
-export function konturieren(bild: Leinwand, stufen: readonly Stufe[], p: Parameter = STANDARD): void {
-  const glanz = glanzToene(stufen);
-  innenkonturen(bild, stufen);
-  randFaerben(bild, KONTUR);
-  streupixelEntfernen(bild, glanz, new Set([KONTUR]), p.streuRunden);
-  for (let runde = 0; runde < p.streuRunden && restStreupixel(bild, glanz) > 0; runde++);
-}
-
-/**
- * Reststreupixel, die streupixelEntfernen bei geschützter Kontur stehen
- * lässt: ein Farbpixel, dessen deckende Nachbarn alle KONTUR sind, wird
- * KONTUR; ein KONTUR-Pixel im Inneren (alle Kantennachbarn deckend) ohne
- * KONTUR-Nachbarn bekommt die häufigste Farbe seiner Nachbarn. Die
- * Außenkontur bleibt dabei geschlossen. Gibt die Zahl der Änderungen zurück.
- */
-function restStreupixel(bild: Leinwand, glanz: ReadonlySet<Pixel>): number {
-  const aenderungen: [number, number, Pixel][] = [];
-  for (const q of streupixel(bild, glanz)) {
-    const eigen = bild.hole(q.x, q.y);
-    const zahl = new Map<Pixel, number>();
-    let beste: Pixel | undefined;
-    let innen = true;
-    NACHBARN.forEach(([dx, dy], i) => {
-      const n = bild.hole(q.x + dx, q.y + dy);
-      if (!deckend(n)) {
-        if (i < KANTEN) innen = false;
-        return;
-      }
-      if (n === KONTUR) return;
-      const z = (zahl.get(n) ?? 0) + 1;
-      zahl.set(n, z);
-      if (beste === undefined || z > (zahl.get(beste) as number)) beste = n;
+/** Hintergrundblätter hintergrund_*.png mit Atlas aus einem Ordner (sortiert). */
+export function hintergrundblaetterLesen(ordner: string): Hintergrundblatt[] {
+  if (!existsSync(ordner)) return [];
+  return readdirSync(ordner)
+    .filter((d) => /^hintergrund_.*\.json$/.test(d))
+    .sort()
+    .flatMap((d) => {
+      const name = d.slice(0, -'.json'.length);
+      const png = join(ordner, `${name}.png`);
+      return existsSync(png) ? [{ name, atlas: readFileSync(join(ordner, d), 'utf8'), blatt: pngDateiLesen(png) }] : [];
     });
-    if (eigen !== KONTUR && beste === undefined) aenderungen.push([q.x, q.y, KONTUR]);
-    else if (eigen === KONTUR && innen && beste !== undefined) aenderungen.push([q.x, q.y, beste]);
+}
+
+/** Hintergrundblätter aus den Bytes eines Baus (Dateiname → PNG oder JSON), z. B. aus bauen.ts. */
+export function hintergrundblaetterAus(dateien: ReadonlyMap<string, Uint8Array | string>): Hintergrundblatt[] {
+  const aus: Hintergrundblatt[] = [];
+  for (const [datei, inhalt] of [...dateien].sort((a, b) => (a[0] < b[0] ? -1 : 1))) {
+    const m = /^(hintergrund_.*)\.json$/.exec(datei);
+    if (m === null || typeof inhalt !== 'string') continue;
+    const png = dateien.get(`${m[1]}.png`);
+    if (png === undefined || typeof png === 'string') continue;
+    aus.push({ name: m[1] as string, atlas: inhalt, blatt: pngLesen(png) });
   }
-  for (const [x, y, f] of aenderungen) bild.setze(x, y, f);
-  return aenderungen.length;
+  return aus;
 }
 
 // ===========================================================================
-// 6. Anker
+// 5. Kontur und Streupixel
 // ===========================================================================
 
+/** Prüfer „dunkle Kontur“: Helligkeit höchstens konturHelligkeit (U2-3). */
+export function dunkelPruefer(p: Parameter = STANDARD): (px: Pixel) => boolean {
+  return (px) => helligkeit(px) <= p.konturHelligkeit;
+}
+
+/** true, wenn der deckende Pixel (x, y) über eine Kante an Durchsichtig oder den Bildrand grenzt. */
+function amRand(bild: Leinwand, x: number, y: number): boolean {
+  for (let i = 0; i < KANTEN; i++) {
+    const [dx, dy] = NACHBARN[i] as readonly [number, number];
+    if (!deckend(bild.hole(x + dx, y + dy))) return true;
+  }
+  return false;
+}
+
+/** Außenkante: alle deckenden Pixel am Rand (über eine Kante an Durchsichtig oder den Bildrand), als Index y · breite + x. */
+export function aussenkante(bild: Leinwand): Set<number> {
+  const s = new Set<number>();
+  for (let y = 0; y < bild.hoehe; y++) {
+    for (let x = 0; x < bild.breite; x++) if (deckend(bild.hole(x, y)) && amRand(bild, x, y)) s.add(y * bild.breite + x);
+  }
+  return s;
+}
+
+/**
+ * Bodenton (Auftrag 5, 4): Kein Figurenpixel darf dunkler als der dunkelste
+ * Bodenton sein, außer in der Kontur. Pixel im Inneren (nicht an der
+ * Außenkante) mit geringerer Helligkeit werden um eine Stufe aufgehellt: auf
+ * die nächste Palettenfarbe (farbAbstand) mit mindestens der Helligkeit des
+ * Bodentons. Gibt die Zahl der geänderten Pixel zurück.
+ */
+export function hellerAlsBoden(bild: Leinwand, palette: readonly Pixel[], boden: number): number {
+  const hell = palette.filter((q) => helligkeit(q) >= boden);
+  if (hell.length === 0) return 0;
+  const ersatz = new Map<Pixel, Pixel>();
+  const rand = aussenkante(bild);
+  let n = 0;
+  for (let j = 0; j < bild.daten.length; j++) {
+    const px = bild.daten[j] as Pixel;
+    if (!deckend(px) || rand.has(j) || helligkeit(px) >= boden) continue;
+    let e = ersatz.get(px);
+    if (e === undefined) {
+      e = hell[0] as Pixel;
+      let d = farbAbstand(px, e);
+      for (const q of hell) {
+        const dq = farbAbstand(px, q);
+        if (dq < d) {
+          d = dq;
+          e = q;
+        }
+      }
+      ersatz.set(px, e);
+    }
+    bild.daten[j] = e;
+    n++;
+  }
+  return n;
+}
+
+/**
+ * Streupixel bei 64 Farben (Stilhandbuch 1.3, U2-1): deckende Pixel, denen
+ * keiner der acht Nachbarn ähnlich ist (gleiche Farbe oder farbAbstand
+ * höchstens `abstand`). Farben in `ausnahmen` zählen nicht. Mit `abstand` 0
+ * gleich kontur.ts streupixel.
+ */
+export function streupixelAehnlich(bild: Leinwand, abstand: number, ausnahmen: ReadonlySet<Pixel> = new Set()): Punkt[] {
+  if (abstand <= 0) return streupixel(bild, ausnahmen);
+  const aus: Punkt[] = [];
+  for (let y = 0; y < bild.hoehe; y++) {
+    for (let x = 0; x < bild.breite; x++) {
+      const px = bild.hole(x, y);
+      if (!deckend(px) || ausnahmen.has(px)) continue;
+      let allein = true;
+      for (const [dx, dy] of NACHBARN) {
+        const n = bild.hole(x + dx, y + dy);
+        if (deckend(n) && (n === px || farbAbstand(n, px) <= abstand)) {
+          allein = false;
+          break;
+        }
+      }
+      if (allein) aus.push({ x, y });
+    }
+  }
+  return aus;
+}
+
+/**
+ * Streupixel entfernen (Stilhandbuch 1.3, wie v1): Ein Pixel ohne
+ * gleichfarbigen der acht Nachbarn bekommt die häufigste erlaubte Farbe
+ * seiner deckenden Nachbarn (Gleichstand: zuerst gefunden in NACHBARN).
+ * `erlaubt(farbe, innen)` schließt Farben aus (im Inneren nichts unter dem
+ * Bodenton). Wiederholt bis nichts mehr ändert oder höchstens `runden`. Die
+ * Deckung ändert sich nicht. Gibt die Zahl der Änderungen zurück.
+ */
+export function streupixelEntfernen(
+  bild: Leinwand, ausnahmen: ReadonlySet<Pixel>, runden: number, erlaubt: (farbe: Pixel, innen: boolean) => boolean = () => true, abstand: number = 0,
+): number {
+  let gesamt = 0;
+  for (let r = 0; r < runden; r++) {
+    let geaendert = 0;
+    for (const q of streupixelAehnlich(bild, abstand, ausnahmen)) {
+      const eigen = bild.hole(q.x, q.y);
+      const innen = !amRand(bild, q.x, q.y);
+      const zahl = new Map<Pixel, number>();
+      let beste: Pixel | undefined;
+      for (const [dx, dy] of NACHBARN) {
+        const n = bild.hole(q.x + dx, q.y + dy);
+        if (!deckend(n) || !erlaubt(n, innen)) continue;
+        const z = (zahl.get(n) ?? 0) + 1;
+        zahl.set(n, z);
+        if (beste === undefined || z > (zahl.get(beste) as number)) beste = n;
+      }
+      if (beste !== undefined && beste !== eigen) {
+        bild.setze(q.x, q.y, beste);
+        geaendert++;
+      }
+    }
+    gesamt += geaendert;
+    if (geaendert === 0) break;
+  }
+  return gesamt;
+}
+
+/**
+ * Kontur nachsetzen (Auftrag 5, 1): Die Figur bekommt 1 Bildpixel freien
+ * Rand. Jeder durchsichtige Pixel, der über eine Kante an einen deckenden
+ * Pixel grenzt, der nicht dunkel ist, wird `farbe` (der dunkelste Ton der
+ * Figur). Dunkle Pixel der Außenkante sind die Kontur des Bildes und
+ * bleiben. Danach grenzt kein heller Pixel mehr an Durchsichtig.
+ */
+export function konturNachsetzen(bild: Leinwand, dunkel: (px: Pixel) => boolean, farbe: Pixel): { bild: Leinwand; gesetzt: number } {
+  const aus = new Leinwand(bild.breite + 2, bild.hoehe + 2);
+  aus.einsetzen(bild, 1, 1);
+  const neu: number[] = [];
+  for (let y = 0; y < aus.hoehe; y++) {
+    for (let x = 0; x < aus.breite; x++) {
+      if (deckend(aus.hole(x, y))) continue;
+      for (let i = 0; i < KANTEN; i++) {
+        const [dx, dy] = NACHBARN[i] as readonly [number, number];
+        const n = aus.hole(x + dx, y + dy);
+        if (deckend(n) && !dunkel(n)) {
+          neu.push(y * aus.breite + x);
+          break;
+        }
+      }
+    }
+  }
+  for (const j of neu) aus.daten[j] = farbe;
+  return { bild: aus, gesetzt: neu.length };
+}
+
+/** Lücken der dunklen Kontur: Pixel der Außenkante, die nicht dunkel sind. Leer heißt: Kontur geschlossen. */
+export function konturLueckenDunkel(bild: Leinwand, dunkel: (px: Pixel) => boolean): Punkt[] {
+  const aus: Punkt[] = [];
+  for (let y = 0; y < bild.hoehe; y++) {
+    for (let x = 0; x < bild.breite; x++) {
+      const px = bild.hole(x, y);
+      if (deckend(px) && amRand(bild, x, y) && !dunkel(px)) aus.push({ x, y });
+    }
+  }
+  return aus;
+}
+
+/** Pixel im Inneren (nicht an der Außenkante), die dunkler als der Bodenton sind. */
+export function dunklerAlsBoden(bild: Leinwand, boden: number): Punkt[] {
+  const aus: Punkt[] = [];
+  for (let y = 0; y < bild.hoehe; y++) {
+    for (let x = 0; x < bild.breite; x++) {
+      const px = bild.hole(x, y);
+      if (deckend(px) && !amRand(bild, x, y) && helligkeit(px) < boden) aus.push({ x, y });
+    }
+  }
+  return aus;
+}
+
+/** Zähler der Bildbearbeitung je Figur (Protokoll). */
+interface Bearbeitung {
+  aufgehellt: number;
+  streupixel: number;
+  kontur: number;
+  konturStreu: number;
+}
+
+/**
+ * Ein verkleinertes, abgebildetes Bild fertig machen (Auftrag 5, 1 und 4):
+ * Streupixel entfernen, Kontur nachsetzen, dann Bodenton (Pixel im Inneren,
+ * also nicht an der Außenkante, um eine Stufe aufhellen), dann noch einmal
+ * Streupixel, wobei ein Pixel der Außenkante nur dunkle Farben und einer im
+ * Inneren nur Farben ab dem Bodenton annehmen darf (die Kontur bleibt dunkel
+ * und geschlossen). Gibt das Bild mit 1 Bildpixel Rand zurück.
+ */
+export function fertigMachen(
+  bild: Leinwand, palette: Palettenergebnis, boden: number | null, ausnahmen: ReadonlySet<Pixel>, p: Parameter, zaehler?: Bearbeitung,
+): Leinwand {
+  const dunkel = dunkelPruefer(p);
+  const streu = streupixelEntfernen(bild, ausnahmen, p.streuRunden, () => true, p.streuAbstand);
+  const k = konturNachsetzen(bild, dunkel, palette.dunkelster);
+  const aufgehellt = boden === null ? 0 : hellerAlsBoden(k.bild, palette.palette, boden);
+  const erlaubt = (f: Pixel, innen: boolean): boolean => (innen ? boden === null || helligkeit(f) >= boden : dunkel(f));
+  const ks = streupixelEntfernen(k.bild, ausnahmen, p.streuRunden, erlaubt, p.streuAbstand);
+  if (zaehler !== undefined) {
+    zaehler.aufgehellt += aufgehellt;
+    zaehler.streupixel += streu;
+    zaehler.kontur += k.gesetzt;
+    zaehler.konturStreu += ks;
+  }
+  return k.bild;
+}
+
+// ===========================================================================
+// 6. Anker und Fußkontakt
+// ===========================================================================
+
+/**
+ * Fußpunkt eines Bildes im Umsetzer: Pixel (x, y) mit y = unterste Zeile der
+ * Figur. Die Spiegelachse liegt rechts neben Spalte x (zwischen x und x + 1).
+ * Im Atlas mit Maßstab 2 steht der linke obere Bildpixel des 2 × 2-Blocks
+ * des Fußpunkt-Spielpixels (Schnittstelle U1, zeichner.ts): ankerX = x,
+ * ankerY = y − 1 (atlasAnker).
+ */
 export interface Anker {
   readonly x: number;
   readonly y: number;
 }
 
 /**
- * Anker (9.3): y = unterste Zeile der Figur; x = Mitte der Füße, das heißt
- * Mitte zwischen dem linken und dem rechten deckenden Pixel im Fußband (die
+ * Anker im Atlas (Auftrag 5, Phase 1, Schnittstelle U1): Der Ankerpixel ist
+ * der linke obere Bildpixel des Spielpixels am Fußpunkt. Die Darstellung legt
+ * ihn auf die Bildposition (2 · bildX, 2 · bildY) und spiegelt um 2 · bildX + 1,
+ * also genau um die Achse rechts neben Spalte x. Die unterste Zeile der Figur
+ * liegt damit auf der unteren Bildpixelzeile des Fußpunkt-Spielpixels.
+ */
+export function atlasAnker(a: Anker): { ankerX: number; ankerY: number } {
+  return { ankerX: a.x, ankerY: a.y - (MASSSTAB - 1) };
+}
+
+/** Fußpunkt aus einem Atlas-Anker (Umkehrung von atlasAnker). */
+export function ankerAusAtlas(ankerX: number, ankerY: number): Anker {
+  return { x: ankerX, y: ankerY + (MASSSTAB - 1) };
+}
+
+/**
+ * Anker: y = unterste Zeile der Figur; x = Mitte der Füße, das heißt Mitte
+ * zwischen dem linken und dem rechten deckenden Pixel im Fußband (die
  * untersten `fussband` der Figurhöhe, mindestens eine Zeile), abgerundet.
  * Liegende Posen: x = Mitte der Figur.
  */
@@ -1045,8 +1279,186 @@ export function bestimmeAnker(bild: Leinwand, liegend: boolean, p: Parameter = S
   return { x: (links + rechts) >> 1, y: unten };
 }
 
+/**
+ * Füße mit Bodenkontakt: Spalten mit deckenden Pixeln in den untersten
+ * `fussHoehe` Zeilen bis zum Anker (dem tiefsten Pixel), zu Läufen
+ * zusammengefasst (Lücken bis `kontaktLuecke` überbrückt: Profil der Sohle);
+ * es bleiben die Läufe mit einem Pixel in den untersten `kontaktBand` + 1
+ * Zeilen. Je Fuß [Anfang, Ende] in Bildpixeln des Bildes, von links nach rechts.
+ */
+export function bodenkontakt(bild: Leinwand, ankerY: number, p: Parameter = STANDARD): [number, number][] {
+  const spalte = (x: number, y0: number): boolean => {
+    for (let y = Math.max(0, y0); y <= ankerY; y++) if (deckend(bild.hole(x, y))) return true;
+    return false;
+  };
+  const laeufe: [number, number][] = [];
+  for (let x = 0; x < bild.breite; x++) {
+    if (!spalte(x, ankerY - p.fussHoehe + 1)) continue;
+    const letzter = laeufe[laeufe.length - 1];
+    if (letzter !== undefined && x - letzter[1] - 1 <= p.kontaktLuecke) letzter[1] = x;
+    else laeufe.push([x, x]);
+  }
+  return laeufe.filter(([x0, x1]) => {
+    for (let x = x0; x <= x1; x++) if (spalte(x, ankerY - p.kontaktBand)) return true;
+    return false;
+  });
+}
+
+/** Körpermitte in x: Schwerpunkt der deckenden Pixel im oberen `koerperAnteil` der Figur (Kopf und Schultern). */
+export function koerpermitte(bild: Leinwand, p: Parameter = STANDARD): number {
+  const u = bild.begrenzung();
+  if (u === null) return bild.breite / 2;
+  const bis = u.y + Math.max(1, Math.round(u.h * p.koerperAnteil));
+  let summe = 0;
+  let n = 0;
+  for (let y = u.y; y < bis; y++) {
+    for (let x = u.x; x < u.x + u.b; x++) {
+      if (!deckend(bild.hole(x, y))) continue;
+      summe += x;
+      n++;
+    }
+  }
+  return n > 0 ? summe / n : bild.breite / 2;
+}
+
+/** Ergebnis des Fußkontakts einer Gehanimation (Protokoll). */
+export interface Fusskontakt {
+  readonly animation: string;
+  /** Gehstrecke je Bild in Bildpixeln (Geschwindigkeit × Dauer × MASSSTAB). */
+  readonly strecke: number;
+  /** true: Die Anker dieser Animation wurden verschoben; false: nur gemessen (gleiche Bilder wie eine andere). */
+  readonly verschoben: boolean;
+  /** Rest je Zyklus in Bildpixeln: so weit rutscht der Standfuß über einen Zyklus (vor dem Verteilen). */
+  readonly rest: number;
+  /** Verschiebung des Ankers je Bild gegenüber dem Fußpunkt-Anker in Bildpixeln. */
+  readonly verschiebung: readonly number[];
+  /** Rutschen des Standfußes je Bildwechsel nach dem Verschieben (Bildpixel; Soll 0). */
+  readonly rutschen: readonly number[];
+  /** Mitte des Standfußes je Bildwechsel i → i + 1: x in Bild i und in Bild i + 1. */
+  readonly standfuss: readonly (readonly [number, number])[];
+}
+
+/** Lage eines Fußes: Mitte seines Laufs. */
+function fussMitte(l: readonly [number, number]): number {
+  return (l[0] + l[1]) / 2;
+}
+
+/**
+ * Standfuß über den ganzen Gehzyklus (U2-4). Je Bild i kommt der Standfuß
+ * als Fuß a(i) an und geht als Fuß s(i) weiter; meist ist es derselbe Fuß.
+ * Eine Übergabe (s(i) ≠ a(i)) ist nur zu einem Fuß vor dem alten möglich
+ * (Blick nach rechts: der vordere hat aufgesetzt) und kommt je Zyklus genau
+ * zweimal vor (jeder Fuß trägt einmal), wenn die Bilder das hergeben. Gewählt
+ * wird die Folge, bei der sich der Standfuß relativ zur Körpermitte je
+ * Bildwechsel am wenigsten von der Gehstrecke nach hinten unterscheidet
+ * (Summe der Abweichungen; Gleichstand: erste Folge in fester Reihenfolge).
+ * Gibt je Bildwechsel i → i + 1 die Lage des Standfußes in beiden Bildern
+ * zurück (null ohne Bodenkontakt).
+ */
+export function standfussFolge(
+  bilder: readonly { leinwand: Leinwand; anker: Anker }[], strecke: number, p: Parameter = STANDARD,
+): ([number, number] | null)[] {
+  const n = bilder.length;
+  const fuesse = bilder.map((b) => bodenkontakt(b.leinwand, b.anker.y, p).map(fussMitte));
+  if (fuesse.some((f) => f.length === 0)) return bilder.map(() => null);
+  const mitte = bilder.map((b) => koerpermitte(b.leinwand, p));
+  // Wahlen je Bild: [ankommend, gehend] als Indizes der Füße.
+  const wahlen = fuesse.map((f) => {
+    const w: [number, number][] = [];
+    for (let a = 0; a < f.length; a++) for (let g = 0; g < f.length; g++) if (a === g || (f[g] as number) > (f[a] as number)) w.push([a, g]);
+    return w;
+  });
+  const kosten = (i: number, g: number, a: number): number => {
+    const j = (i + 1) % n;
+    const xg = (fuesse[i] as number[])[g] as number;
+    const xa = (fuesse[j] as number[])[a] as number;
+    return Math.abs(xa - (mitte[j] as number) - (xg - (mitte[i] as number)) + strecke);
+  };
+  type Weg = { kosten: number; folge: number[] };
+  const beste: { zwei: Weg | null; sonst: Weg | null } = { zwei: null, sonst: null };
+  const w0 = wahlen[0] as [number, number][];
+  w0.forEach((start, si) => {
+    // dp[wahl][übergaben] über die Bilder 1 … n − 1, Start fest.
+    let dp: Map<string, Weg> = new Map([[`${si}|${start[0] !== start[1] ? 1 : 0}`, { kosten: 0, folge: [si] }]]);
+    for (let i = 1; i < n; i++) {
+      const neu = new Map<string, Weg>();
+      const wi = wahlen[i] as [number, number][];
+      for (const [schl, weg] of dp) {
+        const [vorher, ue] = schl.split('|').map(Number) as [number, number];
+        const gv = ((wahlen[i - 1] as [number, number][])[vorher] as [number, number])[1];
+        wi.forEach((wahl, k) => {
+          const u = ue + (wahl[0] !== wahl[1] ? 1 : 0);
+          const c = weg.kosten + kosten(i - 1, gv, wahl[0]);
+          const key = `${k}|${u}`;
+          const alt = neu.get(key);
+          if (alt === undefined || c < alt.kosten) neu.set(key, { kosten: c, folge: [...weg.folge, k] });
+        });
+      }
+      dp = neu;
+    }
+    for (const [schl, weg] of [...dp].sort((x, y) => (x[0] < y[0] ? -1 : x[0] > y[0] ? 1 : 0))) {
+      const [letzte, ue] = schl.split('|').map(Number) as [number, number];
+      const gl = ((wahlen[n - 1] as [number, number][])[letzte] as [number, number])[1];
+      const c = weg.kosten + kosten(n - 1, gl, start[0]);
+      const ziel = { kosten: c, folge: weg.folge };
+      if (ue === 2) {
+        if (beste.zwei === null || c < beste.zwei.kosten) beste.zwei = ziel;
+      } else if (beste.sonst === null || c < beste.sonst.kosten) beste.sonst = ziel;
+    }
+  });
+  const weg = (beste.zwei ?? beste.sonst) as Weg;
+  return bilder.map((_, i) => {
+    const j = (i + 1) % n;
+    const g = ((wahlen[i] as [number, number][])[weg.folge[i] as number] as [number, number])[1];
+    const a = ((wahlen[j] as [number, number][])[weg.folge[j] as number] as [number, number])[0];
+    return [(fuesse[i] as number[])[g] as number, (fuesse[j] as number[])[a] as number];
+  });
+}
+
+/**
+ * Fußkontakt beim Gehen (Auftrag 5, 1, Punkt 4): Die Anker der Bilder werden
+ * so gesetzt, dass der Standfuß je Bildwechsel um die Gehstrecke `strecke`
+ * (Bildpixel) relativ zum Anker zurückwandert: A(i+1) = A(i) + x(i+1) − x(i)
+ * + strecke. Was über den Zyklus nicht aufgeht (Rest = Summe aller
+ * Schritte), wird gleichmäßig auf die Bildwechsel verteilt (U2-4), damit der
+ * Zyklus schließt; der Fuß rutscht dann je Bild um Rest / n. Die Anker
+ * liegen im Mittel auf den Fußpunkt-Ankern, ganzzahlig gerundet.
+ */
+export function fusskontaktSetzen(
+  bilder: readonly { leinwand: Leinwand; anker: Anker }[], strecke: number, p: Parameter = STANDARD,
+): { anker: Anker[]; rest: number; rutschen: number[]; standfuss: [number, number][]; verschiebung: number[] } {
+  const n = bilder.length;
+  const paare = standfussFolge(bilder, strecke, p);
+  const schritte = paare.map((q) => (q === null ? strecke : q[1] - q[0] + strecke));
+  const rest = schritte.reduce((s, d) => s + d, 0);
+  const lage: number[] = [0];
+  for (let i = 1; i < n; i++) lage.push((lage[i - 1] as number) + (schritte[i - 1] as number) - rest / n);
+  // Mittlere Abweichung zum Fußpunkt-Anker auf 0 bringen.
+  let mittel = 0;
+  for (let i = 0; i < n; i++) mittel += (lage[i] as number) - (bilder[i] as { anker: Anker }).anker.x;
+  mittel /= n;
+  const anker = bilder.map((b, i) => ({ x: Math.round((lage[i] as number) - mittel), y: b.anker.y }));
+  const rutschen: number[] = [];
+  for (let i = 0; i < n; i++) {
+    const q = paare[i];
+    if (q === null) {
+      rutschen.push(Number.NaN);
+      continue;
+    }
+    const a0 = (anker[i] as Anker).x;
+    const a1 = (anker[(i + 1) % n] as Anker).x;
+    // Lage des Standfußes auf dem Schirm vorher und nachher (Entität rückt um strecke vor).
+    rutschen.push(strecke + q[1] - a1 - (q[0] - a0));
+  }
+  return {
+    anker, rest, rutschen,
+    standfuss: paare.map((q) => (q === null ? [Number.NaN, Number.NaN] : q)),
+    verschiebung: anker.map((a, i) => a.x - (bilder[i] as { anker: Anker }).anker.x),
+  };
+}
+
 // ===========================================================================
-// 7. Zuordnung und Quelle (Textdateien in fremd/<figur>/)
+// 7. Zuordnung und Quelle (Textdateien in fremd/<ordner>/)
 // ===========================================================================
 
 /** Eine Animation der Zuordnung: Name, Schleife, Dauer je Bild (Richtwert), aktive Bilder. */
@@ -1087,12 +1499,17 @@ export interface ZuordnungKopie {
 }
 
 export interface Zuordnung {
-  /** Name des Blatts und Atlas, z. B. rammbock_fremd. */
+  /** Name des Blatts und Atlas, z. B. rammbock_grok. */
   readonly figur: string;
+  /**
+   * Stand der Lieferung (`datum JJJJ-MM-TT`, U2-6): Nennen zwei Ordner dieselbe Figur, baut bauen.ts
+   * den neueren (gleiches Datum: den im Alphabet späteren Ordner); '' ohne Angabe gilt als ältester.
+   */
+  readonly datum: string;
   /** Umriss aus masse.ts: Gegnertyp ('Rammbock') oder 'Figur' (Vela). */
   readonly typ: string;
+  /** Höhe des Stands in Bildpixeln samt Kontur (Auftrag 5, 1: 2 × (Umrisshöhe − 5)). */
   readonly zielhoehe: number;
-  readonly materialien: readonly string[];
   readonly massstab: ZellBezug;
   /**
    * Maßstab weiterer Blätter (G0b-11): Zelle eines Blatts, die dieselbe Pose zeigt wie eine Zelle
@@ -1102,7 +1519,7 @@ export interface Zuordnung {
   readonly animationen: readonly ZuordnungAnimation[];
   readonly bilder: readonly ZuordnungBild[];
   readonly kopien: readonly ZuordnungKopie[];
-  /** Fußkontakt: Animation → Name der Gehgeschwindigkeit in werte.ts (16.16, px/Frame). */
+  /** Fußkontakt: Animation → Name der Gehgeschwindigkeit in werte.ts (16.16, px/Frame), in Zeilenfolge. */
   readonly gehen: ReadonlyMap<string, string>;
   /** Überschriebene Parameter. */
   readonly parameter: Partial<Parameter>;
@@ -1114,21 +1531,21 @@ function ganz(text: string | undefined, zeile: number, was: string): number {
 }
 
 /**
- * Liest fremd/<figur>/zuordnung.txt (Format in docs/grafik.md 5.3). Zeilen:
- *   figur <name> | typ <Typ> | zielhoehe <px> | materialien <M> …
+ * Liest fremd/<ordner>/zuordnung.txt (Format in docs/grafik.md 5.3 und 5.8). Zeilen:
+ *   figur <name> | datum <JJJJ-MM-TT> | typ <Typ> | zielhoehe <Bildpixel>
  *   massstab <blatt> <zelle> [wie <blatt> <zelle>]
  *   animation <name> schleife|einmal <dauer> … [aktiv <i> …]
  *   bild <blatt> <zelle> <animation> <index> [liegend] [spiegeln]
  *   gleich|ersatz <animation> <index> <von> <vonIndex> [spiegeln]
  *   gehen <animation> <WERTNAME>
  *   parameter <name> <zahl>
- * `#` beginnt einen Kommentar.
+ * `#` beginnt einen Kommentar. `materialien` (v1) gibt es nicht mehr.
  */
 export function leseZuordnung(text: string): Zuordnung {
   let figur = '';
+  let datum = '';
   let typ = '';
   let zielhoehe = 0;
-  let materialien: string[] = [];
   let massstab: ZellBezug | undefined;
   const massstaebe: MassstabBezug[] = [];
   const animationen: ZuordnungAnimation[] = [];
@@ -1145,14 +1562,15 @@ export function leseZuordnung(text: string): Zuordnung {
       case 'figur':
         figur = rest[0] ?? '';
         break;
+      case 'datum':
+        if (rest[0] === undefined || !/^\d{4}-\d{2}-\d{2}$/.test(rest[0])) throw new Error(`zuordnung.txt, Zeile ${nr}: datum JJJJ-MM-TT`);
+        datum = rest[0];
+        break;
       case 'typ':
         typ = rest[0] ?? '';
         break;
       case 'zielhoehe':
         zielhoehe = ganz(rest[0], nr, 'Zielhöhe');
-        break;
-      case 'materialien':
-        materialien = rest;
         break;
       case 'massstab': {
         const bezug = { blatt: rest[0] ?? '', zelle: ganz(rest[1], nr, 'Zelle') };
@@ -1212,7 +1630,6 @@ export function leseZuordnung(text: string): Zuordnung {
   });
   if (figur === '') throw new Error('zuordnung.txt: figur fehlt');
   if (zielhoehe <= 0) throw new Error('zuordnung.txt: zielhoehe fehlt');
-  if (materialien.length === 0) throw new Error('zuordnung.txt: materialien fehlen');
   if (massstab === undefined) throw new Error('zuordnung.txt: massstab fehlt');
   const mitFaktor = new Set([massstab.blatt]);
   for (const m of massstaebe) {
@@ -1229,7 +1646,7 @@ export function leseZuordnung(text: string): Zuordnung {
   for (const k of kopien) {
     if (!namen.has(k.animation) || !namen.has(k.von)) throw new Error(`zuordnung.txt: Kopie ${k.animation} ${k.index} ← ${k.von} ${k.vonIndex} nennt eine unbekannte Animation`);
   }
-  return { figur, typ, zielhoehe, materialien, massstab, massstaebe, animationen, bilder, kopien, gehen, parameter: parameter as Partial<Parameter> };
+  return { figur, datum, typ, zielhoehe, massstab, massstaebe, animationen, bilder, kopien, gehen, parameter: parameter as Partial<Parameter> };
 }
 
 /** Angaben aus quelle.txt, die der Umsetzer braucht: festes Raster je Blatt. */
@@ -1238,10 +1655,10 @@ export interface Quelle {
 }
 
 /**
- * Liest fremd/<figur>/quelle.txt. Freier Text (Datum, Werkzeug, Prompt)
+ * Liest fremd/<ordner>/quelle.txt. Freier Text (Datum, Werkzeug, Prompt)
  * bleibt unbeachtet; ausgewertet werden nur Zeilen der Form
- * `raster <blatt.png> <spalten> <zeilen>` (9.3: festes Raster, wenn das
- * Blatt eines hat).
+ * `raster <blatt.png> <spalten> <zeilen>` (festes Raster, wenn das Blatt
+ * eines hat).
  */
 export function leseQuelle(text: string): Quelle {
   const raster = new Map<string, Raster>();
@@ -1253,10 +1670,10 @@ export function leseQuelle(text: string): Quelle {
 }
 
 // ===========================================================================
-// 8. Prüfungen (dieselben wie bei der Gliederpuppe, Auftrag 4, 9.3)
+// 8. Prüfungen nach E25 (Auftrag 5, 1 und 4)
 // ===========================================================================
 
-/** Umriss der Figur aus masse.ts. */
+/** Umriss der Figur aus masse.ts (in Spielpixeln). */
 export function umrissFuer(typ: string): Umriss {
   if (typ === 'Figur') return UMRISS_FIGUR;
   const u = (UMRISS_GEGNER as Readonly<Record<string, Umriss>>)[typ];
@@ -1264,11 +1681,81 @@ export function umrissFuer(typ: string): Umriss {
   return u;
 }
 
-/** Gehgeschwindigkeit in px/Frame aus werte.ts (16.16). */
+/** Zielhöhe in Bildpixeln aus dem Umriss (Auftrag 5, 1): 2 × (Umrisshöhe − Schattenhöhe / 2). */
+export function zielhoeheFuer(typ: string): number {
+  return MASSSTAB * (umrissFuer(typ).hoehe - SCHATTEN_HOEHE / 2);
+}
+
+/** Gehgeschwindigkeit in Spielpixeln je Frame aus werte.ts (16.16). */
 export function gehgeschwindigkeit(name: string): number {
   const w = (werte as Readonly<Record<string, unknown>>)[name];
   if (typeof w !== 'number') throw new Error(`Umsetzer: ${name} ist kein Zahlenwert in werte.ts`);
   return w / EINS;
+}
+
+/** Ein Befund der Prüfungen. `hart` bricht den Bau ab (Farben, Kontur, Streupixel, Anker, Bodenton, aktive Bilder). */
+export interface Befund {
+  readonly hart: boolean;
+  readonly text: string;
+}
+
+/** Untergrenze der Höhe im Stand als Anteil der Zielhöhe (wie docs/grafik.md 2.5, „Umriss im Stand“). */
+const STAND_MINDESTANTEIL = 0.9;
+
+/**
+ * Prüfungen nach E25 für ein Grok-Blatt (Auftrag 5, Phase 1). Hart: Farben
+ * je Figur höchstens hoechstFarben + 1 einschließlich durchsichtig, Kontur
+ * geschlossen aus dunklem Ton (konturLueckenDunkel), keine Streupixel, Anker
+ * im Bild, aktive Indizes, kein Pixel im Inneren dunkler als der Bodenton.
+ * Weich: Umriss im Stand (2× Umriss, Zielhöhe).
+ */
+export function pruefeGrok(
+  animationen: readonly Animation[], umriss: Umriss, zielhoehe: number, ausnahmen: ReadonlySet<Pixel>, boden: number | null, p: Parameter = STANDARD,
+): Befund[] {
+  const befunde: Befund[] = [];
+  const dunkel = dunkelPruefer(p);
+  const alle: Leinwand[] = [];
+  const gesehen = new Set<Leinwand>();
+  for (const a of animationen) {
+    a.bilder.forEach((roh, i) => {
+      const b = zugeschnitten(roh);
+      const l = b.leinwand;
+      const ort = `${a.name} Bild ${i}`;
+      if (!(b.ankerX >= 0 && b.ankerX < l.breite && b.ankerY >= 0 && b.ankerY < l.hoehe)) {
+        befunde.push({ hart: true, text: `${ort}: Anker im Bild: (${b.ankerX}, ${b.ankerY}) außerhalb ${l.breite} × ${l.hoehe}` });
+      }
+      if (gesehen.has(roh.leinwand)) return;
+      gesehen.add(roh.leinwand);
+      alle.push(l);
+      const luecken = konturLueckenDunkel(l, dunkel);
+      if (luecken.length > 0) befunde.push({ hart: true, text: `${ort}: Kontur geschlossen: ${luecken.length} helle Pixel an der Außenkante` });
+      const streu = streupixelAehnlich(l, p.streuAbstand, ausnahmen);
+      if (streu.length > 0) {
+        const q = streu[0] as Punkt;
+        befunde.push({ hart: true, text: `${ort}: Streupixel: ${streu.length}, erster bei (${q.x}, ${q.y})` });
+      }
+      if (boden !== null) {
+        const zuDunkel = dunklerAlsBoden(l, boden);
+        if (zuDunkel.length > 0) befunde.push({ hart: true, text: `${ort}: Bodenton: ${zuDunkel.length} Pixel im Inneren dunkler als der Bodenton` });
+      }
+    });
+    for (const i of a.aktiv ?? []) {
+      if (!(Number.isInteger(i) && i >= 0 && i < a.bilder.length)) befunde.push({ hart: true, text: `${a.name}: aktives Bild ${i} außerhalb` });
+    }
+  }
+  const farben = farbenZaehlen(alle);
+  if (farben > p.hoechstFarben + 1) befunde.push({ hart: true, text: `Farbzählung: ${farben} Farben einschließlich durchsichtig, erlaubt ${p.hoechstFarben + 1}` });
+  const stand = animationen.find((a) => a.name === 'stand');
+  if (stand === undefined) befunde.push({ hart: false, text: 'Umriss im Stand: Animation stand fehlt' });
+  else {
+    const b = zugeschnitten(stand.bilder[0] as Bild);
+    const breite = MASSSTAB * umriss.breite;
+    if (b.leinwand.breite > breite) befunde.push({ hart: false, text: `Umriss im Stand: Breite ${b.leinwand.breite} > ${breite}` });
+    if (b.leinwand.hoehe > zielhoehe) befunde.push({ hart: false, text: `Umriss im Stand: Höhe ${b.leinwand.hoehe} > ${zielhoehe}` });
+    if (b.leinwand.hoehe < STAND_MINDESTANTEIL * zielhoehe) befunde.push({ hart: false, text: `Umriss im Stand: Höhe ${b.leinwand.hoehe} < ${STAND_MINDESTANTEIL} · ${zielhoehe}` });
+    if (b.ankerY !== b.leinwand.hoehe - MASSSTAB) befunde.push({ hart: false, text: `Umriss im Stand: Anker nicht im untersten Spielpixel (${b.ankerY} von ${b.leinwand.hoehe})` });
+  }
+  return befunde;
 }
 
 // ===========================================================================
@@ -1282,6 +1769,8 @@ export interface Eingabe {
   readonly quelle: Quelle;
   /** Überschreibt Parameter (nach denen der Zuordnung). */
   readonly parameter?: Partial<Parameter>;
+  /** Dunkelster Bodenton (Auftrag 5, 4); null oder fehlend: keine Prüfung, Befund im Protokoll. */
+  readonly bodenton?: Bodenton | null;
 }
 
 /** Zellen eines Blatts mit Befunden (Protokoll). */
@@ -1297,6 +1786,10 @@ export interface Blattbericht {
   readonly grundlinie: readonly Grundlinienbefund[];
   /** Pixel, die das Schließen zur Figur nahm. */
   readonly geschlossen: number;
+  /** Gefüllte Löcher (dunkle Flächen) und ihre Pixel, offene Lücken (U2-2). */
+  readonly loecherGefuellt: number;
+  readonly loecherPixel: number;
+  readonly loecherOffen: number;
 }
 
 /** Ein nachzubestellendes Bild (fehlt im Blatt, im Atlas durch Wiederholung ersetzt). */
@@ -1305,12 +1798,6 @@ export interface Nachbestellung {
   readonly index: number;
   /** Woraus das Ersatzbild stammt: 'gehen 2', 'gehen 2 gespiegelt' oder 'Stand' (ganze Animation fehlt). */
   readonly ersatz: string;
-}
-
-/** Ein Befund der Prüfungen. `hart` bricht den Bau ab (Kontur, Streupixel, Farbbudget, Anker). */
-export interface Befund {
-  readonly hart: boolean;
-  readonly text: string;
 }
 
 export interface Ergebnis {
@@ -1325,13 +1812,15 @@ export interface Ergebnis {
   readonly blatt: GepacktesBlatt;
   readonly nachbestellungen: readonly Nachbestellung[];
   readonly befunde: readonly Befund[];
-  /** Figur für die Prüfungen und den Bau in bauen.ts (mit den weichen Regeln, G0b-4). */
-  readonly pruefFigur: Figur;
+  readonly fusskontakt: readonly Fusskontakt[];
+  readonly bodenton: Bodenton | null;
+  /** Zähler der Bildbearbeitung über alle Zellen. */
+  readonly bearbeitung: Readonly<Bearbeitung>;
+  /** Ausnahmen der Streupixelregel (leer: keine). */
+  readonly ausnahmen: ReadonlySet<Pixel>;
+  readonly zielhoehe: number;
+  readonly umriss: Umriss;
 }
-
-/** Regeln aus figurPruefen (bauen.ts), die beim Umsetzer nur Befunde sind (Festlegung G0b-4). */
-const REGEL_FUSSKONTAKT = 'Fußkontakt';
-export const WEICHE_REGELN: ReadonlySet<string> = new Set(['Umriss im Stand', REGEL_FUSSKONTAKT]);
 
 /** Bild aus einer Zelle nach Palette und Kontur, mit Anker. */
 interface Zellbild {
@@ -1339,8 +1828,9 @@ interface Zellbild {
   readonly anker: Anker;
 }
 
+/** Spiegelt ein Zellbild; die Achse rechts neben der Ankerspalte bleibt an derselben Stelle der Figur. */
 function spiegelBild(z: Zellbild): Zellbild {
-  return { leinwand: z.leinwand.gespiegelt(), anker: { x: z.leinwand.breite - 1 - z.anker.x, y: z.anker.y } };
+  return { leinwand: z.leinwand.gespiegelt(), anker: { x: Math.max(0, z.leinwand.breite - 2 - z.anker.x), y: z.anker.y } };
 }
 
 /** Blätter, die eine Zuordnung braucht (Maßstab, Bezugszellen, Bilder), sortiert. */
@@ -1354,14 +1844,18 @@ export function benutzteBlaetter(zu: Zuordnung): string[] {
 }
 
 /**
- * Setzt die Blätter einer Figur um (9.3): Freistellen und Zellen je Blatt,
- * Maßstab aus der Stand-Zelle, Verkleinern, Palette über alle Bilder,
- * Kontur, Anker, Zuordnung mit Ersatzbildern, Prüfungen, Blatt mit Atlas.
+ * Setzt die Blätter einer Figur um (Auftrag 5, 1): Freistellen und Zellen je
+ * Blatt, Maßstab aus der Stand-Zelle, Verkleinern, Palette per Medianschnitt
+ * über alle Bilder, Bodenton, Streupixel, Kontur, Anker, Fußkontakt beim
+ * Gehen, Zuordnung mit Ersatzbildern, Prüfungen, Blatt mit Atlas.
  */
 export function setzeUm(eingabe: Eingabe): Ergebnis {
   const zu = eingabe.zuordnung;
   const p: Parameter = { ...STANDARD, ...zu.parameter, ...(eingabe.parameter ?? {}) };
   const befunde: Befund[] = [];
+  const bodenton = eingabe.bodenton ?? null;
+  const boden = bodenton === null ? null : bodenton.helligkeit;
+  if (bodenton === null) befunde.push({ hart: false, text: 'Bodenton: kein Hintergrundblatt mit Bodenkarte, Prüfung entfällt' });
 
   // 1 und 2: Freistellen und Zellen je benutztem Blatt (Reihenfolge nach Namen).
   const benutzt = benutzteBlaetter(zu);
@@ -1378,6 +1872,7 @@ export function setzeUm(eingabe: Eingabe): Ergebnis {
     blaetter.push({
       blatt: name, breite: bild.breite, hoehe: bild.hoehe, hintergrund: fs.hintergrund, raster,
       zellen: zellen.zellen, verworfen: zellen.verworfen, leer: zellen.leer, grundlinie, geschlossen: fs.geschlossen,
+      loecherGefuellt: fs.loecherGefuellt, loecherPixel: fs.loecherPixel, loecherOffen: fs.loecherOffen,
     });
     if (fs.hintergrund.streuung > p.toleranzHintergrund) {
       befunde.push({ hart: false, text: `${name}: Hintergrund nicht einfarbig (Ecken weichen bis ${fs.hintergrund.streuung.toFixed(1)} ab)` });
@@ -1391,16 +1886,23 @@ export function setzeUm(eingabe: Eingabe): Ergebnis {
     return { ...b, zelle };
   };
 
-  // 3: Maßstab aus der Stand-Zelle; ein Faktor für alle Blätter, außer ein Blatt hat einen eigenen
-  // über eine Bezugszelle (G0b-11): dann so, dass seine Zelle so hoch wird wie die verkleinerte Bezugszelle.
+  // 3: Maßstab aus der Stand-Zelle; ein Faktor für alle Blätter, außer ein Blatt hat einen eigenen über
+  // eine Bezugszelle (G0b-11): dann so, dass seine Zelle so hoch wird wie die verkleinerte Bezugszelle.
   const stand = zelleVon(zu.massstab);
-  const faktor = bestimmeFaktor(schneideAus(stand.fs, stand.zellen, stand.zelle), zu.zielhoehe, p);
+  const standQuelle = schneideAus(stand.fs, stand.zellen, stand.zelle);
+  const faktor = bestimmeFaktor(standQuelle, zu.zielhoehe, p);
   const faktoren = new Map<string, number>([[zu.massstab.blatt, faktor]]);
   for (const m of zu.massstaebe) {
     const ref = zelleVon(m.wie);
-    const refHoehe = deckendeHoehe(verkleinertBereinigt(schneideAus(ref.fs, ref.zellen, ref.zelle), faktoren.get(m.wie.blatt) as number, p));
+    const refHoehe = hoeheMitKontur(verkleinertBereinigt(schneideAus(ref.fs, ref.zellen, ref.zelle), faktoren.get(m.wie.blatt) as number, p), p);
     const z = zelleVon(m);
-    faktoren.set(m.blatt, bestimmeFaktor(schneideAus(z.fs, z.zellen, z.zelle), refHoehe, p));
+    const f = bestimmeFaktor(schneideAus(z.fs, z.zellen, z.zelle), refHoehe, p);
+    faktoren.set(m.blatt, f);
+    const groesse = (100 * faktor) / f;
+    befunde.push({
+      hart: false,
+      text: `${m.blatt}: Figur ${groesse.toFixed(0)} % so groß wie auf ${zu.massstab.blatt}, neu kalibriert über Zelle ${m.zelle} wie ${m.wie.blatt} ${m.wie.zelle} (Faktor ${f.toFixed(4)})`,
+    });
   }
   const faktorVon = (blatt: string): number => faktoren.get(blatt) ?? faktor;
 
@@ -1413,21 +1915,29 @@ export function setzeUm(eingabe: Eingabe): Ergebnis {
     return verkleinertBereinigt(schneideAus(z.fs, z.zellen, z.zelle), faktorVon(b.blatt), p);
   });
 
-  // 4: Palette über alle Bilder der Figur.
-  const palette = bildePalette(verkleinert, stufenFuer(zu.materialien), p);
+  // 4: Palette per Medianschnitt über alle Bilder der Figur.
+  const gruende = [...new Set(blaetter.filter((b) => !b.hintergrund.durchsichtig).map((b) => b.hintergrund.farbe))].sort((a, b) => a - b);
+  const palette = bildePalette(verkleinert, p, gruende);
+  const ausnahmen = new Set<Pixel>();
 
-  // 5 und 6: Kontur, Streupixel, Anker.
+  // 5 und 6: Bodenton, Streupixel, Kontur, Anker.
+  const bearbeitung: Bearbeitung = { aufgehellt: 0, streupixel: 0, kontur: 0, konturStreu: 0 };
   const liegend = new Set(zu.bilder.filter((b) => b.liegend).map(schluessel));
   const zellbilder = new Map<string, Zellbild>();
   reihenfolge.forEach((b, i) => {
-    const l = palette.bilder[i] as Leinwand;
-    konturieren(l, palette.stufen, p);
+    const l = fertigMachen(palette.bilder[i] as Leinwand, palette, boden, ausnahmen, p, bearbeitung);
     zellbilder.set(schluessel(b), { leinwand: l, anker: bestimmeAnker(l, liegend.has(schluessel(b)), p) });
   });
+  if (bearbeitung.aufgehellt > 0 && bodenton !== null) {
+    befunde.push({
+      hart: false,
+      text: `Bodenton: ${bearbeitung.aufgehellt} Pixel im Inneren dunkler als ${pixelZuHex(bodenton.farbe)} (Helligkeit ${bodenton.helligkeit.toFixed(1)}, ${bodenton.herkunft}), um eine Stufe aufgehellt`,
+    });
+  }
   const standBild = zellbilder.get(schluessel(zu.massstab)) as Zellbild;
 
-  // 7: Zuordnung, Ersatzbilder. Ein Bild löst sich auf als eigenes Bild (`bild`), sonst als Kopie
-  // (`gleich`, `ersatz`; die Quelle wird ihrerseits aufgelöst), sonst als Wiederholung des nächsten
+  // 7: Zuordnung. Eigene Bilder, dann Fußkontakt der Gehanimationen mit eigenen Bildern, dann Kopien
+  // (`gleich`, `ersatz`; die Quelle wird ihrerseits aufgelöst), sonst Wiederholung des nächsten
   // vorherigen Bildes mit eigener Quelle, sonst des nächsten folgenden, sonst des Stands.
   const nachbestellungen: Nachbestellung[] = [];
   const eigen = new Map<string, Zellbild>();
@@ -1435,9 +1945,23 @@ export function setzeUm(eingabe: Eingabe): Ergebnis {
     const z = zellbilder.get(schluessel(b)) as Zellbild;
     eigen.set(`${b.animation}#${b.index}`, b.spiegeln ? spiegelBild(z) : z);
   }
+  const dauernVon = new Map(zu.animationen.map((a) => [a.name, a.dauern]));
+  const fusskontakt: Fusskontakt[] = [];
+  const verschobenVon = new Map<string, number>();
+  for (const [name, wert] of zu.gehen) {
+    const dauern = dauernVon.get(name);
+    if (dauern === undefined) throw new Error(`Umsetzer: gehen nennt unbekannte Animation ${name}`);
+    const strecke = gehgeschwindigkeit(wert) * (dauern[0] as number) * MASSSTAB;
+    const alleEigen = dauern.every((_, i) => eigen.has(`${name}#${i}`));
+    if (!alleEigen) continue;
+    const bilder = dauern.map((_, i) => eigen.get(`${name}#${i}`) as Zellbild);
+    const f = fusskontaktSetzen(bilder, strecke, p);
+    f.anker.forEach((a, i) => eigen.set(`${name}#${i}`, { leinwand: (bilder[i] as Zellbild).leinwand, anker: a }));
+    verschobenVon.set(name, strecke);
+    fusskontakt.push({ animation: name, strecke, verschoben: true, rest: f.rest, verschiebung: f.verschiebung, rutschen: f.rutschen, standfuss: f.standfuss });
+  }
   const kopie = new Map<string, ZuordnungKopie>();
   for (const k of zu.kopien) kopie.set(`${k.animation}#${k.index}`, k);
-  const dauernVon = new Map(zu.animationen.map((a) => [a.name, a.dauern]));
   const fertig = new Map<string, Zellbild>();
   const aufloesen = (anim: string, i: number, pfad: readonly string[]): Zellbild => {
     const k0 = `${anim}#${i}`;
@@ -1464,128 +1988,236 @@ export function setzeUm(eingabe: Eingabe): Ergebnis {
     fertig.set(k0, z);
     return z;
   };
-  const animationen: Animation[] = zu.animationen.map((a) => {
+  // Bei 2× wäre eine Zeile je Animation höher als BLATT_MAX: die Animationen setzen die Zeile fort (G1-8).
+  const animationen: Animation[] = zu.animationen.map((a, ai) => {
     const bilder: Bild[] = a.dauern.map((dauer, i) => {
       const z = aufloesen(a.name, i, []);
-      return { leinwand: z.leinwand, ankerX: z.anker.x, ankerY: z.anker.y, dauer };
+      return { leinwand: z.leinwand, ...atlasAnker(z.anker), dauer };
     });
-    return a.aktiv === undefined ? { name: a.name, schleife: a.schleife, bilder } : { name: a.name, schleife: a.schleife, bilder, aktiv: a.aktiv };
+    const basis = { name: a.name, schleife: a.schleife, bilder, zeileFortsetzen: ai > 0 };
+    return a.aktiv === undefined ? basis : { ...basis, aktiv: a.aktiv };
   });
-
-  // 8: Prüfungen wie bei der Gliederpuppe (bauen.ts figurPruefen, docs/grafik.md 2.5). Hart sind
-  // Kontur, Streupixel, Farbzählung, Anker und aktive Bilder; Umriss im Stand und Fußkontakt sind
-  // bei fremden Blättern Befunde für den Nutzer (Festlegung G0b-4).
-  const umriss = umrissFuer(zu.typ);
-  const figur: Figur = { name: zu.figur, umriss, animationen, glanz: glanzToene(palette.stufen), budget: FARBBUDGET.figur };
-  const stil: Stilbefund[] = figurPruefen(figur);
+  // Gehanimationen aus Kopien (gehen_schnell = gehen): Rest bei ihrer Geschwindigkeit nur messen.
   for (const [name, wert] of zu.gehen) {
-    const anim = animationen.find((a) => a.name === name);
-    if (anim === undefined) throw new Error(`Umsetzer: gehen nennt unbekannte Animation ${name}`);
-    const schritt = gehgeschwindigkeit(wert) * ((anim.bilder[0] as Bild).dauer);
-    for (const b of figurPruefen({ ...figur, gehen: name, schritt })) if (b.regel === REGEL_FUSSKONTAKT) stil.push(b);
+    if (verschobenVon.has(name)) continue;
+    const a = animationen.find((x) => x.name === name) as Animation;
+    const strecke = gehgeschwindigkeit(wert) * ((a.bilder[0] as Bild).dauer) * MASSSTAB;
+    const bilder = a.bilder.map((b) => ({ leinwand: b.leinwand, anker: ankerAusAtlas(b.ankerX, b.ankerY) }));
+    const f = fusskontaktSetzen(bilder, strecke, p);
+    const rutschen = f.standfuss.map((q, i) => {
+      const a0 = (bilder[i] as { anker: Anker }).anker.x;
+      const a1 = (bilder[(i + 1) % bilder.length] as { anker: Anker }).anker.x;
+      return strecke + q[1] - a1 - (q[0] - a0);
+    });
+    const rest = rutschen.reduce((s, r) => s + r, 0);
+    fusskontakt.push({ animation: name, strecke, verschoben: false, rest, verschiebung: bilder.map(() => 0), rutschen, standfuss: f.standfuss });
   }
-  for (const b of stil) befunde.push({ hart: !WEICHE_REGELN.has(b.regel), text: `${b.animation} Bild ${b.bild}: ${b.regel}: ${b.text}` });
-  // Zusätzlich je Zelle: Umriss überschritten (Angriffsposen dürfen das, 1.1), liegend gegen den gedrehten Umriss.
+  for (const f of fusskontakt) {
+    befunde.push({
+      hart: false,
+      text: `Fußkontakt ${f.animation}: Strecke ${f.strecke.toFixed(1)} Bildpixel je Bild, Rest ${f.rest.toFixed(1)} Bildpixel (${(f.rest / MASSSTAB).toFixed(1)} Spielpixel) je Zyklus${f.verschoben ? ', gleichmäßig verteilt' : ', gemessen mit den Ankern der Quelle'}`,
+    });
+  }
+
+  // Reichweite im Trefferbild (erstes aktives Bild): vorderster Pixel vor der Spiegelachse, in Spielpixeln (Befund).
+  for (const a of animationen) {
+    const i = a.aktiv?.[0];
+    if (i === undefined) continue;
+    const b = a.bilder[i] as Bild;
+    const g = b.leinwand.begrenzung();
+    if (g === null) continue;
+    const weite = (g.x + g.b - 1 - b.ankerX) / MASSSTAB;
+    befunde.push({ hart: false, text: `Reichweite ${a.name} im Trefferbild (Bild ${i}): ${weite.toFixed(1)} Spielpixel vor dem Fußpunkt` });
+  }
+
+  // 8: Prüfungen nach E25.
+  const umriss = umrissFuer(zu.typ);
+  for (const b of pruefeGrok(animationen, umriss, zu.zielhoehe, ausnahmen, boden, p)) befunde.push(b);
+  // Zusätzlich je Zelle: Umriss (2×) überschritten (Angriffsposen dürfen das, 1.1), liegend gegen den gedrehten Umriss.
   for (const b of reihenfolge) {
     const g = (zellbilder.get(schluessel(b)) as Zellbild).leinwand.begrenzung();
     if (g === null) continue;
     const [ub, uh] = liegend.has(schluessel(b)) ? [umriss.hoehe, umriss.breite] : [umriss.breite, umriss.hoehe];
-    if (g.b > ub) befunde.push({ hart: false, text: `${b.blatt} Zelle ${b.zelle}: ${g.b} px breit, Umriss ${ub}` });
-    if (g.h > uh) befunde.push({ hart: false, text: `${b.blatt} Zelle ${b.zelle}: ${g.h} px hoch, Umriss ${uh}` });
+    if (g.b > MASSSTAB * ub) befunde.push({ hart: false, text: `${b.blatt} Zelle ${b.zelle}: ${g.b} Bildpixel breit, Umriss ${MASSSTAB * ub}` });
+    if (g.h > MASSSTAB * uh) befunde.push({ hart: false, text: `${b.blatt} Zelle ${b.zelle}: ${g.h} Bildpixel hoch, Umriss ${MASSSTAB * uh}` });
   }
   const standHoehe = standBild.leinwand.begrenzung()?.h ?? 0;
-  if (standHoehe !== zu.zielhoehe) befunde.push({ hart: false, text: `Stand ${standHoehe} px hoch, Ziel ${zu.zielhoehe}` });
-  if (palette.befundAnteil > 0) {
-    befunde.push({ hart: false, text: `${(palette.befundAnteil * 100).toFixed(1)} % der Pixel weiter als ${p.befundAbstand} von der nächsten Stufe (größter Abstand ${palette.groessterAbstand.toFixed(1)})` });
-  }
+  if (standHoehe !== zu.zielhoehe) befunde.push({ hart: false, text: `Stand ${standHoehe} Bildpixel hoch, Ziel ${zu.zielhoehe}` });
 
-  const blatt = blattPacken(zu.figur, animationen);
+  const blatt = blattPacken(zu.figur, animationen, { maxBreite: BLATT_MAX });
   const alleFaktoren = new Map([...benutzt].sort().map((b) => [b, faktorVon(b)] as const));
-  const [ersteGehen] = [...zu.gehen];
-  const pruefFigur: Figur = ersteGehen === undefined
-    ? { ...figur, weich: WEICHE_REGELN }
-    : {
-      ...figur,
-      weich: WEICHE_REGELN,
-      gehen: ersteGehen[0],
-      schritt: gehgeschwindigkeit(ersteGehen[1]) * ((animationen.find((a) => a.name === ersteGehen[0]) as Animation).bilder[0] as Bild).dauer,
-    };
-  return { figur: zu.figur, faktor, faktoren: alleFaktoren, blaetter, palette, animationen, blatt, nachbestellungen, befunde, pruefFigur };
+  return {
+    figur: zu.figur, faktor, faktoren: alleFaktoren, blaetter, palette, animationen, blatt, nachbestellungen, befunde,
+    fusskontakt, bodenton, bearbeitung, ausnahmen, zielhoehe: zu.zielhoehe, umriss,
+  };
 }
 
 // ===========================================================================
-// 10. Protokoll und Aufruf
+// 10. Ausgabe: Atlas mit Maßstab, Kontaktbögen, Protokoll, Aufruf
 // ===========================================================================
 
-/** Höchstzahl der Quellfarben über dem Befundabstand, die das Protokoll einzeln nennt (die häufigsten). */
-const PROTOKOLL_FARBEN = 20;
+/** Atlas als JSON-Text wie atlasText (blatt.ts) mit dem Feld "massstab" auf oberster Ebene (Auftrag 5, 1). */
+export function grokAtlasText(atlas: Atlas, massstab: number = MASSSTAB): string {
+  const zeilen = atlasText(atlas).split('\n');
+  return [zeilen[0], zeilen[1], `  "massstab": ${massstab},`, ...zeilen.slice(2)].join('\n');
+}
 
-/** Protokoll als Markdown (für docs/grafik.md 5): Blätter, Zellen, Palette mit Abständen, Nachbestellungen, Befunde. */
-export function protokoll(e: Ergebnis, p: Parameter = STANDARD): string {
+/** Bytes des Grok-Blatts: PNG und Atlas mit Maßstab (ohne zu schreiben). */
+export function grokBytes(e: Ergebnis): { png: Uint8Array; json: string } {
+  return { png: pngSchreiben(e.blatt.leinwand), json: grokAtlasText(e.blatt.atlas) };
+}
+
+/** Schreibt `${ordner}/${figur}.png` und `.json`; gibt Pfade und MD5 des PNG zurück. */
+export function grokSchreiben(ordner: string, e: Ergebnis): { png: string; json: string; md5: string } {
+  mkdirSync(ordner, { recursive: true });
+  const bytes = grokBytes(e);
+  const png = join(ordner, `${e.figur}.png`);
+  const json = join(ordner, `${e.figur}.json`);
+  writeFileSync(png, bytes.png);
+  writeFileSync(json, bytes.json);
+  return { png, json, md5: md5(bytes.png) };
+}
+
+/** Rand, Lücke und Zeilenhöhe der Kontaktbögen in Bildpixeln (Schrift 2×, Festlegung U2). */
+const K_SCHRIFT = 2;
+const K_RAND = 8;
+const K_LUECKE = 8;
+const K_ZEILE = (ZEICHEN_HOEHE + 3) * K_SCHRIFT;
+const K_KREUZ = 3;
+
+/**
+ * Kontaktbogen eines Grok-Blatts (Auftrag 5, Phase 1): alle Bilder einer
+ * Animation in natürlicher Größe (2× Bildpixel, nicht weiter vergrößert),
+ * am Anker auf derselben Bodenlinie ausgerichtet (unter dem 2 × 2-Block des
+ * Fußpunkts), Ankerkreuz auf der Spiegelachse, Rahmen um die aktiven Bilder,
+ * darunter Bildnummer und Dauer (Schrift 3 × 5 in 2×).
+ */
+export function grokKontaktBogen(animation: Animation): Leinwand {
+  const bilder = animation.bilder.map(zugeschnitten);
+  if (bilder.length === 0) throw new Error(`Kontaktbogen ${animation.name}: keine Bilder`);
+  let links = 0;
+  let rechts = 0;
+  let oben = 0;
+  let unten = 0;
+  for (const b of bilder) {
+    links = Math.max(links, b.ankerX);
+    rechts = Math.max(rechts, b.leinwand.breite - b.ankerX);
+    oben = Math.max(oben, b.ankerY);
+    unten = Math.max(unten, b.leinwand.hoehe - b.ankerY);
+  }
+  unten = Math.max(unten, K_KREUZ + MASSSTAB + 1);
+  const texte = bilder.map((b, i) => `${i}:${b.dauer}F`);
+  const zelleB = Math.max(links + rechts + 4, ...texte.map((t) => textBreite(t, K_SCHRIFT) + 2));
+  const zelleH = oben + unten + 4;
+  const summe = bilder.reduce((s, b) => s + b.dauer, 0);
+  const titel = `${animation.name}  ${bilder.length} BILDER  SUMME ${summe} F${animation.schleife ? '  SCHLEIFE' : ''}  2×`;
+  const breite = Math.max(K_RAND * 2 + bilder.length * zelleB + (bilder.length - 1) * K_LUECKE, K_RAND * 2 + textBreite(titel, K_SCHRIFT));
+  const hoehe = K_RAND + K_ZEILE + zelleH + 4 + K_ZEILE + K_RAND;
+  const bogen = new Leinwand(breite, hoehe);
+  bogen.fuelle(KONTAKT_GRUND);
+  textZeichnen(bogen, titel, K_RAND, K_RAND, KONTAKT_TEXT, K_SCHRIFT);
+  const aktiv = new Set(animation.aktiv ?? []);
+  const y0 = K_RAND + K_ZEILE;
+  bilder.forEach((b, i) => {
+    const x0 = K_RAND + i * (zelleB + K_LUECKE);
+    if (aktiv.has(i)) bogen.rechteck(x0 - 2, y0 - 2, zelleB + 4, zelleH + 4, KONTAKT_AKTIV);
+    bogen.rechteck(x0, y0, zelleB, zelleH, KONTAKT_ZELLE);
+    const ax = x0 + 2 + links;
+    const ay = y0 + 2 + oben;
+    // Bodenlinie unter dem Spielpixel des Fußpunkts (2 × 2 ab dem Anker), Kreuz auf der Spiegelachse
+    bogen.rechteck(x0, ay + MASSSTAB, zelleB, 1, KONTAKT_BODEN);
+    bogen.rechteck(ax + 1 - K_KREUZ, ay + MASSSTAB + K_KREUZ, 2 * K_KREUZ, 1, KONTAKT_ANKER);
+    bogen.rechteck(ax, ay + MASSSTAB, 2, 2 * K_KREUZ + 1, KONTAKT_ANKER);
+    bogen.einsetzen(b.leinwand, ax - b.ankerX, ay - b.ankerY);
+    textZeichnen(bogen, texte[i] as string, x0, y0 + zelleH + 4, aktiv.has(i) ? KONTAKT_AKTIV : KONTAKT_TEXT, K_SCHRIFT);
+  });
+  return bogen;
+}
+
+/** Dateiname des Kontaktbogens einer Animation unter docs/bilder/. */
+export function kontaktDatei(figur: string, animation: string): string {
+  return `kontakt_${figur}_${animation}.png`;
+}
+
+/** Schreibt den Kontaktbogen als PNG nach pfad; gibt das MD5 zurück. */
+export function grokKontaktSchreiben(pfad: string, animation: Animation): string {
+  mkdirSync(dirname(pfad), { recursive: true });
+  const bytes = pngSchreiben(grokKontaktBogen(animation));
+  writeFileSync(pfad, bytes);
+  return md5(bytes);
+}
+
+/** Protokoll als Markdown (für docs/grafik.md 5.8): Blätter, Maßstab, Palette, Fußkontakt, Nachbestellungen, Befunde. */
+export function protokoll(e: Ergebnis): string {
   const z: string[] = [];
-  z.push(`### Protokoll ${e.figur}`, '', `MD5 des Blatts ${md5(blattBytes(e.blatt).png)}`, '');
-  z.push('| Blatt | Maß | Hintergrund | Zellen je Zeile | verworfen | geschlossen px | Raster | Faktor |', '|---|---|---|---|---|---|---|---|');
+  z.push(`### Protokoll ${e.figur}`, '', `MD5 des Blatts ${md5(grokBytes(e).png)} (${e.blatt.leinwand.breite} × ${e.blatt.leinwand.hoehe}, Maßstab ${MASSSTAB})`, '');
+  z.push('| Blatt | Maß | Hintergrund | Zellen je Zeile | verworfen | geschlossen px | Löcher gefüllt (px) / offen | Raster | Faktor |', '|---|---|---|---|---|---|---|---|---|');
   for (const b of e.blaetter) {
     const jeZeile: number[] = [];
     for (const c of b.zellen) jeZeile[c.zeile - 1] = (jeZeile[c.zeile - 1] ?? 0) + 1;
     const raster = b.raster === undefined ? '–' : `${b.raster.spalten} × ${b.raster.zeilen}`;
-    z.push(`| ${b.blatt} | ${b.breite} × ${b.hoehe} | ${pixelZuHex(b.hintergrund.farbe)} | ${[...jeZeile].map((n) => n ?? 0).join(' + ')} = ${b.zellen.length} | ${b.verworfen.length} | ${b.geschlossen} | ${raster} | ${(e.faktoren.get(b.blatt) ?? e.faktor).toFixed(4)} |`);
+    z.push(`| ${b.blatt} | ${b.breite} × ${b.hoehe} | ${pixelZuHex(b.hintergrund.farbe)} | ${[...jeZeile].map((n) => n ?? 0).join(' + ')} = ${b.zellen.length} | ${b.verworfen.length} | ${b.geschlossen} | ${b.loecherGefuellt} (${b.loecherPixel}) / ${b.loecherOffen} | ${raster} | ${(e.faktoren.get(b.blatt) ?? e.faktor).toFixed(4)} |`);
   }
-  z.push('', '| Stufe | Farbe | Pixel | mittlerer Abstand | größter Abstand |', '|---|---|---|---|---|');
-  for (const s of e.palette.stufen) {
-    const liste = e.palette.abbildungen.filter((a) => a.stufe.farbe === s.farbe);
-    const pixel = liste.reduce((t, a) => t + a.pixel, 0);
-    const mittel = pixel > 0 ? liste.reduce((t, a) => t + a.abstand * a.pixel, 0) / pixel : 0;
-    const max = liste.reduce((t, a) => Math.max(t, a.abstand), 0);
-    z.push(`| ${stufenName(s)} | ${pixelZuHex(s.farbe)} | ${pixel} | ${mittel.toFixed(1)} | ${max.toFixed(1)} |`);
-  }
-  z.push('', `Gestrichen (Farbbudget): ${e.palette.gestrichen.map(stufenName).join(', ') || 'keine'}.`);
-  z.push(`Abstand pixelgewichtet ${e.palette.mittlererAbstand.toFixed(1)}, größter ${e.palette.groessterAbstand.toFixed(1)}, über ${p.befundAbstand}: ${(e.palette.befundAnteil * 100).toFixed(1)} % der Pixel.`);
-  const weit = e.palette.abbildungen.filter((a) => a.abstand > p.befundAbstand);
-  if (weit.length > 0) {
-    z.push('', `Quellfarben über ${p.befundAbstand}, die ${Math.min(weit.length, PROTOKOLL_FARBEN)} häufigsten von ${weit.length}:`, '');
-    z.push('| Quellfarbe | Stufe | Abstand | Pixel |', '|---|---|---|---|');
-    for (const a of weit.slice(0, PROTOKOLL_FARBEN)) z.push(`| ${pixelZuHex(a.quelle)} | ${stufenName(a.stufe)} | ${a.abstand.toFixed(1)} | ${a.pixel} |`);
+  const p = e.palette;
+  z.push('', `Palette: ${p.palette.length} Farben (Medianschnitt aus ${p.quellfarben} Quellfarben, davon ${p.ohneSchnitt} im Bereich des Grunds ohne Schnitt), dunkelster Ton ${pixelZuHex(p.dunkelster)}, Abstand pixelgewichtet ${p.mittlererAbstand.toFixed(1)}, größter ${p.groessterAbstand.toFixed(1)}.`);
+  z.push('', '| Farbe | Helligkeit | Pixel |', '|---|---|---|');
+  p.palette.forEach((f, i) => z.push(`| ${pixelZuHex(f)} | ${helligkeit(f).toFixed(1)} | ${p.pixel[i] ?? 0} |`));
+  const b = e.bearbeitung;
+  z.push('', `Bearbeitung: ${b.aufgehellt} Pixel über den Bodenton aufgehellt${e.bodenton === null ? ' (kein Bodenton)' : ` (${pixelZuHex(e.bodenton.farbe)}, Helligkeit ${e.bodenton.helligkeit.toFixed(1)}, ${e.bodenton.herkunft})`}, ${b.streupixel} Streupixel umgefärbt, ${b.kontur} Konturpixel nachgesetzt, ${b.konturStreu} Streupixel nach Kontur und Bodenton umgefärbt.`);
+  z.push('', 'Fußkontakt:');
+  if (e.fusskontakt.length === 0) z.push('- keine Gehanimation');
+  for (const f of e.fusskontakt) {
+    z.push(`- ${f.animation}: Strecke ${f.strecke.toFixed(1)} Bildpixel je Bild, Rest ${f.rest.toFixed(1)} Bildpixel je Zyklus (${(f.rest / MASSSTAB).toFixed(1)} Spielpixel), ${f.verschoben ? `Anker verschoben um ${f.verschiebung.join(', ')}` : 'nur gemessen'}; Rutschen je Bild ${f.rutschen.map((r) => r.toFixed(1)).join(', ')}`);
   }
   z.push('', 'Nachbestellungen:');
   if (e.nachbestellungen.length === 0) z.push('- keine');
   for (const n of e.nachbestellungen) z.push(`- ${n.animation} Bild ${n.index} (ersetzt durch ${n.ersatz})`);
   z.push('', 'Befunde:');
   if (e.befunde.length === 0) z.push('- keine');
-  for (const b of e.befunde) z.push(`- ${b.hart ? 'HART: ' : ''}${b.text}`);
+  for (const x of e.befunde) z.push(`- ${x.hart ? 'HART: ' : ''}${x.text}`);
   return z.join('\n') + '\n';
 }
 
-/** Liest einen Ordner fremd/<figur>/ (alle *.png, zuordnung.txt, quelle.txt) und setzt ihn um. */
-export function umsetzenOrdner(ordner: string, parameter: Partial<Parameter> = {}): Ergebnis {
+/** Ordner spiel/grafik/ausgabe/ (Vorgabe für die Hintergrundblätter mit dem Bodenton). */
+export const AUSGABE_VORGABE = fileURLToPath(new URL('../ausgabe/', import.meta.url));
+
+/**
+ * Liest einen Ordner fremd/<ordner>/ (Blätter der Zuordnung, zuordnung.txt,
+ * quelle.txt) und setzt ihn um. Der Bodenton kommt aus den
+ * Hintergrundblättern in `ausgabe` (Vorgabe spiel/grafik/ausgabe/), wenn
+ * er nicht übergeben wird.
+ */
+export function umsetzenOrdner(ordner: string, parameter: Partial<Parameter> = {}, bodenton?: Bodenton | null, ausgabe: string = AUSGABE_VORGABE): Ergebnis {
   const zuordnung = leseZuordnung(readFileSync(join(ordner, 'zuordnung.txt'), 'utf8'));
   const quellPfad = join(ordner, 'quelle.txt');
   const quelle = leseQuelle(existsSync(quellPfad) ? readFileSync(quellPfad, 'utf8') : '');
   const blaetter = new Map<string, Leinwand>();
   for (const datei of benutzteBlaetter(zuordnung)) blaetter.set(datei, pngDateiLesen(join(ordner, datei)));
-  return setzeUm({ blaetter, zuordnung, quelle, parameter });
+  const ton = bodenton === undefined ? dunkelsterBodenton(hintergrundblaetterLesen(ausgabe)) : bodenton;
+  return setzeUm({ blaetter, zuordnung, quelle, parameter, bodenton: ton });
 }
 
 function hauptprogramm(argumente: readonly string[]): number {
   const ordner = argumente[0];
   if (ordner === undefined) {
-    process.stderr.write('Aufruf: umsetzer.ts <fremd/figur> [--aus <ordner>] [--kontakt <ordner>]\n');
+    process.stderr.write('Aufruf: umsetzer.ts <fremd/ordner> [--aus <ordner>] [--kontakt <ordner>]\n');
     return 2;
   }
   const wert = (schalter: string): string | undefined => {
     const i = argumente.indexOf(schalter);
     return i >= 0 ? argumente[i + 1] : undefined;
   };
-  const e = umsetzenOrdner(ordner);
   const aus = wert('--aus') ?? resolve(ordner, '..', '..', '..', 'ausgabe');
-  const geschrieben = blattSchreiben(aus, e.figur, e.blatt);
+  // Bodenton aus den Hintergrundblättern des Baus (spiel/grafik/ausgabe/), auch wenn --aus woanders hin schreibt
+  const e = umsetzenOrdner(ordner);
+  const geschrieben = grokSchreiben(aus, e);
   process.stdout.write(protokoll(e));
   process.stdout.write(`\n${geschrieben.png}  MD5 ${geschrieben.md5}\n${geschrieben.json}\n`);
   const kontakt = wert('--kontakt');
   if (kontakt !== undefined) {
     for (const a of e.animationen) {
-      const pfad = join(kontakt, `kontakt_${e.figur}_${a.name}.png`);
-      process.stdout.write(`${pfad}  MD5 ${kontaktSchreiben(pfad, a)}\n`);
+      const pfad = join(kontakt, kontaktDatei(e.figur, a.name));
+      process.stdout.write(`${pfad}  MD5 ${grokKontaktSchreiben(pfad, a)}\n`);
     }
   }
   return e.befunde.some((b) => b.hart) ? 1 : 0;

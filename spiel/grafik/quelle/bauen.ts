@@ -2,11 +2,13 @@
 // (docs/grafik.md 2.5), schreibt Blätter und Atlanten nach
 // spiel/grafik/ausgabe/ und Kontaktbögen nach docs/bilder/, gibt je Blatt
 // das MD5 aus. Jede Verletzung bricht mit Figur, Animation und Bild ab.
+// Dazu die Grok-Blätter des Umsetzers v2 (Auftrag 5, Phase 1;
+// docs/grafik.md 5.8) und die Liste aller Blätter blaetter.json.
 //
 //   node --experimental-strip-types grafik/quelle/bauen.ts            alles
 //   node --experimental-strip-types grafik/quelle/bauen.ts --nur-kontakt   nur Kontaktbögen
 
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import type { Umriss } from '../../src/darstellung/masse.ts';
@@ -28,7 +30,10 @@ import type { Leinwand, Pixel } from './leinwand.ts';
 import { deckend } from './leinwand.ts';
 import { FARBBUDGET, KONTUR, SPULE, farbenZaehlen } from './palette.ts';
 import { md5, pngSchreiben } from './png.ts';
-import { umsetzenOrdner } from './umsetzer.ts';
+import type { Bodenton, Ergebnis as GrokErgebnis } from './umsetzer.ts';
+import {
+  BLATT_ENDUNG, dunkelsterBodenton, grokBytes, grokKontaktBogen, hintergrundblaetterAus, kontaktDatei, leseZuordnung, umsetzenOrdner,
+} from './umsetzer.ts';
 import { VERGLEICH_DATEI, vergleichRammbock } from './vergleich.ts';
 import { UEBERSICHT_DATEI, uebersicht } from './uebersicht.ts';
 
@@ -201,15 +206,103 @@ export function erzeugnisse(): Erzeugnis[] {
 
 /** Ordner der Fremdblätter je Figur (Auftrag 4, 9.3; docs/grafik.md 5.3). */
 export const FREMD = join(SPIEL, 'grafik', 'quelle', 'fremd');
-/** Figuren aus Fremdblättern: Ordnername unter FREMD (Weg C, Umsetzer G0b). */
-export const FREMD_ORDNER: readonly string[] = ['rammbock'];
+
+/** Ordner unter FREMD mit einer zuordnung.txt, alphabetisch (Umsetzer v2, docs/grafik.md 5.8). */
+export function fremdOrdnerLesen(fremd: string = FREMD): string[] {
+  if (!existsSync(fremd)) return [];
+  return readdirSync(fremd, { withFileTypes: true })
+    .filter((d) => d.isDirectory() && existsSync(join(fremd, d.name, 'zuordnung.txt')))
+    .map((d) => d.name)
+    .sort();
+}
+
+/** Alle Ordner der Fremdblätter (z. B. rammbock, später rammbock_34). */
+export const FREMD_ORDNER: readonly string[] = fremdOrdnerLesen();
+
+/** Ein Ordner, aus dem ein Grok-Blatt gebaut wird, und die Ordner derselben Figur, die er ersetzt. */
+export interface GrokOrdner {
+  readonly ordner: string;
+  readonly figur: string;
+  readonly datum: string;
+  readonly ersetzt: readonly string[];
+}
 
 /**
- * Figuren aus Grok-Blättern über den Umsetzer (Auftrag 4, 9.3): Blatt `<figur>_fremd` je Ordner
- * unter FREMD. Getrennt von figuren(), weil das Umsetzen der großen Blätter einige Sekunden dauert.
+ * Je Figur (Zeile `figur` der zuordnung.txt) der neueste Ordner (U2-6): das
+ * spätere `datum`, bei gleichem Datum der im Alphabet spätere Ordnername
+ * (rammbock_34 nach rammbock). Die übrigen Ordner derselben Figur werden
+ * nicht gebaut. Reihenfolge nach Figurname.
  */
-export function fremdFiguren(): Figur[] {
-  return FREMD_ORDNER.map((ordner) => umsetzenOrdner(join(FREMD, ordner)).pruefFigur);
+export function grokOrdner(ordner: readonly string[] = FREMD_ORDNER, fremd: string = FREMD): GrokOrdner[] {
+  const jeFigur = new Map<string, { ordner: string; datum: string }[]>();
+  for (const o of ordner) {
+    const zu = leseZuordnung(readFileSync(join(fremd, o, 'zuordnung.txt'), 'utf8'));
+    const liste = jeFigur.get(zu.figur) ?? [];
+    liste.push({ ordner: o, datum: zu.datum });
+    jeFigur.set(zu.figur, liste);
+  }
+  return [...jeFigur.keys()].sort().map((figur) => {
+    const liste = (jeFigur.get(figur) as { ordner: string; datum: string }[])
+      .slice()
+      .sort((a, b) => (a.datum < b.datum ? -1 : a.datum > b.datum ? 1 : a.ordner < b.ordner ? -1 : a.ordner > b.ordner ? 1 : 0));
+    const sieger = liste[liste.length - 1] as { ordner: string; datum: string };
+    return { ordner: sieger.ordner, figur, datum: sieger.datum, ersetzt: liste.slice(0, -1).map((x) => x.ordner) };
+  });
+}
+
+/**
+ * Grok-Blätter über den Umsetzer v2 (Auftrag 5, Phase 1): je Figur der neueste Ordner unter FREMD.
+ * Der Bodenton kommt aus den Hintergrundblättern dieses Baus (bauen) oder, ohne Angabe, aus
+ * spiel/grafik/ausgabe/. Getrennt von figuren(), weil das Umsetzen der großen Blätter einige Sekunden dauert.
+ */
+export function grokErgebnisse(bodenton?: Bodenton | null): GrokErgebnis[] {
+  return grokOrdner().map((o) => umsetzenOrdner(join(FREMD, o.ordner), {}, bodenton));
+}
+
+/**
+ * Animationen eines Grok-Blatts gegen das Blatt der Gliederpuppe derselben Figur (Auftrag 5,
+ * Phase 1): gleiche Namen in gleicher Folge, Schleife, Dauern und aktive Bilder, weil die
+ * Darstellung (zuordnung.ts) sie so erwartet. Gibt die Abweichungen als Text zurück.
+ */
+export function grokGegenPuppe(grok: readonly Animation[], puppe: readonly Animation[]): string[] {
+  const fehler: string[] = [];
+  const g = grok.map((a) => a.name);
+  const q = puppe.map((a) => a.name);
+  if (g.join(' ') !== q.join(' ')) fehler.push(`Animationen ${g.join(', ')} statt ${q.join(', ')}`);
+  for (const a of puppe) {
+    const b = grok.find((x) => x.name === a.name);
+    if (b === undefined) continue;
+    const da = a.bilder.map((x) => x.dauer).join('/');
+    const db = b.bilder.map((x) => x.dauer).join('/');
+    if (da !== db) fehler.push(`${a.name}: Dauern ${db} statt ${da}`);
+    if (a.schleife !== b.schleife) fehler.push(`${a.name}: Schleife ${b.schleife} statt ${a.schleife}`);
+    if ((a.aktiv ?? []).join(',') !== (b.aktiv ?? []).join(',')) fehler.push(`${a.name}: aktiv [${(b.aktiv ?? []).join(', ')}] statt [${(a.aktiv ?? []).join(', ')}]`);
+  }
+  return fehler;
+}
+
+/** Name des Gliederpuppen-Blatts zu einem Grok-Blatt (rammbock_grok → rammbock). */
+export function puppenName(grokFigur: string): string {
+  return grokFigur.endsWith(BLATT_ENDUNG) ? grokFigur.slice(0, -BLATT_ENDUNG.length) : grokFigur;
+}
+
+/** Bytes aller Ausgaben eines Grok-Blatts ohne zu schreiben (Blatt, Atlas mit Maßstab, Kontaktbögen 2×). */
+export function grokAusgabeBytes(e: GrokErgebnis): Map<string, Uint8Array | string> {
+  const aus = new Map<string, Uint8Array | string>();
+  const b = grokBytes(e);
+  aus.set(`${e.figur}.png`, b.png);
+  aus.set(`${e.figur}.json`, b.json);
+  for (const a of e.animationen) aus.set(kontaktDatei(e.figur, a.name), pngSchreiben(grokKontaktBogen(a)));
+  return aus;
+}
+
+/** Datei mit der Liste aller gebauten Blätter unter spiel/grafik/ausgabe/ (Auftrag 5, Phase 1). */
+export const BLAETTER_DATEI = 'blaetter.json';
+
+/** blaetter.json: alphabetische Liste der Blattnamen ohne Endung als JSON-Feld, je Name eine Zeile. */
+export function blaetterText(namen: Iterable<string>): string {
+  const liste = [...new Set(namen)].sort();
+  return liste.length === 0 ? '[]\n' : `[\n${liste.map((n) => `  ${JSON.stringify(n)}`).join(',\n')}\n]\n`;
 }
 
 /** Bytes aller Ausgaben einer Figur ohne zu schreiben (für den Determinismus-Test). */
@@ -246,12 +339,14 @@ export function figurAusgeben(figur: Figur, optionen: AusgabeOptionen = {}): Map
 }
 
 /**
- * Baut alle Figuren (Gliederpuppen und Fremdblätter): prüfen, dann schreiben. Wirft bei
- * Befunden; Befunde der weichen Regeln einer Figur gehen je Regel gezählt an `hinweis`.
+ * Baut alle Figuren (Gliederpuppen), die Erzeugnisse und die Grok-Blätter: prüfen, dann
+ * schreiben. Wirft bei Befunden; Befunde der weichen Regeln einer Figur und die weichen Befunde
+ * der Grok-Blätter gehen gezählt an `hinweis`. Schreibt zuletzt blaetter.json.
  */
 export function bauen(optionen: { nurKontakt?: boolean; hinweis?: (zeile: string) => void } = {}): Map<string, string> {
   const alle = new Map<string, string>();
-  const gebaut = [...figuren(), ...fremdFiguren()];
+  const blaetter: string[] = [];
+  const gebaut = figuren();
   for (const f of gebaut) {
     const weich = f.weich ?? new Set<string>();
     const alleBefunde = figurPruefen(f);
@@ -265,8 +360,10 @@ export function bauen(optionen: { nurKontakt?: boolean; hinweis?: (zeile: string
       throw new Error(`Stilprüfung verletzt (${befunde.length}):\n${text}`);
     }
     for (const [k, v] of figurAusgeben(f, { blatt: optionen.nurKontakt !== true })) alle.set(k, v);
+    blaetter.push(f.name);
   }
-  for (const e of erzeugnisse()) {
+  const erzeugt = erzeugnisse();
+  for (const e of erzeugt) {
     if (e.befunde.length > 0) {
       const text = e.befunde.map((b) => `  ${b.figur} / ${b.animation} / Bild ${b.bild}: ${b.regel}: ${b.text}`).join('\n');
       throw new Error(`Stilprüfung verletzt (${e.befunde.length}):\n${text}`);
@@ -278,36 +375,69 @@ export function bauen(optionen: { nurKontakt?: boolean; hinweis?: (zeile: string
         alle.set(datei, md5(typeof inhalt === 'string' ? new TextEncoder().encode(inhalt) : inhalt));
       }
     }
+    for (const datei of e.ausgabe.keys()) if (datei.endsWith('.png')) blaetter.push(datei.slice(0, -'.png'.length));
     mkdirSync(BILDER, { recursive: true });
     for (const [datei, inhalt] of e.bilder) {
       writeFileSync(join(BILDER, datei), inhalt);
       alle.set(datei, md5(inhalt));
     }
   }
+  // Grok-Blätter (Umsetzer v2): Bodenton aus den Hintergrundblättern dieses Baus (Auftrag 5, 4).
+  const bodenton = dunkelsterBodenton(hintergrundblaetterAus(new Map(erzeugt.flatMap((e) => [...e.ausgabe]))));
+  for (const o of grokOrdner()) {
+    if (o.ersetzt.length > 0) optionen.hinweis?.(`Hinweis ${o.figur}: Ordner ${o.ordner} ersetzt ${o.ersetzt.join(', ')} (neuerer Ordner, docs/grafik.md 5.8)`);
+  }
+  const grok = grokErgebnisse(bodenton);
+  for (const e of grok) {
+    const hart = e.befunde.filter((b) => b.hart);
+    if (hart.length > 0) throw new Error(`Prüfung ${e.figur} verletzt (${hart.length}):\n${hart.map((b) => `  ${b.text}`).join('\n')}`);
+    const puppe = gebaut.find((f) => f.name === puppenName(e.figur));
+    if (puppe !== undefined) {
+      const fehler = grokGegenPuppe(e.animationen, puppe.animationen);
+      if (fehler.length > 0) throw new Error(`${e.figur} passt nicht zu ${puppe.name}.json (${fehler.length}):\n${fehler.map((t) => `  ${t}`).join('\n')}`);
+    }
+    const weich = e.befunde.length - hart.length;
+    if (weich > 0) optionen.hinweis?.(`Hinweis ${e.figur}: ${weich} Befunde (Protokoll: node --experimental-strip-types grafik/quelle/umsetzer.ts grafik/quelle/fremd/<ordner>)`);
+    for (const [datei, inhalt] of grokAusgabeBytes(e)) {
+      const kontakt = datei.startsWith('kontakt_');
+      if (!kontakt && optionen.nurKontakt === true) continue;
+      const ordner = kontakt ? BILDER : AUSGABE;
+      mkdirSync(ordner, { recursive: true });
+      writeFileSync(join(ordner, datei), inhalt);
+      alle.set(datei, md5(typeof inhalt === 'string' ? new TextEncoder().encode(inhalt) : inhalt));
+    }
+    blaetter.push(e.figur);
+  }
   const uebersichtBytes = pngSchreiben(uebersicht(new Map(gebaut.map((f) => [f.name, f.animationen] as const))));
   mkdirSync(BILDER, { recursive: true });
   writeFileSync(join(BILDER, UEBERSICHT_DATEI), uebersichtBytes);
   alle.set(UEBERSICHT_DATEI, md5(uebersichtBytes));
-  const vergleich = vergleichBytes(gebaut);
+  const vergleich = vergleichBytes(gebaut, grok);
   if (vergleich !== null) {
     mkdirSync(BILDER, { recursive: true });
     writeFileSync(join(BILDER, VERGLEICH_DATEI), vergleich);
     alle.set(VERGLEICH_DATEI, md5(vergleich));
   }
+  if (optionen.nurKontakt !== true) {
+    const text = blaetterText(blaetter);
+    writeFileSync(join(AUSGABE, BLAETTER_DATEI), text);
+    alle.set(BLAETTER_DATEI, md5(new TextEncoder().encode(text)));
+  }
   return alle;
 }
 
 /**
- * Vergleichsbild Rammbock für Haltepunkt 1 (Auftrag 4, 9.4; vergleich.ts) als PNG-Bytes, wenn
- * die Blätter vela, rammbock und rammbock_fremd gebaut sind; sonst null.
+ * Vergleichsbild Rammbock für Haltepunkt 1 von Auftrag 5 (vergleich.ts): Grok-Rammbock (Blatt
+ * rammbock_grok, 2×) gegen Gliederpuppe und Vela, als PNG-Bytes, wenn die Blätter vela,
+ * rammbock und rammbock_grok gebaut sind; sonst null.
  */
-export function vergleichBytes(gebaut: readonly Figur[]): Uint8Array | null {
+export function vergleichBytes(gebaut: readonly Figur[], grok: readonly GrokErgebnis[]): Uint8Array | null {
   const anim = (name: string): readonly Animation[] | undefined => gebaut.find((f) => f.name === name)?.animationen;
-  const fremd = anim('rammbock_fremd');
+  const g = grok.find((e) => e.figur === `rammbock${BLATT_ENDUNG}`)?.animationen;
   const puppe = anim('rammbock');
   const vela = anim('vela');
-  if (fremd === undefined || puppe === undefined || vela === undefined) return null;
-  return pngSchreiben(vergleichRammbock(fremd, puppe, vela));
+  if (g === undefined || puppe === undefined || vela === undefined) return null;
+  return pngSchreiben(vergleichRammbock(g, puppe, vela));
 }
 
 /** MD5 der Bytes (Wiederverwendung in Tests). */

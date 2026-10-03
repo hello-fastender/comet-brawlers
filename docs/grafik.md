@@ -486,6 +486,8 @@ Jede Verletzung bricht `npm run grafik` mit Figur, Animation und Bild ab:
 
 ### 2.6 Änderungen
 
+Auftrag 5 (E25): `bauen.ts` baut Grok-Blätter `<figur>_grok` mit dem Umsetzer v2 und schreibt `grafik/ausgabe/blaetter.json`; Schnittstelle in 5.8. Die Darstellung zeichnet bei 2× über die Zeichenklasse in 9.10.
+
 Keine Änderung an den Signaturen aus 2.3. Ergänzt (Stand Ende G0):
 `geometrie.ts` `formGespiegelt`; `puppe.ts` `TeilDef.relief`,
 `Pose.spiegeln`, `Pose.ohneGesicht`; `bauen.ts` `figuren()`,
@@ -1678,6 +1680,12 @@ Bausteinen gesetzt und Spalte für Spalte gegen `balken(lp)` geprüft
 
 ## 5. Umsetzer für Bildblätter
 
+Seit Auftrag 5 (Phase 1, U2) gilt die Fassung v2 (5.8): Palette je Figur per
+Medianschnitt statt der Materialtreppen, doppelte Darstellung, Kontur aus
+dunklem Ton, Fußkontakt beim Gehen, Blätter `<figur>_grok`. Die Abschnitte
+5.1 bis 5.7 beschreiben die Fassung v1 (G0b); was 5.8 nicht ändert
+(Freistellen, Zellen, Zuordnung, Dateien), gilt weiter.
+
 Stand G0b (Phase 1). `spiel/grafik/quelle/umsetzer.ts` macht aus
 Bildblättern eines fremden Werkzeugs (Grok, Auftrag 4, 9.3, Weg C) Sprites
 im Atlas-Format (Auftrag 4, 2.3). Er läuft deterministisch unter Node,
@@ -1888,6 +1896,10 @@ eine Stufe aus dem Budget.
 
 ### 5.7 Stand Rammbock und Nachbestellungen
 
+Fassung v1. Seit Auftrag 5 baut `npm run grafik` aus denselben Blättern
+`rammbock_grok` (5.8); das Blatt `rammbock_fremd` und seine Kontaktbögen
+entfallen. Die Nachbestellungen unten gelten weiter.
+
 Stand 2026-10-03 (G0b): Die Grok-Blätter liegen unter
 `spiel/grafik/quelle/fremd/rammbock/` (A Posen, B Gehen, C Angriffe,
 D Reaktionen, E Griff; Konzeptbild nur als Referenz). `npm run grafik`
@@ -2038,6 +2050,202 @@ Vela, Gliederpuppe und Grok-Rammbock in Spielgröße 1× und 2× auf dem
 Platzhalter von Abschnitt A (Wand, Band 75 px, Kanten, Tiefenlinien,
 Schatten in Farben und Maßen aus `masse.ts`).
 
+### 5.8 Umsetzer v2 (Auftrag 5)
+
+Stand 2026-10-03 (Auftrag 5, Phase 1, U2; E25, Abschnitt 0). Der Umsetzer
+macht aus Grok-Blättern Sprites in Bildpixeln der doppelten Darstellung
+(2 Bildpixel = 1 Spielpixel). Er gilt für alle Grok-Blätter; wo 5.1 bis 5.7
+(Fassung v1) abweichen, gilt dieser Abschnitt. Dateien:
+`spiel/grafik/quelle/umsetzer.ts` (Ablauf, Prüfungen, Ausgabe),
+`spiel/grafik/quelle/medianschnitt.ts` (Palette). Abweichungen U2-1 bis
+U2-14 in Abschnitt 7.
+
+**Ablauf** (1 bis 3 wie v1, 5.1):
+
+1. Hintergrund aus den Ecken, Freistellen, Schließen (G0b-10), dann
+   **Löcher füllen** (U2-2): Ein vom Grund eingeschlossener Bereich wird
+   Figur, wenn seine Pixel im Mittel weiter als `lochToleranz` vom Grund
+   liegen (dunkle Fläche der Figur, Grok malt tiefe Schatten fast in der
+   Grundfarbe). Echte Lücken (zwischen Arm und Rumpf) zeigen den Grund
+   selbst und bleiben durchsichtig.
+2. Zellen wie v1 (Flutfüllung oder Raster aus `quelle.txt`).
+3. **Maßstab**: Zielhöhe = 2 × (Umrisshöhe − 5) Bildpixel samt Kontur
+   (`zielhoeheFuer`: Rammbock 142, Vela 142, Bolzer 134, Zünder 134, Ballast
+   190), gemessen an der Stand-Zelle; die Halbierungssuche (G0b-3) misst die
+   Höhe samt nachgesetzter Kontur und sucht ±3 Zeilen. Ein Faktor je Figur;
+   ein Blatt mit anderer Figurgröße wird über `massstab <blatt> <zelle> wie
+   <blatt> <zelle>` neu kalibriert (G0b-11), am Stand, wo das Blatt einen
+   hat; jede Neukalibrierung steht als Befund im Protokoll („Figur n % so
+   groß wie auf …“). Verkleinern mit Flächenmittel, Deckung ab 1/2, Inseln
+   unter 4 Bildpixeln weg.
+4. **Palette je Figur** (Medianschnitt, keine Abbildung auf `palette.ts`):
+   alle verkleinerten Bilder der Figur, Farben bis `toleranzHintergrund` an
+   der Hintergrundfarbe eines Blatts vorher entfernt (U2-7). Geteilt wird
+   die Kiste mit dem größten gewichteten Fehler entlang ihrer stärksten
+   Achse (Rot 2, Grün 4, Blau 3) am gewichteten Median, bis 63 Farben;
+   dann zwei Runden Nachschärfen. Jede Farbe geht auf die nächste
+   Palettenfarbe (`farbAbstand`), ohne Raster. Jede Palettenfarbe ist ein
+   pixelgewichtetes Mittel: Helligkeit und Sättigung bleiben (am Gehblatt
+   gemessen: Abweichung unter 1,5 Helligkeitsstufen und 0,02 Sättigung).
+5. **Streupixel** entfernen (U2-1): Ein Pixel steht allein, wenn keiner
+   seiner acht Nachbarn ihm ähnlich ist (`farbAbstand` ≤ `streuAbstand`);
+   er nimmt die häufigste Nachbarfarbe an.
+6. **Kontur** (U2-3): Die Figur bekommt 1 Bildpixel Rand. Wo ein Pixel
+   der Außenkante nicht dunkel ist (Helligkeit über `konturHelligkeit`),
+   wird außen 1 Bildpixel im dunkelsten Ton der Figur (Palettenfarbe mit der
+   kleinsten Helligkeit) gesetzt; dunkle Pixel der Außenkante sind die
+   Kontur des Bildes und bleiben.
+7. **Bodenton** (Auftrag 5, 4; U2-5): Kein Pixel im Inneren (nicht an der
+   Außenkante) ist dunkler als der dunkelste Bodenton; zu dunkle werden um
+   eine Stufe aufgehellt (nächste Palettenfarbe ab dem Bodenton), Befund
+   mit Zahl. Danach noch einmal Streupixel, wobei die Außenkante nur
+   dunkle und das Innere nur Farben ab dem Bodenton annehmen darf.
+8. **Anker** (U2-11, Schnittstelle U1, `zeichner.ts`): Fußpunkt wie v1
+   (unterste Zeile, x Mitte der Füße im Fußband, liegend Mitte der Figur).
+   Im Atlas steht der linke obere Bildpixel des Spielpixels am Fußpunkt:
+   `ankerX` = x, `ankerY` = unterste Zeile − 1. Die Darstellung legt ihn auf
+   (2 · bildX, 2 · bildY) und spiegelt um 2 · bildX + 1, also um die Achse
+   rechts neben der Ankerspalte; eine in der Zuordnung gespiegelte Zelle
+   bekommt `ankerX` = Breite − 2 − `ankerX`.
+9. **Fußkontakt beim Gehen** (U2-4): Für die erste Zeile `gehen` mit
+   eigenen Bildern setzt der Umsetzer die Anker so, dass der Standfuß je
+   Bild um die Gehstrecke zurückwandert (Geschwindigkeit aus `werte.ts` ×
+   Dauer des ersten Bildes × 2: Rammbock 1,6 × 4 × 2 = 12,8 Bildpixel =
+   6,4 Spielpixel; bei 1,75 px/Frame 14 = 7 Spielpixel). Füße sind die
+   Läufe in den untersten 8 Zeilen mit einem Pixel in den untersten 3
+   (Profil der Sohle bis 3 Bildpixel überbrückt). Der Standfuß wird über
+   den ganzen Zyklus gewählt: derselbe Fuß, außer an genau zwei Übergaben
+   zu einem Fuß vor dem alten; gewählt wird die Folge, bei der der Fuß
+   relativ zur Körpermitte (Schwerpunkt der oberen 2/5 der Figur) am
+   wenigsten von der Gehstrecke abweicht. Was über den Zyklus nicht aufgeht
+   (der **Rest**), wird gleichmäßig auf die Bildwechsel verteilt; die Anker
+   liegen im Mittel auf den Fußpunkt-Ankern. Weitere Zeilen `gehen` mit
+   denselben Bildern (`gehen_schnell`) werden nur gemessen.
+10. **Zuordnung** wie v1 (5.1, Punkt 10). Namen, Schleife, Dauern und aktive
+    Bilder müssen denen des Gliederpuppen-Blatts derselben Figur gleichen
+    (`bauen.ts` `grokGegenPuppe`, harter Fehler im Bau).
+11. **Prüfungen** (`pruefeGrok`, nach E25). Hart: höchstens 64 Farben
+    einschließlich durchsichtig über alle Bilder, Kontur geschlossen aus
+    dunklem Ton (kein heller Pixel an der Außenkante), keine Streupixel
+    (U2-1), Anker im Bild, aktive Indizes, kein Pixel im Inneren dunkler
+    als der Bodenton. Weich (Befund): Umriss im Stand (Breite ≤ 2 ×
+    Umrissbreite, Höhe = Zielhöhe), Zellen über dem 2×-Umriss, Grundlinie,
+    Neukalibrierung je Blatt, Fußkontakt-Rest, Reichweite im Trefferbild.
+12. **Ausgabe**: Blatt `<figur>.png` (Animationen setzen die Zeile fort,
+    Breite bis 2048, U2-12) und Atlas `<figur>.json` wie Auftrag 4, 2.3 mit
+    `"massstab": 2` auf oberster Ebene (`grokAtlasText`); Bilder, Maße und
+    Anker in Bildpixeln. Kontaktbögen `docs/bilder/kontakt_<figur>_<animation>.png`
+    in natürlicher Größe (nicht weiter vergrößert), Schrift 2×, Bodenlinie
+    unter dem Fußpunkt-Spielpixel, Ankerkreuz auf der Spiegelachse.
+
+**Parameter** (neu oder geändert gegenüber 5.2; überschreibbar mit
+`parameter <name> <zahl>`):
+
+| Parameter | Wert | Herkunft |
+|---|---|---|
+| `hoechstFarben` | 63 | E25: 64 Farben je Figur einschließlich durchsichtig (Zählung wie `FARBBUDGET`) |
+| `nachschaerfen` | 2 | Runden nach dem Medianschnitt (Festlegung U2) |
+| `streuAbstand` | 60 | etwa 20 Stufen je Kanal, rund eine Palettenstufe bei 63 Farben (U2-1); 60 und 90 ergeben am Stand sichtbar dasselbe |
+| `lochToleranz` | 12 | Grund der Rammbock-Blätter ±5, Groks dunkle Innenflächen 14 bis 40 (U2-2) |
+| `konturHelligkeit` | 40 | Helligkeit (Luma) der Sohlen und Schattenkanten des Rammbocks 25 bis 35; Haut, Weste und Hose liegen darüber (U2-3) |
+| `kontaktBand` | 2 | Zeilen über der untersten mit Bodenkontakt (Fußkontakt) |
+| `fussHoehe` | 8 | Bildpixel, Sohle und Spitze eines Stiefels bei 2× |
+| `kontaktLuecke` | 3 | Bildpixel, Profil der Sohle |
+| `koerperAnteil` | 2/5 | Kopf und Schultern als Körpermitte beim Gehen |
+| `befundAbstand`, `materialien` | entfallen | keine Abbildung auf `palette.ts` |
+
+**Dateien je Figur**: wie 5.3; `zuordnung.txt` ohne `materialien`, mit
+`figur <name>_grok`, `zielhoehe` in Bildpixeln und neu `datum
+<JJJJ-MM-TT>` (Stand der Lieferung). **Ordner**: `bauen.ts` baut jeden
+Ordner unter `fremd/` mit einer `zuordnung.txt` (`FREMD_ORDNER`). Nennen
+zwei Ordner dieselbe Figur (z. B. `fremd/rammbock/` in Seitenansicht und
+später `fremd/rammbock_34/` in Dreiviertelansicht, beide `figur
+rammbock_grok`), gewinnt der neuere: das spätere `datum`, bei gleichem
+Datum der im Alphabet spätere Ordnername (U2-6); `npm run grafik` meldet,
+welcher Ordner welchen ersetzt.
+
+**Bau** (`bauen.ts`, ergänzt 2.3): `bauen()` baut erst die Gliederpuppen,
+dann die Erzeugnisse, dann die Grok-Blätter mit dem dunkelsten Bodenton aus
+den Hintergrundblättern desselben Baus, dann Übersicht, Vergleichsbild und
+`spiel/grafik/ausgabe/blaetter.json` (alphabetische Liste aller gebauten
+Blattnamen ohne Endung, JSON-Feld, je Name eine Zeile; die Darstellung nimmt
+darüber `<name>_grok` statt `<name>`, U1-6). Neue Ausfuhren:
+`fremdOrdnerLesen`, `FREMD_ORDNER` (gelesen statt fest), `grokOrdner`,
+`grokErgebnisse`, `grokGegenPuppe`, `puppenName`, `grokAusgabeBytes`,
+`BLAETTER_DATEI`, `blaetterText`; `vergleichBytes(gebaut, grok)`.
+Entfallen: `fremdFiguren()` und das Blatt `rammbock_fremd` mit seinen
+Kontaktbögen (Quelle und `zuordnung.txt` bleiben, jetzt für
+`rammbock_grok`). Die Stilprüfungen der Gliederpuppe (Farbbudget 16,
+`KONTUR`) gelten für Grok-Blätter nicht. Einzeln:
+`node --experimental-strip-types grafik/quelle/umsetzer.ts
+grafik/quelle/fremd/rammbock [--aus <ordner>] [--kontakt ../docs/bilder]`
+schreibt Blatt und Atlas und gibt das Protokoll aus; der Bodenton kommt dabei
+immer aus `spiel/grafik/ausgabe/`.
+
+**Stand Rammbock** (Blätter in Seitenansicht aus Auftrag 4, erste Probe für
+Haltepunkt 1): `spiel/grafik/ausgabe/rammbock_grok.png` (2006 × 434,
+23 Animationen, MD5 `9d308520a0d5d93fee814743d7960f9c`, zwei Läufe gleich),
+`rammbock_grok.json`, 23 Kontaktbögen
+`docs/bilder/kontakt_rammbock_grok_<animation>.png`, Vergleichsbild
+`docs/bilder/vergleich_rammbock.png` (U2-8). Keine harten Befunde.
+
+| Blatt | Bezug | Faktor | Figur gegenüber A | Löcher gefüllt (px) / offen |
+|---|---|---|---|---|
+| A Posen | Stand (Zelle 1) auf 142 Bildpixel | 0,3135 | 100 % | 27 (5 522) / 8 |
+| B Gehen | Zelle 1 wie A 2 (Schrittstellung) | 0,4588 | 68 % | 8 (2 739) / 3 |
+| C Angriffe | Zelle 1 wie A 4 (Kampfhaltung) | 0,3293 | 95 % | 31 (5 695) / 6 |
+| D Reaktionen | Zelle 14 wie A 1 (Stand) | 0,4115 | 76 % | 13 (2 231) / 9 |
+| E Griff | Zelle 1 wie A 1 (Stand) | 0,1865 | 168 % | 19 (3 541) / 1 |
+
+**Palette Rammbock**: 63 Farben aus 76 995 Quellfarben (3 854 im Bereich
+des Grunds ohne Schnitt), Abstand pixelgewichtet 11,3, größter 85,7;
+dunkelster Ton und Kontur `#201A13` (Helligkeit 27), hellster `#EFC87E`
+(Hautlicht, 203). 2 320 Streupixel umgefärbt, 18 458 Konturpixel
+nachgesetzt. Dunkelster Bodenton `#0F1016` (Helligkeit 16,4, Abschnitt F,
+Tränenblech); kein Pixel musste aufgehellt werden, weil Groks fast schwarze
+Innenlinien nach U2-7 auf den dunkelsten Ton gehen.
+
+**Fußkontakt-Rest Rammbock**: `gehen` (12,8 Bildpixel je Bild) Rest −12,1
+Bildpixel je Zyklus (−6,0 Spielpixel): Der Standfuß rutscht je Bild um etwa
+0,75 Spielpixel nach hinten, das Grok-Bild schreitet also etwas weiter aus,
+als der Rammbock läuft. Anker der acht Bilder um −16, 3, −1, 5, −11, 4, 12,
+3 Bildpixel gegenüber dem Fußpunkt verschoben; der Körper ruckt dadurch
+zwischen Bild 6 und 7 sichtbar vor (Groks Bild 8 steht weit vor seinem
+Standfuß). `gehen_schnell` (dieselben Bilder, 12 Bildpixel je Bild) Rest
+−18,5 Bildpixel (−9,3 Spielpixel) je Zyklus.
+
+**Zuordnung Rammbock** (gegenüber 5.7 geändert, U2-10): Animationen,
+Schleifen, Dauern und aktive Bilder wie `rammbock.json` (neu `schlag` =
+`schlag_a`; `wiegen` als Schleife; Dauern von `aufstehen_hocke`,
+`hocke_ankuendigung`, `umgeworfen`, `liegen`, `aufstehen`, `geworfen`,
+`tot` wie die Gliederpuppe). `getroffen` = D2, D3, D1 (G2-15);
+`kampfhaltung` = C1, C5 (Boxerstellung, G2-7); `aufstehen` = D10 bis D13,
+C15 (halb auf), D14. Nicht verwendet wie bisher: A2, A3, A7 bis A10, A12,
+C11, C14.
+
+**Befunde Rammbock**: Reichweite im Trefferbild (vorderster Pixel vor der
+Spiegelachse) `schlag_a` 30,0, `schlag_b` 31,5, `umwerfschlag` 22,0,
+`sprungtritt` 38,0 Spielpixel; die Gliederpuppe erreichte 48, 48, 47 und 32,
+die Trefferzonen der Logik reichen bis 48. Der Grok-Arm in Seitenansicht ist
+kürzer als die Zone. Geworfen kopfüber (E2) ist 137 Bildpixel hoch (Umriss
+liegend 120). Grundlinie wie 5.7 (Luftposen, Liegen, C11, C14, E1).
+
+**Nachbestellungen Rammbock** (unverändert, Prompts in 5.7): 1 Haltung
+(`haltung` 1 und 2), 2 Rückzug nach dem zweiten Schlag (`schlag_b` 3),
+3 Landung nach dem Sprungtritt (`sprungtritt` 2 und 3), 4 tiefe Hocke zum
+Absprung (wünschenswert). Für die Blätter in Dreiviertelansicht zusätzlich:
+die Schläge mit weit gestrecktem Arm (Faust etwa 48 Spielpixel vor dem
+Fußpunkt, Befund Reichweite), sonst gleiche Bilder wie bisher.
+
+**Grenzen** (zusätzlich zu 5.6): Der Fußkontakt setzt Gehbilder mit Blick
+nach rechts und erkennbaren Füßen voraus; zeichnet Grok die Körpermitte
+sprunghaft, ruckt der Körper statt der Füße (Rest und Verschiebungen im
+Protokoll). Die Kontur ist nicht einfarbig (dunkle Kanten des Bildes
+bleiben); die Darstellung bildet das Konturblatt fürs Schutzblinken
+deshalb aus den Randpixeln (U1-3). Die Hintergrundfarbe der Blätter muss
+sich von den dunkelsten Figurfarben abheben, sonst gehen diese nach U2-7
+auf den dunkelsten Ton.
+
 ## 6. Stand
 
 | Phase | Stand |
@@ -2048,6 +2256,7 @@ Schatten in Farben und Maßen aus `masse.ts`).
 | 3 Einbau (G7) | Sprites, Hintergründe, Vordergrund, Blende und Anzeige aus den Blättern in der Darstellung (Abschnitt 9); Rückfall `?platzhalter=1` und bei fehlendem Blatt; Zuordnung als reine Funktion (`zuordnung.ts`), Effektliste der Darstellung (`verlauf.ts`); Tests `grafik_zuordnung` (63 Kombinationen der Figur, 337 der Gegner in 83 Modi, 24 901 Frames aller Prüfszenen ohne Ersatzwahl), `grafik_aktiv` (40 Angriffsanimationen), `grafik_dauer` (81 Animationen); Szenenbilder `docs/bilder/szene_*.png`; `npm test` 377 grün, Browser-Test unverändert grün; mittlere Zeit je Bild 0,42 ms (600 Bilder, Chromium) |
 | Haltepunkt 2 (Auftrag 4) | Der Nutzer hat die Figuren der Gliederpuppe und die gezeichneten Hintergründe abgelehnt; Auftrag 4, Phasen 4 und 5 entfallen; weiter mit Auftrag 5 (E25, Abschnitt 0) |
 | A5 Phase 0 | Ausgangslage: `npm run pruefen` grün, `npm test` 377 von 377 grün; E25 eingetragen |
+| A5 Phase 1 | Darstellung bei 2× (U1, Abschnitt 9.10), Umsetzer v2 mit Medianschnitt bis 64 Farben (U2, Abschnitt 5.8); `rammbock_grok` aus den alten Blättern in Seitenansicht ersetzt im Spiel die Gliederpuppe des Rammbocks; `rammbock_fremd` entfällt; `npm test` 394 grün; Haltepunkt 1 |
 
 ## 7. Abweichungen und Lücken
 
@@ -2195,6 +2404,29 @@ Schatten in Farben und Maßen aus `masse.ts`).
 | G7-17 | 4.7 (Explosion: Kern bis zur Freigabe des Slots, danach die Darstellung bis Uhr 24) | Die Explosion kommt ganz aus der Effektliste, gestartet mit dem Ereignis `EX:gn` bzw. `EX:on` am Einschlagpunkt; ihre Uhr zählt echte Frames ab dem Einschlag (gleich der Explosionsuhr der Logik, Explosionen haben keinen Trefferstopp). Das Objekt in der Flugphase EXPLOSION zeichnet die Darstellung nicht | Ein Weg statt zweier (Objekt, dann Effekt); kein Sprung beim Freigeben des Slots |
 | G7-18 | G1-7 (Anker des Werfers bei W − Griffpunkt; Griffpunkt y −1,5) | y des Ankers gerundet (`Math.round(W.y + 1,5)`), Spiegeln mit dem Blick um Velas Fußpunkt | Bilder stehen auf ganzen Pixeln |
 | G7-19 | Kampf 3 (Objekttyp Effekt) | Objekte des Typs `Effekt` zeichnet die Darstellung mit Sprites nicht | In der Scheibe entstehen keine (nur Prüfszenen könnten sie anlegen); Funke, Staub, Trümmer und Explosion führt die Effektliste |
+| U1-1 | Auftrag 5, U1 (Zeichenklasse multipliziert an genau einer Stelle; 1×-Bilder mit drawImage ganzzahlig hochskaliert) | Die Methoden des `Zeichner` rechnen jede Spielkoordinate über `bx`, `by`, `bl` in Bildpixel und zeichnen mit der Einheitsmatrix, statt eine Skalierungsmatrix zu setzen; die Schattenellipse (pixelgenau in Spielpixeln) legt der Zeichner einmal je Größe in Bildpixeln an und zeichnet sie 1:1 (`pixelEllipse`) | Chromium rundet beim skalierten Zeichnen einer halbdurchsichtigen Canvas-Quelle um eine Stufe anders als 1:1 (gemessen: Blau 101 statt 102 unter dem Schatten); so bleibt die Grafik von Auftrag 4 Pixel für Pixel gleich, die Szenenbilder `szene_0300` bis `szene_1500` und `szene_arena` sind byte-gleich |
+| U1-2 | Auftrag 5, Schnittstelle U1/U2 („Spiegeln um die Ankerspalte“) | Gespiegelt wird bei jedem Massstab um die Mitte der Spielpixelspalte des Ankers (Bildposition 2 · bildX + 1); bei Massstab 2 rückt die Ankerspalte des Blatts dabei um 1 Bildpixel, bleibt aber im selben Spielpixel | Die Logik ist um die Spielpixelmitte symmetrisch (Trefferflächen −hinten bis vorn); nur so ergeben ein 1×-Blatt und dasselbe Blatt verdoppelt auch gespiegelt dasselbe Bild (`darstellung_2x.test.ts`) |
+| U1-3 | Auftrag 5, Schnittstelle (Konturblatt aus den Randpixeln: deckend mit durchsichtigem Nachbarn) | Rand mit so vielen Ringen wie der Massstab des Blatts (Massstab 2: 2 Bildpixel = 1 Spielpixel); Kantennachbarn, der Blattrand zählt als durchsichtig | Die Kontur der Gliederpuppe ist bei 2× zwei Bildpixel breit; ein einzelner Ring wirkte im Blinken halb so dick |
+| U1-4 | Auftrag 5, U1 (ganzzahlig auf das Fenster skaliert; kleiner als 768 × 448 darf weich verkleinert werden) | Ab 768 × 448 Gerätepixeln ganzzahlig (1×, 2× …) mit `image-rendering: pixelated`; darunter so groß, wie es passt, mit `image-rendering: auto` (weich) | Festlegung; ein Fenster unter 768 × 448 Gerätepixeln zeigte sonst nur einen Ausschnitt |
+| U1-5 | Auftrag 5, Schnittstelle (`"massstab"` für Sprite-Atlanten) | Auch die Atlanten von Hintergrund, Blende und Anzeige lesen `massstab`: Rechtecke, Kacheln, Maße, Anker, Laufweite, Zeilenhöhe, Balkenbreite und `zahlDx` in Pixeln des Blatts; Weltlagen (Karten und freie Bilder x, y; Blende `weg`) und die Lagen aus `werte.ts` bleiben Spielpixel | U4 kann die Hintergründe als 2× bauen, ohne die Darstellung zu ändern; geprüft im Pixelvergleich mit verdoppelten Blättern |
+| U1-6 | Auftrag 5, Schnittstelle (Blattwahl nach `blaetter.json`) | Antwortet der Server mit 404, gilt die bisherige Wahl; ein anderer Inhalt als eine Liste von Namen bricht das Laden ab (Rückfall auf die Rechtecke mit Meldung); Blende und Anzeige haben keine Grok-Fassung | Wie ein fehlendes Blatt (9.2); bis `bauen.ts` die Liste schreibt, meldet Chromium den 404 einmal in der Konsole |
+| U1-7 | G7-16 (`szene_nah.png`: Ausschnitt 152 × 88 dreifach, 456 × 264) | Ausschnitt 152 × 88 Spielpixel (304 × 176 Bildpixel), Canvas zweifach: 608 × 352 | Dreifach je Spielpixel wäre 1,5-fach je Bildpixel, also nicht ganzzahlig |
+| U1-8 | Auftrag 5, U1 (Debug-Anzeige in Spielpixeln, Platzhalter unverändert) | Linien 1 Spielpixel breit, Striche 2 Spielpixel; gestrichelte Linien beginnen auf der Pixelgrenze und sind jetzt scharf (bei 1× waren die Strichenden halb gedeckt), schräge Linien und die Ellipsen der Platzhalter werden feiner geglättet; `szene_debug.png` ändert sich nur dort, `scheibe_*.png` bleiben der Stand von Auftrag 3 | Folge der feineren Rasterung; die Schrift 3 × 5 ist pixelgleich verdoppelt |
+| U1-9 | 9.2 (Laden; `objekte` ohne `stand`) | Die Prüfung des Sprite-Atlas nimmt das Blatt `objekte` nach dem Blattnamen aus, nicht nach dem Dateinamen | Sonst schlüge `objekte_grok.json` fehl (gefunden mit `darstellung_2x.test.ts`) |
+| U2-1 | Auftrag 5, U2 („Streupixel entfernen wie bisher“) und Stilhandbuch 1.3 | Bei 64 Farben steht ein Pixel allein, wenn keiner seiner acht Nachbarn ihm ähnlich ist (`farbAbstand` ≤ `streuAbstand` 60); die Prüfung im Bau nutzt dieselbe Regel (`streupixelAehnlich`) | Die strenge Regel (kein gleichfarbiger Nachbar) färbte am Rammbock 78 361 Pixel um und löschte Gesicht, Steppnähte und Schnürung: Benachbarte Töne eines Verlaufs sind bei 63 Farben verschiedene Farben. Mit der Ähnlichkeit werden nur 2 320 echte Ausreißer umgefärbt |
+| U2-2 | Auftrag 5, U2 (Kontaktbögen „keine Löcher“) und 5.1 (Freistellen) | Nach dem Schließen werden vom Grund eingeschlossene Bereiche Figur, wenn ihre Pixel im Mittel weiter als `lochToleranz` 12 vom Grund liegen (Rammbock: 98 Bereiche, 19 728 Quellpixel); echte Lücken (Mittel unter 12) bleiben durchsichtig (27) | Grok malt tiefe Schatten der Hose fast in der Grundfarbe (Abstand 14 bis 40); in der Probe `probe_grok_2x.png` scheint dort der Hintergrund durch. Der Grund selbst ist sauber (Abstand 0 bis 5) |
+| U2-3 | Auftrag 5, 1 (Kontur: dunkle Kontur bleibt, sonst 1 Bildpixel nachsetzen) | „Dunkel“ heißt Helligkeit (Luma nach Rec. 601) ≤ `konturHelligkeit` 40. Nachgesetzt wird außen: Die Figur wächst je Seite um 1 Bildpixel; die Zielhöhe 142 gilt samt Kontur (Suche des Faktors ±3 Zeilen) | Groks eigene Außenlinie liegt fast in der Grundfarbe und fällt beim Freistellen weg; außen gesetzt bleibt jedes Detail der Figur. Wie bei v1 (G0b-5) gehört die Kontur zur Zielhöhe |
+| U2-4 | Auftrag 5, 1, Punkt 4 (Standfuß wandert je Bild um die Gehstrecke zurück, Rest protokollieren) | Der Standfuß wird über den ganzen Zyklus gewählt (derselbe Fuß, genau zwei Übergaben zu einem Fuß davor, kleinste Abweichung relativ zur Körpermitte). Der Rest wird gleichmäßig auf die Bildwechsel verteilt (Rammbock: −1,5 Bildpixel je Bild) statt am Zyklusende; die Anker liegen im Mittel auf den Fußpunkt-Ankern. Zeilen `gehen` mit kopierten Bildern (`gehen_schnell`) werden nur gemessen | Mit der Regel „hinterer Fuß beim Doppelstand“ oder einer Paarung je Bildwechsel wählte der Umsetzer an Groks Zwischenbildern den falschen Fuß. Ein gleichmäßiges Rutschen von 0,75 Spielpixeln fällt weniger auf als ein Sprung von 6 Spielpixeln einmal je Zyklus |
+| U2-5 | Auftrag 5, 4 (kein Figurenpixel dunkler als der dunkelste Bodenton des Abschnitts, außer in der Kontur; sonst Aufhellung um eine Stufe) | Bodenton = dunkelstes Pixel der Kacheln aller Bodenkarten der Hintergrundblätter A, B, F (`#0F1016`, Helligkeit 16,4, F Tränenblech), für alle Figuren, solange die Hintergründe aus Code kommen. „Kontur“ = Außenkante nach dem Nachsetzen; „eine Stufe“ = nächste Palettenfarbe mit mindestens der Helligkeit des Bodentons; Maß ist die Helligkeit (Luma) | Eine Figur steht in jedem Abschnitt; der Abschnitt ist beim Umsetzen nicht bekannt. Die Palette hat keine Treppen mehr, die nächste Stufe ist die nächste hellere Palettenfarbe |
+| U2-6 | Auftrag 5, Phase 1 (eigener Ordner `fremd/<figur>_34/`, „der neuere Ordner gewinnt“) | Neue Zeile `datum <JJJJ-MM-TT>` in `zuordnung.txt`; bei gleicher `figur` gewinnt das spätere Datum, bei gleichem Datum der im Alphabet spätere Ordnername; `npm run grafik` meldet die Ersetzung | `quelle.txt` gehört Opus und ist freier Text; das Datum der Lieferung ist eindeutig, Ordnernamen allein sind es nicht (`rammbock_10` vor `rammbock_9`) |
+| U2-7 | Auftrag 5, 1 (Hintergrundfarbe vor dem Schnitt entfernen) | Farben bis `toleranzHintergrund` 45 an der Hintergrundfarbe eines Blatts nehmen nicht am Medianschnitt teil und gehen danach auf die nächste Palettenfarbe (Rammbock: 3 854 von 76 995 Quellfarben). Dunkelster Ton und Kontur werden dadurch `#201A13` statt `#0C0A0C` | Das Schließen nimmt Groks Innenlinien mit ihrer fast schwarzen Farbe in die Figur (Abstand zum Grund unter 45, meist 15 bis 25); ohne den Ausschluss enthielt die Palette eine Farbe 8 Einheiten neben dem Grund |
+| U2-8 | Auftrag 5, Phase 1 (`vergleich.ts`: auf rammbock_grok umstellen oder entfernen) | `vergleich_rammbock.png` zeigt den Grok-Rammbock (`rammbock_grok`, natürliche Größe 2×) gegen die Gliederpuppe und Vela (2× vergrößert) und den Streifen auf dem Platzhalter von Abschnitt A bei doppelter Darstellung; der Streifen 1× entfällt | Bild für Haltepunkt 1 ohne Browser; Anker wie die Darstellung (linker oberer Bildpixel des Fußpunkt-Spielpixels) |
+| U2-9 | E25 (bis zu 64 Farben je Figur) | 63 deckende Farben, mit durchsichtig 64 (Zählung wie `FARBBUDGET`); zwei Runden Nachschärfen nach dem Schnitt | Beide Lesarten von „64 Farben“ sind damit erfüllt |
+| U2-10 | Auftrag 5, Phase 1 (Animationsnamen, Dauern und aktive Bilder wie das Gliederpuppen-Blatt) | `zuordnung.txt` übernimmt Namen, Schleife, Dauern und `aktiv` aus `rammbock.json` (neu `schlag` = `schlag_a`, `wiegen` Schleife, Dauern von `aufstehen_hocke`, `hocke_ankuendigung`, `umgeworfen`, `liegen`, `aufstehen`, `geworfen`, `tot`); Inhalt wie 4.2: `getroffen` D2, D3, D1, `kampfhaltung` C1, C5, `aufstehen` D10 bis D13, C15, D14. `bauen.ts` bricht ab, wenn ein Grok-Blatt abweicht | Die Darstellung (`zuordnung.ts`) und die Tests `grafik_aktiv`, `grafik_dauer` erwarten diese Namen und Dauern |
+| U2-11 | Schnittstelle U1 (Anker bei Maßstab 2: linker oberer Bildpixel des Fußpunkt-Spielpixels; Spiegeln um 2 · bildX + 1) | Im Atlas `ankerY` = unterste Zeile − 1, `ankerX` = linke Spalte des Fußpunkt-Spielpixels (Mitte der Füße abgerundet); in der Zuordnung gespiegelte Zellen `ankerX` = Breite − 2 − `ankerX` | Die unterste Zeile liegt auf der unteren Bildpixelzeile des Fußpunkts wie bei vergrößerten 1×-Blättern; die Spiegelachse bleibt in der Mitte der Füße, die Figur springt bei Blick links nicht |
+| U2-12 | Auftrag 4, 2.2 (je Animation eine neue Zeile, Blatt höchstens 2048 × 2048) | Grok-Blätter setzen die Zeile fort (`zeileFortsetzen`, G1-8), Breite bis 2048 | Bei 2× wäre das Blatt mit einer Zeile je Animation 2141 Bildpixel hoch |
+| U2-13 | Auftrag 4, 2.2 (Kontaktbögen 2×) und Auftrag 5, Phase 1 (natürliche Größe) | Kontaktbögen der Grok-Blätter in natürlicher Größe mit Schrift 2× aus einer eigenen Funktion (`grokKontaktBogen`), `kontakt.ts` unverändert | `kontaktBogen` vergrößert Bild und Schrift gemeinsam; bei Faktor 1 wäre die Schrift 3 × 5 Bildpixel klein |
+| U2-14 | Auftrag 5, 1 (Atlas mit `"massstab": 2`) | Das Feld schreibt der Umsetzer (`grokAtlasText`: `atlasText` aus `blatt.ts` plus eine Zeile); `blatt.ts` bleibt unverändert, die Gliederpuppen-Blätter bitgleich | Kein Eingriff in den Werkzeugkasten für ein Feld, das nur Grok-Blätter tragen |
 
 ## 8. Weg nach E24
 
@@ -2399,3 +2631,113 @@ Die Abnahme in Phase 4 misst nach ihrer eigenen Vorschrift.
 - Die Anzeigeleiste liegt ohne eigenen Grund auf der Szene (G5-16); in F
   liegen helle Lichtkegel unter der Schrift, der Umriss der Schrift hält sie
   lesbar.
+
+### 9.10 Darstellung 2× (Auftrag 5)
+
+Stand 2026-10-03 (Auftrag 5, Phase 1, U1). Nach E25 hat das Canvas
+768 × 448 Bildpixel, zwei je Spielpixel (`DARSTELLUNG` = 2 in `masse.ts`).
+Logik, Protokoll, Lagen (`bildX`, `bildY`), Sortierung, Zuordnung,
+Werferpunkte, Ansätze des Magnetstoßes und Mündungsblitz rechnen weiter in
+Spielpixeln; nur das Zeichnen multipliziert. Die Grafik von Auftrag 4
+(Gliederpuppe, Effekte, Hintergründe, Anzeige und Pixelschrift) läuft
+unverändert bei 2×: Die Szenenbilder `szene_0300` bis `szene_1500` und
+`szene_arena` sind byte-gleich mit dem Stand G7 (U1-1). Der Himmel läuft
+weiter mit halber Kamerageschwindigkeit in ganzen Spielpixeln, der Schatten
+bleibt eine pixelgenaue Ellipse in Spielpixeln, `?platzhalter=1` zeichnet die
+Rechtecke (über dieselbe Zeichenklasse).
+
+**Dateien**
+
+| Datei | Inhalt |
+|---|---|
+| `spiel/src/darstellung/zeichner.ts` | Zeichenklasse `Zeichner`; `BILDPIXEL` (768 × 448), `canvasEinrichten` |
+| `spiel/src/darstellung/blaetter.ts` | ohne DOM: Atlasformate von Hintergrund, Blende und Anzeige (aus `sprites.ts` verlegt), `HINTERGRUND_BLAETTER`, `BLAETTER_LISTE`, `GROK_ENDUNG`, `blattWahl`, `blaetterListe`, `massstabVon`, `konturMaske` |
+| `spiel/src/darstellung/masse.ts` | `DARSTELLUNG` = 2 |
+| `spiel/src/darstellung/sprites.ts`, `zeichnen.ts`, `debug.ts` | zeichnen nur über den Zeichner; `sprites.ts` lädt nach der Blattwahl und führt je Blatt Datei, Massstab und Art des Konturblatts (`Grafik.dateien`, `massstab`, `konturArt`); `spielBreite` (Bildbreite in Spielpixeln für den Schatten kleiner Objekte) |
+| `spiel/src/darstellung/schrift.ts` | nur noch Glyphen (`glyphe`, `textBreite`); gezeichnet wird mit `Zeichner.text` |
+| `spiel/src/darstellung/main.ts`, `spiel/index.html` | Canvas 768 × 448, Skalierung auf das Fenster |
+| `spiel/werkzeuge/foto.mjs` | Fenster 768 × 448, das Canvas erscheint 1:1; `szene_nah.png` 608 × 352 (U1-7) |
+| `spiel/tests/darstellung_2x.test.ts` | Tests (unten) |
+| `spiel/tests/grafik_einbau_hilfe.ts`, `grafik_zuordnung.test.ts`, `grafik_aktiv.test.ts`, `grafik_dauer.test.ts` | lesen die Blätter der Blattwahl (unten) |
+
+**Zeichenklasse.** Jedes Zeichnen der Darstellung geht durch einen
+`Zeichner` und gibt Spielkoordinaten an. Der Faktor steht nur in
+`zeichner.ts`: Die Methoden rechnen jede Koordinate über `bx`, `by` (mit der
+Verschiebung des Bildschüttelns) und jede Länge über `bl` in Bildpixel und
+zeichnen mit der Einheitsmatrix (U1-1).
+
+| Methode | Wirkung |
+|---|---|
+| `beginne()` | Beginn eines Bildes (`zeichneBild`): Einheitsmatrix, keine Verschiebung, Deckkraft 1, ohne Glättung |
+| `sichern()`, `zurueck()`, `verschieben(dx, dy)` | Bildschütteln (KA10) in Spielpixeln |
+| `deckkraft(a)` | Deckkraft für das Folgende (Vordergrund 0,85, Blende) |
+| `rechteck(x, y, b, h, farbe)` | gefülltes Rechteck, also Blöcke aus 2 × 2 Bildpixeln |
+| `bild(quelle, q, m, x, y, ankerX, ankerY, spiegeln, zielB?, zielH?)` | Ausschnitt q eines Blatts mit Massstab m; Ankerpixel auf (x, y); Größe q.b / m × q.h / m Spielpixel (Massstab 1 wird mit `drawImage` ganzzahlig hochskaliert, nächster Nachbar; Massstab 2 1:1); zielB, zielH strecken (Balkenbausteine) |
+| `pixelEllipse(x, y, b, h, farbe, deckkraft)` | Schatten: pixelgenaue Ellipse b × h Spielpixel, einmal je Größe in Bildpixeln angelegt |
+| `text(schrift, inhalt, x, y, farbe, faktor)` | Pixelschrift 5 × 7 und 3 × 5 (Platzhalter, Debug-Anzeige) |
+| `umriss`, `linie`, `vieleck`, `ellipse` | Linien von 1 Spielpixel (Debug-Anzeige, Platzhalter), Strichmuster in Spielpixeln |
+
+**Massstab** (Atlas-Feld `"massstab"` auf oberster Ebene, `massstabVon`): 1
+oder fehlend = Spielpixel, 2 = Bildpixel; jeder andere Wert bricht das Laden
+ab (Rückfall auf die Rechtecke). Bei Massstab 2 sind Rechtecke, Maße und
+Anker in Bildpixeln. Der Ankerpixel (ankerX, ankerY) liegt mit seiner linken
+oberen Ecke auf der Bildposition 2 · bildX, 2 · bildY; gespiegelt wird um die
+Mitte der Spielpixelspalte (Bildposition 2 · bildX + 1, U1-2). Ein 1×-Bild
+mit Anker (a, b) und dasselbe Bild verdoppelt mit Anker (2a, 2b) liegen so
+Pixel für Pixel gleich. Hintergrund, Blende und Anzeige lesen das Feld
+ebenso; ihre Weltlagen bleiben Spielpixel (U1-5). Die Schatten kleiner
+Objekte nehmen die Bildbreite in Spielpixeln (gerundet).
+
+**Blattwahl** (`blattWahl`, Schnittstelle zu U2): `bauen.ts` schreibt
+`grafik/ausgabe/blaetter.json`, die alphabetische Liste aller gebauten
+Blattnamen ohne Endung. `ladeGrafik` lädt sie zuerst und nimmt für `vela`,
+`bolzer`, `puppe`, `rammbock`, `zuender`, `ballast`, `objekte` und
+`hintergrund_a`, `_b`, `_f` die Datei `<name>_grok`, wenn die Liste sie nennt,
+sonst `<name>`. `rammbock_fremd` wird nie geladen. Fehlt die Liste (HTTP 404),
+gilt die bisherige Wahl (U1-6). Die Zuordnung arbeitet weiter mit den Blättern
+`vela` … `objekte` und den Animationsnamen; die Grok-Blätter tragen dieselben
+Namen. Die Einbautests lesen über `atlantenLesen` (`grafik_einbau_hilfe.ts`)
+dieselbe Wahl aus `grafik/ausgabe/blaetter.json` und nennen die gewählten
+Dateien in ihrer Diagnose; ein eigener Test in `grafik_zuordnung.test.ts`
+prüft, dass die geprüften Atlanten die gewählten Dateien sind.
+
+**Konturblatt** (`konturMaske`, Schutzblinken G4-15, G7-14): Hat ein Blatt
+Pixel in `KONTUR`, bleiben genau diese (alle Blätter von Auftrag 4). Hat es
+keines (Grok-Blätter, keine feste Konturfarbe), bleibt sein Rand: deckende
+Pixel mit einem durchsichtigen Kantennachbarn oder am Blattrand, so viele
+Ringe wie der Massstab (U1-3). Gebildet einmal beim Laden; ein Blatt von
+2048 × 2048 Pixeln braucht dafür etwa 130 ms (Node, gemessen).
+
+**Fenster.** Das Canvas (768 × 448) wird ganzzahlig auf das Fenster skaliert
+(1×, 2× … in Gerätepixeln, `image-rendering: pixelated`); ist das Fenster
+kleiner als 768 × 448 Gerätepixel, so groß wie es passt und weich verkleinert
+(U1-4). Geprüft: Fenster 600 × 400 → 600 × 350 weich, 768 × 448 → 1×,
+1600 × 900 → 2×, 2400 × 1400 → 3×; bei Pixeldichte 2 ein Fenster von
+800 × 500 → 2× in Gerätepixeln (768 × 448 CSS-Pixel), 500 × 300 → 1×.
+
+**Tests.** `darstellung_browser.test.ts` besteht unverändert (Protokoll in
+600 Schritten mit Debug-Anzeige Spalte für Spalte gleich dem Prüflauf).
+`darstellung_2x.test.ts` (5 Tests): Blattwahl (mit und ohne Liste, nie
+`rammbock_fremd`, ungültige Liste), Massstab (auch der gebauten Atlanten),
+Konturmaske (KONTUR, Rand mit 1 und 2 Ringen); im Browser 1× gegen 2×: alle
+Blätter der Darstellung werden in Node verdoppelt (nächster Nachbar,
+Rechtecke, Maße und Anker · 2) und einer zweiten Seite geliefert, Sprites und
+Hintergründe als `<name>_grok` über `blaetter.json`; beide Seiten spielen die
+Vorführung (Frames 182, 300, 546, 600, 718, 900, 1200, 1500) und die Arena
+(Frame 138), und das Canvas ist gleich (Ausschnitt um Vela 256 × 208 Byte für
+Byte, das ganze Bild über Zeilenprüfsummen; eine um einen halben Spielpixel
+verschobene Spiegelachse fällt auf); Leistung (unten). Die Browsertests bauen
+in einen eigenen Ordner, nicht nach `dist/`. Stand: `npm test` 383 grün
+(377 + 6), `npm run pruefen` und `npm run bauen` grün.
+
+**Leistung** (Playwright, Chromium ohne Fenster, 600 Schritte der Vorführung
+über `window.comet.schritt(1)`, je Schritt Logik und ein Bild; im Test
+`darstellung_2x`, Grenze 8 ms): Mittel 0,8 ms, Median 0,2 ms, 95 % unter
+0,7 ms, erstes Bild etwa 5 ms; mit erzwungenem Rastern je Bild (1 Pixel
+lesen) Mittel 0,8 bis 1,0 ms. Bei 1× waren es 0,42 ms (9.8).
+
+**Offen.** Grok-Blätter mit Massstab 2 aus dem Umsetzer v2 lagen beim Bau
+noch nicht vor; geprüft ist der Weg mit verdoppelten Blättern. Bis `bauen.ts`
+`blaetter.json` schreibt, meldet Chromium einmal den 404 (U1-6). Der Himmel
+könnte bei 2× in Bildpixeln laufen (2 · x − K); er bleibt wie erlaubt bei
+ganzen Spielpixeln.

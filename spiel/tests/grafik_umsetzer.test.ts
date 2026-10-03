@@ -1,29 +1,30 @@
-// Einzeltests des Umsetzers für Bildblätter (Auftrag 4, 9.3; docs/grafik.md 5)
-// an kleinen, im Test gebauten Bildern. Farben nur aus palette.ts (und
-// daraus gemischt). Der Gesamtablauf am synthetischen Blatt steht in
-// grafik_umsetzer_blatt.test.ts.
+// Einzeltests des Umsetzers für Bildblätter (Auftrag 4, 9.3; docs/grafik.md 5;
+// angepasst an die Fassung v2, Auftrag 5, Phase 1, docs/grafik.md 5.8) an
+// kleinen, im Test gebauten Bildern. Farben nur aus palette.ts (und daraus
+// gemischt). Der Gesamtablauf am synthetischen Blatt steht in
+// grafik_umsetzer_blatt.test.ts, die neuen Regeln von v2 in
+// grafik_umsetzer_v2.test.ts.
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { UMRISS_GEGNER } from '../src/darstellung/masse.ts';
 import { NAH_ANGRIFFE } from '../src/kern/werte.ts';
 import { farbAbstand, mischen } from '../grafik/quelle/farbe.ts';
 import { Leinwand } from '../grafik/quelle/leinwand.ts';
 import type { Pixel } from '../grafik/quelle/leinwand.ts';
-import { konturGeschlossen, streupixel } from '../grafik/quelle/kontur.ts';
+import { helligkeit } from '../grafik/quelle/medianschnitt.ts';
 import {
   HAUT_MITTEL, HOSE_BRAUN, KONTUR, LEDER, LEISTE_TEXT, NACHTHIMMEL, STAHL, STERNBEERE, TON_DUNKEL, TON_GRUND, TON_SCHATTEN, WESTE_OLIV,
 } from '../grafik/quelle/palette.ts';
 import {
-  bestimmeAnker, bestimmeFaktor, bildePalette, findeZellen, freistellen, gehgeschwindigkeit, glanzToene, innenkonturen, konturieren,
-  leseQuelle, leseZuordnung, pruefeGrundlinie, schliesse, schneideAus, STANDARD, stufenFuer, stufenName, verkleinere,
+  bestimmeAnker, bestimmeFaktor, bildePalette, dunkelPruefer, findeZellen, fertigMachen, freistellen, gehgeschwindigkeit, hoeheMitKontur,
+  konturLueckenDunkel, konturNachsetzen, leseQuelle, leseZuordnung, pruefeGrundlinie, schliesse, schneideAus, STANDARD, streupixelAehnlich,
+  verkleinere, verkleinertBereinigt, zielhoeheFuer,
 } from '../grafik/quelle/umsetzer.ts';
 
 const GRUND = NACHTHIMMEL.treppe[TON_GRUND];
 const HAUT = HAUT_MITTEL.treppe[TON_GRUND];
 const OLIV = WESTE_OLIV.treppe[TON_GRUND];
-const RAMMBOCK = ['HAUT_MITTEL', 'WESTE_OLIV', 'HOSE_BRAUN', 'STAHL', 'LEDER'];
 
 function deckkraftWerte(l: Leinwand): Set<number> {
   const s = new Set<number>();
@@ -117,15 +118,20 @@ test('Zellen im festen Raster (quelle.txt): Feldnummern, Nummer im Feld verworfe
   assert.equal(z.verworfen.length, 1);
 });
 
-test('Maßstab: Stand-Zelle genau auf Zielhöhe, Flächenmittel ohne Halbtransparenz', () => {
+test('Maßstab: Stand-Zelle samt nachgesetzter Kontur genau auf Zielhöhe, Flächenmittel ohne Halbtransparenz', () => {
   const quelle = new Leinwand(60, 250);
   quelle.ellipse(30, 25, 24, 25, HAUT); // runder Kopf oben: die oberste Zeile ist nur teilweise gedeckt
   quelle.rechteck(10, 45, 40, 205, OLIV);
   const f = bestimmeFaktor(quelle, 71);
   const klein = verkleinere(quelle, f);
-  assert.equal(klein.begrenzung()?.h, 71);
-  assert.ok(Math.abs(f - 71 / 250) < (71 / 250) * (1.5 / 71) + 1e-12, `Faktor ${f} nahe am Rohfaktor`);
+  // v2: Haut und Oliv sind hell, die Kontur kommt oben und unten dazu (Auftrag 5, 1)
+  assert.equal(hoeheMitKontur(verkleinertBereinigt(quelle, f)), 71);
+  assert.equal(klein.begrenzung()?.h, 69);
+  assert.ok(Math.abs(f - 71 / 250) < (71 / 250) * (3 / 71) + 1e-12, `Faktor ${f} nahe am Rohfaktor`);
   assert.deepEqual([...deckkraftWerte(klein)].sort((a, b) => a - b), [0, 255]);
+  // Ohne Kontur (Messung wie v1) trifft die Suche die Zielhöhe mit dem verkleinerten Bild selbst
+  const f1 = bestimmeFaktor(quelle, 71, STANDARD, (v) => v.begrenzung()?.h ?? 0);
+  assert.equal(verkleinere(quelle, f1).begrenzung()?.h, 71);
   // Flächenmittel: ein Pixel halb Haut, halb Oliv bekommt den Mittelwert
   const zwei = new Leinwand(2, 1);
   zwei.setze(0, 0, HAUT);
@@ -139,65 +145,85 @@ test('Maßstab: Stand-Zelle genau auf Zielhöhe, Flächenmittel ohne Halbtranspa
   assert.equal(verkleinere(halb, 1 / 4).hole(0, 0), 0);
 });
 
-test('Palette: nächste Stufe der Materialtreppen, Abstand je Farbe, höchstens 15 Farben', () => {
+test('Palette: Medianschnitt aus den Farben des Bildes, keine Abbildung auf palette.ts, Helligkeit erhalten', () => {
   const l = new Leinwand(16, 8);
-  const fremd = STERNBEERE.treppe[TON_GRUND]; // Fremdfarbe ohne passendes Material
-  const nah = mischen(HOSE_BRAUN.treppe[TON_GRUND], HAUT, 0.1); // fast Hosenbraun
+  const fremd = STERNBEERE.treppe[TON_GRUND]; // Farbe ohne Material der Figur: bleibt erhalten (keine Palettenabbildung)
+  const nah = mischen(HOSE_BRAUN.treppe[TON_GRUND], HAUT, 0.1);
   l.rechteck(0, 0, 8, 8, HAUT);
   l.rechteck(8, 0, 8, 4, nah);
   l.rechteck(8, 4, 4, 4, STAHL.treppe[4]);
   l.rechteck(12, 4, 4, 4, fremd);
-  const stufen = stufenFuer(RAMMBOCK);
-  // Töne 0 bis 3, bei glänzendem Stahl 0 bis 4, dazu KONTUR
-  assert.equal(stufen.length, 4 + 4 + 4 + 5 + 4 + 1);
-  const e = bildePalette([l], stufen);
-  assert.equal(e.abbildungen.length, 4, 'je Quellfarbe ein Eintrag');
-  for (const a of e.abbildungen) assert.equal(a.abstand, farbAbstand(a.quelle, a.stufe.farbe));
-  const haut = e.abbildungen.find((a) => a.quelle === HAUT)!;
-  assert.equal(stufenName(haut.stufe), 'HAUT_MITTEL:2');
-  assert.equal(haut.abstand, 0);
-  for (const a of e.abbildungen) {
-    for (const st of stufen) assert.ok(a.abstand <= farbAbstand(a.quelle, st.farbe), 'nächste Stufe');
+  const e = bildePalette([l]);
+  // Vier Farben, höchstens 63: jede Farbe ist ihre eigene Kiste, also unverändert
+  assert.equal(e.quellfarben, 4);
+  assert.deepEqual([...e.palette].sort((a, b) => a - b), [HAUT, nah, STAHL.treppe[4], fremd].sort((a, b) => a - b));
+  assert.equal(e.mittlererAbstand, 0);
+  assert.ok(e.bilder[0]!.gleich(l), 'Bild unverändert');
+  // Nach Helligkeit geordnet, der dunkelste Ton vorn
+  for (let i = 1; i < e.palette.length; i++) assert.ok(helligkeit(e.palette[i - 1]!) <= helligkeit(e.palette[i]!));
+  assert.equal(e.dunkelster, e.palette[0]);
+  assert.equal(e.pixel.reduce((s, n) => s + n, 0), 128);
+});
+
+test('Palette: über der Höchstzahl teilt der Medianschnitt, jede Farbe geht auf die nächste Palettenfarbe, Mittel bleibt', () => {
+  // 5 Materialien × 5 Töne, jeder Ton belegt, mit abnehmender Fläche, dazu Mischfarben
+  const farben: Pixel[] = [];
+  for (const m of [HAUT_MITTEL, WESTE_OLIV, HOSE_BRAUN, STAHL, LEDER]) for (const t of m.treppe) farben.push(t);
+  const l = new Leinwand(farben.length, 40);
+  farben.forEach((f, i) => l.rechteck(i, 0, 1, 40 - i, f));
+  for (let i = 1; i < farben.length; i++) l.setze(i, 39 - i, mischen(farben[i - 1]!, farben[i]!, 0.5));
+  const e = bildePalette([l], { ...STANDARD, hoechstFarben: 8 });
+  const benutzt = new Set<Pixel>();
+  for (const p of e.bilder[0]!.daten) if (p !== 0) benutzt.add(p);
+  assert.ok(e.palette.length <= 8, `${e.palette.length} Farben`);
+  assert.ok(benutzt.size <= 8);
+  for (const p of benutzt) assert.ok(e.palette.includes(p), 'nur Palettenfarben');
+  // nächste Palettenfarbe je Quellfarbe
+  for (let j = 0; j < l.daten.length; j++) {
+    const q = l.daten[j]!;
+    if (q === 0) continue;
+    const z = e.bilder[0]!.daten[j]!;
+    for (const p of e.palette) assert.ok(farbAbstand(q, z) <= farbAbstand(q, p) + 1e-9);
   }
-  assert.ok(e.abbildungen.find((a) => a.quelle === nah)!.abstand < STANDARD.befundAbstand, 'fast passende Farbe ist kein Befund');
-  const f = e.abbildungen.find((a) => a.quelle === fremd)!;
-  assert.ok(f.abstand > STANDARD.befundAbstand, `Fremdfarbe ist ein Befund (${f.abstand})`);
-  assert.equal(e.befundAnteil, 16 / 128);
-  for (const p of e.bilder[0]!.daten) assert.ok(stufen.some((s) => s.farbe === p), 'nur Stufenfarben');
+  // Helligkeit im Mittel erhalten (keine Abdunklung)
+  const mittel = (b: Leinwand): number => {
+    let s = 0;
+    let n = 0;
+    for (const p of b.daten) {
+      if (p === 0) continue;
+      s += helligkeit(p);
+      n++;
+    }
+    return s / n;
+  };
+  assert.ok(Math.abs(mittel(e.bilder[0]!) - mittel(l)) < 3, `Mittel ${mittel(e.bilder[0]!).toFixed(1)} statt ${mittel(l).toFixed(1)}`);
+  assert.ok(Number.isFinite(e.mittlererAbstand) && e.groessterAbstand > 0);
 });
 
-test('Palette: über dem Budget wird die am wenigsten belegte Stufe gestrichen', () => {
-  // 7 Materialien × 4 bis 5 Töne, jeder Ton belegt, mit abnehmender Fläche
-  const namen = ['HAUT_MITTEL', 'WESTE_OLIV', 'HOSE_BRAUN', 'STAHL', 'LEDER', 'JACKE_VELA', 'HAAR_VELA'];
-  const stufen = stufenFuer(namen);
-  const l = new Leinwand(stufen.length, 40);
-  stufen.forEach((s, i) => l.rechteck(i, 0, 1, 40 - i, s.farbe));
-  const e = bildePalette([l], stufen);
-  const farben = new Set<Pixel>();
-  for (const p of e.bilder[0]!.daten) if (p !== 0) farben.add(p);
-  farben.add(KONTUR);
-  assert.ok(farben.size <= 15, `${farben.size} Farben`);
-  assert.equal(e.stufen.length, 15);
-  assert.ok(e.gestrichen.length >= stufen.length - 15);
-  assert.ok(e.stufen.some((s) => s.farbe === KONTUR), 'KONTUR bleibt');
-  // gestrichen wird von hinten (kleinste Fläche zuerst)
-  assert.equal(e.gestrichen[0], stufen[stufen.length - 2]);
-});
-
-test('Kontur: Außenkontur neu, Innenkontur im dunkelsten Materialton, keine Streupixel', () => {
-  const stufen = stufenFuer(RAMMBOCK);
+test('Kontur: dunkle Außenkante bleibt, sonst 1 Bildpixel im dunkelsten Ton nachgesetzt; Innenlinie aufgehellt, keine Streupixel', () => {
   const l = new Leinwand(12, 12);
   l.rechteck(1, 1, 10, 10, OLIV);
-  l.rechteck(5, 2, 1, 8, KONTUR); // Innenlinie in KONTUR im Oliv
-  l.setze(3, 3, LEDER.treppe[TON_SCHATTEN]); // Streupixel
-  assert.equal(innenkonturen(l.klon(), stufen), 8);
-  konturieren(l, stufen);
-  assert.ok(konturGeschlossen(l, KONTUR));
-  assert.equal(streupixel(l, glanzToene(stufen)).length, 0);
-  assert.equal(l.hole(5, 5), WESTE_OLIV.treppe[TON_DUNKEL], 'Innenlinie im Ton 0 des Materials');
-  assert.equal(l.hole(1, 5), KONTUR, 'Rand in KONTUR');
-  assert.equal(l.hole(3, 3), OLIV, 'Streupixel nimmt die Mehrheitsfarbe');
-  assert.equal(l.begrenzung()?.b, 10, 'die Figur wird nicht größer');
+  l.rechteck(1, 1, 10, 1, LEDER.treppe[TON_DUNKEL]); // dunkle Oberkante: Kontur des Bildes
+  l.rechteck(5, 3, 1, 6, KONTUR); // Innenlinie in KONTUR, dunkler als der Bodenton
+  l.setze(3, 6, LEDER.treppe[TON_SCHATTEN]); // Streupixel
+  const dunkel = dunkelPruefer();
+  assert.ok(dunkel(LEDER.treppe[TON_DUNKEL]) && dunkel(KONTUR) && !dunkel(OLIV));
+  const k = konturNachsetzen(l.klon(), dunkel, KONTUR);
+  assert.equal(k.bild.breite, 14, '1 Bildpixel Rand');
+  assert.equal(k.bild.hole(1, 5), KONTUR, 'links nachgesetzt');
+  assert.equal(k.bild.hole(1, 2), 0, 'neben der dunklen Ecke nichts nachgesetzt');
+  assert.equal(k.bild.hole(5, 1), 0, 'über der dunklen Oberkante nichts nachgesetzt');
+  assert.equal(k.bild.hole(5, 2), LEDER.treppe[TON_DUNKEL], 'dunkle Oberkante bleibt');
+  assert.equal(konturLueckenDunkel(k.bild, dunkel).length, 0);
+  assert.equal(k.gesetzt, 9 + 9 + 10, 'links und rechts ohne die dunkle Oberkante, unten ganz');
+  const pal = bildePalette([l]);
+  const boden = helligkeit(KONTUR) + 1;
+  const fertig = fertigMachen(pal.bilder[0]!, pal, boden, new Set(), STANDARD);
+  assert.equal(konturLueckenDunkel(fertig, dunkel).length, 0, 'Kontur geschlossen aus dunklem Ton');
+  assert.equal(streupixelAehnlich(fertig, STANDARD.streuAbstand).length, 0, 'keine Streupixel');
+  assert.ok(helligkeit(fertig.hole(6, 6)) >= boden, 'Innenlinie um eine Stufe aufgehellt');
+  assert.equal(fertig.hole(4, 7), OLIV, 'Streupixel nimmt die Mehrheitsfarbe');
+  assert.equal(fertig.begrenzung()?.b, 12, 'die Figur wächst um je 1 Bildpixel');
 });
 
 test('Anker: unterste Zeile, x Mitte der Füße; liegend Mitte der Figur', () => {
@@ -214,10 +240,10 @@ test('Anker: unterste Zeile, x Mitte der Füße; liegend Mitte der Figur', () =>
 
 test('Zuordnung: Animationen, Bilder, Kopien, Gehen und Parameter lesen; Fehler mit Zeilennummer', () => {
   const z = leseZuordnung(`# Test
-figur test_fremd
+figur test_grok
+datum 2026-10-03
 typ Rammbock
-zielhoehe 71   # 76 minus Schatten
-materialien HAUT_MITTEL WESTE_OLIV
+zielhoehe 142   # 2 × (76 minus Schatten)
 massstab a.png 1
 animation stand schleife 0
 animation schlag einmal 4 4 5 3 2 aktiv 2
@@ -228,7 +254,9 @@ ersatz schlag 1 stand 0 spiegeln
 gehen stand RAMMBOCK_GEHEN_X
 parameter toleranzHintergrund 50
 `);
-  assert.equal(z.figur, 'test_fremd');
+  assert.equal(z.figur, 'test_grok');
+  assert.equal(z.datum, '2026-10-03');
+  assert.equal(z.zielhoehe, 142);
   assert.deepEqual(z.animationen[1], { name: 'schlag', schleife: false, dauern: [4, 4, 5, 3, 2], aktiv: [2] });
   assert.equal(z.bilder[1]!.liegend, true);
   assert.equal(z.kopien[0]!.nachbestellen, false);
@@ -236,19 +264,29 @@ parameter toleranzHintergrund 50
   assert.equal(z.kopien[1]!.spiegeln, true);
   assert.equal(z.gehen.get('stand'), 'RAMMBOCK_GEHEN_X');
   assert.equal(z.parameter.toleranzHintergrund, 50);
-  assert.throws(() => leseZuordnung('figur x\nzielhoehe 71\nmaterialien A\nmassstab a.png 1\nanimation a einmal\n'), /Zeile 5/);
-  assert.throws(() => leseZuordnung('figur x\nzielhoehe 71\nmaterialien A\nmassstab a.png 1\nbild a.png 1 fehlt 0\n'), /unbekannte Animation/);
+  assert.throws(() => leseZuordnung('figur x\nzielhoehe 142\nmassstab a.png 1\n\nanimation a einmal\n'), /Zeile 5/);
+  assert.throws(() => leseZuordnung('figur x\nzielhoehe 142\nmassstab a.png 1\nbild a.png 1 fehlt 0\n'), /unbekannte Animation/);
+  // v2: keine Materialien mehr (keine Abbildung auf palette.ts, Auftrag 5, 1)
+  assert.throws(() => leseZuordnung('figur x\nzielhoehe 142\nmaterialien HAUT_MITTEL\nmassstab a.png 1\n'), /Zeile 3: unbekanntes Wort 'materialien'/);
+  assert.throws(() => leseZuordnung('figur x\ndatum 3.10.2026\nzielhoehe 142\nmassstab a.png 1\n'), /Zeile 2: datum/);
 });
 
-test('Rammbock-Vorlage fremd/rammbock/zuordnung.txt: lesbar, Animationen nach Auftrag 4, 3, Angriffe nach werte.ts', () => {
+test('Rammbock-Vorlage fremd/rammbock/zuordnung.txt: lesbar, Animationen wie das Blatt der Gliederpuppe, Angriffe nach werte.ts', () => {
   const z = leseZuordnung(readFileSync(new URL('../grafik/quelle/fremd/rammbock/zuordnung.txt', import.meta.url), 'utf8'));
-  assert.equal(z.figur, 'rammbock_fremd');
-  assert.equal(z.zielhoehe, UMRISS_GEGNER.Rammbock.hoehe - 5, '76 minus Schatten (Auftrag 4, 9.3)');
-  assert.deepEqual(z.materialien, RAMMBOCK);
-  const namen = z.animationen.map((a) => a.name);
-  for (const n of ['stand', 'haltung', 'gehen', 'gehen_schnell', 'spott', 'wiegen', 'auftritt_hocke', 'aufstehen_hocke', 'auftritt_versteck',
-    'hocke_ankuendigung', 'kampfhaltung', 'schlag_a', 'schlag_b', 'umwerfschlag', 'sprungtritt', 'getroffen', 'umgeworfen', 'liegen',
-    'aufstehen', 'gehalten', 'geworfen', 'tot']) assert.ok(namen.includes(n), `Animation ${n}`);
+  assert.equal(z.figur, 'rammbock_grok');
+  assert.equal(z.zielhoehe, zielhoeheFuer('Rammbock'), '2 × (76 minus Schatten) Bildpixel (Auftrag 5, 1)');
+  assert.equal(z.zielhoehe, 142);
+  // Namen, Schleife, Dauern und aktive Bilder wie rammbock.json (die Darstellung erwartet sie so)
+  const puppe = JSON.parse(readFileSync(new URL('../grafik/ausgabe/rammbock.json', import.meta.url), 'utf8')) as {
+    animationen: Record<string, { schleife: boolean; bilder: { dauer: number }[]; aktiv?: number[] }>;
+  };
+  assert.deepEqual(z.animationen.map((a) => a.name), Object.keys(puppe.animationen));
+  for (const a of z.animationen) {
+    const q = puppe.animationen[a.name]!;
+    assert.equal(a.schleife, q.schleife, `${a.name}: Schleife`);
+    assert.deepEqual(a.dauern, q.bilder.map((b) => b.dauer), `${a.name}: Dauern`);
+    assert.deepEqual(a.aktiv, q.aktiv, `${a.name}: aktive Bilder`);
+  }
   const anim = (n: string) => z.animationen.find((a) => a.name === n)!;
   assert.equal(anim('gehen').dauern.length, 8);
   assert.equal(anim('getroffen').dauern.reduce((s, d) => s + d, 0), 23, 'Trefferreaktion 23 Frames (E3)');
@@ -286,7 +324,7 @@ test('Schließen (G0b-10): Innenlinie in Hintergrundfarbe verbindet, breite Lüc
 });
 
 test('Zuordnung: Maßstab je Blatt über eine Bezugszelle (G0b-11)', () => {
-  const kopf = 'figur x\nzielhoehe 71\nmaterialien HAUT_MITTEL\n';
+  const kopf = 'figur x\nzielhoehe 142\n';
   const z = leseZuordnung(`${kopf}massstab a.png 1\nmassstab b.png 3 wie a.png 2\n`);
   assert.deepEqual(z.massstab, { blatt: 'a.png', zelle: 1 });
   assert.deepEqual(z.massstaebe, [{ blatt: 'b.png', zelle: 3, wie: { blatt: 'a.png', zelle: 2 } }]);

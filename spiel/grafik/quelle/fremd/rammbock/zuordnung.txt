@@ -1,76 +1,68 @@
 # Zuordnung Zelle → Animation für den Rammbock aus Grok-Blättern
-# (Auftrag 4, 9.3, Weg C; Format: docs/grafik.md 5.3).
+# (Umsetzer v2, Auftrag 5, Phase 1; Format: docs/grafik.md 5.3 und 5.8).
 #
-# Stand 2026-10-03 (G0b): Blätter gesichtet. Zellnummern zeilenweise, je
-# Blatt (Blatt A im Raster 4 × 3 aus quelle.txt). Zellen je Reihe am Blatt
-# nachgezählt und vom Umsetzer bestätigt: A 4 + 4 + 4, B 8, C 5 + 5 + 4 + 2,
-# D 3 + 5 + 6 + 6, E 3. Fehlende Bilder ersetzt der Umsetzer durch
-# Wiederholung und meldet sie als Nachbestellung (docs/grafik.md 5.7).
+# Stand 2026-10-03 (U2): Blätter in Seitenansicht (Lieferung zu Auftrag 4),
+# erste Probe für Haltepunkt 1; die Blätter in Dreiviertelansicht folgen als
+# eigener Ordner (fremd/rammbock_34/, gleiche Ausgabe rammbock_grok, der
+# neuere Ordner gewinnt, docs/grafik.md 5.8). Zellnummern zeilenweise, je
+# Blatt (Blatt A im Raster 4 × 3 aus quelle.txt). Zellen je Reihe: A 4 + 4 + 4,
+# B 8, C 5 + 5 + 4 + 2, D 3 + 5 + 6 + 6, E 3. Fehlende Bilder ersetzt der
+# Umsetzer durch Wiederholung und meldet sie als Nachbestellung.
 
-figur rammbock_fremd
-typ Rammbock                    # Umriss 60 × 76 aus src/darstellung/masse.ts
-zielhoehe 71                    # 76 minus Schatten (Auftrag 4, 9.3, Maßstab)
-materialien HAUT_MITTEL WESTE_OLIV HOSE_BRAUN STAHL LEDER   # Auftrag 4, 4 und 9.3
+figur rammbock_grok
+datum 2026-10-03                # Lieferung der Blätter in Seitenansicht (quelle.txt)
+typ Rammbock                    # Umriss 60 × 76 Spielpixel aus src/darstellung/masse.ts
+zielhoehe 142                   # 2 × (76 − 5) Bildpixel samt Kontur (Auftrag 5, 1)
 
-# Maßstab: Stand auf Blatt A (Zelle 1) auf 71 px. Grok hat die Figur auf
-# den Blättern verschieden groß gezeichnet (Stand A 445 px, D 339 px,
-# E 748 px); jedes weitere Blatt bekommt seinen Faktor über eine Pose, die
-# es mit Blatt A teilt (G0b-11).
+# Maßstab: Stand auf Blatt A (Zelle 1) auf 142 Bildpixel. Grok hat die Figur
+# auf den Blättern verschieden groß gezeichnet (Stand A 445 px, D 339 px,
+# E 748 px); jedes weitere Blatt wird über eine Pose, die es mit Blatt A
+# teilt, neu kalibriert (G0b-11), am Stand, wo das Blatt einen hat.
 massstab rammbock_a_posen.png 1
 massstab rammbock_b_gehen.png 1 wie rammbock_a_posen.png 2        # Schrittstellung, rechtes Bein vorn
 massstab rammbock_c_angriffe.png 1 wie rammbock_a_posen.png 4     # Kampfhaltung
 massstab rammbock_d_reaktionen.png 14 wie rammbock_a_posen.png 1  # Stand (Ende des Aufstehens)
 massstab rammbock_e_griff.png 1 wie rammbock_a_posen.png 1        # festgehalten, aufrecht wie der Stand
 
-# Fußkontakt beim Gehen: Geschwindigkeit aus werte.ts (Welt 5.1, E9, E10)
+# Fußkontakt beim Gehen (Auftrag 5, 1, Punkt 4): Geschwindigkeit aus werte.ts
+# (Welt 5.1, E9, E10). gehen hat eigene Bilder: der Umsetzer verschiebt sie;
+# gehen_schnell sind dieselben Bilder: Rest nur gemessen.
 gehen gehen RAMMBOCK_GEHEN_X
 gehen gehen_schnell RAMMBOCK_SCHNELL_X
 
 # ---------------------------------------------------------------------------
-# Animationen (Auftrag 4, 3: Rammbock wie Bolzer, dazu wiegen, Hocke,
-# Sprungtritt). Dauern sind Richtwerte in Frames (Atlas `dauer`); die
-# Darstellung nimmt die Dauer aus der Aktionsuhr der Logik.
+# Animationen: Namen, Schleife, Dauern und aktive Bilder genau wie im Blatt
+# der Gliederpuppe (spiel/grafik/ausgabe/rammbock.json, docs/grafik.md 4.2),
+# weil die Darstellung (zuordnung.ts) Namen und Bilddauern so erwartet und
+# grafik_aktiv / grafik_dauer das Trefferbild im ersten aktiven Frame prüfen.
 # ---------------------------------------------------------------------------
 
-# Stand: Rückfall der Darstellung für fehlende Animationen (Auftrag 4, 3) und
-# Prüfung „Umriss im Stand“ (docs/grafik.md 2.5); dieselbe Zelle wie massstab
 animation stand schleife 0
-# Haltung 3 × 5, Gehen 8 × 4 (design-gegner-stages.md 9, Rammbock)
 animation haltung schleife 5 5 5
 animation gehen schleife 4 4 4 4 4 4 4 4
-# schnelle Gehstufe 2,0 statt 1,6 px/Frame: dieselben Bilder, 4 · 1,6 / 2,0 ≈ 3 Frames
 animation gehen_schnell schleife 3 3 3 3 3 3 3 3
-# Spott 42 Frames (spezifikation-welt.md 5.2: 10/8/8/8/7/1); Wiegen gleich (design-gegner-stages.md 9)
-animation spott einmal 10 8 8 8 7 1
-animation wiegen einmal 10 8 8 8 7 1
-# Auftritt aus der Hocke (69 Frames, werte.ts AUFTRITT_HOCKE_RAMMBOCK), Aufrichten 3 Bilder (Richtwert)
-animation auftritt_hocke schleife 0
-animation aufstehen_hocke einmal 6 6 6
-# Einlauf aus dem Versteck = gehen
 animation auftritt_versteck schleife 4 4 4 4 4 4 4 4
-# Hocke vor jedem Angriff (design-gegner-stages.md 1.2); Kampfhaltung = Hocke
-animation hocke_ankuendigung schleife 8 8
+animation auftritt_hocke schleife 0
+animation aufstehen_hocke einmal 35 17 17
+animation spott einmal 10 8 8 8 7 1
+animation wiegen schleife 10 8 8 8 7 1
 animation kampfhaltung schleife 8 8
-# Angriffe (werte.ts NAH_ANGRIFFE, spezifikation-welt.md 5.5): Ausholen A bis A+Startup−1,
-# Trefferbild im ersten aktiven Frame, so lang wie die aktiven Frames ohne Treffer
+animation hocke_ankuendigung einmal 4 21
 animation schlag_a einmal 5 4 5 3 2 aktiv 2          # RA: Startup 9, aktiv A+9 bis A+13, Rückzug 5
+animation schlag einmal 5 4 5 3 2 aktiv 2            # = schlag_a (Name aus Phase 1, G2-11)
 animation schlag_b einmal 5 5 8 4 4 aktiv 2          # RB: Startup 10, aktiv A+10 bis A+17, Rückzug 8
 animation umwerfschlag einmal 5 4 5 3 2 aktiv 2      # RU: Startup 9, aktiv A+9 bis A+13, Rückzug 5
 animation sprungtritt einmal 9 37 4 4 aktiv 1        # RS: Startup 9, aktiv A+9 bis A+45 in der Luft, Landung 2 Bilder
-# Trefferreaktion 23 Frames, Bilder ab h+1, h+10, h+22 (design-gegner-stages.md 9)
 animation getroffen einmal 9 12 2
-# Umgeworfen, liegen, aufstehen 126 Frames (design-gegner-stages.md 9: 2/8/37/9/41/8/8/1, dann 4/4/4)
-animation umgeworfen einmal 2 8 18 19 9
-animation liegen schleife 41
-animation aufstehen einmal 8 8 1 4 4 4
-# Gegriffen und geworfen (design-gegner-stages.md 9: 3/4/9/7/42/12/23)
+animation umgeworfen einmal 8 19 18 5 4
+animation liegen schleife 0
+animation aufstehen einmal 3 3 3 3 3 3
 animation gehalten schleife 0
-animation geworfen einmal 21 21
-# Tod = umgeworfen und liegen, Blinken zeichnet die Darstellung
-animation tot einmal 2 8 18 19 9 28
+animation geworfen einmal 22 36
+animation tot einmal 2 19 18 5 4 30
 
 # ---------------------------------------------------------------------------
-# Zellen
+# Zellen (Inhalt der Bilder wie die Gliederpuppe, docs/grafik.md 4.2)
 # ---------------------------------------------------------------------------
 
 # Blatt A, Posen 4 × 3: 1 Stand, 2 Gehen, 3 Gehen, 4 Kampfhaltung / 5 Ausholen,
@@ -78,9 +70,9 @@ animation tot einmal 2 8 18 19 9 28
 # 11 Aufstehen aus der Hocke, 12 liegend. Nicht verwendet: 2, 3 (Gehen kommt
 # aus Blatt B), 7 (Sprungtritt aus Blatt C), 8, 9, 10, 12 (Reaktionen aus Blatt D).
 bild rammbock_a_posen.png 1 stand 0
-bild rammbock_a_posen.png 1 haltung 0                # haltung 1, 2 fehlen: Nachbestellung
+bild rammbock_a_posen.png 1 haltung 0                # haltung 1, 2 (atmen) fehlen: Nachbestellung
 bild rammbock_a_posen.png 11 auftritt_hocke 0
-bild rammbock_a_posen.png 4 schlag_b 0               # zweiter Schlag: Kampfhaltung, Ausholen, Schlag aus Blatt A
+bild rammbock_a_posen.png 4 schlag_b 0               # Schwinger von oben: Kampfhaltung, Ausholen, Schlag aus Blatt A
 bild rammbock_a_posen.png 5 schlag_b 1
 bild rammbock_a_posen.png 6 schlag_b 2
 bild rammbock_a_posen.png 4 schlag_b 4               # schlag_b 3 (Rückzug) fehlt: Nachbestellung
@@ -102,6 +94,8 @@ bild rammbock_c_angriffe.png 2 schlag_a 1
 bild rammbock_c_angriffe.png 3 schlag_a 2
 bild rammbock_c_angriffe.png 4 schlag_a 3
 bild rammbock_c_angriffe.png 5 schlag_a 4
+bild rammbock_c_angriffe.png 1 kampfhaltung 0        # Boxerstellung (G2-7)
+bild rammbock_c_angriffe.png 5 kampfhaltung 1
 bild rammbock_c_angriffe.png 6 umwerfschlag 0
 bild rammbock_c_angriffe.png 7 umwerfschlag 1
 bild rammbock_c_angriffe.png 8 umwerfschlag 2
@@ -116,23 +110,23 @@ ersatz sprungtritt 2 hocke_ankuendigung 1
 ersatz sprungtritt 3 hocke_ankuendigung 0
 bild rammbock_c_angriffe.png 15 hocke_ankuendigung 0
 bild rammbock_c_angriffe.png 16 hocke_ankuendigung 1
+bild rammbock_c_angriffe.png 15 aufstehen 4          # halb auf (zwischen Hocke D13 und Stand D14)
 
 # Blatt D, Reihe 1 getroffen 3 (1 bis 3), Reihe 2 umgeworfen 5 (4 bis 8),
 # Reihe 3 aufstehen 6 (9 bis 14), Reihe 4 Spott 6 (15 bis 20)
-bild rammbock_d_reaktionen.png 1 getroffen 0
-bild rammbock_d_reaktionen.png 2 getroffen 1
-bild rammbock_d_reaktionen.png 3 getroffen 2
+bild rammbock_d_reaktionen.png 2 getroffen 0         # stärkster Rückschlag zuerst (G2-15: D2, D3, D1)
+bild rammbock_d_reaktionen.png 3 getroffen 1
+bild rammbock_d_reaktionen.png 1 getroffen 2
 bild rammbock_d_reaktionen.png 4 umgeworfen 0
 bild rammbock_d_reaktionen.png 5 umgeworfen 1 liegend
 bild rammbock_d_reaktionen.png 6 umgeworfen 2 liegend
 bild rammbock_d_reaktionen.png 7 umgeworfen 3 liegend
 bild rammbock_d_reaktionen.png 8 umgeworfen 4 liegend
 bild rammbock_d_reaktionen.png 9 liegen 0 liegend
-bild rammbock_d_reaktionen.png 9 aufstehen 0 liegend
-bild rammbock_d_reaktionen.png 10 aufstehen 1
-bild rammbock_d_reaktionen.png 11 aufstehen 2
-bild rammbock_d_reaktionen.png 12 aufstehen 3
-bild rammbock_d_reaktionen.png 13 aufstehen 4
+bild rammbock_d_reaktionen.png 10 aufstehen 0
+bild rammbock_d_reaktionen.png 11 aufstehen 1
+bild rammbock_d_reaktionen.png 12 aufstehen 2
+bild rammbock_d_reaktionen.png 13 aufstehen 3
 bild rammbock_d_reaktionen.png 14 aufstehen 5
 bild rammbock_d_reaktionen.png 12 aufstehen_hocke 0
 bild rammbock_d_reaktionen.png 13 aufstehen_hocke 1
@@ -152,6 +146,11 @@ bild rammbock_e_griff.png 3 geworfen 1 liegend
 # ---------------------------------------------------------------------------
 # Gewollte Wiederholungen (keine Nachbestellung)
 # ---------------------------------------------------------------------------
+gleich schlag 0 schlag_a 0
+gleich schlag 1 schlag_a 1
+gleich schlag 2 schlag_a 2
+gleich schlag 3 schlag_a 3
+gleich schlag 4 schlag_a 4
 gleich auftritt_versteck 0 gehen 0
 gleich auftritt_versteck 1 gehen 1
 gleich auftritt_versteck 2 gehen 2
@@ -168,14 +167,14 @@ gleich gehen_schnell 4 gehen 4
 gleich gehen_schnell 5 gehen 5
 gleich gehen_schnell 6 gehen 6
 gleich gehen_schnell 7 gehen 7
-gleich kampfhaltung 0 hocke_ankuendigung 0
-gleich kampfhaltung 1 hocke_ankuendigung 1
+# Wiegen nennt das Vorbild mit derselben Folge wie Spott (G2-9)
 gleich wiegen 0 spott 0
 gleich wiegen 1 spott 1
 gleich wiegen 2 spott 2
 gleich wiegen 3 spott 3
 gleich wiegen 4 spott 4
 gleich wiegen 5 spott 5
+# Tod = umgeworfen und liegen, Blinken zeichnet die Darstellung
 gleich tot 0 umgeworfen 0
 gleich tot 1 umgeworfen 1
 gleich tot 2 umgeworfen 2

@@ -1,6 +1,6 @@
 // Übersicht aller Figuren im Stand nebeneinander, 2× (Auftrag 4, Phase 2: „eine
 // Übersichtsseite docs/bilder/kontakt_uebersicht.png“). Gebaut von bauen.ts aus den
-// Animationen `stand` der Figuren; das Blatt rammbock_fremd (Vorlage, E24) fehlt hier.
+// Animationen `stand` der Figuren; Grok-Blätter (`<figur>_grok`, E25) fehlen hier noch.
 
 import type { Animation } from './blatt.ts';
 import { zugeschnitten } from './blatt.ts';
