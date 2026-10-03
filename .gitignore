@@ -26,3 +26,8 @@ __pycache__/
 # (siehe research/captcomm/notes.md).
 research/**/*.png
 !research/captcomm/grafik/**/*.png
+
+# Spiel (vertikale Scheibe): Bau und Prüfläufe bleiben lokal
+spiel/dist/
+spiel/aus/
+node_modules/

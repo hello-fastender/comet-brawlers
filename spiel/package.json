@@ -1,0 +1,14 @@
+{
+  "name": "comet-brawlers-scheibe",
+  "private": true,
+  "type": "module",
+  "description": "Vertikale Scheibe von Comet Brawlers: Logikkern, Prüfläufe, Abnahmetests, Darstellung. Keine Abhängigkeiten.",
+  "scripts": {
+    "pruefen": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.kern.json && tsc --noEmit -p tsconfig.browser.json",
+    "test": "node --experimental-strip-types --test \"tests/**/*.test.ts\"",
+    "lauf": "node --experimental-strip-types src/pruef/lauf.ts",
+    "bauen": "tsc -p tsconfig.browser.json",
+    "start": "http-server . -p 8080 -c-1",
+    "foto": "node werkzeuge/foto.mjs"
+  }
+}
