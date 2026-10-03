@@ -15,6 +15,7 @@
 <canvas id="bild" width="384" height="224" tabindex="0" aria-label="Comet Brawlers, vertikale Scheibe"></canvas>
 <div id="meldung"></div>
 <!-- Bau: npm run bauen (tsc -p tsconfig.browser.json nach dist/); Start: npm start, dann http://localhost:8080/ -->
+<!-- Grafik: main.js lädt vor dem ersten Bild die Blätter aus grafik/ausgabe/ (docs/grafik.md 9); ?platzhalter=1 zeichnet die Rechtecke, ebenso wenn ein Blatt nicht lädt (Meldung in der Konsole). -->
 <script type="module" src="dist/darstellung/main.js" onerror="document.getElementById('meldung').textContent = 'dist/darstellung/main.js fehlt: zuerst im Ordner spiel/ npm run bauen ausführen.'"></script>
 </body>
 </html>

@@ -2008,6 +2008,7 @@ Schatten in Farben und Maßen aus `masse.ts`).
 | 0 Einrichtung | Ausgangslage geprüft: `npm run pruefen` grün, `npm test` 214 von 214 grün; Animationszeiger geprüft (Abschnitt 3) |
 | 1 Werkzeugkasten, Umsetzer, Vergleich | Werkzeugkasten, Vela (Stand, Gehen, Kette), Rammbock als Gliederpuppe und aus Grok-Blättern; Haltepunkt 1 am 2026-10-03: E24 (Gliederpuppe als Standardweg, Grok als Vorlage) |
 | 2 Alle Grafiken | Vela (30 Animationen), Bolzer (21), Puppe (Farbtausch), Rammbock (23), Zünder (12), Ballast (16), Objekte und Effekte (20), Hintergründe A, B, F mit Himmel, Vordergrund und Blendenkante, Anzeige mit Pixelschrift; Übersicht `docs/bilder/kontakt_uebersicht.png`; `npm run grafik` zweimal bitgleich, `npm test` 367 grün |
+| 3 Einbau (G7) | Sprites, Hintergründe, Vordergrund, Blende und Anzeige aus den Blättern in der Darstellung (Abschnitt 9); Rückfall `?platzhalter=1` und bei fehlendem Blatt; Zuordnung als reine Funktion (`zuordnung.ts`), Effektliste der Darstellung (`verlauf.ts`); Tests `grafik_zuordnung` (63 Kombinationen der Figur, 337 der Gegner in 83 Modi, 24 901 Frames aller Prüfszenen ohne Ersatzwahl), `grafik_aktiv` (40 Angriffsanimationen), `grafik_dauer` (81 Animationen); Szenenbilder `docs/bilder/szene_*.png`; `npm test` 377 grün, Browser-Test unverändert grün; mittlere Zeit je Bild 0,42 ms (600 Bilder, Chromium) |
 
 ## 7. Abweichungen und Lücken
 
@@ -2136,6 +2137,25 @@ Schatten in Farben und Maßen aus `masse.ts`).
 | G3-17 | Welt 6 (Kolbenhieb wie BA, 42 Frames im Vorbild) | Werfer umgedreht, Stoß mit dem Heck voran (45 px), dann Werfer hochnehmen; im Nachlauf `stand` | Ausholen, Treffer und Rückzug nach `NAH_ANGRIFFE.BA`; das Halten eines Rückzugsbilds über 12 bis 36 Frames Nachlauf sähe eingefroren aus |
 | G3-18 | Auftrag 4, 3 (Zünder: … tot; keine Bildzahl; GEHALTEN ist ein Gegnermodus, Kampf 7) | `tot` 5 Bilder wie `umgeworfen` ohne Werfer über die Bahn F4; zusätzlich `gehalten` (1); geworfen zeigt `umgeworfen` | Ab dem Tod liegt die Waffe als Gegenstand am Boden (Welt 6); jeder Modus braucht eine Animation (Auftrag 4, 3) |
 | G3-19 | Auftrag 4, 3 (Ballast; GEHALTEN ist auch ein Modus des Bosses, Welt 7.1) | zusätzlich `gehalten` (1): gekrümmt | Die Figur kann den Boss greifen (Kampf 8) |
+| G7-1 | Auftrag 4, 2.3 (`dauer` ist Richtwert; die Darstellung nimmt die Dauer aus der Aktionsuhr) | Die Tabelle Uhr → Bild ist die Folge der Bilddauern im Atlas (`bildZurUhr` über die Dauern der Animation, Schleifen über (Uhr − 1) mod Summe + 1); die Uhr kommt aus der Logik (`uhr`, `modus_uhr`, Frame − A, Bahnzustand). Zahlen, die der Atlas nicht trägt, aus `werte.ts` | Die Dauern der Blätter sind dieselben Tabellen, die G1 bis G3 aus `werte.ts` gerechnet haben (4.1 bis 4.6); so gibt es eine Quelle, und `grafik_aktiv`/`grafik_dauer` prüfen sie gegen die Logik |
+| G7-2 | 4.1 (Kette: Tabelle nach `uhr`) und Kampf 5.6 (Ausfallschritt: aktiv `AUSFALL_AKTIV_VON` bis `_BIS`) | Mit Ausfallschritt laufen die Kettenbilder um `AUSFALL_AKTIV_VON − KETTE_AKTIV_VON` (6, 4, 6 Frames) später, davor hält Bild 0; in Kette 4 gilt ab uhr 17 (zweites Fenster) wieder die Uhr ohne Versatz. Der Magnetstoß steht im Fenster des Ausfallschritts | Sonst stünde das Trefferbild 4 bis 6 Frames vor den aktiven Frames (Auftrag 4, 1.4) |
+| G7-3 | G1-7 (Mündung bei 25 px, Rakete bei 58 px: Mündungsblitz oder Lücke) | Mündungsblitz aus dem Trefferfunken: Bilder 0 und 1 von `funke` je 2 Frames ab dem Abschuss P+7 (uhr 7 bis 10), Mitte 4 px vor der Mündung (`MUENDUNGSBLITZ`); bis zum Heck der Rakete bleibt eine Lücke von etwa 10 px | Ein Explosionsbild an der Mündung läse sich als Einschlag; die Rakete steht nach der Logik bei 58 px und wird nicht verschoben. Ein eigenes Blitzbild (Strahl 25 bis 50 px) wäre eine Ergänzung im Blatt `objekte` (Bericht) |
+| G7-4 | 4.7 (Trefferfunke am Trefferpunkt, Vorschlag G4: Ziel minus 20 px zum Angreifer, Höhe des Angriffs) | x = Ziel-x + 20 px zum Angreifer hin (bei gleichem x gegen dessen Blick; Behälter ± 12 px), Tiefe des Ziels, Höhe über dem Ziel nach dem Angriff (`FUNKE_HOEHE`: Kette in Ansatzhöhe der Faust 47, 46, 65, 41; Explosion, Kniestoß, Landung 30; Spezialangriff 12; Gegnerschläge 35 bis 50; Behälter 16); kein Funke bei W und beim Wurf WU (dessen Aufprall zeigt Staub) | Der Wurftreffer WU ist das Packen über dem Kopf, ein Funke vor Velas Brust las sich falsch |
+| G7-5 | 4.7 (Staub beim Aufprall einer Umwerf- oder Wurfbahn und bei der Landung des Neueinstiegs) | Zusätzlich Staub bei der Landung der Körperpresse (`boss.kp_landung`); Aufprall erkannt am Wechsel von `bahn_boden` 0 auf > 0 (je Slot gemerkt) | Die Presse landet mit Bildschütteln (KA10) bäuchlings auf dem Boden; nach der Explosionsbahn des Bosses bleibt `bahn_frame` = `bahn_boden` stehen, daher der Wechsel statt der Gleichheit |
+| G7-6 | 4.5 (Kolbenhieb: Bild 3 und 4 nach dem Trefferbild; mit `aktion` NACHLAUF `stand`) | Rückzugsbilder 3 und 4 (3 + 2 Frames) am Anfang des Nachlaufs (Frame − `angriff_aktiv_ende` = 1 bis 5), danach `stand` | Die Logik wechselt nach dem letzten aktiven Frame sofort auf `aktion` NACHLAUF; ohne diese Regel kämen Bild 3 und 4 nie vor, der Zünder spränge aus dem Stoß in den Stand |
+| G7-7 | Kampf 8.4 (der Geworfene bleibt E+1 bis E+21 in der Haltelage, losgelassen in E+22 bei 13 px und 59 px Höhe) und „die Darstellung zeichnet am Anker“ | Darstellungsversatz des getragenen Gegners (Bahn F3 im Stillstand, Figur in WURF mit `wurf_ziel`): je Bild von `wurf` 0, ½, ganz von der Haltelage zur Loslassstelle der Logik (`WURF_TRAGEN_ANTEIL`, `WURF_LOSLASS_X`, `WURF_LOSLASS_HOEHE`), Schatten mit; ab E+22 die Lage der Logik ohne Sprung | Vela hebt ihn in ihrer Animation über den Kopf; am Boden vor ihr stand er kopfüber wie im Handstand. Die Logik bleibt unberührt |
+| G7-8 | Auftrag 4, 3 (Bolzer: „tot (umgeworfen + Blinken)“; G2, G3: „Blinken zeichnet die Darstellung“) | Tote Gegner blinken ab der Ruhe ihrer Bahn bis zur Freigabe des Slots: in jedem zweiten Framepaar (`BLINKEN_TAKT` 2, nach `welt.frame`) nicht gezeichnet, mit Schatten; der Ballast blinkt nicht (sein Slot bleibt bis zum Ende belegt, K4) | Regel ohne eigene Bilder wie das Blinken der Gegenstände (Welt 9.3) |
+| G7-9 | 4.8 (Hintergründe der Scheibe) und Kampf 11.2 (Prüfbühne) | Die Hintergrundblätter gelten nur für die Bühne `scheibe` (`HINTERGRUND_BUEHNE`); auf anderen Bühnen (Prüfbühne der Abnahmeszenen) zeichnet die Darstellung die Flächen und den Vordergrund der Platzhalter unter bzw. über den Sprites | Die Karten liegen an den Welt-x und Ky der Scheibe; auf der Prüfbühne (Ky 0) lagen die Kabelrollen von A mitten über den Figuren |
+| G7-10 | G1-12 (Figur: Liegen und Aufstehen gespiegelt wie der Flug) und G2-10 (Gegner: nur Umgeworfen und Tot genannt) | Auch Gegner zeigen `liegen` und `aufstehen` gespiegelt wie den Flug davor; Regel für Figur und Gegner: gespiegelt, wenn `bahn_richtung` = `blick` (Flug in Blickrichtung). `bahn_richtung` bleibt nach dem Ende der Bahn stehen (`bahn.ts`); geworfene Gegner (`geworfen`) zeigen in Flugrichtung | Sonst spränge der Kopf beim Übergang vom Aufprall ins Liegen auf die andere Seite |
+| G7-11 | 4.5, 4.6 (Gehbild des Zünders und des Ballast über `modus_uhr`) und G2 (Zähler der Gehframes) | Alle Gegner nehmen das Gehbild aus den Gehframes des Verlaufs (Frames mit `aktion` GEHEN seit Beginn des Gehens, `verlauf.ts`); gegen den Blick rückwärts (G3-15). Ohne Verlauf (Tests) `modus_uhr` | Der Modus beginnt oft mit Stehen (ANNAEHERN, BEREIT); mit `modus_uhr` begänne das Gehen mitten im Zyklus |
+| G7-12 | Auftrag 4, 1.5 (Schatten wie heute, Schattenblau, feste Deckkraft) | Schatten als pixelgenaue Ellipse (Pixelmitte in der Ellipse) in `SCHATTEN_BLAU` mit Deckkraft 0,45, einmal je Größe erzeugt; Breiten und Höhe wie bisher (`masse.ts`), kleine Objekte nach der Breite ihres Bildes statt der Platzhaltermaße | Die geglättete Ellipse des Canvas hätte Halbtöne am Rand (1.1: keine Kantenglättung) |
+| G7-13 | 4.2, 4.3 (Umgeworfen und Tot nach k = Frame − W mit Tabellen je Bahn) | Umgeworfen und Tot aller Gegner nach dem Bahnzustand wie 4.5 (Stillstand, steigend, fallend, Aufprall = erste `dauern[3]` Frames ab dem Bodenkontakt, danach liegend); das liegende Bild von `tot` bzw. `fall` erst ab der Ruhe der Bahn (F4b: während des Rollens Bild 4, wie 4.2) | Gleich der Tabelle für F1, deckt F2, F3 und F4b ohne eigene Tabellen und auch den Boss mit seinen Bahndaten |
+| G7-14 | G4-15 (Schutzblinken: nur die Pixel in `KONTUR`) | Konturblätter werden beim Laden aus jedem Sprite-Blatt erzeugt; im Blinkpaar zeigt Vela nur ihre Kontur, der Werfer in der Hand ebenso; Magnetstoß, Eiswelle und Mündungsblitz blinken nicht | Effekte haben keine Kontur (G4-1) und gehören nicht zum Körper |
+| G7-15 | 4.9 (Schrift ersetzt `SCHRIFT_5X7` auch im Hinweis „AUFZ“; große Texte ohne Kasten) | „AUFZ“ in der kleinen Schrift von G6 an der Lage von heute, davor der rote Punkt (`FARBE.aufzeichnung`); große Texte ohne den dunklen Textkasten | Umriss und Schatten der Schrift machen den Kasten überflüssig (4.9) |
+| G7-16 | Auftrag 3, 2.4 (`foto.mjs` schreibt `scheibe_*.png`) und Phase 3 (Szenenbilder `szene_*.png`) | `foto.mjs` schreibt standardmäßig `szene_*.png` und dazu `szene_arena.png` und `szene_nah.png`; `--platzhalter` zeichnet die Rechtecke (so sind `scheibe_*.png` entstanden), `--nur-reihe` lässt Arena und Nahbild weg | Die Bilder der Platzhalter bleiben als Stand von Auftrag 3 erhalten |
+| G7-17 | 4.7 (Explosion: Kern bis zur Freigabe des Slots, danach die Darstellung bis Uhr 24) | Die Explosion kommt ganz aus der Effektliste, gestartet mit dem Ereignis `EX:gn` bzw. `EX:on` am Einschlagpunkt; ihre Uhr zählt echte Frames ab dem Einschlag (gleich der Explosionsuhr der Logik, Explosionen haben keinen Trefferstopp). Das Objekt in der Flugphase EXPLOSION zeichnet die Darstellung nicht | Ein Weg statt zweier (Objekt, dann Effekt); kein Sprung beim Freigeben des Slots |
+| G7-18 | G1-7 (Anker des Werfers bei W − Griffpunkt; Griffpunkt y −1,5) | y des Ankers gerundet (`Math.round(W.y + 1,5)`), Spiegeln mit dem Blick um Velas Fußpunkt | Bilder stehen auf ganzen Pixeln |
+| G7-19 | Kampf 3 (Objekttyp Effekt) | Objekte des Typs `Effekt` zeichnet die Darstellung mit Sprites nicht | In der Scheibe entstehen keine (nur Prüfszenen könnten sie anlegen); Funke, Staub, Trümmer und Explosion führt die Effektliste |
 
 ## 8. Weg nach E24
 
@@ -2162,3 +2182,181 @@ liefern `Erzeugnis`se (`erzeugnis.ts`) über `objekteErzeugnisse`
 (`objekte.ts`), `hintergrundErzeugnisse` (`hintergrund/hintergruende.ts`)
 und `anzeigeErzeugnisse` (`anzeige.ts`); `bauen.ts` prüft und schreibt
 alles.
+
+## 9. Einbau in die Darstellung (G7, Phase 3)
+
+Stand G7 (2026-10-03). Die Darstellung zeichnet Figuren, Gegner, Objekte,
+Effekte, Hintergründe, Vordergrund, Blende und Anzeigeleiste aus den Blättern
+in `spiel/grafik/ausgabe/`. Die Logik bleibt unberührt: Die Darstellung liest
+die Welt und ändert sie nie; `darstellung_browser.test.ts` (600 Schritte mit
+Debug-Anzeige, Protokoll Spalte für Spalte gegen den Prüflauf) besteht
+unverändert.
+
+### 9.1 Dateien
+
+| Datei | Inhalt |
+|---|---|
+| `spiel/src/darstellung/zuordnung.ts` | Atlas-Typen und die Zuordnung Logikzustand → Blatt, Animation, Bild, Spiegelung als reine Funktionen ohne DOM: `figurWahl`, `figurTeile` (Werfer, Mündungsblitz, Magnetstoß, Eiswelle), `gegnerWahl`, `getragenVersatz`, `objektWahl`; `bildZurUhr`, `schleifenBild` |
+| `spiel/src/darstellung/verlauf.ts` | `Verlauf`: Effektliste der Darstellung (Funke, Staub, Trümmer, Explosion) und Gehframes der Gegner, ohne DOM, gefüttert nach jedem Logikschritt |
+| `spiel/src/darstellung/sprites.ts` | Laden (fetch der JSON, `Image` für die PNG), Konturblätter, Kachelkarten, Schatten; Zeichnen eines Bildes am Anker (gespiegelt), der Hintergrundebenen, der Blende und der Anzeige |
+| `spiel/src/darstellung/zeichnen.ts` | Szene mit Sprites (`zeichneSzeneSprites`) neben den Rechtecken; `zeichneBild(ctx, welt, sprites)` und `zeichneObersteEbene(…, grafik)` wählen die Fassung |
+| `spiel/src/darstellung/main.ts` | lädt die Grafik vor dem ersten Bild (parallel zur Stage), Rückfall, ruft `Verlauf.beobachten` nach jedem Logikschritt |
+| `spiel/src/darstellung/masse.ts` | Werte der Darstellung, die die Blätter nicht tragen (Abschnitt „Sprites“): Werferpunkte, Griffpunkt und Mündung, Ansätze des Magnetstoßes, Mündungsblitz, Funke, Trümmerblinken, Schatten, Bühne der Hintergründe, Tragen beim Wurf |
+| `spiel/index.html` | Hinweis auf das Laden und `?platzhalter=1` |
+| `spiel/werkzeuge/foto.mjs` | Szenenbilder `docs/bilder/szene_*.png` (9.7) |
+| `spiel/tests/grafik_zuordnung.test.ts`, `grafik_aktiv.test.ts`, `grafik_dauer.test.ts`, Hilfe `grafik_einbau_hilfe.ts` | Tests (9.6) |
+| `spiel/tests/szenen/grafik_arena.txt`, `spiel/tests/eingaben/grafik_arena.txt` | Prüfszene der Arena (Welle 7 mit dem Ballast) für `szene_arena.png`; keine Abnahmeszene |
+
+### 9.2 Laden und Rückfall
+
+- `main.ts` lädt vor dem ersten Bild die Sprite-Blätter `vela`, `bolzer`,
+  `puppe`, `rammbock`, `zuender`, `ballast`, `objekte` (nicht
+  `rammbock_fremd`, E24), die Hintergründe `hintergrund_a`, `_b`, `_f`, die
+  Blende und die Anzeige, je JSON mit `fetch` und PNG als `Image`, relativ zu
+  `index.html` aus `grafik/ausgabe/`. `window.comet.bereit` gilt erst danach.
+- Beim Laden entstehen einmal: je Kachelkarte eine Zeichenfläche (4.8,
+  „Zeichnen“ Punkt 1), je Sprite-Blatt ein Konturblatt (nur die Pixel in
+  `KONTUR`, für das Schutzblinken), die freien Bilder je Ebene nach `folge`
+  sortiert, Schattenellipsen je Größe beim ersten Gebrauch. Je Bild wird
+  nichts erzeugt; Spiegeln über `translate`/`scale(−1, 1)`.
+- Rückfall: `?platzhalter=1` lädt nichts und zeichnet die Rechtecke von
+  Auftrag 3. Lädt ein Blatt oder Atlas nicht, meldet die Seite
+  „Grafik lädt nicht, Rückfall auf die Rechtecke: …“ mit `console.error` und
+  zeichnet ebenso die Rechtecke (geprüft mit einem gesperrten `vela.png`).
+- Fehlt im Atlas eine Animation, die die Zuordnung verlangt, zeigt die
+  Darstellung `stand` und meldet den Grund einmal mit `console.warn`
+  (Auftrag 4, 3); `grafik_zuordnung` schlägt dann fehl.
+- Die Debug-Anzeige (F1) zeichnet weiter über die Sprites und behält
+  `SCHRIFT_3X5`.
+
+### 9.3 Zuordnungstabelle (Umsetzung)
+
+Grundregel (G7-1): Die Uhr kommt aus der Logik, die Tabelle Uhr → Bild aus
+den Bilddauern des Atlas (`bildZurUhr`: erstes Bild, bei dem die Summe der
+Dauern die Uhr erreicht, danach hält das letzte; Schleifen über
+(Uhr − 1) mod Summe + 1). Stoppframes halten das Bild, weil die Uhren der
+Logik (`uhr`, `ss_n`, `kp_k`) in ihnen stehen. Blick links spiegelt um die
+Ankerspalte. Die Tabellen in 4.1 bis 4.7 gelten; hier die Umsetzung mit den
+Abweichungen G7-….
+
+**Figur** (`figurWahl`, `figurTeile`; 4.1):
+
+| Zustand | Animation, Uhr | Zusatzbilder |
+|---|---|---|
+| `STAND`, `LAUF`, `SPRINT` | `stand` bzw. `waffe_stand`; `gehen` bzw. `waffe_gehen` und `sprint` als Schleife über `uhr` | Werfer bei `waffe` RW in STAND und LAUF (Griffpunkt auf W, G7-18) |
+| `SPRUNG`, `SPRINTSPRUNG` | `sprung`: Luftbilder (bis `SPRUNG_LETZTER_LUFTFRAME`) nach `uhr`, nach einem Sprungangriff die Fallpose; `SS` mit `ss_n` > 0: `sprint_sprungangriff` nach `ss_n` | – |
+| `LANDUNG` | Landebilder von `sprung` nach `uhr`; mit laufender Instanz SS das Landebild von `sprint_sprungangriff` | – |
+| `SPRUNGANGRIFF` N, R, H, T | `sprungangriff` (danach Fallpose), `richtung`, `hoch`, `runter` nach `uhr` | – |
+| `SCHLAG`, `LEERSCHLAG` | `kette`k (k = `kombo`), `uhr` mit Ausfallschritt verschoben (G7-2) | Magnetstoß k am Ansatz in den aktiven Frames, Bild nach Uhr − erster aktiver Frame; Kette 4 zweites Fenster (ohne Treffer) am Ansatz 4B |
+| `GRIFF`, `KNIESTOSS`, `WURF`, `SPEZIAL`, `SPRINTANGRIFF`, `WAFFE`, `AUFNEHMEN` | gleichnamige Animation nach `uhr` (`griff` nach einem Kniestoß im Haltebild, `waffe_schuss` für WAFFE) | Eiswelle Stufe ⌊(uhr − 8) / 6⌋ + 1 vorn und gespiegelt hinten (uhr 8 bis 43); Werfer und Mündungsblitz in WAFFE (G7-3) |
+| `GETROFFEN` | `getroffen_vorn` bzw. `_hinten` nach `letzter_angreifer` (G1-11) | – |
+| `UMGEWORFEN`, `LIEGEN`, `AUFSTEHEN` | `umgeworfen`, `liegen`, `aufstehen` nach `uhr`, gespiegelt bei Flug in Blickrichtung (G1-12, G7-10) | – |
+| `TOT` | `umgeworfen` mit den Zeiten von F4 (G1-13, aus `werte.ts` und den Dauern von `umgeworfen`), ab der Ruhe `tot` | – |
+| `NEUEINSTIEG` | vor der Landung `neueinstieg_fall` als Schleife, ab LN `neueinstieg_landung` nach Frame − LN + 1 | – |
+
+Schutz blinkt wie heute: in jedem zweiten Framepaar (`(frame >> 1) & 1`, nur
+in Zustand 3 mit Schutz) nur die Kontur (G7-14).
+
+**Gegner** (`gegnerWahl`; 4.2 bis 4.6):
+
+| Zustand | Animation, Uhr |
+|---|---|
+| Reaktionen aller Typen | `getroffen` nach Frame − `reaktion_h`; `umgeworfen` und `tot` (Ballast `fall`) nach dem Bahnzustand (G7-13), gespiegelt bei Flug in Blickrichtung; Wurf F3 vor dem Bodenkontakt `geworfen` (Bolzer, Puppe, Rammbock) in Flugrichtung, getragen mit Versatz (G7-7); `liegen`; `aufstehen` nach `modus_uhr`; `gehalten`; tote Gegner blinken ab der Ruhe (G7-8) |
+| Bolzer, Puppe, Rammbock | WARTEN hockend `auftritt_hocke`; AUFTRITT `aufstehen_hocke` bzw. `auftritt_versteck`; Gehen `gehen` bzw. `gehen_schnell` nach den Gehframes (G7-11), rückwärts gegen den Blick (G3-15); stehend `haltung`, Rammbock in ABWARTEN `wiegen`; KAMPFHALTUNG `kampfhaltung` bzw. Rammbock `hocke_ankuendigung`; SPOTT `spott`; ANGRIFF Code → `schlag_a` … `umwerfschlag_b`, `umwerfschlag`, `sprungtritt` nach Frame − A, das Trefferbild hält bis zum Ende der aktiven Frames; NACHLAUF Rückzugsbilder 3 und 4 nach `modus_uhr`, dann `kampfhaltung`; Sprungtritt nach Höhe und A+46 (4.2) |
+| Zünder | `stand` in WARTEN, BEREIT, FREI, PUPPE und stehend; Gehen wie oben; ZIELEN `zielen` als Schleife; SCHUSS `schuss` nach Frame − A + 1; KOLBENHIEB `kolbenhieb`, im Nachlauf Bild 3 und 4, dann `stand` (G7-6) |
+| Ballast | AUFTRITT `auftritt`; BEREIT `stand` als Schleife bzw. `gehen`; ANKUENDIGUNG `ankuendigung` (beim Armschwung ab n = 15 das Ausholen); Armschwung Bild 5(k − 1) + Bild des Schwungs nach Frame − `schwung_a`, nach Treffer 7 Frames länger im Trefferbild und Rückzug bis 36 (4.6); Ansturm nach `lauf_n`, Auslauf `ansturm_bremsen`; Körperpresse nach `kp_k`, nach der Landung nach Frame − `kp_landung`; STOSS `stoss_rueckzug`; TAUMELN `taumeln` |
+
+**Objekte** (`objektWahl`; 4.7): Gegenstände (auch im Flug in Höhe `h`),
+leere Waffe, unzerbrochene Behälter, Raketen im Flug (`rakete` bzw.
+`rakete_zuender` nach `flug_n`, gespiegelt nach `bahn_richtung`). Zerbrochene
+Behälter und Explosionen zeichnet die Effektliste (9.5), Objekte des Typs
+Effekt keine (G7-19). Gegenstände blinken über `sichtbar` wie heute.
+
+### 9.4 Zeichnen
+
+- Lage nach Kampf 2.5 wie die Rechtecke: Anker auf (⌊x⌋ − K,
+  234 − (⌊z⌋ − Ky) − ⌊h⌋), Schatten am Boden (Ellipse pixelgenau, G7-12),
+  Sortierung nach ⌊z⌋ absteigend, dann Behälter, Gegenstände, Gegner, Figur,
+  Geschosse, Effekte, dann Slot. Bildschütteln verschiebt die Szene, nicht die
+  Anzeige.
+- Zusatzbilder der Figur im Stück der Figur: Eiswelle davor, Werfer,
+  Magnetstoß und Mündungsblitz danach; Versatz vom Fußpunkt, mit dem Blick
+  gespiegelt.
+- Hintergrund nach 4.8: Himmel (Parallaxe 0,5), Wand, Boden je erst die
+  Karten aller Blätter, dann die freien Bilder nach `folge`; Dampf nach
+  `welt.frame`; Vordergrund nach den Figuren mit Deckkraft 0,85. Nur auf der
+  Bühne `scheibe` (G7-9).
+- Blende nach 4.8 Punkt 5: Szene abdunkeln (d/28), dunkles Feld ab
+  F = 400 − ⌊400 · d / 28⌋, Bayer-Kante links davon; die Anzeige bleibt
+  darüber.
+- Anzeige nach 4.9: kleine Schrift für Name, Punkte, Leben und Gegnername,
+  Lebenssymbol, Balken aus den Bausteinen (je Lauf ein gestreckter
+  `drawImage`), Pfeil nach `anzeige(welt).pfeil`, große Texte als fertige
+  Bilder (sonst gesetzt), „AUFZ“ mit rotem Punkt (G7-15).
+
+### 9.5 Effektliste der Darstellung (`verlauf.ts`)
+
+Der Verlauf liest die Welt nach jedem Logikschritt (`main.ts`: Tastatur und
+`window.comet.schritt`) und beim Zeichnen; eine neue Welt (Neustart,
+Eingabedatei, Prüfszene) setzt ihn zurück und liest ihren Frame 0 (so
+erscheinen die mit `welle.7=nur_boss` zerbrochenen Kisten). Effekte zählen
+echte Frames ab ihrem Start (Uhr 1 = Startframe) und laufen über die Summe
+ihrer Bilddauern:
+
+| Effekt | Start | Lage | Dauer |
+|---|---|---|---|
+| `funke` | je Treffer des Frames mit Wirkung R, U, X, B (nicht W, nicht WU) | G7-4 | 8 Frames |
+| `staub` | Bodenkontakt einer Bahn (Figur, Gegner, Boss), Landung des Neueinstiegs, Landung der Körperpresse (G7-5) | Fußpunkt am Boden | 9 Frames |
+| `fass_truemmer`, `bosskiste_truemmer` | Behälter im Frame h des Zerbrechens (auch Frame 0) | Fußpunkt des Behälters | 48 Frames, blinkt ab Uhr 33 (2 an, 2 aus) |
+| `explosion`, `explosion_zuender` | Ereignis `EX:gn` bzw. `EX:on` (G7-17) | Einschlagpunkt am Boden, gespiegelt nach der Flugrichtung | 24 Frames |
+
+Dazu die Gehframes je Gegnerslot (G7-11). Der Verlauf beeinflusst weder
+Logik noch Protokoll.
+
+### 9.6 Tests
+
+| Test | prüft |
+|---|---|
+| `grafik_zuordnung.test.ts` | jede Aktion aus `FIGUR_AKTIONEN` mit ihren Unterphasen und Varianten (63 Kombinationen: Waffe, Kettenstufe × Ausfallschritt, Sprungangriff N/R/H/T, Kniestoß 1 bis 3, Wurf V/R, SS, Angreifer vorn/hinten, Flugrichtung, Fall/Landung …) und jeder Modus je Gegnertyp (83 Modi, 337 Kombinationen mit Aktion, Code, Auftritt, Bahn F1 bis F4b, Bosswerten) je über Uhr 1 bis 130 und beide Blickrichtungen: keine Ersatzwahl, Bild im Atlas; alle Prüfszenen und die Vorführung Frame für Frame (24 901 Frames, 96 verschiedene Animationen) ebenso, einschließlich Zusatzbildern und Effekten; die übernommenen Maße in `masse.ts` gleich `grafik/quelle/` (Werferpunkte, Griffpunkt, Mündung, Ansätze des Magnetstoßes) |
+| `grafik_aktiv.test.ts` | für 40 Angriffsanimationen zeigt die Zuordnung im ersten aktiven Frame (`werte.ts`) ein Bild aus `aktiv`: Vela (14, Kette auch mit Ausfallschritt und im zweiten Fenster, jede Spezialstufe ein eigenes Bild), Magnetstoß 1 bis 4, Eiswelle je Stufe (vorn und gespiegelt hinten), Bolzer und Puppe je 5, Rammbock 4 (Sprungtritt in der Luft), Zünder 2, Ballast 3 (jeder Schwung, Ansturm, Presse), Explosionen aus dem Verlauf (Figur Uhr 1, Zünder Uhr 2) |
+| `grafik_dauer.test.ts` | Summe der Bilddauern jeder nicht schleifenden Animation höchstens die Aktion der Logik (81 Animationen; Nahangriffe: längster Ablauf mit kürzestem Nachlauf ohne bzw. mit Treffer; Kampfhaltung des Rammbocks beim kleinsten Rang); jede solche Animation braucht einen Eintrag; Effekte der Darstellung gegen ihre Regel (Explosion deckt RX bzw. ZR und dauert 24, Trümmer höchstens der Flug des Inhalts, Funke höchstens Trefferframe und Stopp, Staub höchstens Boden bis Ruhe) |
+
+Stand: `npm run pruefen` grün, `npm test` 377 grün (367 + 10), `npm run
+bauen` grün.
+
+### 9.7 Szenenbilder
+
+`npm run foto` (`werkzeuge/foto.mjs`, 768 × 448, zweifach):
+
+| Bild | Inhalt |
+|---|---|
+| `docs/bilder/szene_0300.png` | Frame 300: Sprung nach der Kette im Landedeck, Himmel mit halber Kamerageschwindigkeit |
+| `docs/bilder/szene_0600.png` | Frame 600: geworfener Bolzer, Trümmer des Fasses, Kometenbraten, der Rammbock hockt am Rand |
+| `docs/bilder/szene_0900.png` | Frame 900: der Rammbock kommt vor dem Funkladen heran |
+| `docs/bilder/szene_1200.png` | Frame 1200: der Rammbock fliegt besiegt, Vela im Nachlauf |
+| `docs/bilder/szene_1500.png` | Frame 1500: Sprint vor der Stahlfassade mit Dampf |
+| `docs/bilder/szene_debug.png` | Frame 718 mit Debug-Anzeige über den Sprites: Spezialangriff Stufe 1 mit Eiswelle beidseitig |
+| `docs/bilder/szene_arena.png` | Prüfszene `grafik_arena`, Frame 138: Asservatenkammer, Vela schlägt Kette 2 (Magnetstoß, Funke) gegen einen Bolzer, der Ballast holt zum Armschwung aus |
+| `docs/bilder/szene_nah.png` | Vorführung Frame 182, Ausschnitt 152 × 88 dreifach: Kette 2 im Trefferstopp, Magnetstoß und Funke am getroffenen Bolzer |
+
+Die Platzhalterbilder `scheibe_*.png` bleiben (G7-16).
+
+### 9.8 Leistung
+
+Gemessen mit Playwright in Chromium (ohne Fenster): 600 Schritte der
+Vorführung über `window.comet.schritt(1)`, je Schritt Logik und ein Bild:
+mittlere Zeit 0,42 ms, Median 0,2 ms, 95 % unter 0,6 ms, das erste Bild
+30 ms (Schatten und erstes Dekodieren); Rechtecke zum Vergleich 0,37 ms.
+Die Abnahme in Phase 4 misst nach ihrer eigenen Vorschrift.
+
+### 9.9 Lücken und offene Punkte
+
+- Mündungsblitz: zwischen Blitz und Rakete bleiben etwa 10 px (G7-3). Ein
+  eigenes Bild `muendungsblitz` (Strahl von der Mündung bis etwa 50 px vor
+  dem Fußpunkt, 2 bis 3 Bilder) im Blatt `objekte` würde die Lücke schließen.
+- Getragener Gegner beim Wurf: Versatz der Darstellung (G7-7); ein eigenes
+  Tragebild über dem Kopf ist nicht nötig, `geworfen` 0 passt.
+- Prüfbühne ohne eigene Hintergründe (G7-9).
+- Die Anzeigeleiste liegt ohne eigenen Grund auf der Szene (G5-16); in F
+  liegen helle Lichtkegel unter der Schrift, der Umriss der Schrift hält sie
+  lesbar.

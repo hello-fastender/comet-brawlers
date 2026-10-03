@@ -14,6 +14,13 @@
 // Bild nach anzeige(welt).blende ab; die Anzeigeleiste bleibt sichtbar.
 // Gegner zeichnet sie nur im aktiven Fenster (Welt 4.1), wartende nur, wenn
 // sie hocken (Welt 4.2).
+//
+// Zwei Fassungen (Auftrag 4, Phase 3, G7; docs/grafik.md 9): mit geladener
+// Grafik (SpriteDarstellung) zeichnet sie die Sprites aus den Blättern
+// (Zuordnung in zuordnung.ts, Laden und Zeichnen in sprites.ts, Effekte aus
+// verlauf.ts); ohne Grafik (?platzhalter=1 oder ein Blatt lädt nicht) die
+// Rechtecke der Platzhalter. Lage, Schatten, Höhe, Sortierung und Blinken im
+// Schutz sind in beiden gleich.
 
 import type { EntitaetBasis, Figur, FigurAktion, Gegner, GegnerModus, Objekt } from '../kern/entitaeten.ts';
 import type { Balken, AnzeigeDaten } from '../kern/rahmen.ts';
@@ -37,6 +44,7 @@ import {
   GROSS_ZEILE,
   HINTERGRUND_HOEHE,
   HINTERGRUND_RAND,
+  HINTERGRUND_BUEHNE,
   HOCKE_NENNER,
   HOCKE_ZAEHLER,
   LEBEN_ABSTAND,
@@ -58,6 +66,20 @@ import {
   WAFFE_HAND,
 } from './masse.ts';
 import { SCHRIFT_3X5, SCHRIFT_5X7, text, textBreite } from './schrift.ts';
+import type { Grafik } from './sprites.ts';
+import type { Verlauf } from './verlauf.ts';
+import type { Wahl } from './zuordnung.ts';
+import {
+  atlasBild,
+  zeichneAnzeigeSprites,
+  zeichneAufzeichnungSprites,
+  zeichneBlendeSprites,
+  zeichneEbene,
+  zeichneGrosseTexteSprites,
+  zeichneSchatten,
+  zeichneWahl,
+} from './sprites.ts';
+import { figurTeile, figurWahl, gegnerWahl, getragenVersatz, objektWahl } from './zuordnung.ts';
 
 // ===========================================================================
 // Bildschirmformeln (Kampf 2.5)
@@ -449,6 +471,7 @@ const RANG_GEGENSTAND = 1;
 const RANG_GEGNER = 2;
 const RANG_FIGUR = 3;
 const RANG_GESCHOSS = 4;
+const RANG_EFFEKT = 5;
 
 interface Stueck {
   z: number;
@@ -496,6 +519,121 @@ function stuecke(ctx: CanvasRenderingContext2D, welt: Welt, k: Kamera): Stueck[]
   }
   // hinten zuerst (⌊z⌋ absteigend), dann Rang, dann Slotnummer aufsteigend
   return liste.sort((a, b) => b.z - a.z || a.rang - b.rang || a.nr - b.nr);
+}
+
+// ===========================================================================
+// Szene mit Sprites (Auftrag 4, Phase 3, G7)
+// ===========================================================================
+
+/** Sprites der Darstellung: geladene Grafik und Verlauf der Effekte und Gehframes. */
+export interface SpriteDarstellung {
+  grafik: Grafik;
+  verlauf: Verlauf;
+}
+
+/** Breite eines Sprite-Bilds (für den Schatten kleiner Objekte), 0 ohne Bild. */
+function bildBreite(g: Grafik, w: Wahl): number {
+  return atlasBild(g, w)?.b ?? 0;
+}
+
+/**
+ * Stücke der Szene mit Sprites in derselben Reihenfolge wie die Rechtecke
+ * (Kampf 2.5), dazu die Effekte der Darstellung (Funke, Staub, Trümmer,
+ * Explosion) mit dem Rang „Effekte“ in der Tiefe ihres Ankers.
+ */
+function stueckeSprites(ctx: CanvasRenderingContext2D, welt: Welt, k: Kamera, s: SpriteDarstellung): Stueck[] {
+  const g = s.grafik;
+  const a = g.atlanten;
+  const liste: Stueck[] = [];
+  const f = welt.figur;
+  const fw = figurWahl(f, welt, a);
+  const teile = figurTeile(f, welt, a, fw);
+  liste.push({
+    z: ganz(f.z),
+    rang: RANG_FIGUR,
+    nr: f.nr,
+    schatten: () => {
+      const l = lageVon(k, f);
+      zeichneSchatten(ctx, g, l.x, l.schatten, UMRISS_FIGUR.schatten, SCHATTEN_HOEHE);
+    },
+    zeichne: () => {
+      const l = lageVon(k, f);
+      const blinkAus = schutzBlinkt(f, welt.frame);
+      for (const t of teile) if (!t.vorn) zeichneWahl(ctx, g, t.wahl, l.x + t.dx, l.fuss + t.dy);
+      zeichneWahl(ctx, g, fw, l.x, l.fuss, blinkAus);
+      for (const t of teile) if (t.vorn) zeichneWahl(ctx, g, t.wahl, l.x + t.dx, l.fuss + t.dy, blinkAus && t.wahl.animation === 'raketenwerfer');
+    },
+  });
+  for (const gg of welt.gegner) {
+    if (!gegnerSichtbar(welt, gg)) continue;
+    const w = gegnerWahl(gg, welt, a, s.verlauf.gehframes(gg.nr));
+    if (w.aus) continue;
+    const v = getragenVersatz(gg, welt, a);
+    liste.push({
+      z: ganz(gg.z),
+      rang: RANG_GEGNER,
+      nr: gg.nr,
+      schatten: () => {
+        const l = lageVon(k, gg);
+        zeichneSchatten(ctx, g, l.x + v.dx, l.schatten, gegnerUmriss(gg).schatten, SCHATTEN_HOEHE);
+      },
+      zeichne: () => {
+        const l = lageVon(k, gg);
+        zeichneWahl(ctx, g, w, l.x + v.dx, l.fuss - v.dh);
+      },
+    });
+  }
+  for (const o of [...welt.objekte, ...welt.geschosse]) {
+    if (!o.belegt || !o.sichtbar) continue;
+    const w = objektWahl(o, a);
+    if (w === null) continue;
+    liste.push({
+      z: ganz(o.z),
+      rang: objektRang(o),
+      nr: o.nr,
+      schatten: () => {
+        const l = lageVon(k, o);
+        zeichneSchatten(ctx, g, l.x, l.schatten, bildBreite(g, w), SCHATTEN_HOEHE / SCHATTEN_KLEIN_TEILER);
+      },
+      zeichne: () => {
+        const l = lageVon(k, o);
+        zeichneWahl(ctx, g, w, l.x, l.fuss);
+      },
+    });
+  }
+  s.verlauf.bilder(welt).forEach((e, i) => {
+    liste.push({
+      z: e.z,
+      rang: RANG_EFFEKT,
+      nr: i,
+      schatten: () => undefined,
+      zeichne: () => zeichneWahl(ctx, g, e.wahl, bildX(k, e.x), bildY(k, e.z, e.h)),
+    });
+  });
+  return liste.sort((p, q) => q.z - p.z || p.rang - q.rang || p.nr - q.nr);
+}
+
+/** Szene mit Sprites: Hintergrund (Himmel, Wand, Boden), Schatten, Stücke, Vordergrund; Bildschütteln wie die Rechtecke (KA10). */
+export function zeichneSzeneSprites(ctx: CanvasRenderingContext2D, welt: Welt, s: SpriteDarstellung): void {
+  const g = s.grafik;
+  const k: Kamera = { x: welt.kamera.x, y: welt.kamera.y };
+  // Hintergrundblätter gelten für die Bühne scheibe; andere Bühnen (Prüfbühne) zeigen die Flächen der Platzhalter (G7-9)
+  const blaetter = welt.stage.id === HINTERGRUND_BUEHNE;
+  ctx.save();
+  ctx.translate(welt.kamera.schuetteln_x, welt.kamera.schuetteln_y);
+  if (blaetter) {
+    ctx.fillStyle = FARBE.leer;
+    ctx.fillRect(0, 0, BILD_BREITE, BILD_HOEHE);
+    for (const e of ['himmel', 'wand', 'boden'] as const) zeichneEbene(ctx, g, e, k.x, k.y, welt.frame);
+  } else {
+    zeichneHintergrund(ctx, welt, k);
+  }
+  const liste = stueckeSprites(ctx, welt, k, s);
+  for (const st of liste) st.schatten();
+  for (const st of liste) st.zeichne();
+  if (blaetter) zeichneEbene(ctx, g, 'vordergrund', k.x, k.y, welt.frame);
+  else zeichneVordergrund(ctx, welt, k);
+  ctx.restore();
 }
 
 /** Zeichnet Hintergrund, Schatten, Objekte und Vordergrund mit Bildschütteln (KA10). */
@@ -610,11 +748,18 @@ export interface Ansicht {
 }
 
 /**
- * Ein ganzes Bild ohne Debug-Anzeige: Szene, Blende, Anzeige, Texte. Gibt die
- * Anzeige-Daten zurück (für die Debug-Anzeige danach).
+ * Ein ganzes Bild ohne Debug-Anzeige: Szene, Blende, Anzeige. Mit Sprites
+ * aus den Blättern, sonst als Rechtecke (Rückfall). Gibt die Anzeige-Daten
+ * zurück (für die Debug-Anzeige danach).
  */
-export function zeichneBild(ctx: CanvasRenderingContext2D, welt: Welt): AnzeigeDaten {
+export function zeichneBild(ctx: CanvasRenderingContext2D, welt: Welt, sprites: SpriteDarstellung | null = null): AnzeigeDaten {
   const a = anzeige(welt);
+  if (sprites !== null) {
+    zeichneSzeneSprites(ctx, welt, sprites);
+    zeichneBlendeSprites(ctx, sprites.grafik, a.blende);
+    zeichneAnzeigeSprites(ctx, sprites.grafik, a);
+    return a;
+  }
   zeichneSzene(ctx, welt);
   zeichneBlende(ctx, a);
   zeichneAnzeige(ctx, a);
@@ -622,9 +767,14 @@ export function zeichneBild(ctx: CanvasRenderingContext2D, welt: Welt): AnzeigeD
 }
 
 /** Texte über allem (nach der Debug-Anzeige): STAGE CLEAR, GAME OVER, PAUSE, Aufzeichnung. */
-export function zeichneObersteEbene(ctx: CanvasRenderingContext2D, a: AnzeigeDaten, ansicht: Ansicht): void {
+export function zeichneObersteEbene(ctx: CanvasRenderingContext2D, a: AnzeigeDaten, ansicht: Ansicht, grafik: Grafik | null = null): void {
   const zeilen = [...a.texte];
   if (ansicht.pause) zeilen.push('PAUSE');
+  if (grafik !== null) {
+    zeichneGrosseTexteSprites(ctx, grafik, zeilen);
+    if (ansicht.aufzeichnung) zeichneAufzeichnungSprites(ctx, grafik);
+    return;
+  }
   zeichneGrosseTexte(ctx, zeilen);
   if (ansicht.aufzeichnung) zeichneAufzeichnung(ctx);
 }

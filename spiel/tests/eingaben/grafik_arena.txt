@@ -1,0 +1,6 @@
+# Eingabe zu tests/szenen/grafik_arena.txt (G7): Vela dreht sich zu den
+# Bolzern (L), schlägt Kette 1 und 2; Bild der Arena in Frame 138.
+# seed=12345
+112,113,L
+118,118,A
+133,133,A

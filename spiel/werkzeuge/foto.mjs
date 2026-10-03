@@ -2,6 +2,7 @@
 //
 //   node werkzeuge/foto.mjs [--eingabe <datei>] [--abstand <n>] [--debug-frame <n>] [--ohne-bau]
 //                           [--szene <datei>] [--aus <ordner>] [--praefix <name>]
+//                           [--platzhalter] [--nur-reihe]
 //   (im Ordner spiel/: npm run foto)
 //
 // Ablauf: baut die Browserfassung (tsc -p tsconfig.browser.json, außer mit
@@ -11,16 +12,26 @@
 // /opt/pw-browsers, kein playwright install), spielt die Eingabedatei
 // (Standard tests/eingaben/vorfuehrung.txt) über window.comet ab und
 // speichert alle <abstand> Frames (Standard 300) ein Bild nach
-// docs/bilder/scheibe_<frame>.png (Frame vierstellig mit führenden Nullen),
-// dazu ein Bild mit Debug-Anzeige nach docs/bilder/scheibe_debug.png
+// docs/bilder/szene_<frame>.png (Frame vierstellig mit führenden Nullen),
+// dazu ein Bild mit Debug-Anzeige nach docs/bilder/szene_debug.png
 // (Frame --debug-frame, Standard 718: Spezialangriff mit Trefferfläche, ein
-// Bolzer im Angriff, der Rammbock im Anmarsch). Am Ende beendet es Browser
-// und Server. Das Bild ist 768 × 448 (Raster 384 × 224, zweifach skaliert).
+// Bolzer im Angriff, der Rammbock im Anmarsch). Das Bild ist 768 × 448
+// (Raster 384 × 224, zweifach skaliert).
+//
+// Dazu (Auftrag 4, Phase 3, G7; außer mit --nur-reihe oder --szene):
+// szene_arena.png aus der Prüfszene tests/szenen/grafik_arena.txt (Welle 7
+// mit dem Ballast, Frame 138: Vela schlägt Kette 2 gegen einen Bolzer, der
+// Ballast holt zum Armschwung aus) und szene_nah.png, ein Ausschnitt
+// 152 × 88 um Vela und den nächsten Bolzer in dreifacher Größe (456 × 264)
+// aus der Vorführung (Frame 182: Kette 2 im Trefferstopp mit Magnetstoß und
+// Funke). Am Ende beendet es Browser und Server. Meldungen der Seite
+// (console.warn, console.error, etwa eine Ersatzwahl der Grafik) gibt es aus.
 //
 // Mit --szene spielt es statt des Spielstarts eine Prüfszene (Kampf 11.2)
 // bis zu ihrem endframe ab (window.comet.ladeSzene); --aus und --praefix
 // legen Ordner und Namensanfang der Bilder fest (Standard docs/bilder und
-// scheibe).
+// szene). --platzhalter zeichnet die Rechtecke (Adresse ?platzhalter=1), so
+// entstanden die Bilder scheibe_*.png vor dem Einbau der Grafik.
 
 import { createRequire } from 'node:module';
 import { createServer } from 'node:http';
@@ -52,6 +63,12 @@ const PW_BROWSER = '/opt/pw-browsers';
 const NODE_MODULE = '/opt/node22/lib/node_modules';
 /** Wartezeit auf window.comet in ms. */
 const WARTEN_MS = 30000;
+/** Szenenbild der Arena: Prüfszene, Eingabe, Frame (siehe Kopf). */
+const ARENA = { szene: 'tests/szenen/grafik_arena.txt', eingabe: 'tests/eingaben/grafik_arena.txt', frame: 138 };
+/** Nahbild: Frame der Vorführung, Ausschnitt im Raster, Vergrößerung, Rand unter dem tieferen Fußpunkt (siehe Kopf). */
+const NAH = { frame: 182, breite: 152, hoehe: 88, skala: 3, unten: 10 };
+/** Bildschirm-y des Fußpunkts zur Tiefe 0 (Kampf 2.5: 234 − (⌊z⌋ − Ky)). */
+const BILDSCHIRM_Y_BASIS = 234;
 
 /** MIME-Typen des Webservers. */
 const TYPEN = {
@@ -138,7 +155,7 @@ function letzterFrame(text) {
 }
 
 function argumente(argv) {
-  const a = { eingabe: EINGABE_STANDARD, abstand: ABSTAND_STANDARD, debugFrame: DEBUG_FRAME_STANDARD, bau: true, szene: null, aus: BILDER, praefix: 'scheibe' };
+  const a = { eingabe: EINGABE_STANDARD, abstand: ABSTAND_STANDARD, debugFrame: DEBUG_FRAME_STANDARD, bau: true, szene: null, aus: BILDER, praefix: 'szene', platzhalter: false, nurReihe: false };
   for (let i = 0; i < argv.length; i++) {
     const name = argv[i];
     if (name === '--ohne-bau') a.bau = false;
@@ -148,6 +165,8 @@ function argumente(argv) {
     else if (name === '--szene') a.szene = argv[++i];
     else if (name === '--aus') a.aus = resolve(argv[++i]);
     else if (name === '--praefix') a.praefix = argv[++i];
+    else if (name === '--platzhalter') a.platzhalter = true;
+    else if (name === '--nur-reihe') a.nurReihe = true;
     else throw new Error(`unbekanntes Argument „${name}“`);
   }
   if (!(a.abstand > 0) || !(a.debugFrame > 0)) throw new Error('--abstand und --debug-frame müssen positiv sein');
@@ -169,7 +188,10 @@ async function haupt() {
     const seite = await browser.newPage({ viewport: { width: BILD_BREITE * SKALA, height: BILD_HOEHE * SKALA }, deviceScaleFactor: 1 });
     const fehler = [];
     seite.on('pageerror', (e) => fehler.push(e.message));
-    await seite.goto(server.url);
+    seite.on('console', (m) => {
+      if (m.type() === 'warning' || m.type() === 'error') process.stdout.write(`Seite (${m.type()}): ${m.text()}\n`);
+    });
+    await seite.goto(a.platzhalter ? `${server.url}?platzhalter=1` : server.url);
     await seite.waitForFunction(() => window.comet !== undefined && window.comet.bereit === true, undefined, { timeout: WARTEN_MS });
     const laden = () =>
       szene === null ? seite.evaluate((t) => window.comet.ladeEingabe(t), text) : seite.evaluate(([s, t]) => window.comet.ladeSzene(s, t), [szene, text]);
@@ -189,6 +211,30 @@ async function haupt() {
     await seite.evaluate((n) => window.comet.schritt(n), a.debugFrame);
     await seite.evaluate(() => window.comet.debug(true));
     await bild(`${a.praefix}_debug.png`);
+    await seite.evaluate(() => window.comet.debug(false));
+    if (!a.nurReihe && szene === null) {
+      // Arena: Prüfszene mit Welle 7 und dem Ballast
+      const arenaSzene = readFileSync(resolve(SPIEL, ARENA.szene), 'utf8');
+      const arenaEingabe = readFileSync(resolve(SPIEL, ARENA.eingabe), 'utf8');
+      await seite.evaluate(([s, t]) => window.comet.ladeSzene(s, t), [arenaSzene, arenaEingabe]);
+      await seite.evaluate((n) => window.comet.schritt(n), ARENA.frame);
+      await bild(`${a.praefix}_arena.png`);
+      // Nahbild: Ausschnitt um Vela und den nächsten Bolzer, dreifach
+      await seite.setViewportSize({ width: BILD_BREITE * NAH.skala, height: BILD_HOEHE * NAH.skala });
+      await seite.evaluate((t) => window.comet.ladeEingabe(t), text);
+      const z = await seite.evaluate((n) => window.comet.schritt(n), NAH.frame);
+      const bolzer = z.gegner.filter((g) => g.typ === 'Bolzer').sort((p, q) => Math.abs(p.x - z.figur.x) - Math.abs(q.x - z.figur.x))[0];
+      const ziel = bolzer ?? { x: z.figur.x, z: z.figur.z };
+      const mitte = Math.floor((Math.floor(z.figur.x) + Math.floor(ziel.x)) / 2) - z.kamera.x;
+      const unten = Math.max(BILDSCHIRM_Y_BASIS - (Math.floor(z.figur.z) - z.kamera.y), BILDSCHIRM_Y_BASIS - (Math.floor(ziel.z) - z.kamera.y)) + NAH.unten;
+      const x0 = Math.max(0, Math.min(BILD_BREITE - NAH.breite, mitte - Math.floor(NAH.breite / 2)));
+      const y0 = Math.max(0, Math.min(BILD_HOEHE - NAH.hoehe, unten - NAH.hoehe));
+      const box = await seite.locator('#bild').boundingBox();
+      if (box === null) throw new Error('Canvas #bild nicht sichtbar');
+      const pfad = join(a.aus, `${a.praefix}_nah.png`);
+      await seite.screenshot({ path: pfad, clip: { x: box.x + x0 * NAH.skala, y: box.y + y0 * NAH.skala, width: NAH.breite * NAH.skala, height: NAH.hoehe * NAH.skala } });
+      process.stdout.write(`${pfad}  frame ${z.frame}  Ausschnitt x ${x0} y ${y0}  figur ${z.figur.aktion}  bolzer ${bolzer === undefined ? '-' : bolzer.modus}\n`);
+    }
     if (fehler.length > 0) throw new Error(`Fehler in der Seite: ${fehler.join('; ')}`);
   } finally {
     await browser.close();

@@ -205,3 +205,76 @@ export const FARBE = {
   hindernis_flaeche: 'rgba(0, 0, 0, 0.35)',
   treffer: '#ffffff',
 } as const;
+
+// ===========================================================================
+// Sprites (Auftrag 4, Phase 3, G7; docs/grafik.md 9): Werte der Darstellung,
+// die die Blätter nicht tragen. Je Wert die Herkunft; die Tests vergleichen
+// die übernommenen Maße mit grafik/quelle/ (grafik_zuordnung.test.ts).
+// ===========================================================================
+
+/** Ordner der Blätter relativ zu index.html (Auftrag 4, 2.2: der Browser lädt grafik/ausgabe/ direkt). */
+export const GRAFIK_ORDNER = 'grafik/ausgabe/';
+/** Konturviolett RGB (palette.ts KONTUR, docs/grafik.md 1.2): nur diese Pixel zeigt das Schutzblinken (G4-15). */
+export const KONTUR_RGB: readonly [number, number, number] = [0x14, 0x0e, 0x22];
+/** Schatten der Sprites: SCHATTEN_BLAU (palette.ts) mit der Deckkraft von FARBE.schatten (Auftrag 4, 1.5: „wie heute“), Ellipse pixelgenau. */
+export const SCHATTEN_SPRITE = { farbe: '#0a1230', deckkraft: 0.45 } as const;
+
+/**
+ * Werferpunkt W je Bild der Waffenanimationen von Vela (docs/grafik.md 4.1,
+ * G1-7; figuren/vela_kampf.ts werferPunkte): Mitte des vorderen Handschuhs in
+ * px vom Fußpunkt, x nach vorn, y nach oben negativ.
+ */
+export const WERFER_PUNKTE: Readonly<Record<'waffe_stand' | 'waffe_gehen' | 'waffe_schuss', readonly (readonly [number, number])[]>> = {
+  waffe_stand: [[13, -52]],
+  waffe_gehen: [
+    [15, -48], [15, -51], [15, -51], [15, -51], [15, -51], [15, -49],
+    [15, -48], [15, -51], [15, -51], [15, -51], [15, -51], [15, -49],
+  ],
+  waffe_schuss: [[14, -50], [9, -51], [11, -51]],
+};
+/** Griffpunkt und Mündung des Raketenwerfers in Objektkoordinaten (docs/grafik.md 4.7; gegenstaende.ts WERFER.griffpunkt, muendungspunkt). */
+export const WERFER_GRIFF = { x: -3, y: -1.5 } as const;
+export const WERFER_MUENDUNG = { x: 13, y: -4 } as const;
+
+/** Ansatz des Magnetstoßes je Kettenstufe relativ zu Velas Fußpunkt, y nach unten (docs/grafik.md 4.7; effekte.ts MAGNETSTOSS_ANSATZ). */
+export const MAGNETSTOSS_ANSATZ: readonly (readonly [number, number])[] = [[50, -47], [50, -46], [44, -65], [47, -41]];
+/** Ansatz im zweiten Fenster der Kette 4 (effekte.ts MAGNETSTOSS_ANSATZ_4B). */
+export const MAGNETSTOSS_ANSATZ_4B: readonly [number, number] = [46, -41];
+
+/**
+ * Mündungsblitz von Velas Werfer (G7-3): die ersten zwei Bilder des
+ * Trefferfunkens (weißer Blitz, Stern) je 2 Frames ab dem Abschuss, Mitte
+ * 4 px vor der Mündung.
+ */
+export const MUENDUNGSBLITZ = { bilder: [0, 1], dauer: 2, vor: 4 } as const;
+
+/**
+ * Trefferfunke (docs/grafik.md 4.7, Vorschlag G4; G7-4): x = Ziel-x plus
+ * FUNKE_ABSTAND zum Angreifer hin (Körper beginnt etwa 25 px vor der
+ * Position), bei Behältern ihre halbe Breite; Höhe über dem Ziel je Angriff:
+ * Kette an der Ansatzhöhe der Faust (MAGNETSTOSS_ANSATZ), Explosion, Wurf und
+ * Würfe 30 px, Spezialangriff am Boden, Gegnerschläge in Brusthöhe der Figur.
+ */
+export const FUNKE_ABSTAND = 20;
+export const FUNKE_HOEHE: Readonly<Record<string, number>> = {
+  KT1: 47, KT2: 46, KT3: 65, KT4: 41,
+  SN: 40, SR: 40, SH: 50, ST: 50, SA: 47, SS: 40,
+  KN: 30, WU: 30, WG: 30, SP: 12, RX: 30, LN: 30,
+  BA: 45, BB: 45, BC: 50, BUA: 50, BUB: 35, RA: 45, RB: 45, RU: 45, RS: 40,
+  ZR: 30, ZK: 40, AS: 50, AN: 40, KP: 20, PA: 40,
+};
+/** Höhe des Funkens für Angriffe ohne Eintrag. */
+export const FUNKE_HOEHE_STANDARD = 40;
+/** Treffer ohne Funken (G7-4): der Wurf WU ist das Packen über den Kopf, sein Aufprall zeigt Staub. */
+export const FUNKE_OHNE: readonly string[] = ['WU'];
+/** Trümmer blinken ab Uhr 33 je 2 Frames sichtbar, 2 unsichtbar (docs/grafik.md 4.7, G4-8). */
+export const TRUEMMER_BLINKEN_AB = 33;
+/** Bühne, für die die Hintergrundblätter gebaut sind (G5: hintergrund/lage.ts liest daten/stages/scheibe.txt); andere Bühnen zeigen den Hintergrund der Platzhalter (G7-9). */
+export const HINTERGRUND_BUEHNE = 'scheibe';
+/**
+ * Getragener Gegner beim Wurf (G7-7): Anteil des Wegs von der Haltelage zur
+ * Loslassstelle der Logik (13 px vor bzw. hinter der Figur, 59 px hoch,
+ * werte.ts WURF_LOSLASS_X, WURF_LOSLASS_HOEHE) je Bild der Animation wurf:
+ * fassen, anheben, über dem Kopf (ab Bild 2 ganz).
+ */
+export const WURF_TRAGEN_ANTEIL: readonly number[] = [0, 0.5, 1];

@@ -8,11 +8,19 @@
 // Spiellogik (Auftrag 3, 2.3). Pause, Debug-Anzeige, Aufzeichnung und
 // Neustart liegen außerhalb der Logik (Welt 10.4, 10.6, 11.3).
 //
+// Grafik (Auftrag 4, Phase 3, G7): vor dem ersten Bild lädt sprites.ts die
+// Blätter aus grafik/ausgabe/; mit ?platzhalter=1 oder wenn ein Blatt nicht
+// lädt (Meldung in der Konsole), zeichnet die Darstellung die Rechtecke. Der
+// Verlauf (verlauf.ts) liest die Welt nach jedem Logikschritt für die
+// Effekte der Darstellung.
+//
 // Bedienung: docs/scheibe.md, Abschnitt „Bedienung“.
 
 import type { AnzeigeDaten } from '../kern/rahmen.ts';
 import type { Welt } from '../kern/welt.ts';
 import type { Steuertaste } from './tastatur.ts';
+import type { Grafik } from './sprites.ts';
+import type { SpriteDarstellung } from './zeichnen.ts';
 import { EINS } from '../kern/festkomma.ts';
 import { blickText } from '../kern/entitaeten.ts';
 import { anzeige } from '../kern/rahmen.ts';
@@ -24,6 +32,8 @@ import { zeichneDebugText, zeichneDebugWelt } from './debug.ts';
 import { Takt } from './schleife.ts';
 import { BUEHNE, SEED_STANDARD, Sitzung, naechsterSeed } from './sitzung.ts';
 import { Tastatur } from './tastatur.ts';
+import { ladeGrafik } from './sprites.ts';
+import { Verlauf } from './verlauf.ts';
 import { zeichneBild, zeichneObersteEbene } from './zeichnen.ts';
 
 /** Stage-Datei einer Bühne relativ zu index.html (Welt 2.3). */
@@ -132,12 +142,14 @@ class Spiel {
   private readonly ctx: CanvasRenderingContext2D;
   private readonly tastatur: Tastatur;
   private readonly takt = new Takt();
+  /** Sprites (Grafik und Verlauf); null = Rechtecke (?platzhalter=1 oder Rückfall) */
+  private readonly sprites: SpriteDarstellung | null;
   debugAn = false;
   pauseAn = false;
   /** Frame, ab dem die laufende Aufzeichnung (F2) markiert ist; null = keine */
   aufzeichnungAb: number | null = null;
 
-  constructor(canvas: HTMLCanvasElement, stageText: string, seed: number, debug: boolean) {
+  constructor(canvas: HTMLCanvasElement, stageText: string, seed: number, debug: boolean, grafik: Grafik | null) {
     const ctx = canvas.getContext('2d');
     if (ctx === null) throw new Error('Canvas 2D nicht verfügbar');
     this.canvas = canvas;
@@ -145,6 +157,7 @@ class Spiel {
     this.ctx.imageSmoothingEnabled = false;
     this.debugAn = debug;
     this.sitzung = new Sitzung(stageText, seed);
+    this.sprites = grafik === null ? null : { grafik, verlauf: new Verlauf(grafik.atlanten) };
     this.tastatur = new Tastatur(window, (t) => this.steuer(t));
     window.addEventListener('resize', () => this.skalieren());
     document.addEventListener('visibilitychange', () => this.takt.anhalten());
@@ -175,7 +188,7 @@ class Spiel {
 
   /** Ein Logikschritt mit der Tastatur; nach dem Ende der Scheibe Neustart mit Seed + 1 (Welt 10.3, 10.5). */
   private logikSchritt(): void {
-    this.sitzung.schritt(this.tastatur.abfragen());
+    if (this.sitzung.schritt(this.tastatur.abfragen())) this.beobachten();
     if (this.sitzung.welt.beendet && this.sitzung.szene === null) this.neustart(naechsterSeed(this.sitzung.seed));
   }
 
@@ -231,19 +244,29 @@ class Spiel {
 
   /** Logikschritte über window.comet (Eingabedatei oder Tastenstand), ohne Neustart am Ende. */
   schritte(n: number): void {
-    for (let i = 0; i < n; i++) if (!this.sitzung.schritt(this.tastatur.abfragen())) break;
+    for (let i = 0; i < n; i++) {
+      if (!this.sitzung.schritt(this.tastatur.abfragen())) break;
+      this.beobachten();
+    }
     this.zeichnen();
+  }
+
+  /** Verlauf der Darstellung nach einem Logikschritt (Effekte, Gehframes); liest nur. */
+  private beobachten(): void {
+    if (this.sprites !== null) this.sprites.verlauf.beobachten(this.sitzung.welt);
   }
 
   zeichnen(): void {
     const ctx = this.ctx;
     const welt = this.sitzung.welt;
-    const a = zeichneBild(ctx, welt);
+    // neue Welt (Neustart, Eingabedatei, Prüfszene): der Verlauf beginnt mit ihr neu
+    this.beobachten();
+    const a = zeichneBild(ctx, welt, this.sprites);
     if (this.debugAn) {
       zeichneDebugWelt(ctx, welt);
       zeichneDebugText(ctx, welt, { seed: this.sitzung.seed, tasten: this.tastatur.stand(), quelle: this.sitzung.quelle, pause: this.pauseAn });
     }
-    zeichneObersteEbene(ctx, a, { pause: this.pauseAn, aufzeichnung: this.aufzeichnungAb !== null });
+    zeichneObersteEbene(ctx, a, { pause: this.pauseAn, aufzeichnung: this.aufzeichnungAb !== null }, this.sprites === null ? null : this.sprites.grafik);
   }
 
   zustand(): CometZustand {
@@ -376,12 +399,27 @@ function schnittstelle(spiel: Spiel): CometSchnittstelle {
   };
 }
 
+/**
+ * Grafik laden (Auftrag 4, Phase 3): null mit ?platzhalter=1 oder wenn ein
+ * Blatt oder Atlas nicht lädt; dann zeichnet die Darstellung die Rechtecke
+ * und meldet den Grund in der Konsole.
+ */
+async function grafikLaden(p: URLSearchParams): Promise<Grafik | null> {
+  if (p.get('platzhalter') === '1') return null;
+  try {
+    return await ladeGrafik();
+  } catch (fehler: unknown) {
+    console.error(`Grafik lädt nicht, Rückfall auf die Rechtecke: ${fehler instanceof Error ? fehler.message : String(fehler)}`);
+    return null;
+  }
+}
+
 async function starten(): Promise<void> {
   const canvas = document.getElementById('bild');
   if (!(canvas instanceof HTMLCanvasElement)) throw new Error('Canvas #bild fehlt in index.html');
-  const stageText = await stageLaden(BUEHNE);
   const p = new URLSearchParams(window.location.search);
-  const spiel = new Spiel(canvas, stageText, seedAusAdresse(p), p.get('debug') === '1');
+  const [stageText, grafik] = await Promise.all([stageLaden(BUEHNE), grafikLaden(p)]);
+  const spiel = new Spiel(canvas, stageText, seedAusAdresse(p), p.get('debug') === '1', grafik);
   canvas.focus();
   window.comet = schnittstelle(spiel);
 }
