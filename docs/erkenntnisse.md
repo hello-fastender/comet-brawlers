@@ -61,7 +61,7 @@ den beiden Spezifikationen:
 | `docs/design-gegner-stages.md` | Designdokument Gegner, Bosse und Stages (Entwurf): Gegnerrollen, Verhaltensmodell, Wiederverwendung, Bosse, Stage-Schablone, acht Stages, erste Stage im Detail, Gegenstände, Animationsplan |
 | `docs/spezifikation-kampf.md` | Spezifikation der vertikalen Scheibe, Kampfsystem: Zeit und Raum (60 Hz, Festkomma 16.16), Zustandsautomat der Figur, Trefferprüfung, Schaden, LP und Schutz, Trefferreaktion der Gegner, Griff und Wurf, Sprint und Spezialangriff, Waffen, Frame-Protokoll, Abnahmetests, Platzhalter und Fragen (beantwortet mit E10 bis E22) |
 | `docs/spezifikation-welt.md` | Spezifikation der vertikalen Scheibe, Welt: Stage-Daten, Kamera, Aktivierung und Wellen, Gegnerlogik der Nah- und Fernkämpfer, Boss, Rang, Gegenstände und Behälter, Anzeige und Rahmen, Zufall und Determinismus, Abnahmetests, Fragen (beantwortet mit E10 bis E22) |
-| `docs/scheibe.md` | Programm der vertikalen Scheibe (im Aufbau, Auftrag 3; Code in `spiel/`): Bedienung, Bau und Befehle, Werkzeuge, Tests, Stand der Abnahme, Abweichungen und Lücken, die beim Codieren festgelegt wurden |
+| `docs/scheibe.md` | Programm der vertikalen Scheibe (Auftrag 3; Code in `spiel/`): Bedienung, Bau und Befehle, Werkzeuge, Tests, Stand der Abnahme, Abweichungen und Lücken, die beim Codieren festgelegt wurden |
 | `research/captcomm/notes.md` | Methode, alle Messungen mit Status und Belegen, Speicheradressen |
 | `research/captcomm/grafik/README.md` | Stages, Spielfiguren und Gegner mit Bildern, Kennwerten und Animationsdauern |
 | `research/captcomm/logs/` | Belege der Messungen (CSV) |
@@ -94,6 +94,7 @@ stichprobenweise nachgemessen; **offen** heißt nicht untersucht.
 | Titel, Figurenwahl, Anzeigeleiste, Punkte, Leben, Continue | Punkte gemessen (`mechanik.md`, „Gegenstände und Waffen“); Leben und Neueinstieg gemessen (`mechanik.md`, „Tod und Neueinstieg der Figur“); übrige offen |
 | Mehrspieler | offen |
 | Sound | nicht Teil der Analyse |
+| Vertikale Scheibe | Programm in `spiel/` (Auftrag 3, Stand 2026-10-03): Logikkern, Prüfläufe und Browserfassung fertig; alle 31 Abnahmetests der Spezifikationen (Kampf T1 bis T20 und D1, Welt W-T1 bis W-T10) grün, 214 Tests insgesamt; die Vorführung (Seed 1, 1500 Frames) ergibt bitgleiche Protokolle; Stichprobe gegen `mechanik.md` (Laufen, Sprunghöhe, Kettenreichweite, Trefferstopp, Haltepunkt) stimmt; Festlegungen beim Codieren L1 bis L122 in `docs/scheibe.md` und in den Spezifikationen |
 
 ## Was das Kampfgefühl ausmacht
 
