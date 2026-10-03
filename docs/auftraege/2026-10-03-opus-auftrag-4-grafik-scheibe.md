@@ -637,3 +637,14 @@ Weg C, wird der Umsetzer der Standardweg für die übrigen Figuren, und der
 Nutzer liefert je Figur die Blätter nach demselben Muster; die
 Gliederpuppe bleibt für Effekte, Gegenstände und als Ersatz, wenn ein
 Blatt fehlt.
+
+### 9.5 Blätter für weitere Figuren
+
+Der Nutzer darf schon in Phase 2 Blätter für weitere Figuren liefern
+(Bestellliste in `docs/grafik-bestellung.md`). Dann setzt Opus sie mit dem
+Umsetzer um, parallel zur Gliederpuppe der Agenten G1 bis G3, und erzeugt
+je Figur ein Vergleichsbild. Fehlende Bilder nennt Opus in `docs/grafik.md`
+als Nachbestellung („nur dieses eine Bild“), die Gliederpuppe füllt die
+Lücke, bis das Bild kommt. Gegenstände, Behälter, Explosion und
+Hintergründe aus Grok-Blättern gehen denselben Weg (G4, G5 setzen um
+statt zu zeichnen, wenn Blätter vorliegen).
