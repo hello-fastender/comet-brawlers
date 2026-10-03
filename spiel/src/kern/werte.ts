@@ -967,3 +967,58 @@ export const PRUEF_RANG_STANDARD = 9;
 // ===========================================================================
 // Ergänzungen aus Stufe 2 (nur anhängen, je Konstante mit Quellkommentar)
 // ===========================================================================
+
+// --- Ergänzung K2: Trefferprüfung und Trefferreaktion ---
+/** Wurftreffer in E+1: umwerfender Treffer W = E+1 (Kampf 8.4; mechanik „Trefferreaktion der Gegner“: K beim Wurf E+1). */
+export const WURF_TREFFER = 1;
+
+// --- Ergänzung K3: Gehrichtung der Gegner ---
+/**
+ * Gehrichtung der Gegner: cos(k · 11,25°) für k = 0 … 8 als Rohwert 16.16,
+ * einmal auf 1/65536 gerundet; sin(k · 11,25°) ist Eintrag 8 − k (Welt 5.3:
+ * Schritt (v_x · cos α, v_z · sin α) aus einer Tabelle, auf 1/65536 gerundet).
+ */
+export const GEH_COS: readonly Fest[] = [65536, 64277, 60547, 54491, 46341, 36410, 25080, 12785, 0];
+/**
+ * Sektorgrenzen der Gehrichtung: tan((k + 0,5) · 11,25°) für k = 0 … 7 als
+ * Rohwert 16.16 (Welt 5.3: Sektor über eine feste Tabelle der Tangensgrenzen,
+ * nicht über eine Winkelfunktion).
+ */
+export const GEH_TAN_GRENZEN: readonly Fest[] = [6455, 19880, 35030, 53784, 79856, 122609, 216043, 665398];
+
+// --- Ergänzung K4: Boss Ballast ---
+/**
+ * Boss nach dem Umwerfen: vom Bodenkontakt (W+46, 109,25 px) bis zur Ruhe
+ * (W+55, 127,25 px) 18 px in 9 Frames, also 2 px/Frame (Welt 7.1:
+ * BOSS_UMWERFEN_RUHE_WEG; Verlauf Festlegung K4).
+ */
+export const BOSS_AUSROLLEN_V: Fest = ausDezimal(2);
+/**
+ * Wahl nach Abstand (Welt 7.2): bei |dx| < 100 Armschwung 2/3, Körperpresse
+ * 1/3; sonst Ansturm, Armschwung, Körperpresse je 1/3. Eine Ziehung
+ * gleichverteilt aus der Liste (zufall.ts wahl).
+ */
+export const BOSS_WAHL_NAH: readonly string[] = ['AS', 'AS', 'KP'];
+export const BOSS_WAHL_FERN: readonly string[] = ['AN', 'AS', 'KP'];
+/**
+ * Ansturm: Auslauf nach dem Lauf mit 4 px/Frame, je Frame 0,25 px/Frame
+ * weniger: 15 Frames, 30 px (Welt 7.3: Auslauf 24 bis 30 px; Verlauf
+ * Festlegung K4).
+ */
+export const AN_AUSLAUF_ABNAHME: Fest = ausDezimal(0.25);
+/**
+ * Körperpresse, Höhe nach k Bahnframes (Welt 7.3, Verlauf S2; Festlegung K4):
+ * bis zum Scheitel 107,5 − c·(31 − k)², danach 107,5 − c'·(k − 31)², mit
+ * c = 107,5/31² und c' = 107,5/33² (Landung in A+64), einmal auf 1/65536
+ * nach −∞ gerundet; in der Landung Höhe 0.
+ */
+export const KP_STEIG_FAKTOR: Fest = ausBruch(215, 1922);
+export const KP_FALL_FAKTOR: Fest = ausBruch(215, 2178);
+
+// --- Ergänzung K1: Figur ---
+/**
+ * Fall nach dem Neueinstieg: Höhe sinkt ab N+1 (256 px) um 5 px je Frame, in
+ * N+52 also 1 px, Landung LN = N+53 auf Höhe 0 (Kampf 6.5, P28: Höhenverlauf
+ * frei für die Darstellung, Landung fest in N+53; Verlauf Festlegung K1).
+ */
+export const NEUEINSTIEG_FALL_V: Fest = ausDezimal(5);

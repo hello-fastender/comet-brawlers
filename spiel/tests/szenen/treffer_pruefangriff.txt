@@ -1,0 +1,10 @@
+# Prüfszene K2 (Kampf 11.2): Prüfangriff einer Puppe gegen die stehende Figur.
+# Standard nach Kampf 12: Prüfbühne, Seed 1, Rang 9 fest, Figur x 100, z 100,
+# Blick rechts, 72 LP. Puppe leicht s0 bei x 146 (Figur 46 px vor ihr).
+# Erwartung: Treffer T:s0>F:PA:5:R in Frame 19, danach kein weiterer Treffer
+# dieses Prüfangriffs (ein Gegnerangriff trifft die Figur einmal, Kampf 5.8).
+szene name=treffer_pruefangriff endframe=30 seed=1 buehne=pruefbuehne
+pruefstart rang=9 rang.fest
+figur x=100 z=100 blick=R lp=72
+gegner slot=0 typ=Puppe rolle=leicht x=146 z=100 lp=16 vorplatziert=ja
+pruefangriff slot=0 von=19 bis=23 schaden=5 umwerfen=nein

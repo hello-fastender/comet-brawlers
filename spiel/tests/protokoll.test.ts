@@ -73,13 +73,14 @@ test('protokoll: Prüflauf mit leerer Logik schreibt ein formal richtiges Protok
 test('protokoll: Objektprotokoll mit Behältern der Bühne scheibe (Kampf 11.5)', () => {
   const e = laufDateien('tests/szenen/beispiel_scheibe.txt');
   const o = csv(e.objekte);
-  assert.equal(o.zeilen.length, 120 * 5);
-  const erste = o.zeilen.slice(0, 5).map((z) => [z[1], z[2], z[3], z[4], z[5], z[11]]);
+  // Stand nach Stufe 2 (K3): Bei Kamera-x 1792 verschwindet das Fass F1 in
+  // Frame 1 beim Scrollen (Welt 9.2); welle.7=nur_boss öffnet die Bosskisten,
+  // ihr Inhalt erscheint in Frame 1 in den kleinsten freien Slots (Lücke L17).
+  assert.equal(o.zeilen.length, 120 * 3);
+  const erste = o.zeilen.slice(0, 3).map((z) => [z[1], z[2], z[3], z[4], z[5], z[11]]);
   assert.deepEqual(erste, [
-    ['o20', 'Behälter', 'Fass', '560', '158', 'Kometenbraten'],
-    ['o21', 'Behälter', 'Bosskiste', '2040', '95', 'Raketenwerfer'],
-    ['o22', 'Behälter', 'Bosskiste', '2080', '95', 'Raketenwerfer'],
-    ['o23', 'Behälter', 'Bosskiste', '2120', '95', 'leer'],
+    ['o20', 'Gegenstand', 'Raketenwerfer', '2040', '95', ''],
+    ['o21', 'Gegenstand', 'Raketenwerfer', '2080', '95', ''],
     ['o24', 'Behälter', 'Fass', '2150', '60', 'Raketenwerfer'],
   ]);
   for (const z of o.zeilen) assert.equal(z.length, OBJEKT_SPALTEN.length);
@@ -90,8 +91,8 @@ test('protokoll: Objektprotokoll mit Behältern der Bühne scheibe (Kampf 11.5)'
   assert.equal(zelle(p, z59, 's2_typ'), '');
   assert.equal(zelle(p, z60, 's2_typ'), 'Bolzer');
   assert.equal(zelle(p, z60, 's2_timer'), '1');
-  assert.equal(zelle(p, z60, 'ereignis'), 'EI:s2.erscheint=Bolzer');
+  assert.equal(zelle(p, z60, 'ereignis'), 'EI:s2.erscheint=Bolzer;RE:s2:L');
   assert.equal(zelle(p, z60, 'zufall_haupt'), '3');
   assert.deepEqual(['kamera_x', 'kamera_y', 'kamera_modus', 's0_typ', 's0_x', 's0_blick', 's0_lp', 's0_lpfolge', 's0_folge'].map((s) => zelle(p, z59, s)), ['1792', '0', 'ARENA', 'Ballast', '2060', 'L', '100', '0', '0']);
-  assert.equal(zelle(p, p.zeilen[89] as string[], 'ereignis'), 'EI:welle.9.jetzt=ja');
+  assert.equal(zelle(p, p.zeilen[89] as string[], 'ereignis'), 'WL:9;EI:welle.9.jetzt=ja');
 });

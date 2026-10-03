@@ -121,14 +121,17 @@ test('welt: Gegner per Eingriff mit eigenem Zufall (Welt 11.1) und sn_timer', ()
   logikSchritt(w, 0);
   const g3 = w.gegner[3] as Gegner;
   assert.equal(g3.belegt, true);
-  assert.equal(g3.modus, 'FREI');
-  assert.equal(g3.modus_uhr, 1);
-  assert.equal(g3.lp_offen, true); // nicht vorplatziert: LP nach Rang (K3)
+  // Stand nach Stufe 2 (K3): Der erscheinende Bolzer bekommt seine LP nach
+  // Rang schon im Frame des Erscheinens (Welt-T9: „1700 s2_lp 23“) und handelt
+  // im selben Frame (Recht der rechten Seite, Annähern).
+  assert.equal(g3.modus, 'ANNAEHERN');
+  assert.equal(g3.lp_offen, false);
+  assert.equal(g3.lp, 23);
   assert.equal(w.zufall.ziehungen, 2);
-  assert.deepEqual(w.ereignisse, ['EI:s3.erscheint=Bolzer']);
-  modusSetzen(g3, 'ANNAEHERN');
+  assert.deepEqual(w.ereignisse, ['EI:s3.erscheint=Bolzer', 'RE:s3:R']);
+  modusSetzen(g3, 'ABWARTEN');
   assert.equal(g3.modus_uhr, 1);
-  modusSetzen(g3, 'ANNAEHERN');
+  modusSetzen(g3, 'ABWARTEN');
   assert.equal(g3.modus_uhr, 1);
 });
 

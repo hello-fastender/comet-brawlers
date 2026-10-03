@@ -1,0 +1,10 @@
+# Prüfstart PS8b nach docs/spezifikation-welt.md, 12 (K4): wie PS7, Boss mit
+# 2 LP; Puppen (Logik aus, Rolle leicht) in s1, s2, s3.
+szene name=boss_ps8b endframe=600 seed=12345 buehne=scheibe
+pruefstart welle.1=aus welle.2=aus welle.9=aus welle.7=nur_boss rang.fest
+pruefstart kamera.x=1792 kamera.modus=ARENA boss.angriffe=aus boss.bewegung=aus boss.lp=2
+figur x=2000 z=50 blick=R
+gegner slot=0 typ=Ballast x=2060 z=50 blick=L
+gegner slot=1 typ=Bolzer rolle=leicht x=2150 z=50 logik=aus lp=16
+gegner slot=2 typ=Bolzer rolle=leicht x=1880 z=50 logik=aus lp=16
+gegner slot=3 typ=Bolzer rolle=leicht x=1860 z=70 logik=aus lp=16

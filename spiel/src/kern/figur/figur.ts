@@ -1,61 +1,81 @@
-// Platzhalter (Stufe 1, K0) für K1: Spielfigur nach docs/spezifikation-kampf.md,
-// Abschnitte 4 (Zustandsautomat), 5.2, 5.3, 5.6 (Angriffe, Trefferstopp,
-// Kette), 8 (Griff, Kniestoß, Wurf, geworfener Gegner), 9 (Sprint,
-// Spezialangriff), 10 (Waffen, Aufnehmen).
+// Spielfigur (K1) nach docs/spezifikation-kampf.md, Abschnitte 4
+// (Zustandsautomat), 5.2, 5.3, 5.6 (Angriffe, Trefferstopp, Kette), 8 (Griff,
+// Kniestoß, Wurf, geworfener Gegner), 9 (Sprint, Spezialangriff), 10 (Waffen,
+// Aufnehmen); Schaden, Schutz, Tod und Neueinstieg in schaden.ts (Kampf 6).
 //
-// K1 darf in src/kern/figur/ beliebige Dateien anlegen; welt.ts ruft genau
-// die hier exportierten Funktionen auf (Signaturen nicht ändern).
+// welt.ts ruft genau die hier exportierten Funktionen (Vertrag Stufe 2):
+//   figurInitialisieren  nach erzeugeWelt
+//   figurEingabe         KS1  Doppeltipp-Erkennung (9.1)
+//   figurSchritt         KS2  Timer, Zustandsübergänge, Bewegung, Instanz aktiv
+//   figurGeschosseSchritt KS4 Raketen g0–g4, Instanzen WG, Haltelage
+//   figurHatGetroffen    KS7  Urheberseite (Trefferstopp, Kette, Kosten)
+//   griffPruefen         Ende KS7 (Griff am Ende eines LAUF-Frames)
+// Dateien: intern.ts (Zustand, Eingabe), basis.ts (Aktionswechsel, Bewegung),
+// angriffe.ts (Instanzen, aktive Frames), zustaende.ts (Automat), griff.ts,
+// waffen.ts.
 
 import type { Treffer } from '../entitaeten.ts';
 import type { Welt } from '../welt.ts';
+import { figurZustandSetzen } from '../schaden.ts';
+import { griffPruefenIntern, wurfGeschosseSchritt } from './griff.ts';
+import { internNeu, schwellenSetzen } from './intern.ts';
+import { raketenSchritt } from './waffen.ts';
+import { figurKs1, figurKs2, figurUrheberTreffer } from './zustaende.ts';
 
 /**
  * Nach erzeugeWelt: Figur steht am Start (x, z, blick, lp, waffe, munition
- * sind gesetzt, aktion STAND, zustand 1, uhr 1). Hier weitere Startwerte.
+ * sind gesetzt, aktion STAND, zustand 1, uhr 1). Interner Zustand neu,
+ * Drücke ab Frame 0, zustand nach Kampf 4.1.
  */
-export function figurInitialisieren(welt: Welt): void {}
+export function figurInitialisieren(welt: Welt): void {
+  const f = welt.figur;
+  internNeu(f);
+  schwellenSetzen(f, 0, 0, 0);
+  figurZustandSetzen(welt);
+}
 
 /**
- * KS1 (Kampf 2.2): welt.eingabe.t1 = T(f−1) und welt.eingabe.neu (neue Drücke
- * in T(f−1)) sind gesetzt. Sprint-Erkennung fortschreiben (Kampf 9.1, Feld
- * figur.tipp). Bei welt.rahmen.steuerung = 0 wertet die Figur keine Eingaben
- * aus (Welt 3 KA13, 10.3, 10.5; Ausnahme Neueinstieg LN bis LN+4).
+ * KS1 (Kampf 2.2): welt.eingabe.t1 = T(f−1) und welt.eingabe.neu sind
+ * gesetzt. Sprint-Erkennung fortschreiben (Kampf 9.1, Feld figur.tipp). Bei
+ * welt.rahmen.steuerung = 0 wertet die Figur keine Eingaben aus.
  */
-export function figurEingabe(welt: Welt): void {}
+export function figurEingabe(welt: Welt): void {
+  figurKs1(welt);
+}
 
 /**
- * KS2 (Kampf 2.2): Timer zählen (schutz vor der Trefferprüfung, stopp,
- * griffsperre, haltefrist), Zustandsübergänge nach Kampf 4 (Vorrang 4.2),
- * Bewegung mit Begrenzung (stage.ts schrittBegrenzt; Ränder mit Kamera-x des
- * Vorframes, welt.kamera.x), Angriffsinstanz figur.angriff anlegen bzw.
- * fortschreiben und figur.angriff.aktiv für diesen Frame setzen; ebenso die
- * Instanz WG am geworfenen Gegner (Kampf 8.5) und LN bei der Landung nach dem
- * Neueinstieg (Kampf 6.5). Ereignisse SP, KE, WU, AU, WA, AB, K; G schreibt
- * griffPruefen. Beim Tod in t setzt K1 figur.tod_t und figur.neueinstieg_n
- * (= t+120); Leben −1, Rang −3 und NE:F im Frame N übernimmt K3 (rang.ts,
- * rahmen.ts, Welt 8, 10.3), LP 72 und das Erscheinen in N+1 K1.
+ * KS2 (Kampf 2.2): Timer, Zustandsübergänge nach Kampf 4 (Vorrang 4.2),
+ * Bewegung mit Begrenzung (Welt 2.2), Angriffsinstanz figur.angriff anlegen
+ * bzw. fortschreiben und aktiv setzen; Ereignisse SP, KE, WU, AU, WA, AB, K, L.
+ * Beim Tod in t: figur.tod_t, figur.neueinstieg_n = t+120; in N LP 72, in N+1
+ * Erscheinen (Kampf 6.5).
  */
-export function figurSchritt(welt: Welt): void {}
+export function figurSchritt(welt: Welt): void {
+  figurKs2(welt);
+}
 
 /**
- * KS4 (Kampf 2.2, 10.3): Raketen der Figur in g0 bis g4, Slots aufsteigend:
- * Bewegung, Einschlag (EX:gn), Explosion RX als Angriffsinstanz des
- * Geschossslots (urheber 'f'), Lebensdauer, Freigabe.
+ * KS4 (Kampf 2.2, 8.5, 10.3): Raketen der Figur in g0 bis g4 (Flug,
+ * Einschlag EX:gn, Explosion RX, Freigabe), Instanzen WG der geworfenen
+ * Gegner (E+1 bis E+58), Haltelage eines gehaltenen Gegners.
  */
-export function figurGeschosseSchritt(welt: Welt): void {}
+export function figurGeschosseSchritt(welt: Welt): void {
+  raketenSchritt(welt);
+  wurfGeschosseSchritt(welt);
+}
 
 /**
  * KS7, Seite des Urhebers (Kampf 5.3, 6.4, 5.6): für jeden wirksamen Treffer
- * (t.wirkung ≠ 'W') mit t.urheber = 'f', in Trefferreihenfolge. Trefferstopp
- * stopp = 7 einmal je Frame und Instanz (nicht für KN, WU, WG, RX; SP einmal je
- * Flächenstufe; SS nur in A+13), Kosten des Spezialangriffs vormerken
- * (h+8), Kette fortschreiben (kombo_h).
+ * (t.wirkung ≠ 'W') mit t.urheber = 'f', in Trefferreihenfolge.
  */
-export function figurHatGetroffen(welt: Welt, t: Treffer): void {}
+export function figurHatGetroffen(welt: Welt, t: Treffer): void {
+  figurUrheberTreffer(welt, t);
+}
 
 /**
  * KS7, Ende (Kampf 8.1): Griff am Ende eines LAUF-Frames; Haltelage (P19);
- * Ereignis G:F>sn. Läuft nach allen Trefferfolgen, damit getroffene Gegner
- * (Zustand 3) nicht gegriffen werden.
+ * Ereignis G:F>sn.
  */
-export function griffPruefen(welt: Welt): void {}
+export function griffPruefen(welt: Welt): void {
+  griffPruefenIntern(welt);
+}
