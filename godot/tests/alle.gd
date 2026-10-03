@@ -647,6 +647,20 @@ func _szenen(nur: String) -> void:
 
 
 
+## Meldet das Ergebnis eines Testmoduls mit der Schnittstelle lauf() -> {"geprueft", "fehler"}.
+func _modul(titel: String, r: Dictionary) -> void:
+	var n: int = r["geprueft"] as int
+	var fehler: Array = r["fehler"] as Array
+	_geprueft += n
+	_fehler += fehler.size()
+	if fehler.is_empty():
+		print("ok %s (%d Prüfungen)" % [titel, n])
+	else:
+		print("FEHLER %s: %d von %d Prüfungen" % [titel, fehler.size(), n])
+		for f: String in fehler:
+			print("    %s" % f)
+
+
 # ===========================================================================
 # Hauptablauf
 # ===========================================================================
@@ -675,6 +689,7 @@ func _init() -> void:
 	_gruppe("Stage-Parser", _test_stage)
 	_gruppe("Protokollformat", _test_protokollformat)
 	_gruppe("Reinheit von godot/kern", _test_reinheit)
+	_modul("Darstellung", DarstellungTest.lauf())
 	if not ohne_szenen:
 		_szenen(nur)
 	var sekunden: float = (Time.get_ticks_msec() - t0) / 1000.0

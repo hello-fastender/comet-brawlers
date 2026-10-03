@@ -1,0 +1,41 @@
+# Teile von Vela (erzeugt von werkzeuge/umsetzer.gd, nicht von Hand ändern)
+# Quelle: spiel/grafik/quelle/fremd/vela/vela_t_teile.png, Maßstab: ganze Figur 142 Bildpixel hoch (2x)
+# Farben insgesamt: 64 (Quellfarben 7854, Medianschnitt, höchstens 64)
+# Koordinaten in Pixeln des jeweiligen Teilbildes, Ursprung oben links.
+# datei  <name> <breite> <hoehe>
+# gelenk <bone> <datei> <eltern-bone> <ansatz_x> <ansatz_y> <dreh_x> <dreh_y> <ruhe_grad>
+#   ansatz = Gelenk am Elternteil (Koordinaten des Elternbildes, das zuerst für den Bone genannt ist)
+#   dreh   = Drehpunkt im eigenen Bild (liegt auf dem Gelenk), ruhe = Ruhedrehung des Bildes um dreh
+datei kopf 27 33
+datei zopf 47 47
+datei rumpf 33 46
+datei becken 30 27
+datei oberarm 18 26
+datei unterarm 18 24
+datei faust 19 16
+datei hand_offen 20 25
+datei oberschenkel 19 27
+datei unterschenkel 16 28
+datei stiefel_seite 25 21
+datei stiefel_vorn 14 27
+datei massstab 57 142
+gelenk Becken becken - 0 0 15 4 0
+gelenk Rumpf rumpf Becken 15 4 16 40 0
+gelenk Kopf kopf Rumpf 17 5 12 29 0
+gelenk Zopf zopf Kopf 2 5 22 5 0
+gelenk OberarmV oberarm Rumpf 30 13 9 5 0
+gelenk OberarmH oberarm Rumpf 5 14 9 5 0
+gelenk UnterarmV unterarm OberarmV 8 24 8 5 0
+gelenk UnterarmH unterarm OberarmH 8 24 8 5 0
+gelenk HandV faust UnterarmV 13 22 3 8 90
+gelenk HandH faust UnterarmH 13 22 3 8 90
+gelenk HandV hand_offen UnterarmV 13 22 10 21 180
+gelenk HandH hand_offen UnterarmH 13 22 10 21 180
+gelenk OberschenkelV oberschenkel Becken 20 14 9 5 0
+gelenk OberschenkelH oberschenkel Becken 10 14 9 5 0
+gelenk UnterschenkelV unterschenkel OberschenkelV 9 23 8 5 0
+gelenk UnterschenkelH unterschenkel OberschenkelH 9 23 8 5 0
+gelenk FussV stiefel_seite UnterschenkelV 8 26 7 5 0
+gelenk FussH stiefel_seite UnterschenkelH 8 26 7 5 0
+gelenk FussV stiefel_vorn UnterschenkelV 8 26 7 5 0
+gelenk FussH stiefel_vorn UnterschenkelH 8 26 7 5 0
