@@ -1,0 +1,28 @@
+# Herkunft der Bildblätter für den Rammbock (Auftrag 4, 9.3, Weg C)
+#
+# Datum:     2026-10-03, vom Nutzer im Opus-Chat hochgeladen
+# Werkzeug:  Grok (Bilderzeugung), Projekt „Comet Brawlers“
+# Prompts:   Projektanweisungen und Blattprompts aus docs/grafik-bestellung.md,
+#            Abschnitt „Rammbock“ (Konzeptbild, Blätter A bis D, Griff)
+# Umwandlung: rammbock_a_posen, rammbock_c_angriffe und rammbock_d_reaktionen
+#            kamen als WebP und sind mit Chromium (Canvas, sRGB) unverändert in
+#            PNG umgewandelt (Opus); die übrigen kamen als PNG.
+#
+# Inhalt laut Nutzer (Bildzahlen von Opus am Blatt nachgezählt):
+#   rammbock_0_konzept.png     Referenz, eine Figur in Kampfhaltung (784 × 1168)
+#   rammbock_a_posen.png       12 Posen im Raster 4 × 3 (2000 × 1827):
+#                              Reihe 1 Stand, Gehen, Gehen, Kampfhaltung;
+#                              Reihe 2 Ausholen, Schlag, Sprung mit Knie, getroffen;
+#                              Reihe 3 umgeworfen im Flug, liegend, Aufstehen aus der Hocke, liegend
+#   rammbock_b_gehen.png       8 Bilder Gehen in einer Reihe (2000 × 329)
+#   rammbock_c_angriffe.png    vier Reihen (1669 × 2000): Schlag 5, Umwerfschlag von oben 5,
+#                              Sprungtritt 4, Hocke 2
+#   rammbock_d_reaktionen.png  vier Reihen (2000 × 1669): getroffen 3, umgeworfen 5,
+#                              aufstehen 6, Spott 6
+#   rammbock_e_griff.png       3 Bilder: festgehalten, geworfen kopfüber, geworfen waagrecht (2000 × 789)
+#
+# Auffälligkeiten beim Sichten (Opus): Die Reihe Sprungtritt zeigt als Bild 1
+# eine Kampfhaltung statt der tiefen Hocke und als Bild 4 einen Schlag im
+# Stand statt der Landung in der Hocke. Bildzahlen aller Reihen stimmen.
+
+raster rammbock_a_posen.png 4 3
