@@ -22,12 +22,16 @@ func _initialize() -> void:
 
 ## Argumente --name wert (und --debug) → Dictionary; Fehler im Schlüssel "fehler".
 func _argumente(argv: PackedStringArray) -> Dictionary:
-	var a: Dictionary = {"szene": "", "eingabe": "", "nach": "", "aus": "", "seed": "", "debug": false, "fehler": ""}
+	var a: Dictionary = {"szene": "", "eingabe": "", "nach": "", "aus": "", "seed": "", "debug": false, "platzhalter": false, "fehler": ""}
 	var i: int = 0
 	while i < argv.size():
 		var name: String = argv[i]
 		if name == "--debug":
 			a["debug"] = true
+			i += 1
+			continue
+		if name == "--platzhalter":
+			a["platzhalter"] = true
 			i += 1
 			continue
 		if not (name in ["--szene", "--eingabe", "--nach", "--aus", "--seed"]):
@@ -65,6 +69,8 @@ func _lauf() -> void:
 			argv.append(a[schluessel] as String)
 	if a["debug"]:
 		argv.append("--debug")
+	if a["platzhalter"]:
+		argv.append("--platzhalter")
 	var spiel_skript: GDScript = load("res://darstellung/spiel.gd")
 	var spiel_args: Dictionary = spiel_skript.call("parseArgumente", argv)
 	var vp: SubViewport = SubViewport.new()

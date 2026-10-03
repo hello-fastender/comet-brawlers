@@ -690,6 +690,8 @@ func _init() -> void:
 	_gruppe("Protokollformat", _test_protokollformat)
 	_gruppe("Reinheit von godot/kern", _test_reinheit)
 	_modul("Darstellung", DarstellungTest.lauf())
+	_modul("Vela-Puppe", VelaTest.lauf())
+	_modul("Darstellung mit Puppe", PuppeProtokollTest.lauf())
 	if not ohne_szenen:
 		_szenen(nur)
 	var sekunden: float = (Time.get_ticks_msec() - t0) / 1000.0

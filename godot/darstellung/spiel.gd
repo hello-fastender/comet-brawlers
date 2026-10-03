@@ -107,9 +107,10 @@ static func stageLaden(buehne: String) -> String:
 
 ## Kommandozeilenargumente (nach „--“) in ein Dictionary:
 ## seed (int, 0 = nicht angegeben), debug, szene, eingabe, schritte (−1 = nicht
-## angegeben), pause, ende, fehler (leer oder Meldung).
+## angegeben), pause, ende, platzhalter (Rechtecke statt der Vela-Puppe), fehler
+## (leer oder Meldung).
 static func parseArgumente(argv: PackedStringArray) -> Dictionary:
-	var a: Dictionary = {"seed": 0, "debug": false, "szene": "", "eingabe": "", "schritte": -1, "pause": false, "ende": false, "fehler": ""}
+	var a: Dictionary = {"seed": 0, "debug": false, "szene": "", "eingabe": "", "schritte": -1, "pause": false, "ende": false, "platzhalter": false, "fehler": ""}
 	var i: int = 0
 	while i < argv.size():
 		var name: String = argv[i]
@@ -120,6 +121,8 @@ static func parseArgumente(argv: PackedStringArray) -> Dictionary:
 				a["pause"] = true
 			"--ende":
 				a["ende"] = true
+			"--platzhalter":
+				a["platzhalter"] = true
 			"--seed", "--schritte", "--szene", "--eingabe":
 				if i + 1 >= argv.size() or argv[i + 1].begins_with("--"):
 					a["fehler"] = "Argument %s ohne Wert" % name
@@ -198,14 +201,20 @@ func _ready() -> void:
 		get_tree().quit(1)
 		return
 	_ebenenAnlegen()
+	if not (a["platzhalter"] as bool):
+		puppeEinhaengen(DarstellungVelaPuppe.new())
 
 
-## Legt die beiden Zeichenebenen an (Hinten, Vorn).
+## Legt die beiden Zeichenebenen an (Hinten, Vorn). Die Ebenen ordnen über
+## z_index: Hinten 0, die Puppe 1 (ihre Teile 1 bis 24), Vorn 30 (Rest der
+## Szene, Blende, Anzeige und Texte).
 func _ebenenAnlegen() -> void:
 	_hinten = Ebene.new()
 	_hinten.name = "Hinten"
 	_vorn = Ebene.new()
 	_vorn.name = "Vorn"
+	_hinten.z_index = 0
+	_vorn.z_index = 30
 	add_child(_hinten)
 	add_child(_vorn)
 	_zn_hinten = DarstellungZeichner.new(_hinten)
@@ -219,9 +228,26 @@ func _ebenenAnlegen() -> void:
 ## Puppe setzt ihre Lage aus DarstellungZeichnen.figurFuss(sitzung.welt).
 func puppeEinhaengen(puppe: Node2D) -> void:
 	_puppe = puppe
-	figur_extern = true
+	puppe.z_index = 1
 	add_child(puppe)
 	move_child(puppe, _vorn.get_index())
+	_puppeAktualisieren()
+
+
+## Setzt die Puppe nach der Figur (Lage, Pose, Blick). Deckt sie die Aktion
+## nicht ab, zeichnet die Platzhalterfigur (Rechteck) und die Puppe ruht.
+func _puppeAktualisieren() -> void:
+	if _puppe == null or sitzung == null:
+		return
+	var f: KernEntitaeten.Figur = sitzung.welt.figur
+	var an: bool = DarstellungVelaPosen.abgedeckt(f)
+	figur_extern = an
+	_puppe.visible = an
+	if an:
+		var fuss: Vector2 = DarstellungZeichnen.figurFuss(sitzung.welt)
+		# Spiegelachse in der Mitte der Spielpixelspalte (1 Bildpixel rechts vom Fußpunkt)
+		_puppe.position = fuss + Vector2(DarstellungMasse.DARSTELLUNG * 0.5, 0.0)
+		_puppe.call("aus_figur", f, sitzung.welt)
 
 
 # ===========================================================================
@@ -245,6 +271,7 @@ func _process(_delta: float) -> void:
 		_hinweis_rest -= 1
 		if _hinweis_rest == 0:
 			_hinweis = ""
+	_puppeAktualisieren()
 	_hinten.queue_redraw()
 	_vorn.queue_redraw()
 	if _beenden and (_gezeichnet >= 1 or _bilder >= 5):

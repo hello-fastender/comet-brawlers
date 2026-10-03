@@ -1,7 +1,8 @@
 # Rückmeldung Arbeitssitzung (Claude Sonnet 5.5), Auftrag 6, 2026-10-03
 
-Stand: **Zwischenstand an Haltepunkt 1** (Phase 0 und 1 fertig). Phase 2 bis 4
-folgen nach der Freigabe; diese Datei wird dann fortgeschrieben.
+Stand: **Zwischenstand an Haltepunkt 2** (Phase 0, 1 und 2 fertig, Freigabe zu
+Haltepunkt 1 am 2026-10-03). Phase 3 und 4 folgen nach der Freigabe zu
+Haltepunkt 2; diese Datei wird dann fertiggestellt.
 
 ## Commits
 Erster Commit auf `main`: `3526453` (Godot-Projekt, Festkomma, Zufall, Werte,
@@ -50,8 +51,31 @@ zusätzlich die Referenz-MD5 aus `PRUEFSUMMEN.md5`).
 Leistung: Vorführung headless noch nicht gemessen (Phase 3); alle 74 Szenen in
 8,6 s.
 
-## Darstellung
-Noch nicht begonnen (Phase 2).
+## Darstellung (Phase 2)
+Platzhalter: **fertig** (Rechtecke, Schatten, Hintergrundbänder, Anzeigeleiste,
+Debug F1, Pause P, Einzelschritt N, Aufzeichnung F2, Neustart F3,
+Tastenbelegung wie `docs/scheibe.md`, Spielschleife in `_physics_process`
+mit 60 Hz und höchstens 4 Schritten je Bild, Sitzungsklasse ohne Nodes,
+Zeichner mit Faktor 2). Vela-Puppe: **Stand, Gehen (12 Bilder zu je 4 Frames)
+und Kette 1 bis 4** aus den Teilen von `vela_t_teile.png` (13 Teile, 64 Farben,
+Maßstab 142 px), als `Skeleton2D` mit 16 Bones; alle anderen Aktionen zeichnet
+weiter der Platzhalter. Bilder: `docs/bilder/godot_szene_0300/0600/0900/1200/1500.png`
+(Platzhalter), `godot_vela_szene_*.png` (mit Puppe), `godot_kontakt_vela.png`
+(Kontaktbogen). Tests: `darstellung_test.gd` (121 Prüfungen), `vela_test.gd`
+(2129), `puppe_protokoll_test.gd` (Vorführung 600 Schritte mit Darstellung und
+Puppe: Protokoll bitgleich zur Referenz). `alle.gd`: 2616 Prüfungen grün.
+
+Abweichungen der Darstellung (nur Godot): Bildschirmfotos brauchen
+`xvfb-run -a godot --path godot --rendering-driver opengl3 --script
+res://werkzeuge/foto.gd` (unter `--headless` gibt es kein Rendering; das
+Projekt nutzt `gl_compatibility`). Die Platzhalterbilder sind nicht
+pixelgleich zur Canvas-Fassung (Dreiecke und Ellipsen als Fächer ohne
+Glättung, 4/4-Strichmuster), optisch gleich. Die Gehpose rutscht ca. 25 %
+(Kompromiss der Schrittweite); die Posen sind von Hand gesetzte
+Winkeltabellen (15°-Stufen), die Drehbilder der Kette 4 stauchen/spiegeln den
+Körper, weil das Teileblatt keinen Hinterkopf hat (Nachbestellung nötig, wenn
+eine Rückenansicht gewünscht wird); der gestreckte Ärmel ist am Ellbogen
+geteilt, der angewinkelte Ärmel (`aermel_angewinkelt`) ist ungenutzt.
 
 ## Befunde zur TypeScript-Fassung (Verhalten ohne Spezifikation, mögliche Fehler)
 Der Port blieb überall bitgleich zur Referenz. Beobachtungen der Port-Agenten,
