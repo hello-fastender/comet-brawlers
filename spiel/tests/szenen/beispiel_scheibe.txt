@@ -1,0 +1,14 @@
+# Beispielszene (K0): Bühne scheibe mit Prüfstart nach Welt 12, PS7
+# (Format: docs/scheibe.md, Abschnitt „Formate“).
+szene name=beispiel_scheibe endframe=120 seed=12345 buehne=scheibe
+pruefstart welle.1=aus welle.2=aus welle.9=aus welle.7=nur_boss rang.fest
+pruefstart kamera.x=1792 kamera.modus=ARENA boss.angriffe=aus boss.bewegung=aus
+pruefstart fest.gehstufe=normal behaelter.F9=fass,2150,60,Raketenwerfer
+figur x=2000 z=50 blick=R
+# Boss in (2060, 50) Blick links; ersetzt den vorplatzierten Boss in s0
+gegner slot=0 typ=Ballast x=2060 z=50 blick=L
+# Puppe wie PS8b
+gegner slot=1 typ=Bolzer x=2150 z=50 logik=aus lp=16
+# Bolzer erscheint per Eingriff wie Welt 12, T9 (nicht vorplatziert, Logik an)
+gegner slot=2 typ=Bolzer x=1900 z=70 erscheint=60
+eingriff frame=90 ziel=welle.9 feld=jetzt wert=ja

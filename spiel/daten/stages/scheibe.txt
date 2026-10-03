@@ -1,0 +1,52 @@
+# Stage der vertikalen Scheibe nach docs/spezifikation-welt.md, 2.3 und 4.7
+# (Zuschnitt design-gegner-stages.md, Abschnitt 7: Abschnitte A, B und F,
+# Schnitt mit Blende am rechten Ende von B; Welt-x von F wie in der vollen Stage).
+
+stage id=scheibe name=Scheibe x_ende=2304 kamera_x_max=1920 start_x=64 start_z=170 start_blick=rechts
+
+# Tiefenbänder (Welt 2.3)
+band x0=0 x1=400 unten0=138 unten1=138 oben0=213 oben1=213      # A Landedeck, 75 px
+band x0=400 x1=850 unten0=138 unten1=138 oben0=229 oben1=229    # B Händlergasse, 91 px
+band x0=1700 x1=2304 unten0=10 unten1=10 oben0=101 oben1=101    # F Asservatenkammer, 91 px; Beginn 1700 (S2)
+
+# Kamera-y: 128 in A und B, 0 in F (Welt 2.3)
+kamera_y k0=0 k1=466 y0=128 y1=128
+kamera_y k0=1792 k1=1920 y0=0 y1=0
+
+# Hintergrund und Vordergrund, ohne Wirkung auf die Logik (Welt 2.3)
+hintergrund id=frachtcontainer x0=330 x1=410 bild=frachtcontainer
+hintergrund id=funkladen x0=450 x1=650 bild=funkladen
+hintergrund id=asservatenkammer x0=1700 x1=2304 bild=asservatenkammer
+vordergrund id=kabelrollen1 x0=96 x1=176 zeilen=24
+vordergrund id=kabelrollen2 x0=280 x1=344 zeilen=24
+
+# Behälter in Zeilenfolge = Objektslots o20 bis o23 (Welt 2.3, 9.1)
+behaelter id=F1 art=fass x=560 z=158 inhalt=Kometenbraten
+behaelter id=B1 art=bosskiste x=2040 z=95 inhalt=Raketenwerfer
+behaelter id=B2 art=bosskiste x=2080 z=95 inhalt=Raketenwerfer
+behaelter id=B3 art=bosskiste x=2120 z=95 inhalt=leer
+
+# Vorplatzierte Gegner (Welt 2.3, 4.1, 4.7): Boss in s0, übrige ab s1 in Zeilenfolge.
+# Blick links für alle: Festlegung K0, die Daten nennen keinen Blick.
+gegner typ=Ballast x=2080 z=80 auftritt=boss welle=7 werte=start blick=links
+gegner typ=Bolzer x=368 z=206 auftritt=versteck welle=1 werte=start blick=links
+gegner typ=Bolzer x=633 z=168 auftritt=hocke welle=2 werte=start blick=links
+gegner typ=Rammbock x=663 z=208 auftritt=hocke welle=2 werte=start blick=links
+
+# Wellen (Welt 4.7)
+welle nr=1 ausloeser=figur_abstand wert=150 bonus=0
+# Welle 2: Die Hockenden wachen einzeln nach ihrem Weckreiz auf (Welt 4.2).
+# Der Satz mit Kamera-x 250 (design-gegner-stages.md, 7) gibt der Welle ihren
+# Eintrag WL:2 und die Spalte wellen; Festlegung K0.
+welle nr=2 ausloeser=kamera wert=250 bonus=0
+welle nr=7 ausloeser=arena bonus=0
+eintrag welle=7 typ=Bolzer auftritt=rand_links z=30 verzoegerung=0
+eintrag welle=7 typ=Bolzer auftritt=rand_links z=80 verzoegerung=0
+welle nr=9 ausloeser=boss_lp wert=25 bonus=0
+eintrag welle=9 typ=Zünder auftritt=rand_links z=55 verzoegerung=0
+
+# Kamera (Welt 2.3, 3)
+sperre id=S1 kamera_x=400 welle=2
+halt id=H1 kamera_x=440 max_lebende=0
+schnitt kamera_x=466 figur_x=826 ziel_kamera_x=1792 ziel_x=1900 ziel_z=55
+arena k0=1792 k1=1920 totzone_links=128 totzone_rechts=256

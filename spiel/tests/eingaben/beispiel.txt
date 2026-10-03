@@ -1,0 +1,5 @@
+# Beispiel-Eingabe (K0) nach Kampf 11.1: von,bis,tasten
+10,10,A
+24,24,A
+30,40,R
+35,36,RA

@@ -1,0 +1,10 @@
+# Beispielszene (K0): Prüfbühne mit einer Puppe, Aufbau wie Kampf 12, T3
+# (Format: docs/scheibe.md, Abschnitt „Formate“).
+szene name=beispiel_puppe endframe=140 seed=1 buehne=pruefbuehne
+pruefstart rang=9 rang.fest
+figur x=100 z=100 blick=R lp=72
+gegner slot=0 typ=Puppe rolle=leicht x=146 z=100 lp=16 vorplatziert=ja
+# Eingriff wie Kampf 12, T5 Lauf e: in 43 s0_x := 200
+eingriff frame=43 ziel=s0 feld=x wert=200
+# Prüfangriff wie Kampf 12, T8 Lauf c: 5 LP in 19 bis 23
+pruefangriff slot=0 von=19 bis=23 schaden=5 umwerfen=nein

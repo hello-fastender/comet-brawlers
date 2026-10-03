@@ -1,0 +1,11 @@
+# Prüfbühne nach docs/spezifikation-kampf.md, 11.2:
+# Welt-x 0 bis 4000, Tiefenband 10 bis 197 ohne Stufen, keine Wände,
+# Kamera fest bei Kamera-x 0 und Kamera-y 0, Bildränder begrenzen nichts,
+# keine Wellen. Start der Figur nach dem Standard der Abnahmetests
+# (Kampf 12: x 100, z 100, Blick rechts).
+# kamera=fest und raender=aus sind Ergänzungen des Satzes stage (K0,
+# docs/scheibe.md „Formate“).
+
+stage id=pruefbuehne name=Prüfbühne x_ende=4000 kamera_x_max=0 start_x=100 start_z=100 start_blick=rechts kamera=fest raender=aus
+band x0=0 x1=4000 unten0=10 unten1=10 oben0=197 oben1=197
+kamera_y k0=0 k1=0 y0=0 y1=0
