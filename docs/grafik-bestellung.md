@@ -1,6 +1,6 @@
 # Bestellliste für Grok: Bildblätter der vertikalen Scheibe
 
-Stand 2026-10-03. Diese Liste nennt alle Bildblätter, die der Nutzer bei
+Stand 2026-10-03, Fassung nach E25 (Dreiviertelansicht, doppelte Darstellung, bis 64 Farben je Figur). Diese Liste nennt alle Bildblätter, die der Nutzer bei
 Grok bestellt, damit Opus sie mit dem Umsetzer (Auftrag 4, Abschnitt 9.3)
 zu Sprites macht. Die Blätter ersetzen die Gliederpuppe für Figuren,
 Gegenstände und Hintergründe; die Puppe bleibt für Effekte und als Ersatz.
@@ -11,7 +11,7 @@ Gegenstände und Hintergründe; die Puppe bleibt für Effekte und als Ersatz.
   Das erste Bild einer Figur ist die Referenz; jedes weitere Blatt
   derselben Figur mit dem Zusatz „dieselbe Figur, dieselben Farben und
   Proportionen wie im ersten Bild, Figur im Stand genau so groß“.
-- Immer: Seitenansicht, Blick nach rechts, einfarbiger dunkler
+- Immer: **Dreiviertelansicht wie in Automaten-Prügelspielen** (Körper leicht zum Betrachter gedreht, Gesicht und Brust sichtbar, Füße versetzt), Blick nach rechts, einfarbiger dunkler
   Hintergrund ohne Verlauf, Füße aller Bilder auf einer gemeinsamen
   Grundlinie, kein Schatten am Boden (den zeichnet das Spiel), keine
   Nummern, keine Rahmen, keine Schrift, gleichmäßige Abstände.
@@ -31,11 +31,12 @@ Gegenstände und Hintergründe; die Puppe bleibt für Effekte und als Ersatz.
 Projekt: Comet Brawlers, ein Arcade-Beat-'em-up im Pixelstil um 1991.
 Welt: Frachthafen „Perihel“ im Eiskern eines Kometen, Neonlicht auf
 blauem Eis, dampfende Maschinen, Gegner in Overalls mit Atemmasken.
-Stil für alle Bilder: Pixelgrafik, Seitenansicht, ganze Figur, Blick nach
-rechts, einfarbiger dunkler Hintergrund ohne Verlauf, kein Bodenschatten,
-wenige Farben, je Material fünf Töne, Schatten ins Blaue, Lichter ins
-Gelbe, dunkle farbige Konturen, Licht von links oben, keine
-Kantenglättung. Keine Schrift, keine Nummern, keine Logos, keine
+Stil für alle Bilder: Pixelgrafik wie auf Spielautomaten um 1991, ganze
+Figur in Dreiviertelansicht (Körper leicht zum Betrachter gedreht, Gesicht
+und Brust sichtbar), Blick nach rechts, einfarbiger dunkler Hintergrund
+ohne Verlauf, kein Bodenschatten, kräftige Farben mit hohem Kontrast,
+Schatten ins Blaue, Lichter ins Gelbe, dunkle Konturen, Licht von links
+oben, keine Kantenglättung, keine Unschärfe. Keine Schrift, keine Nummern, keine Logos, keine
 bekannten Spielfiguren als Vorlage. Dieselbe Figur immer mit denselben
 Proportionen und Farben. Bildzahlen genau einhalten, Füße auf einer
 Grundlinie, gleichmäßige Abstände.
@@ -49,9 +50,14 @@ Grundlinie, gleichmäßige Abstände.
 
 ---
 
-## Rammbock (Nahkämpfer schwer), Blätter A bis D liegen vor
+## Rammbock (Nahkämpfer schwer)
 
-Bereits erzeugt: A Posen (12), B Gehen (8), C Angriffe. Nachbestellen:
+Die Blätter vom 2026-10-03 sind in Seitenansicht und bleiben als
+Rückfall. Für E25 alle Blätter neu in Dreiviertelansicht bestellen: zuerst
+das Konzeptbild mit dem Zusatz „Dreiviertelansicht“, dann A bis E mit den
+Prompts aus der Antwort des Orchestrators vom 2026-10-03 (Blatt A Posen,
+B Gehen, C Angriffe mit Sprungtritt in der Luft, D Reaktionen, E Griff),
+jeweils mit „dieselbe Figur wie im neuen Konzeptbild“. Ergänzend:
 
 ```text
 Nur eine Reihe, genau 4 Bilder, Sprungtritt: 1 tiefe Hocke zum Absprung,
@@ -198,7 +204,7 @@ mitgeben):
 
 ```text
 Konzeptbild der Heldin „Vela“, Lotsin des Hafens, wie im beigefügten
-Bild: schlank, aufrecht, rotbraunes Haar als Pferdeschwanz, blaue
+Bild (Figur links), in Dreiviertelansicht: schlank, aufrecht, rotbraunes Haar als Pferdeschwanz, blaue
 Lotsenjacke mit orangem Querstreifen, dunkle Hose, schwere Stiefel, dicke
 Magnethandschuhe aus blauem Stahl mit Glanz. Ruhiger Gesichtsausdruck,
 Kampfhaltung.
