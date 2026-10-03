@@ -1,0 +1,28 @@
+; Comet Brawlers, Godot 4.7 (Auftrag 6). Logikkern unter kern/, Darstellung unter darstellung/.
+config_version=5
+
+[application]
+
+config/name="Comet Brawlers"
+run/main_scene="res://darstellung/spiel.tscn"
+config/features=PackedStringArray("4.7")
+
+[display]
+
+window/size/viewport_width=768
+window/size/viewport_height=448
+window/stretch/mode="viewport"
+
+[debug]
+
+gdscript/warnings/untyped_declaration=1
+gdscript/warnings/integer_division=0
+
+[physics]
+
+common/physics_ticks_per_second=60
+common/max_physics_steps_per_frame=4
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0
