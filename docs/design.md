@@ -567,6 +567,7 @@ Abschnitt 1). Die Begründungen stehen in `docs/erkenntnisse.md`,
 | E22 | Technik | TypeScript, reiner Logikkern ohne Browser, Canvas 2D in einer HTML-Seite, Prüfläufe und Abnahmetests in Node, Bildschirmfotos über Playwright, keine npm-Abhängigkeiten | Abschnitt 8; `docs/scheibe.md` |
 | E23 | Grafikstil | Arcade-Pixel, gewählt aus drei Stilproben derselben Szene (Arcade-Pixel, Comic-Pixel, gezeichnet); Einzelheiten in `docs/erkenntnisse.md`, „Entscheidungen“ | Abschnitt 3; Stilproben `docs/bilder/stil_*.png`, Werkzeug `spiel/werkzeuge/stilproben.html` |
 | E24 | Weg der Grafik | Gliederpuppe als Standardweg für Figuren und Objekte, Grok-Blätter als Vorlage für Reaktionsposen, Spott und Sprungtritt; Rammbock schlanker in Dreiviertelansicht; Hintergründe nach Grok-Konzeptbildern, wenn geliefert; Einzelheiten in `docs/erkenntnisse.md`, „Entscheidungen“ | `docs/grafik.md`; Vergleich `docs/bilder/vergleich_rammbock.png` |
+| E25 | Grafik aus Grok-Bildern, Darstellung 2× | Figuren, Gegenstände und Hintergründe aus Grok-Bildern in Dreiviertelansicht, Darstellung mit doppelter Auflösung (768 × 448), Logik unverändert bei 384 × 224, bis 64 Farben je Figur; ersetzt E24 für Figuren und Hintergründe; Einzelheiten in `docs/erkenntnisse.md`, „Entscheidungen“ | `docs/grafik.md`, Abschnitt 0; Auftrag 5 |
 
 ### Offen
 

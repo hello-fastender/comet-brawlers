@@ -1,6 +1,6 @@
 # Comet Brawlers: Grafik der vertikalen Scheibe
 
-Stand 2026-10-03 (Auftrag 4, Phase 0). Dieses Dokument beschreibt, wie die
+Stand 2026-10-03 (Auftrag 5, Phase 0; vorher Auftrag 4). Dieses Dokument beschreibt, wie die
 Grafik der Scheibe aussieht und entsteht: Stilhandbuch nach E23, Pipeline
 der Erzeugung, Animationstabellen mit Zuordnung zur Logik, Stand und
 Abweichungen. Grundlage: Entscheidung E23 (`docs/erkenntnisse.md`), die
@@ -14,9 +14,44 @@ schreibt PNG-Blätter mit Atlas. Keine Farbe, kein Maß und kein Bild
 entsteht außerhalb von `spiel/grafik/quelle/`; Farben nur in
 `palette.ts`, Umrisse in `spiel/src/darstellung/masse.ts`.
 
+## 0. E25: Grafik aus Grok-Bildern bei doppelter Darstellung
+
+Entscheidung des Nutzers am 2026-10-03 (`docs/erkenntnisse.md`, E25;
+Auftrag 5, `docs/auftraege/2026-10-03-opus-auftrag-5-grafik-grok-2x.md`):
+Figuren, Gegenstände und Hintergründe entstehen aus Grok-Bildern. Die
+Darstellung zeichnet mit doppelter Auflösung (768 × 448 Bildpixel), die
+Logik bleibt unverändert bei 384 × 224 Einheiten. Je Figur sind bis zu
+64 Farben erlaubt. Die Gliederpuppe bleibt nur als Rückfall
+(`?platzhalter=1`) und für Effekte, die kein Bild haben. E23 (Arcade-Pixel)
+bleibt als Stilrichtung; die Festlegungen „ein Bildpixel ist ein
+Spielpixel“ und „16 Farben je Figur“ entfallen. Anlass: Der Nutzer hat an
+Haltepunkt 2 von Auftrag 4 die Figuren der Gliederpuppe und die
+gezeichneten Hintergründe abgelehnt; Maßstab für „lesbar“ ist die Probe
+`docs/bilder/probe_grok_2x.png`.
+
+| Bereich | Auftrag 4 | Auftrag 5 (E25) |
+|---|---|---|
+| Quelle der Figuren | Gliederpuppe aus Code | Grok-Bildblätter, Umsetzer macht Sprites |
+| Ansicht | Seitenansicht | Dreiviertelansicht wie in Automaten-Prügelspielen (Körper leicht zum Betrachter gedreht, Blick nach rechts) |
+| Darstellung | 384 × 224 Bildpixel, 1 Bildpixel = 1 Spielpixel | 768 × 448 Bildpixel, 2 Bildpixel = 1 Spielpixel; Sprites doppelt so hoch wie der Umriss (Vela 152 px, Bolzer 144, Rammbock 152, Zünder 144, Ballast 200) |
+| Farben | 16 je Figur aus festen Materialtreppen | bis 64 je Figur, aus dem Bild selbst gewonnen (Medianschnitt), Helligkeit und Sättigung erhalten; keine Abbildung auf `palette.ts` |
+| Kontur | Konturviolett 1 px | dunkle Kontur aus dem Bild erhalten, fehlende Außenkontur 1 Bildpixel (= 0,5 Spielpixel) nachsetzen |
+| Hintergründe | gezeichnet aus Code | Grok-Panoramen je Abschnitt, in Ebenen zerlegt (Himmel, Wand, Boden), bei 2× |
+| Anzeigeleiste, Schrift | aus Code (G6) | bleibt, bei 2× ganzzahlig verdoppelt |
+| Effekte | aus Code (G4) | bleiben, bei 2× verdoppelt; Explosion und Funke dürfen durch Grok-Blätter ersetzt werden, wenn der Nutzer sie liefert |
+| Logik, Protokoll, Tests | unverändert | unverändert; der Browser-Test und die Referenzprotokolle müssen bitgleich bleiben |
+
+Positionen, Reichweiten, Anker und die Sortierung nach Tiefe rechnen weiter
+in Spielpixeln; nur das Zeichnen multipliziert mit 2. Schatten, Blinken im
+Schutz, Höhe und Blende bleiben wie bisher. Prüfung statt
+Palettenabbildung: Kein Figurenpixel ist dunkler als der dunkelste Bodenton
+des Abschnitts, außer in der Kontur (Auftrag 5, 4).
+
 ## 1. Stilhandbuch
 
-### 1.1 Raster und Maß
+### 1.1 Raster und Maß (ersetzt durch E25, Abschnitt 0)
+
+> Ersetzt durch E25: gilt für die Gliederpuppe (Rückfall und Effekte), nicht für die Grafik aus Grok-Bildern.
 
 - Alles im Spielraster 384 × 224. Ein Bildpixel ist ein Spielpixel: keine
   Halbpixel, keine Kantenglättung, nur voll deckend oder durchsichtig.
@@ -34,7 +69,9 @@ entsteht außerhalb von `spiel/grafik/quelle/`; Farben nur in
   Körperhöhe, große Hände und Füße, breite Schultern bei schweren
   Figuren. Nichts abzeichnen.
 
-### 1.2 Farbe
+### 1.2 Farbe (ersetzt durch E25, Abschnitt 0)
+
+> Ersetzt durch E25: gilt für die Gliederpuppe (Rückfall und Effekte), nicht für die Grafik aus Grok-Bildern.
 
 **Farbtreppe aus fünf Tönen** je Material, berechnet wie `treppe(basis)`
 in `stilproben.html` (Werte in HSL, Sättigung und Helligkeit 0 bis 1,
@@ -2009,6 +2046,8 @@ Schatten in Farben und Maßen aus `masse.ts`).
 | 1 Werkzeugkasten, Umsetzer, Vergleich | Werkzeugkasten, Vela (Stand, Gehen, Kette), Rammbock als Gliederpuppe und aus Grok-Blättern; Haltepunkt 1 am 2026-10-03: E24 (Gliederpuppe als Standardweg, Grok als Vorlage) |
 | 2 Alle Grafiken | Vela (30 Animationen), Bolzer (21), Puppe (Farbtausch), Rammbock (23), Zünder (12), Ballast (16), Objekte und Effekte (20), Hintergründe A, B, F mit Himmel, Vordergrund und Blendenkante, Anzeige mit Pixelschrift; Übersicht `docs/bilder/kontakt_uebersicht.png`; `npm run grafik` zweimal bitgleich, `npm test` 367 grün |
 | 3 Einbau (G7) | Sprites, Hintergründe, Vordergrund, Blende und Anzeige aus den Blättern in der Darstellung (Abschnitt 9); Rückfall `?platzhalter=1` und bei fehlendem Blatt; Zuordnung als reine Funktion (`zuordnung.ts`), Effektliste der Darstellung (`verlauf.ts`); Tests `grafik_zuordnung` (63 Kombinationen der Figur, 337 der Gegner in 83 Modi, 24 901 Frames aller Prüfszenen ohne Ersatzwahl), `grafik_aktiv` (40 Angriffsanimationen), `grafik_dauer` (81 Animationen); Szenenbilder `docs/bilder/szene_*.png`; `npm test` 377 grün, Browser-Test unverändert grün; mittlere Zeit je Bild 0,42 ms (600 Bilder, Chromium) |
+| Haltepunkt 2 (Auftrag 4) | Der Nutzer hat die Figuren der Gliederpuppe und die gezeichneten Hintergründe abgelehnt; Auftrag 4, Phasen 4 und 5 entfallen; weiter mit Auftrag 5 (E25, Abschnitt 0) |
+| A5 Phase 0 | Ausgangslage: `npm run pruefen` grün, `npm test` 377 von 377 grün; E25 eingetragen |
 
 ## 7. Abweichungen und Lücken
 
