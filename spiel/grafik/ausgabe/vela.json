@@ -1,0 +1,79 @@
+{
+  "blatt": "vela.png",
+  "animationen": {
+    "stand": {
+      "schleife": true,
+      "bilder": [
+        { "x": 1, "y": 1, "b": 46, "h": 69, "ankerX": 18, "ankerY": 68, "dauer": 0 }
+      ]
+    },
+    "gehen": {
+      "schleife": true,
+      "bilder": [
+        { "x": 1, "y": 71, "b": 62, "h": 65, "ankerX": 29, "ankerY": 64, "dauer": 4 },
+        { "x": 64, "y": 71, "b": 50, "h": 68, "ankerX": 24, "ankerY": 67, "dauer": 4 },
+        { "x": 115, "y": 71, "b": 36, "h": 69, "ankerX": 17, "ankerY": 68, "dauer": 4 },
+        { "x": 152, "y": 71, "b": 30, "h": 69, "ankerX": 12, "ankerY": 68, "dauer": 4 },
+        { "x": 183, "y": 71, "b": 37, "h": 69, "ankerX": 14, "ankerY": 68, "dauer": 4 },
+        { "x": 221, "y": 71, "b": 44, "h": 66, "ankerX": 18, "ankerY": 65, "dauer": 4 },
+        { "x": 266, "y": 71, "b": 52, "h": 65, "ankerX": 24, "ankerY": 64, "dauer": 4 },
+        { "x": 319, "y": 71, "b": 45, "h": 68, "ankerX": 19, "ankerY": 67, "dauer": 4 },
+        { "x": 365, "y": 71, "b": 36, "h": 69, "ankerX": 13, "ankerY": 68, "dauer": 4 },
+        { "x": 402, "y": 71, "b": 31, "h": 69, "ankerX": 12, "ankerY": 68, "dauer": 4 },
+        { "x": 434, "y": 71, "b": 37, "h": 69, "ankerX": 16, "ankerY": 68, "dauer": 4 },
+        { "x": 472, "y": 71, "b": 50, "h": 66, "ankerX": 23, "ankerY": 65, "dauer": 4 }
+      ]
+    },
+    "kette1": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 141, "b": 38, "h": 69, "ankerX": 18, "ankerY": 68, "dauer": 1 },
+        { "x": 40, "y": 141, "b": 69, "h": 65, "ankerX": 18, "ankerY": 64, "dauer": 4 },
+        { "x": 110, "y": 141, "b": 64, "h": 66, "ankerX": 18, "ankerY": 65, "dauer": 1 },
+        { "x": 175, "y": 141, "b": 49, "h": 67, "ankerX": 18, "ankerY": 66, "dauer": 1 },
+        { "x": 225, "y": 141, "b": 48, "h": 68, "ankerX": 18, "ankerY": 67, "dauer": 1 },
+        { "x": 1, "y": 1, "b": 46, "h": 69, "ankerX": 18, "ankerY": 68, "dauer": 8 }
+      ],
+      "aktiv": [1]
+    },
+    "kette2": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 211, "b": 41, "h": 69, "ankerX": 18, "ankerY": 68, "dauer": 1 },
+        { "x": 43, "y": 211, "b": 58, "h": 67, "ankerX": 21, "ankerY": 66, "dauer": 1 },
+        { "x": 102, "y": 211, "b": 74, "h": 65, "ankerX": 23, "ankerY": 64, "dauer": 4 },
+        { "x": 177, "y": 211, "b": 55, "h": 67, "ankerX": 18, "ankerY": 66, "dauer": 10 }
+      ],
+      "aktiv": [2]
+    },
+    "kette3": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 281, "b": 42, "h": 65, "ankerX": 19, "ankerY": 64, "dauer": 1 },
+        { "x": 44, "y": 281, "b": 42, "h": 63, "ankerX": 19, "ankerY": 62, "dauer": 1 },
+        { "x": 87, "y": 281, "b": 46, "h": 66, "ankerX": 19, "ankerY": 65, "dauer": 1 },
+        { "x": 134, "y": 281, "b": 67, "h": 70, "ankerX": 22, "ankerY": 69, "dauer": 4 },
+        { "x": 202, "y": 281, "b": 55, "h": 68, "ankerX": 18, "ankerY": 67, "dauer": 10 }
+      ],
+      "aktiv": [3]
+    },
+    "kette4": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 352, "b": 40, "h": 70, "ankerX": 17, "ankerY": 69, "dauer": 1 },
+        { "x": 42, "y": 352, "b": 40, "h": 71, "ankerX": 17, "ankerY": 70, "dauer": 1 },
+        { "x": 83, "y": 352, "b": 67, "h": 70, "ankerX": 19, "ankerY": 69, "dauer": 4 },
+        { "x": 151, "y": 352, "b": 40, "h": 71, "ankerX": 17, "ankerY": 70, "dauer": 2 },
+        { "x": 192, "y": 352, "b": 30, "h": 70, "ankerX": 11, "ankerY": 69, "dauer": 2 },
+        { "x": 223, "y": 352, "b": 32, "h": 70, "ankerX": 19, "ankerY": 69, "dauer": 2 },
+        { "x": 192, "y": 352, "b": 30, "h": 70, "ankerX": 11, "ankerY": 69, "dauer": 2 },
+        { "x": 256, "y": 352, "b": 44, "h": 71, "ankerX": 21, "ankerY": 70, "dauer": 2 },
+        { "x": 301, "y": 352, "b": 71, "h": 69, "ankerX": 24, "ankerY": 68, "dauer": 4 },
+        { "x": 373, "y": 352, "b": 41, "h": 70, "ankerX": 17, "ankerY": 69, "dauer": 2 },
+        { "x": 415, "y": 352, "b": 46, "h": 68, "ankerX": 18, "ankerY": 67, "dauer": 2 },
+        { "x": 1, "y": 1, "b": 46, "h": 69, "ankerX": 18, "ankerY": 68, "dauer": 1 }
+      ],
+      "aktiv": [2, 8]
+    }
+  }
+}

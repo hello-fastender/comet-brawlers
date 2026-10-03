@@ -9,6 +9,8 @@
     "lauf": "node --experimental-strip-types src/pruef/lauf.ts",
     "bauen": "tsc -p tsconfig.browser.json",
     "start": "http-server . -p 8080 -c-1",
-    "foto": "node werkzeuge/foto.mjs"
+    "foto": "node werkzeuge/foto.mjs",
+    "grafik": "node --experimental-strip-types grafik/quelle/bauen.ts",
+    "kontakt": "node --experimental-strip-types grafik/quelle/bauen.ts --nur-kontakt"
   }
 }

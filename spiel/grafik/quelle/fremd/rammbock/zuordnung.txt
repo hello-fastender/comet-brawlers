@@ -1,0 +1,122 @@
+# Zuordnung Zelle → Animation für den Rammbock aus Grok-Blättern
+# (Auftrag 4, 9.3, Weg C; Format: docs/grafik.md 5.3).
+#
+# Stand 2026-10-03, Entwurf G0b: Die Blätter liegen noch nicht vor. Die
+# Animationen und ihre Richtwerte stehen fest; die Zeilen `bild` werden nach
+# der Sichtprüfung der Blätter gefüllt (Vorlage unten, auskommentiert).
+# Fehlende Bilder ersetzt der Umsetzer durch Wiederholung und meldet sie als
+# Nachbestellung.
+
+figur rammbock_fremd
+typ Rammbock                    # Umriss 60 × 76 aus src/darstellung/masse.ts
+zielhoehe 71                    # 76 minus Schatten (Auftrag 4, 9.3, Maßstab)
+materialien HAUT_MITTEL WESTE_OLIV HOSE_BRAUN STAHL LEDER   # Auftrag 4, 4 und 9.3
+massstab rammbock_a_posen.png 1 # Pose „Stand“ auf Blatt A (nach Sichtprüfung bestätigen)
+
+# Fußkontakt beim Gehen: Geschwindigkeit aus werte.ts (Welt 5.1, E9, E10)
+gehen gehen RAMMBOCK_GEHEN_X
+gehen gehen_schnell RAMMBOCK_SCHNELL_X
+
+# ---------------------------------------------------------------------------
+# Animationen (Auftrag 4, 3: Rammbock wie Bolzer, dazu wiegen, Hocke,
+# Sprungtritt). Dauern sind Richtwerte in Frames (Atlas `dauer`); die
+# Darstellung nimmt die Dauer aus der Aktionsuhr der Logik.
+# ---------------------------------------------------------------------------
+
+# Stand: Rückfall der Darstellung für fehlende Animationen (Auftrag 4, 3) und
+# Prüfung „Umriss im Stand“ (docs/grafik.md 2.5); dieselbe Zelle wie massstab
+animation stand schleife 0
+bild rammbock_a_posen.png 1 stand 0
+# Haltung 3 × 5, Gehen 8 × 4 (design-gegner-stages.md 9, Rammbock)
+animation haltung schleife 5 5 5
+animation gehen schleife 4 4 4 4 4 4 4 4
+# schnelle Gehstufe 2,0 statt 1,6 px/Frame: dieselben Bilder, 4 · 1,6 / 2,0 ≈ 3 Frames
+animation gehen_schnell schleife 3 3 3 3 3 3 3 3
+# Spott 42 Frames (spezifikation-welt.md 5.2: 10/8/8/8/7/1); Wiegen gleich (design-gegner-stages.md 9)
+animation spott einmal 10 8 8 8 7 1
+animation wiegen einmal 10 8 8 8 7 1
+# Auftritt aus der Hocke (69 Frames, werte.ts AUFTRITT_HOCKE_RAMMBOCK), Aufrichten 3 Bilder (Richtwert)
+animation auftritt_hocke schleife 0
+animation aufstehen_hocke einmal 6 6 6
+# Einlauf aus dem Versteck = gehen
+animation auftritt_versteck schleife 4 4 4 4 4 4 4 4
+# Hocke vor jedem Angriff (design-gegner-stages.md 1.2); Kampfhaltung = Hocke
+animation hocke_ankuendigung schleife 8 8
+animation kampfhaltung schleife 8 8
+# Angriffe (werte.ts NAH_ANGRIFFE, spezifikation-welt.md 5.5): Ausholen A bis A+Startup−1,
+# Trefferbild im ersten aktiven Frame, so lang wie die aktiven Frames ohne Treffer
+animation schlag_a einmal 5 4 5 3 2 aktiv 2          # RA: Startup 9, aktiv A+9 bis A+13, Rückzug 5
+animation schlag_b einmal 5 5 8 4 4 aktiv 2          # RB: Startup 10, aktiv A+10 bis A+17, Rückzug 8
+animation umwerfschlag einmal 5 4 5 3 2 aktiv 2      # RU: Startup 9, aktiv A+9 bis A+13, Rückzug 5
+animation sprungtritt einmal 9 37 4 4 aktiv 1        # RS: Startup 9, aktiv A+9 bis A+45 in der Luft, Landung 2 Bilder
+# Trefferreaktion 23 Frames, Bilder ab h+1, h+10, h+22 (design-gegner-stages.md 9)
+animation getroffen einmal 9 12 2
+# Umgeworfen, liegen, aufstehen 126 Frames (design-gegner-stages.md 9: 2/8/37/9/41/8/8/1, dann 4/4/4)
+animation umgeworfen einmal 2 8 18 19 9
+animation liegen schleife 41
+animation aufstehen einmal 8 8 1 4 4 4
+# Gegriffen und geworfen (design-gegner-stages.md 9: 3/4/9/7/42/12/23)
+animation gehalten schleife 0
+animation geworfen einmal 21 21
+# Tod = umgeworfen und liegen, Blinken zeichnet die Darstellung
+animation tot einmal 2 8 18 19 9 28
+
+# Gewollte Wiederholungen (keine Nachbestellung)
+gleich auftritt_versteck 0 gehen 0
+gleich auftritt_versteck 1 gehen 1
+gleich auftritt_versteck 2 gehen 2
+gleich auftritt_versteck 3 gehen 3
+gleich auftritt_versteck 4 gehen 4
+gleich auftritt_versteck 5 gehen 5
+gleich auftritt_versteck 6 gehen 6
+gleich auftritt_versteck 7 gehen 7
+gleich gehen_schnell 0 gehen 0
+gleich gehen_schnell 1 gehen 1
+gleich gehen_schnell 2 gehen 2
+gleich gehen_schnell 3 gehen 3
+gleich gehen_schnell 4 gehen 4
+gleich gehen_schnell 5 gehen 5
+gleich gehen_schnell 6 gehen 6
+gleich gehen_schnell 7 gehen 7
+gleich kampfhaltung 0 hocke_ankuendigung 0
+gleich kampfhaltung 1 hocke_ankuendigung 1
+gleich wiegen 0 spott 0
+gleich wiegen 1 spott 1
+gleich wiegen 2 spott 2
+gleich wiegen 3 spott 3
+gleich wiegen 4 spott 4
+gleich wiegen 5 spott 5
+gleich tot 0 umgeworfen 0
+gleich tot 1 umgeworfen 1
+gleich tot 2 umgeworfen 2
+gleich tot 3 umgeworfen 3
+gleich tot 4 umgeworfen 4
+gleich tot 5 liegen 0
+
+# ---------------------------------------------------------------------------
+# Zellen (nach Sichtprüfung der Blätter einkommentieren und anpassen).
+# Vorlage nach der Bestellliste (docs/grafik-bestellung.md, Rammbock und
+# Muster Bolzer): A Posen 12, B Gehen 8, C Angriffe, D Reaktionen.
+# Die Reihenfolge der Zeilen ist gleich: Kopien lösen ihre Quelle auf, auch
+# wenn diese erst ersetzt werden muss.
+# ---------------------------------------------------------------------------
+# bild rammbock_a_posen.png 1 haltung 0
+# bild rammbock_a_posen.png 2 hocke_ankuendigung 0
+# bild rammbock_a_posen.png 3 auftritt_hocke 0
+# bild rammbock_a_posen.png 4 aufstehen_hocke 1
+# bild rammbock_a_posen.png 5 schlag_a 1
+# bild rammbock_a_posen.png 6 schlag_a 2
+# bild rammbock_a_posen.png 7 umwerfschlag 1
+# bild rammbock_a_posen.png 8 umwerfschlag 2
+# bild rammbock_a_posen.png 9 getroffen 0
+# bild rammbock_a_posen.png 10 umgeworfen 1
+# bild rammbock_a_posen.png 11 liegen 0 liegend
+# bild rammbock_a_posen.png 12 aufstehen 2
+# bild rammbock_b_gehen.png 1 gehen 0
+# bild rammbock_b_gehen.png 2 gehen 1
+# bild rammbock_b_gehen.png 3 gehen 2
+# bild rammbock_b_gehen.png 4 gehen 3
+# bild rammbock_b_gehen.png 5 gehen 4
+# bild rammbock_b_gehen.png 6 gehen 5
+# bild rammbock_b_gehen.png 7 gehen 6
+# bild rammbock_b_gehen.png 8 gehen 7

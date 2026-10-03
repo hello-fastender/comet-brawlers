@@ -201,8 +201,255 @@ Lagenfarben; Lebenssymbol; Pfeil; Blende mit Rasterkante.
 
 ## 2. Pipeline
 
-Folgt mit G0 (Werkzeugkasten): Ablage, Schnittstellen von `leinwand.ts`,
-`png.ts`, `palette.ts`, `kontur.ts`, `blatt.ts`, `kontakt.ts`, Befehle.
+Stand G0 (Phase 1). Die Erzeugung läuft unter Node 22 mit
+`--experimental-strip-types` (kein `enum`, keine Namespaces, keine
+Parameter-Properties, `import type`, relative Importe mit `.ts`), ohne
+Pakete. Sie ist deterministisch: kein `Math.random`, kein `Date`; Rauschen
+nur über `src/kern/zufall.ts` mit festem Seed.
+
+### 2.1 Ablage und Befehle
+
+```
+spiel/grafik/quelle/
+  geometrie.ts   Punkt, Formen (Kapsel, Ellipse, Polygon), Drehung, Treffer am Pixelmittelpunkt
+  leinwand.ts    Pixelpuffer (RGBA als 0xRRGGBBAA), Zeichnen, Ausschnitt, Spiegeln, Vergrößern
+  png.ts         PNG schreiben (8-Bit-RGBA) und lesen (8 Bit, Farbtypen 0, 2, 3, 4, 6, Filter 0–4), CRC32, MD5
+  farbe.ts       RGB/HSL, treppe() wie stilproben.html, hintergrundTreppe(), Mischen, Abstand
+  palette.ts     alle Materialien und Einzelfarben (einzige Datei mit Farbwerten), Farbzählung
+  raster.ts      Bayer 4 × 4, Verläufe mit Raster
+  licht.ts       Lichtvektor, Helligkeit aus Normale, Ton aus Helligkeit
+  kontur.ts      Außenkontur, Rand umfärben, Lücken, Streupixel finden und entfernen
+  puppe.ts       Gliederpuppe: Teile, Gelenke, Posen, Zwischenbild, Rastern, Tonabbildung je Figur
+  blatt.ts       Bild, Animation, Atlas; Packen in Blätter (≤ 2048 × 2048), Atlas-JSON
+  kontakt.ts     Kontaktbögen mit Schrift 3 × 5 als Bitmuster
+  bauen.ts       CLI und Prüfungen: baut alle Figuren, prüft, schreibt Blätter, Atlanten, Kontaktbögen, MD5
+  figuren/vela.ts  Vela (Teile, Maße, Tonzuteilung, Posen)
+  umsetzer.ts, fremd/   G0b (Abschnitt 5)
+spiel/grafik/ausgabe/   <figur>.png und <figur>.json (werden committet)
+docs/bilder/kontakt_<figur>_<animation>.png
+```
+
+Befehle im Ordner `spiel/`: `npm run grafik` (alle Blätter, Atlanten und
+Kontaktbögen, gibt je Blatt das MD5 aus), `npm run kontakt` (nur
+Kontaktbögen). `npm run pruefen` prüft `grafik/**/*.ts` mit.
+
+### 2.2 Konventionen
+
+- Koordinaten in Spielpixeln, x nach rechts, y nach unten. Ein Pixel
+  (x, y) gehört zu einer Form, wenn sein Mittelpunkt (x + 0,5; y + 0,5)
+  darin liegt (gleiche Regel in `leinwand.ts` und `puppe.ts`).
+- `Pixel` ist eine vorzeichenlose 32-Bit-Zahl `0xRRGGBBAA`;
+  `DURCHSICHTIG = 0`. Bilder sind voll deckend oder durchsichtig.
+- Anker: Pixel (ankerX, ankerY) eines Bildes liegt auf der
+  Bildschirmposition der Entität (`bildX`, `bildY`). Bei Figuren ist das
+  die Konturzeile unter den Sohlen, also die unterste Zeile des Bildes im
+  Stand.
+- Puppe: Figurkoordinaten mit dem Fußpunkt in (0, 0); Winkel in Grad,
+  0 zeigt nach unten, +90 nach vorn (Blickrichtung rechts), 180 nach oben;
+  Winkel eines Teils gelten relativ zum Elternteil.
+- Alle Bilder blicken nach rechts; Blick links spiegelt die Darstellung um
+  den Anker.
+
+### 2.3 Schnittstellen (fest; nur Ergänzungen, Änderungen unter 2.6)
+
+`geometrie.ts`
+
+```ts
+interface Punkt { x: number; y: number }
+type Form = Kapsel | Ellipse | Polygon
+  // Kapsel { art: 'kapsel'; a; b: Punkt; ra; rb: number }  (Radius an a und b)
+  // Ellipse { art: 'ellipse'; m: Punkt; rx; ry; winkel: number }
+  // Polygon { art: 'polygon'; punkte: Punkt[] }
+function drehe(v: Punkt, winkel: number): Punkt
+function inForm(f: Form, x: number, y: number): boolean
+function formBewegt(f: Form, winkel: number, v: Punkt): Form
+function imPolygon(punkte, x, y): boolean
+```
+
+`leinwand.ts`
+
+```ts
+type Pixel = number                         // 0xRRGGBBAA
+const DURCHSICHTIG: Pixel                   // 0
+function rgba(r, g, b, a = 255): Pixel
+function kanaele(p: Pixel): [r, g, b, a]
+function alpha(p: Pixel): number
+function deckend(p: Pixel): boolean        // Deckkraft > 0
+interface Rechteck { x; y; b; h: number }
+class Leinwand {
+  readonly breite: number; readonly hoehe: number; readonly daten: Uint32Array  // Index y·breite + x
+  constructor(breite: number, hoehe: number, daten?: Uint32Array)
+  drin(x, y): boolean
+  hole(x, y): Pixel                         // außerhalb DURCHSICHTIG
+  setze(x, y, p: Pixel): void               // außerhalb ohne Wirkung
+  fuelle(p): void
+  rechteck(x, y, b, h, p): void
+  linie(x0, y0, x1, y1, p): void            // Bresenham, Enden eingeschlossen
+  polygon(punkte: Punkt[], p): void
+  ellipse(cx, cy, rx, ry, p): void
+  kapsel(ax, ay, bx, by, r, p): void
+  einsetzen(quelle: Leinwand, x, y): void   // nur deckende Pixel, ohne Mischen
+  ausschnitt(x, y, b, h): Leinwand
+  gespiegelt(): Leinwand                    // waagrecht
+  vergroessert(faktor: number): Leinwand    // ganzzahlig, nächster Nachbar
+  klon(): Leinwand
+  gleich(andere: Leinwand): boolean
+  begrenzung(): Rechteck | null             // um alle deckenden Pixel
+}
+```
+
+`png.ts`
+
+```ts
+type Filtertyp = 0 | 1 | 2 | 3 | 4
+function pngSchreiben(bild: Leinwand, optionen?: { filter?: Filtertyp }): Uint8Array  // 8-Bit-RGBA, Deflate-Stufe 9
+function pngLesen(daten: Uint8Array): Leinwand  // Bittiefe 8; Farbtyp 0, 2, 3 (mit tRNS), 4, 6; Filter 0–4; ohne Interlace
+function pngDateiLesen(pfad: string): Leinwand
+function pngDateiSchreiben(pfad: string, bild: Leinwand, optionen?): string  // MD5
+function pngAusRohdaten(breite, hoehe, farbtyp, gefilterteZeilen: Uint8Array, palette?): Uint8Array  // für Tests
+function crc32(daten: Uint8Array, start?, ende?): number
+function md5(daten: Uint8Array): string
+```
+
+`farbe.ts`
+
+```ts
+type Rgb = [r, g, b]; type Hsl = [h, s, l]
+type Treppe = [Pixel, Pixel, Pixel, Pixel, Pixel]   // 0 dunkel, 1 Schatten, 2 Grund, 3 Licht, 4 Glanz
+function treppe(basis: '#RRGGBB'): Treppe            // genau treppe() aus stilproben.html
+function hintergrundTreppe(basis: '#RRGGBB'): Treppe // 1.2, Hintergrundtreppe
+function hexZuPixel(hex): Pixel; pixelZuHex(p): string; hexZuRgb; rgbZuPixel; pixelZuRgb
+function rgbZuHsl(r, g, b): Hsl; hslZuRgb(h, s, l): Rgb; zuFarbton(h, ziel, um): number
+function mischen(a: Pixel, b: Pixel, t: number): Pixel
+function farbAbstand(a: Pixel, b: Pixel): number     // gewichtetes RGB („redmean“)
+```
+
+`palette.ts`
+
+```ts
+type TonIndex = 0 | 1 | 2 | 3 | 4        // TON_DUNKEL … TON_GLANZ
+interface Material { name: string; basis: string; glanz: boolean; art: 'figur' | 'hintergrund'; treppe: Treppe }
+const KONTUR, SCHATTEN_BLAU: Pixel
+const HAUT_HELL, HAUT_MITTEL, …, STAUB: Material          // Namen und Basis wie 1.2
+const MATERIALIEN: Record<string, Material>               // alle Figuren- und Gegenstandsmaterialien
+const SPULE, NEON_MAGENTA, NEON_CYAN, BRILLE_GLUT: Pixel; LEUCHTTOENE: Record<string, Pixel>
+const NACHTHIMMEL, …, KABEL: Material; HINTERGRUND_MATERIALIEN: Record<string, Material>
+const LEISTE_TEXT, BALKEN_GRUEN, BALKEN_GELB, BALKEN_ORANGE, BALKEN_LEER: Pixel
+const KONTAKT_GRUND, KONTAKT_ZELLE, KONTAKT_BODEN, KONTAKT_ANKER, KONTAKT_TEXT, KONTAKT_AKTIV: Pixel  // nur Kontaktbögen
+const FARBBUDGET = { figur: 16, gegenstand: 8, hintergrund: 48, anzeige: 8 }  // einschließlich durchsichtig
+function farbenMenge(bilder: Leinwand | Leinwand[]): Set<Pixel>   // einschließlich DURCHSICHTIG
+function farbenZaehlen(bilder: Leinwand | Leinwand[]): number
+function naechsteFarbe(p: Pixel, auswahl: Pixel[]): { farbe; index; abstand }
+function treppenFarben(materialien: Material[], toene?: TonIndex[]): Pixel[]
+```
+
+`kontur.ts`
+
+```ts
+const NACHBARN_4, NACHBARN_8
+function konturAussen(bild: Leinwand, farbe: Pixel): number       // durchsichtige Kantennachbarn deckender Pixel → farbe (braucht 1 px Rand)
+function randFaerben(bild: Leinwand, farbe: Pixel): number        // äußerster deckender Ring → farbe (Figur wächst nicht)
+function konturLuecken(bild: Leinwand, kontur: Pixel): Punkt[]     // deckend, nicht kontur, Kante an Durchsichtig oder Bildrand
+function konturGeschlossen(bild: Leinwand, kontur: Pixel): boolean
+function streupixel(bild: Leinwand, ausnahmen?: Set<Pixel>): Punkt[]   // ohne gleichfarbigen der 8 Nachbarn
+function streupixelEntfernen(bild, ausnahmen?, geschuetzt?, runden = 4): number  // Mehrheit der Nachbarn
+```
+
+`blatt.ts`
+
+```ts
+interface Bild { leinwand: Leinwand; ankerX: number; ankerY: number; dauer: number }
+interface Animation { name: string; schleife: boolean; bilder: Bild[]; aktiv?: number[] }
+interface AtlasBild { x; y; b; h; ankerX; ankerY; dauer: number }
+interface AtlasAnimation { schleife: boolean; bilder: AtlasBild[]; aktiv?: number[] }
+interface Atlas { blatt: string; animationen: Record<string, AtlasAnimation> }   // Format Auftrag 4, 2.3
+interface GepacktesBlatt { leinwand: Leinwand; atlas: Atlas }
+const BLATT_MAX = 2048
+function zugeschnitten(bild: Bild): Bild                       // auf deckende Pixel, Anker angepasst
+function blattPacken(name: string, animationen: Animation[], optionen?: { maxBreite?; abstand? }): GepacktesBlatt
+function atlasText(atlas: Atlas): string                        // feste Schlüsselfolge, je Bild eine Zeile
+function blattBytes(blatt): { png: Uint8Array; json: string }
+function blattSchreiben(ordner, name, blatt): { png: string; json: string; md5: string }
+```
+
+`kontakt.ts`
+
+```ts
+function kontaktBogen(animation: Animation, optionen?: { faktor?: number; titel?: string }): Leinwand  // Vorgabe 2×
+function kontaktSchreiben(pfad: string, animation: Animation, optionen?): string   // MD5
+function textZeichnen(bild: Leinwand, text: string, x, y, farbe: Pixel, faktor = 1): void  // Schrift 3 × 5
+function textBreite(text: string, faktor = 1): number
+```
+
+`bauen.ts` (zur Mitbenutzung durch den Umsetzer)
+
+```ts
+interface Figur { name: string; umriss: Umriss; animationen: Animation[]; glanz: Set<Pixel>;
+                  budget: number; schritt?: number; gehen?: string }  // schritt: px je Bild beim Gehen
+interface Befund { figur: string; animation: string; bild: number; regel: string; text: string }
+function figurPruefen(figur: Figur): Befund[]       // alle Stilregeln aus 2.5
+function figurAusgeben(figur: Figur, optionen?: { blatt?: boolean; kontakt?: boolean; ausgabe?: string; bilder?: string }): Map<string, string>  // schreibt Blatt, Atlas, Kontaktbögen; Datei → MD5
+```
+
+`puppe.ts` (für Phase 2)
+
+```ts
+interface TeilDef { name; eltern: string | null; gelenk: Punkt; formen: Form[]; varianten?: Record<string, Form[]>;
+                    material: string; gruppe: string; ebene: number; glanz?; flach?; auf?: string; kissen?; sohle?: Punkt; relief?: number }
+interface Pose { wurzel: Punkt; winkel: Record<string, number>; versatz?; ebenen?; formen?; versteckt?; spiegeln?: boolean; ohneGesicht?: boolean }
+type Toene = [Pixel, Pixel, Pixel, Pixel, Pixel]                 // Tonabbildung eines Materials
+interface Stil { zuteilung: Record<string, Toene>; kontur: Pixel; glanz: Set<Pixel>; schwellen?; gesicht?: Gesicht }
+interface Gesicht { teil: string; ursprung: Punkt; zeilen: string[]; farben: Record<string, Pixel> }  // höchstens 8 × 8
+class Puppe {
+  constructor(teile: TeilDef[])                                  // Eltern vor Kindern
+  lagen(pose): Map<string, { pos: Punkt; winkel: number }>
+  zweiGelenke(pose, a, b, ende, ziel: Punkt, beuge: 1 | -1): Record<string, number>  // Knie +1, Ellbogen −1
+  weltWinkel(pose, teil, welt: number): Record<string, number>
+  rastern(pose, stil): { leinwand; ankerX; ankerY; sohlen }
+}
+function zwischenPose(a: Pose, b: Pose, t = 0.5): Pose          // Winkel linear (Vela mischt lieber die Haltung, 4.1)
+```
+
+### 2.4 Ablauf der Gliederpuppe
+
+1. Pose → Welttransformation je Teil (Winkel relativ zum Elternteil,
+   Versatz der Wurzel; Beine wahlweise über ein Ziel für den Fuß, das
+   `puppe.ts` in Gelenkwinkel umrechnet).
+2. Rastern am Pixelmittelpunkt: vorderstes Teil je Pixel nach der
+   Zeichenreihenfolge (je Pose überschreibbar); dazu Normale (Kapsel als
+   Zylinder, Ellipse als Kugel, Polygon als Kissen mit Kantenlicht).
+3. Ton je Pixel aus der Helligkeit (`licht.ts`), harte Stufen ohne Raster;
+   rechte und untere Außenkante höchstens Schatten, linke und obere
+   mindestens Grund; Glanzton nur bei glänzenden Materialien.
+4. Innenkontur: Pixel eines hinteren Teils, die über eine Kante an ein
+   vorderes Teil anderer Gruppe grenzen, bekommen Ton 0 ihres Materials.
+5. Tonabbildung je Figur (Material, Ton) → Farbe: so entstehen geteilte
+   Treppen und Zweitonmaterialien (Farbbudget 1.2); Leuchtteile in ihrem
+   Leuchtton.
+6. Gesichtsmaske (bis 8 × 8, von Hand) am Kopfgelenk, dann Streupixel
+   entfernen, dann Außenkontur in `KONTUR`.
+
+### 2.5 Prüfungen in `bauen.ts`
+
+Jede Verletzung bricht `npm run grafik` mit Figur, Animation und Bild ab:
+
+| Regel | Prüfung |
+|---|---|
+| Kontur geschlossen | kein deckender Pixel außer `KONTUR` grenzt über eine Kante an Durchsichtig oder den Bildrand |
+| Streupixel (1.3) | jeder deckende Pixel hat einen gleichfarbigen der acht Nachbarn, außer den Glanzfarben der Figur |
+| Farbzählung | Farben je Bild und je Figur (alle Bilder) einschließlich durchsichtig ≤ Budget (Figur 16) |
+| Anker im Bild | 0 ≤ ankerX < Breite, 0 ≤ ankerY < Höhe |
+| Umriss im Stand | Bild `stand`: Breite ≤ Umrissbreite, Höhe ≤ Umrisshöhe − Schattenhöhe/2 und ≥ 90 % davon |
+| Fußkontakt | Bilder von `gehen` (zyklisch): zwischen zwei Bildern verschiebt sich mindestens eine Sohle auf der Ankerzeile um `schritt` px nach hinten (±1) |
+
+### 2.6 Änderungen
+
+Keine Änderung an den Signaturen aus 2.3. Ergänzt (Stand Ende G0):
+`geometrie.ts` `formGespiegelt`; `puppe.ts` `TeilDef.relief`,
+`Pose.spiegeln`, `Pose.ohneGesicht`; `bauen.ts` `figuren()`,
+`figurBytes()`, `bauen()`, `AUSGABE`, `BILDER`. Kontaktbögen beschriften
+jedes Bild mit `Nummer:DauerF`. Berichtigt: `figurAusgeben` gibt eine
+Tabelle Datei → MD5 zurück (in 2.3 stand zuerst `{ md5 }`).
 
 ## 3. Zuordnung von Logik zu Animation
 
@@ -223,11 +470,289 @@ Animationstabellen mit Zuordnung folgen mit G0 bis G7.
 
 ## 4. Figuren
 
-Folgt (Vela mit G0, übrige mit Phase 2).
+### 4.1 Vela (G0, Phase 1)
+
+Quelle `spiel/grafik/quelle/figuren/vela.ts`, Blatt
+`spiel/grafik/ausgabe/vela.png` mit `vela.json`, Kontaktbögen
+`docs/bilder/kontakt_vela_<animation>.png`. Vorlage ist Vela der
+Stilprobe (Pferdeschwanz, blaue Lotsenjacke mit orangem Querstreifen,
+dunkle Hose, schwere Stiefel, dicke Magnethandschuhe mit leuchtenden
+Spulen), sauberer ausgeführt: Auge 2 × 2 in `KONTUR`, Mund 1 px im
+Hautschatten, Nase als kleiner Vorsprung im Profil, Gesicht frei, Haar
+als eigene Form (Kappe mit Pony, Pferdeschwanz aus zwei Kapseln).
+
+**Maße** (px; Körper im Stand 69 × 46 mit Kontur, Umriss 57 × 71 ohne
+Schatten): Sohle bis Knöchel 5, Oberschenkel 15, Unterschenkel 15
+(Hüfte im Stand bei −32, gestreckt −35), Taille 2 über der Hüfte,
+Schulterlinie 17,5 über der Taille, Kopf 14 hoch (1/5 der Körperhöhe),
+Oberarm 11, Unterarm 9, Handschuh 9,2 × 10 (Mitte 3,5 unter dem
+Handgelenk), Stiefel 14,5 lang. Zeichenreihenfolge: hinterer Arm (10),
+hinteres Bein (20), Pferdeschwanz (25), vorderes Bein (27, hinter dem
+Saum der Jacke), Becken (29), Rumpf (30), Streifen (31, nur auf dem
+Rumpf), Kopf (35), Haar (36), vorderer Arm (50). Der schlagende hintere
+Arm (Kette 2) und das tretende Bein (Kette 4) liegen in ihrer Pose vorn.
+
+**Tonzuteilung** (15 Farben plus durchsichtig = 16, Farbbudget 1.2):
+
+| Farbe | Wert | Verwendung |
+|---|---|---|
+| `KONTUR` | `#140E22` | Außenkontur, Auge, Innenkontur (Ton 0) von Jacke, Hose und Stiefel |
+| `HAUT_HELL` 1 | `#E0734A` | Hautschatten, Innenkontur der Haut, Mund |
+| `HAUT_HELL` 2 | `#E8B189` | Haut |
+| `HAUT_HELL` 3 | `#F0D6B9` | Hautlicht |
+| `HAAR_VELA` 1 | `#8A261C` | Haarschatten und Innenkontur des Haars |
+| `HAAR_VELA` 2 | `#C2502B` | Haar |
+| `SIGNAL_ORANGE` 2 | `#E8812F` | Querstreifen (einstufig); Licht und Glanz des Haars |
+| `JACKE_VELA` 1 | `#192752` | Jackenschatten; Innenkontur des Handschuhs; Stiefelschatten |
+| `JACKE_VELA` 2 | `#2D4F86` | Jacke; Handschuhschatten |
+| `JACKE_VELA` 3 | `#3D74AE` | Jackenlicht; Handschuh (stahlblau) |
+| `HANDSCHUH_VELA` 3 | `#70A2E3` | Handschuhlicht |
+| `SPULE` | `#7EF6FF` | Spulen (Leuchtton); Glanz des Handschuhs (einzige Glanzfarbe) |
+| `HOSE_GRAUBLAU` 1 | `#262B3F` | Hosenschatten; Stiefel |
+| `HOSE_GRAUBLAU` 2 | `#445069` | Hose; Stiefellicht |
+| `HOSE_GRAUBLAU` 3 | `#5C6F89` | Hosenlicht |
+
+**Animationen** (Zeiten in Frames ohne Trefferstopp; das Bild zur
+Aktionsuhr `uhr` ist das erste, bei dem die Summe der Dauern `uhr`
+erreicht; in Stoppframes bleibt es stehen):
+
+| Animation | Bilder | Dauern | Summe | aktiv (uhr) | Inhalt |
+|---|---|---|---|---|---|
+| `stand` | 1 | 0 | – | – | Kampfhaltung wie die Stilprobe: Beine gegrätscht, vordere Faust vorn auf Brusthöhe, hintere vor der Brust |
+| `gehen` | 12 | je 4 | 48, Schleife | – | Standfuß rückt je Bild 7 px zurück (84 px je Zyklus); Ferse setzt in Bild 0 auf, Spitze rollt in Bild 6 ab; Arme gegengleich, Pferdeschwanz schwingt |
+| `kette1` | 6 | 1/4/1/1/1/8 | 16 | [1] (2–5) | Gerade mit der vorderen Faust aus dem Ausfallschritt; Bild 2 und 4 sind Zwischenbilder |
+| `kette2` | 4 | 1/1/4/10 | 16 | [2] (3–6) | Gerade mit der hinteren Faust, Schulter dreht vor; Bild 1 ist Zwischenbild |
+| `kette3` | 5 | 1/1/1/4/10 | 17 | [3] (4–7) | Aufwärtshaken mit der vorderen Faust aus der Hocke |
+| `kette4` | 12 | 1/1/4/2/2/2/2/2/4/2/2/1 | 25 | [2, 8] (3–6; 17–20) | Abschlusstritt, Drehung (Rücken, Blick nach hinten, Rücken), zweiter Tritt im zweiten aktiven Fenster, Landung |
+
+**Reichweite der Trefferbilder** (für den Magnetstoß, Auftrag 4, 1.5;
+vorderster Pixel in x vom Anker, Höhe über dem Boden): Kette 1 Faust bis
+50 px bei 45 bis 49 px Höhe; Kette 2 bis 50 px bei 44 bis 47; Kette 3 bis
+44 px bei 63 bis 66; Kette 4 Stiefel bis 47 px bei 37 bis 44, zweiter
+Tritt bis 46 px bei 36 bis 45. Der Stoß reicht dann bis Reichweite minus
+etwa 25 px Gegnerkörper: Stufe 1 etwa 10 px, Stufe 2 etwa 12, Stufe 3
+etwa 22, Stufe 4 etwa 28.
+
+**Bauen weiterer Animationen** (Phase 2, G1): Eine `Haltung` gibt Hüfte,
+Neigung von Rumpf und Kopf, die Ziele der Handgelenke (absolut oder
+relativ zur Schulter), Knöchel und Stiefelwinkel, den Pferdeschwanz und
+wahlweise Versätze, Zeichenreihenfolge, Spiegelung und `ohneGesicht`;
+`pose()` löst sie über zwei Gelenke je Glied. `zwischen(a, b)` mischt die
+Eingaben zweier Schlüsselhaltungen (höchstens ein Zwischenbild).
+`animation(name, haltungen, dauern, schleife, aktiv)` rastert und prüft
+die Länge; aktive Bilder aus `werte.ts` über `bildBeiUhr`.
 
 ## 5. Umsetzer für Bildblätter
 
-Folgt mit G0b.
+Stand G0b (Phase 1). `spiel/grafik/quelle/umsetzer.ts` macht aus
+Bildblättern eines fremden Werkzeugs (Grok, Auftrag 4, 9.3, Weg C) Sprites
+im Atlas-Format (Auftrag 4, 2.3). Er läuft deterministisch unter Node,
+ohne Pakete, und nutzt den Werkzeugkasten aus Abschnitt 2: PNG lesen
+(`png.ts`), Abstand (`farbe.ts` `farbAbstand`), Palette (`palette.ts`
+`MATERIALIEN`, `naechsteFarbe`, `KONTUR`, `FARBBUDGET`), Kontur
+(`kontur.ts` `randFaerben`, `streupixel`, `streupixelEntfernen`), Blatt
+und Atlas (`blatt.ts`), Kontaktbögen (`kontakt.ts`) und die Prüfungen der
+Gliederpuppe (`bauen.ts` `figurPruefen`). Eigene Kopien davon enthält er
+nicht.
+
+### 5.1 Ablauf
+
+1. **Hintergrund**: Median je Kanal über vier Eckfelder zu 4 × 4 px.
+   Weichen die Ecken stärker als die Hintergrundtoleranz voneinander ab,
+   ist das ein Befund („Hintergrund nicht einfarbig“). Ein durchsichtiger
+   Grund (RGBA) wird über die Deckkraft erkannt.
+2. **Freistellen**: Abstand jedes Pixels zur Hintergrundfarbe
+   (`farbAbstand`). Bis zur Hintergrundtoleranz Hintergrund, ab der
+   Figurtoleranz Figur, dazwischen Randpixel. Randpixel übernehmen in
+   Durchgängen die Klasse der Mehrheit ihrer entschiedenen acht Nachbarn
+   (außerhalb des Blatts zählt als Hintergrund). Ein Randpixel, das Figur
+   wird und am Hintergrund liegt, bekommt die häufigste Farbe seiner
+   Figurnachbarn (Kantenglättung entfernt). Eines im Inneren behält seine
+   Farbe (Innenlinien, dunkle Flächen). Gleichstand nach allen Durchgängen:
+   Abstand über der Mitte beider Toleranzen ist Figur. Ergebnis: Maske ohne
+   Halbtransparenz.
+3. **Zellen**: Flutfüllung über die Maske (8er-Nachbarschaft). Ein Bereich
+   ist groß, wenn sein Rechteck mindestens 1/50 der Blattfläche misst oder
+   mindestens 1/4 des größten Rechtecks (G0b-1). Kleine Bereiche, deren
+   Rechteck das einer großen Zelle schneidet, gehören zu ihr (G0b-2), die
+   übrigen werden verworfen (Nummern, Staub) und mit Lage protokolliert.
+   Reihenfolge: nach der Mitte in y sortiert. Eine Zelle gehört zur
+   laufenden Blattzeile, solange ihre Mitte über deren Unterkante liegt.
+   In der Zeile gilt die Reihenfolge von links nach rechts, Nummern ab 1.
+   **Festes Raster** (Zeile `raster` in `quelle.txt`): Spalten × Zeilen
+   gleich groß über das ganze Blatt. Je Feld gilt die größte Komponente
+   samt den Komponenten, die ihr Rechteck schneiden. Die Zellnummer ist
+   die Feldnummer, leere Felder werden gemeldet.
+4. **Grundlinie**: Je Blattzeile ist der Median der Unterkanten die
+   Grundlinie. Eine Zelle, die mehr als 1/50 der Zeilenhöhe davon
+   abweicht, ist ein Befund (Luftposen sind das zu Recht).
+5. **Maßstab**: ein Faktor je Figur aus der Zelle `massstab` (Pose
+   „Stand“): Rohfaktor Zielhöhe / Zellhöhe. Deckung und Rundung können oben
+   oder unten eine Zeile kosten. Deshalb sucht eine Halbierung im Bereich
+   ±1,5 Zeilen den kleinsten Faktor, bei dem der verkleinerte Stand genau
+   die Zielhöhe hat (G0b-3). Derselbe Faktor gilt für alle Blätter.
+6. **Verkleinern** mit Flächenmittel: Jeder Zielpixel deckt
+   1/Faktor × 1/Faktor Quellpixel. Ab einer Deckung von 1/2 wird er
+   deckend, mit dem flächengewichteten Mittel der deckenden Quellfarben
+   (gerundet), sonst durchsichtig. Unterkante und linke Kante der Zelle
+   liegen auf dem Raster, damit die Fußzeile ganz bleibt. Danach werden
+   Inseln unter 4 px entfernt.
+7. **Palette** über alle Bilder der Figur: Kandidaten sind je Material
+   der Figur die Töne 0 bis 3, bei glänzendem Material auch 4, dazu
+   `KONTUR`. Jede Quellfarbe geht auf die nächste Stufe
+   (`naechsteFarbe`). Sind mehr als 15 Stufen belegt (`KONTUR` zählt immer,
+   weil die Außenkontur sie setzt), wird die am wenigsten belegte
+   gestrichen (Gleichstand: die spätere) und neu abgebildet, bis das Budget
+   passt. Protokolliert wird je Quellfarbe: Zielstufe, Abstand, Pixelzahl.
+   Abstände über 72 sind ein Befund.
+8. **Kontur**: `KONTUR` im Inneren (alle Kantennachbarn deckend) wird zum
+   Ton 0 des häufigsten Nachbarmaterials, sofern dieser zur Palette
+   gehört; Innenlinien, die schon im Ton 0 liegen, bleiben. Dann wird der
+   äußerste deckende Ring in `KONTUR` umgefärbt (`randFaerben`, die Figur
+   wird nicht größer), dann werden Streupixel entfernt
+   (`streupixelEntfernen`, `KONTUR` geschützt, Glanztöne ausgenommen).
+   Reste, die nur `KONTUR` als Nachbarn haben, werden `KONTUR`. Ein
+   `KONTUR`-Pixel im Inneren ohne `KONTUR`-Nachbarn nimmt die
+   Mehrheitsfarbe an.
+9. **Anker**: y ist die unterste Zeile der Figur. x ist die Mitte zwischen
+   dem linken und dem rechten deckenden Pixel im Fußband (die untersten
+   1/8 der Figurhöhe), abgerundet. Bei liegenden Posen (`liegend`) ist x
+   die Mitte der Figur. Gespiegelte Bilder spiegeln den Anker mit.
+10. **Zuordnung**: Ein Bild einer Animation löst sich so auf: zuerst das
+    eigene Bild (`bild`), sonst eine Kopie (`gleich`, `ersatz`; deren
+    Quelle wird ebenso aufgelöst), sonst eine Wiederholung des nächsten
+    vorherigen Bildes mit eigener Quelle, sonst des nächsten folgenden,
+    sonst der Stand. Wiederholungen und `ersatz` sind Nachbestellungen,
+    `gleich` ist gewollt. Kopien im Kreis sind ein Fehler.
+11. **Prüfungen und Ausgabe**: wie bei der Gliederpuppe (5.4), dann
+    `blattPacken` zum Blatt `<figur>.png` mit Atlas `<figur>.json`.
+
+### 5.2 Parameter
+
+Abstände in der Einheit von `farbAbstand` (gewichtetes RGB): Wird Grau in
+allen Kanälen um n Stufen verschoben, ergibt das etwa 3n. Überschreibbar
+je Figur mit `parameter <name> <zahl>` in `zuordnung.txt`.
+
+| Parameter | Wert | Herkunft |
+|---|---|---|
+| `toleranzHintergrund` | 45 | etwa 15 Stufen je Kanal: Rauschen eines einfarbigen Grunds; die dunkle Außenlinie des Quellbilds (Konturviolett auf dunklem Grund, Abstand etwa 40) fällt darunter und wird neu gesetzt |
+| `toleranzFigur` | 90 | etwa 30 Stufen je Kanal: dunkle Figurfarben wie Leder (Abstand etwa 110 auf Nachtblau) sind sicher Figur |
+| `mindestAnteil` | 1/50 | Auftrag 4, 9.3 |
+| `vergleichsAnteil` | 1/4 | G0b-1 |
+| `deckung` | 1/2 | Auftrag 4, 9.3 (keine Halbtransparenz; die Hälfte ist die neutrale Schwelle) |
+| `fussband` | 1/8 der Figurhöhe | Festlegung G0b: erfasst beide Füße auch beim angehobenen Fuß im Gehen |
+| `befundAbstand` | 72 | etwa 24 Stufen je Kanal, rund zwei Drittel des Abstands zweier Treppentöne (etwa 0,11 bis 0,14 Helligkeit) |
+| `mindestInsel` | 4 px | Streupixel im Sinn von 1.3 nach dem Verkleinern |
+| `hoechstFarben` | 15 | `FARBBUDGET.figur` − 1 (durchsichtig) |
+| `grundlinienToleranz` | 1/50 der Zeilenhöhe | Festlegung G0b |
+| `durchgaenge` | 256 | größte Tiefe eines Randbereichs in Quellpixeln |
+| `streuRunden` | 8 | Runden von `streupixelEntfernen` |
+
+### 5.3 Dateien je Figur (`spiel/grafik/quelle/fremd/<figur>/`)
+
+- Blätter `*.png` (von Opus abgelegt, Namen nach der Bestellliste).
+- `quelle.txt` (Opus): Datum, Werkzeug, Prompt als freier Text.
+  Ausgewertet werden nur Zeilen `raster <blatt.png> <spalten> <zeilen>`.
+- `zuordnung.txt` (G0b, nach Sichtprüfung der Blätter gefüllt), je Zeile
+  ein Satz, `#` beginnt einen Kommentar:
+
+| Zeile | Bedeutung |
+|---|---|
+| `figur <name>` | Name von Blatt und Atlas, z. B. `rammbock_fremd` |
+| `typ <Typ>` | Umriss aus `masse.ts`: Gegnertyp (`Rammbock`) oder `Figur` (Vela) |
+| `zielhoehe <px>` | Höhe des Stands ohne Schatten (Rammbock 71 = 76 − 5) |
+| `materialien <M> …` | Materialien aus `palette.ts` (Tabelle 5.5) |
+| `massstab <blatt> <zelle>` | Zelle der Pose „Stand“ |
+| `animation <name> schleife\|einmal <dauer> … [aktiv <i> …]` | Animation mit Richtwert der Dauer je Bild und aktiven Bildern |
+| `bild <blatt> <zelle> <animation> <index> [liegend] [spiegeln]` | Zelle → Animation und Bildindex |
+| `gleich <animation> <index> <von> <vonIndex> [spiegeln]` | gewollte Wiederholung |
+| `ersatz <animation> <index> <von> <vonIndex> [spiegeln]` | Lücke, bewusst ersetzt, wird nachbestellt |
+| `gehen <animation> <WERT>` | Fußkontakt prüfen mit der Gehgeschwindigkeit `WERT` aus `werte.ts` |
+| `parameter <name> <zahl>` | Parameter aus 5.2 überschreiben |
+
+Aufruf im Ordner `spiel/`:
+
+```
+node --experimental-strip-types grafik/quelle/umsetzer.ts grafik/quelle/fremd/rammbock --kontakt ../docs/bilder
+```
+
+Er schreibt `grafik/ausgabe/<figur>.png` und `.json` (mit `--aus` ein
+anderer Ordner) und mit `--kontakt` die Kontaktbögen
+`kontakt_<figur>_<animation>.png`. Auf die Standardausgabe gehen das
+Protokoll als Markdown (Blätter, Palette mit Abständen je Stufe,
+Quellfarben über 72, Nachbestellungen, Befunde) und das MD5 des Blatts.
+Das Exit-Ergebnis ist 1 bei harten Befunden.
+
+### 5.4 Prüfungen
+
+Es gelten dieselben Prüfungen wie bei der Gliederpuppe (`figurPruefen`,
+2.5). **Hart** (Exit 1): Kontur geschlossen, Streupixel, Farbzählung je
+Bild und je Figur, Anker im Bild, aktive Indizes. **Befund** (G0b-4):
+Umriss im Stand, Fußkontakt je Zeile `gehen` (Schritt =
+Gehgeschwindigkeit × Dauer des ersten Bildes). Dazu kommen als Befunde:
+Hintergrund nicht einfarbig, Grundlinie, Zellen über dem Umriss (liegend
+gegen den gedrehten Umriss), Stand nicht genau auf Zielhöhe und Anteil
+der Pixel über dem Befundabstand.
+
+### 5.5 Materialien je Figur
+
+| Figur | Materialien | Kandidaten |
+|---|---|---|
+| Rammbock | `HAUT_MITTEL`, `WESTE_OLIV`, `HOSE_BRAUN`, `STAHL` (glänzend), `LEDER` | 4 + 4 + 4 + 5 + 4 Töne und `KONTUR` = 22, davon höchstens 15 belegt |
+
+Der Bart (in Auftrag 4, 4 genannt) hat kein eigenes Material in der
+Liste; er fällt auf die dunklen Töne von `LEDER` oder `HOSE_BRAUN`. Soll
+er `HAAR_DUNKEL` tragen, gehört es in die Zeile `materialien`; das kostet
+eine Stufe aus dem Budget.
+
+### 5.6 Grenzen
+
+- Nur PNG mit 8 Bit (Farbtypen aus `png.ts`). JPEG oder Bilder mit
+  Zeilensprung muss Opus vorher umwandeln (ohne Pakete nicht im Umsetzer).
+- Ein einfarbiger Grund wird vorausgesetzt. Bei Verlauf oder Vignette
+  zeigt der Befund „Hintergrund nicht einfarbig“ das an; dann
+  `toleranzHintergrund` erhöhen oder das Blatt nachbestellen.
+- Ein gezeichneter Bodenschatten, der sich farblich vom Grund abhebt, wird
+  Teil der Figur und verschiebt Fußpunkt und Maßstab. Er gilt als Befund
+  der Sichtprüfung, und das Blatt wird ohne Schatten nachbestellt.
+- Ein Teil der Figur, das außerhalb ihres Rechtecks frei schwebt
+  (abgetrennte Faust, Bewegungslinien), wird wie eine Nummer verworfen.
+  Ein Staubkorn im Rechteck einer Figur wird angeschlossen; im
+  Zielmaßstab verschwindet es über die Deckungsregel.
+- Eine dunkle Fläche, die außen am Grund liegt und im Abstand zwischen den
+  Toleranzen liegt (Stiefel ohne Außenlinie), kann von beiden Seiten
+  angefressen werden. Dann `toleranzFigur` senken.
+- Fremdfarben (Farbtöne ohne passendes Material) landen auf der nächsten
+  Stufe und erscheinen im Protokoll als Befund. Sie werden nicht still
+  korrigiert.
+- Flächenmittel mischt an Teilgrenzen Zwischenfarben. Die Palette fängt
+  sie auf, schmale Innenlinien können dabei verschwinden.
+- Der Fußkontakt fremder Gehzyklen trifft die Geschwindigkeit der Logik
+  nur zufällig. Er ist ein Befund, keine Korrektur.
+
+### 5.7 Stand Rammbock und Nachbestellungen
+
+Die Grok-Blätter des Rammbocks liegen noch nicht im Repo (Stand
+2026-10-03). `fremd/rammbock/zuordnung.txt` ist als Entwurf angelegt: alle
+Animationen aus Auftrag 4, 3 mit Richtwerten, die Angriffe nach
+`NAH_ANGRIFFE` (Ausholen = Startup, Trefferbild über die aktiven Frames,
+geprüft in `grafik_umsetzer.test.ts`), die gewollten Wiederholungen
+(`gehen_schnell` und `auftritt_versteck` = `gehen`, `kampfhaltung` =
+`hocke_ankuendigung`, `wiegen` = `spott`, `tot` = `umgeworfen` +
+`liegen`), Stand und Maßstab aus Blatt A Zelle 1. Die Zeilen `bild` folgen
+nach der Sichtprüfung der Blätter. Dann folgen hier das
+Palettenprotokoll und die Liste der Nachbestellungen.
+
+Laut Bestellliste (`docs/grafik-bestellung.md`, Rammbock) sind diese
+Reihen noch nicht erzeugt. Fehlen sie beim Umsetzen, werden sie zu
+Nachbestellungen:
+
+- Sprungtritt, genau 4 Bilder: tiefe Hocke, Absprung, frei in der Luft
+  mit vorgestrecktem Knie, Landung (`sprungtritt` 0 bis 3).
+- Blatt D Reaktionen: getroffen 3, umgeworfen 5, aufstehen 6, Spott 6
+  (`getroffen`, `umgeworfen`, `aufstehen`, `spott`).
+- Festgehalten, geworfen kopfüber, geworfen waagrecht (`gehalten`,
+  `geworfen`).
 
 ## 6. Stand
 
@@ -241,3 +766,24 @@ Folgt mit G0b.
 |---|---|---|---|
 | G1 | Auftrag 4, 1.2 (Schatten senken die Sättigung) | Treppe genau wie `treppe()` der Stilprobe: Schatten heben die Sättigung leicht an (+0,03, +0,06) | Die gewählte Stilprobe ist maßgeblich |
 | G2 | Auftrag 4, 1.2 (fünf Töne je Material, 16 Farben je Figur) | geteilte Treppen und Zweitonmaterialien nach 1.2, „Farbbudget“ | Fünf volle Treppen für sechs Materialien wären 30 Farben |
+| G0b-1 | Auftrag 4, 9.3 (Zellen kleiner als 1/50 des Blatts verwerfen) | Gemessen wird das Rechteck der Zelle. Eine Zelle bleibt auch unter 1/50, wenn ihr Rechteck mindestens 1/4 des größten misst | Auf einem Blatt 4 × 3 hat eine liegende Pose etwa 1,5 % der Blattfläche und fiele sonst weg; Nummern und Staub liegen unter 0,1 % |
+| G0b-2 | Auftrag 4, 9.3 (Zellen finden) | Kleine Bereiche, deren Rechteck das einer großen Zelle schneidet, gehören zu dieser Zelle | Getrennte Splitter einer Figur (Kantenglättung, Lücken) gingen sonst verloren |
+| G0b-3 | Auftrag 4, 9.3 (Maßstab, Rundung auf das Raster) | Halbierungssuche ±1,5 Zeilen um den Rohfaktor, bis der Stand genau die Zielhöhe hat | Bei der Deckung 1/2 kann ein runder Kopf die oberste Zeile verlieren (70 statt 71 px) |
+| G0b-4 | Auftrag 4, 9.3 (dieselben Prüfungen wie bei der Puppe) | `figurPruefen` aus `bauen.ts`. Hart: Kontur, Streupixel, Farben, Anker, aktive Bilder. Umriss im Stand und Fußkontakt sind beim Umsetzer Befunde | Fremde Blätter treffen Schrittweite und Breite nur zufällig. Das ist eine Frage an den Nutzer (Nachbestellung), kein Baufehler |
+| G0b-5 | Auftrag 4, 9.3 (Außenkontur neu) | Der äußerste deckende Ring wird in `KONTUR` umgefärbt (`randFaerben`), die Figur wächst nicht | Die Zielhöhe 71 gilt für die ganze Figur mit Kontur, wie bei der Puppe |
+| G0b-6 | Auftrag 4, 9.3 (Innenkonturen übernehmen, wo sie im dunkelsten Materialton liegen) | Innenlinien, die auf Ton 0 eines Materials fallen, bleiben. Innenlinien, die auf `KONTUR` fallen, werden Ton 0 des häufigsten Nachbarmaterials, sofern dieser zur Palette gehört, sonst bleibt `KONTUR` | Stilhandbuch 1.2: Innenkontur im dunkelsten Ton des Materials; `KONTUR` als Innenkontur sehr dunkler Materialien und als Pupille |
+| G0b-7 | Auftrag 4, 9.3 (höchstens 15 Farben) | Kandidaten: Töne 0 bis 3 je Material, Glanz nur bei glänzendem; über dem Budget wird die am wenigsten belegte Stufe gestrichen | Fünf Materialien ergeben 22 Kandidaten |
+| G0b-8 | Auftrag 4, 3 (Rammbock wie Bolzer: `haltung`) | Der Rammbock bekommt zusätzlich `stand` (1 Bild, Zelle des Maßstabs) | Rückfall der Darstellung für fehlende Animationen (Auftrag 4, 3) und Prüfung „Umriss im Stand“ (2.5) |
+| G0b-9 | Auftrag 4, 3 und 9.3 (Dauern der Rammbock-Animationen) | Angriffe: Ausholen = Startup (A bis A+Startup−1), Trefferbild über die aktiven Frames ohne Treffer, Rest Rückzug (`NAH_ANGRIFFE`). Richtwerte ohne Quelle: `aufstehen_hocke` 6/6/6, `hocke_ankuendigung` 8/8, Aufteilung des Flugs bei `umgeworfen` (2/8/18/19/9), `geworfen` 21/21, `tot` | Die Darstellung nimmt die Dauer aus der Aktionsuhr; der Atlas trägt nur Richtwerte (Auftrag 4, 2.3) |
+| G0-1 | docs/design.md 8 (Kette Stufe 2: 1/1/11/1, Stufe 3: 1/1/1/11/2) | Atlas ohne Trefferstopp (11 = 4 + 7): Stufe 2 1/1/4/10, Stufe 3 1/1/1/4/10; das letzte Bild hält bis zum Ende der Aktion | Die Tabelle deckt ohne Stopp nur 7 bzw. 9 Frames, die Logik dauert ohne Treffer 16 bzw. 17 (`KETTE2_LEER_DAUER`, `KETTE3_LEER_DAUER`), mit Treffer hält die Pose bis h+26; es gilt die Logik |
+| G0-2 | Auftrag 4, 2.3 (`aktiv`) | `kette4` hat `aktiv` [2, 8]: Bild 8 (Dauer 4) liegt im zweiten aktiven Fenster uhr 17 bis 20 | werte.ts `KETTE4_ZWEITES_FENSTER_VON/BIS`; der zweite Tritt der Tabelle in design.md 8 fällt genau dorthin |
+| G0-3 | Auftrag 4, 4 (Vela: Leder dunkelbraun für die Stiefel) | Stiefel in Hosentönen (dunkles Graublau mit Jackenschatten), Gürtel als dunkles Becken unter dem Saum; kein `LEDER` | Farbbudget: eine eigene Treppe für Leder ginge nur auf Kosten von Haut, Jacke oder Handschuh; die Stilprobe zeigt die Stiefel ebenfalls graublau-dunkel (`#262a35`). Frage an den Nutzer, falls braune Stiefel gewünscht sind |
+| G0-4 | Auftrag 4, 1.2 (Treppe je Material, Glanz für Handschuhe) | Tonzuteilung Vela nach 4.1: Streifen einstufig, Haarlicht im Streifenorange, Handschuh aus der Jackentreppe (Töne 1 bis 3) mit `HANDSCHUH_VELA` 3 als Licht und `SPULE` als Glanz | 15 Farben plus durchsichtig (Farbbudget 1.2) |
+| G0-5 | Auftrag 4, 1.3 (Licht und Schatten je 1 bis 2 px) | Tonschwellen der Figuren 0,86 / 0,68 / 0,2 statt 0,8 / 0,52 / 0,12 der Stilprobe; Gesicht mit halber Wölbung (`relief` 0,45) | Die Stilprobe glättet ihre Stufen mit Raster, das auf Figuren verboten ist; mit ihren Schwellen wäre das Licht eines 7-px-Arms 3 px breit und das Gesicht halb im Schatten |
+| G0-6 | Auftrag 2.4 (Pose aus Winkeln und Versätzen) | Im Trefferbild werden Ellbogen und Handgelenk um 1,5 und 1 px gestreckt (Tritt: Knie 2, Knöchel 1) | Reichweite der Faust 50 px statt etwa 45; Zug im Trefferbild wie im Zeichentrick, bei 4 Frames nicht als Dehnung sichtbar |
+| G0-7 | Auftrag 4, 1.4 (Gehen, 7 px je Bild) | Hüfte wippt um 2 bis 3 px; Ferse setzt mit 12° auf, Spitze rollt mit 22° ab | Ein Standfuß wandert 42 px unter der Hüfte durch; bei 29 px Beinlänge geht das nur mit gebeugtem Knie, das Abrollen hebt den Knöchel an den Enden |
+| G0-8 | Auftrag 4, 2.4 (Zwischenposen rechnerisch) | Zwischenbilder mischen die Eingaben der Haltung (Hüfte, Ziele von Händen und Knöcheln, Winkel von Rumpf, Kopf, Stiefel), danach Lösung über die Gelenke | Gemischte Gelenkwinkel heben stehende Füße vom Boden (Fehler beim Bau von `kette2`, Bild 1) |
+| G0-9 | docs/grafik.md 1.2 (Innenkontur zwischen Teilen verschiedener Materialien) | Innenkontur auch zwischen Teilen gleichen Materials aus verschiedenen Gruppen (Arm vor Rumpf, Bein vor Bein), im Ton 0 des hinteren Teils | Sonst verschmilzt der Jackenärmel mit der Jacke und das vordere mit dem hinteren Bein |
+| G0-10 | Auftrag 4, 1.1 (Körper im Stand etwa 5 px niedriger als der Umriss) | Prüfung: Höhe im Stand höchstens 71 und mindestens 90 % davon; Vela 69 × 46 | „etwa“ braucht eine Grenze für die Prüfung in `bauen.ts` |
+| G0-11 | Auftrag 4, 1.4 (Fußkontakt prüfen) | Prüfung am Bild: Läufe deckender Pixel auf der Ankerzeile (Kontur unter den Sohlen); zwischen zwei Bildern muss ein Lauf mit Anfang oder Ende um genau den Schritt zurückrücken (±1 px) | Prüft die Pixel statt der Puppenrechnung, gilt damit auch für den Umsetzer; die Puppenrechnung prüft `grafik_vela.test.ts` exakt |
+| G0-12 | Auftrag 4, 2.4 (Spiegelung) | Gespiegelte Posen (Blick nach hinten in der Drehung von `kette4`) spiegeln die Formen, nicht das Bild: Licht bleibt links oben | Ein gespiegeltes Bild hätte das Licht von rechts |

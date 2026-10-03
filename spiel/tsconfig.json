@@ -14,5 +14,5 @@
     "typeRoots": ["/opt/node-tools/node_modules/@types"],
     "types": ["node"]
   },
-  "include": ["src/kern/**/*.ts", "src/pruef/**/*.ts", "tests/**/*.ts"]
+  "include": ["src/kern/**/*.ts", "src/pruef/**/*.ts", "tests/**/*.ts", "grafik/**/*.ts"]
 }
