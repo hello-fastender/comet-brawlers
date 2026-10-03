@@ -60,7 +60,7 @@ static func kopfIndex(zeilen: PackedStringArray) -> int:
 
 ## Erste abweichende Zeile zweier Protokolltexte. Gleiche Texte: leeres Dictionary.
 ## Sonst die Schlüssel
-##   zeile  (1-basiert), art ("inhalt", "spaltenzahl", "ist_kuerzer", "soll_kuerzer"),
+##   zeile  (1-basiert), art ("inhalt", "spaltenzahl", "ist_kuerzer", "soll_kuerzer", "zeilenende"),
 ##   frame  (Text der Spalte frame oder "-" im Kopf), spalte (Name oder "(Kopf)"),
 ##   ist, soll (Werte der abweichenden Spalte bzw. die ganze Kopfzeile),
 ##   davor  (Array von bis zu fünf Texten der Zeilen davor, je nur Frame und abweichende Spalte),
@@ -70,6 +70,13 @@ static func erstesAbweichen(ist: String, soll: String) -> Dictionary:
 		return {}
 	var il: PackedStringArray = ist.split("\n")
 	var sl: PackedStringArray = soll.split("\n")
+	# das Zeilenende am Schluss ist keine eigene Zeile; fehlt es auf einer Seite, ist das eine eigene Abweichung
+	var ist_lf: bool = il[il.size() - 1] == ""
+	var soll_lf: bool = sl[sl.size() - 1] == ""
+	if ist_lf:
+		il.remove_at(il.size() - 1)
+	if soll_lf:
+		sl.remove_at(sl.size() - 1)
 	var kopf: int = kopfIndex(sl)
 	var spalten: PackedStringArray = PackedStringArray()
 	if kopf >= 0:
@@ -84,7 +91,10 @@ static func erstesAbweichen(ist: String, soll: String) -> Dictionary:
 	if i < 0:
 		# gleiche Zeilen, aber verschieden lang (zum Beispiel ein fehlendes Zeilenende am Schluss)
 		i = n
-		art = "ist_kuerzer" if il.size() < sl.size() else "soll_kuerzer"
+		if il.size() == sl.size():
+			art = "zeilenende"
+		else:
+			art = "ist_kuerzer" if il.size() < sl.size() else "soll_kuerzer"
 	var ist_zeile: String = il[i] if i < il.size() else ""
 	var soll_zeile: String = sl[i] if i < sl.size() else ""
 	var im_kopf: bool = ist_zeile.begins_with("#") or soll_zeile.begins_with("#") or i == kopf or kopf < 0
@@ -116,6 +126,10 @@ static func erstesAbweichen(ist: String, soll: String) -> Dictionary:
 		if fi.size() != fs.size():
 			ergebnis["art"] = "spaltenzahl"
 		ergebnis["frame"] = fs[0] if fs.size() > 0 else fi[0]
+	elif art == "zeilenende":
+		ergebnis["spalte"] = "(Zeilenende)"
+		ergebnis["ist"] = "(LF am Schluss)" if ist_lf else "(LF am Schluss fehlt)"
+		ergebnis["soll"] = "(LF am Schluss)" if soll_lf else "(LF am Schluss fehlt)"
 	elif not im_kopf:
 		# Datenzeile fehlt auf einer Seite
 		var vorhanden: PackedStringArray = (ist_zeile if i < il.size() else soll_zeile).split(",")
