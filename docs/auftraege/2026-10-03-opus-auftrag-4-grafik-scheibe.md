@@ -379,44 +379,83 @@ dienen nur als Maßstab für Größen und Posen.
 5. `.gitignore` prüfen: `spiel/grafik/ausgabe/` wird committet,
    Kontaktbögen und Szenenbilder unter `docs/bilder/` ebenfalls.
 
-### Phase 1: Werkzeugkasten und erste Figur (G0, dann Haltepunkt 1)
+### Phase 1: Werkzeugkasten, Umsetzer und der Vergleich (G0 und G0b parallel, dann Haltepunkt 1)
 
-**G0: Werkzeugkasten und Vela-Grundlagen**
+Die Entscheidung zwischen Gliederpuppe und Grok-Blättern (Abschnitt 9)
+fällt am Ende dieser Phase, nicht erst am Ende des Auftrags. Deshalb baut
+Phase 1 beides nur so weit, wie der Vergleich es braucht.
+
+**G0: Werkzeugkasten und Vela-Minimalpuppe**
 
 ```text
 Aufgabe: Baue den Werkzeugkasten für prozedurale Pixelgrafik nach
 Abschnitt 2 des vierten Auftrags (wörtlich angehängt) in
-spiel/grafik/quelle/: leinwand.ts, png.ts, farbe.ts (Treppe nach E23 wie
-treppe() in spiel/werkzeuge/stilproben.html), palette.ts mit allen
-Materialien aus Abschnitt 4, raster.ts, licht.ts, kontur.ts, puppe.ts,
-blatt.ts, kontakt.ts, bauen.ts. Dann die erste Figur: figuren/vela.ts mit
-Teilen, Maßen und Materialien und den Animationen stand, gehen (12 Bilder,
-Füße rutschen nicht: 7 px je Bild), kette1 bis kette4 (Trefferbild im
-ersten aktiven Frame nach werte.ts: Stufe 1 P+2, Stufe 2 D+3, Stufe 3
-D+4, Stufe 4 D+3; Reichweite 85/87/91/100 px mit Magnetstoß-Effekt),
-sprung, getroffen_vorn, umgeworfen, liegen, aufstehen. Lies vorher
+spiel/grafik/quelle/: leinwand.ts, png.ts (Schreiben und Lesen: Encoder
+mit node:zlib deflateSync und CRC32; Decoder mit inflateSync, Filtertypen
+0 bis 4, 8-Bit RGB und RGBA, auch für den Umsetzer), farbe.ts (Treppe
+nach E23 wie treppe() in spiel/werkzeuge/stilproben.html), palette.ts
+mit allen Materialien aus Abschnitt 4, raster.ts, licht.ts, kontur.ts,
+puppe.ts, blatt.ts, kontakt.ts, bauen.ts. Dann Vela als Gliederpuppe nur
+mit stand, gehen (12 Bilder, 7 px je Bild Fußkontakt) und kette1 bis
+kette4 (Trefferbild im ersten aktiven Frame nach werte.ts). Lies vorher
 docs/design.md Abschnitte 2, 5 und 8, die Stilprobe stil_1_arcade_nah.png
 (als Bild ansehen) und die Umrisse in spiel/src/darstellung/masse.ts.
-Tests (node:test): PNG-Encoder (Rundlauf über einen eigenen Mini-Decoder
-oder Prüfung der Chunk-Struktur und CRC), Treppe (fünf Töne, Farbton
-verschiebt sich in die richtige Richtung), Kontur geschlossen,
-Streupixelprüfung, Farbzählung ≤ 16 je Figurblatt, Anker im Bild,
-Umriss eingehalten, Fußkontakt beim Gehen (der tiefste Pixel des
-Standfußes bewegt sich je Bild um 7 px rückwärts), Determinismus (zwei
-Bauläufe, gleiche MD5). Kontaktbögen nach docs/bilder/kontakt_vela_*.png
-und eine Übersicht kontakt_vela.png mit allen Animationen untereinander.
-Ablieferung: Code, Tests grün, docs/grafik.md Abschnitt Pipeline und
-Vela, zehn Zeilen Bericht mit MD5 der Blätter. Nicht committen.
+Tests: PNG Rundlauf (schreiben, lesen, bitgleich), Treppe, Kontur
+geschlossen, Streupixel, Farbzählung ≤ 16, Anker im Bild, Umriss,
+Fußkontakt, Determinismus (zwei Bauläufe, gleiche MD5). Kontaktbögen
+nach docs/bilder/kontakt_vela_*.png. Ablieferung: Code, Tests grün,
+docs/grafik.md Abschnitte Pipeline und Vela, zehn Zeilen Bericht. Nicht
+committen. Die Schnittstellen von leinwand.ts, png.ts, palette.ts,
+kontur.ts, blatt.ts und kontakt.ts legst du zuerst fest und schreibst sie
+in docs/grafik.md, weil G0b parallel darauf aufbaut.
 ```
 
-**Haltepunkt 1**: Opus committet „Grafik: Werkzeugkasten und Vela
-(Entwurf)“ und zeigt dem Nutzer die Kontaktbögen von Vela (Stand, Gehen,
-Kette, Sprung, Getroffen) mit drei Sätzen, was zu beurteilen ist
-(Silhouette, Farben, Lesbarkeit der Kette). Der Nutzer gibt frei oder
-nennt Änderungen; Opus lässt G0 nachbessern, bis die Freigabe da ist. Erst
-dann Phase 2.
+**G0b: Umsetzer und Rammbock aus den Grok-Blättern**
+
+```text
+Aufgabe: Baue den Umsetzer für Bildblätter nach Abschnitt 9.3 des
+vierten Auftrags (wörtlich angehängt) als spiel/grafik/quelle/umsetzer.ts
+und setze den Rammbock aus den Blättern des Nutzers um, die unter
+spiel/grafik/quelle/fremd/rammbock/ liegen (Opus legt sie dort ab, mit
+quelle.txt). Verwende die Schnittstellen aus docs/grafik.md (G0 schreibt
+sie zuerst; bis dahin eigene Minimalfassungen in umsetzer.ts, die du
+danach gegen die von G0 tauschst). Schritte: Zellen finden, freistellen,
+Maßstab aus dem Stand-Bild auf 71 px Figurhöhe, Palette auf die
+Materialtreppen des Rammbocks (Haut mittel, Weste oliv, Hose braun,
+Stahl, Leder) mit höchstens 15 Farben, Außenkontur neu, Streupixel
+entfernen, Anker am Fußpunkt, Zuordnung der Zellen zu den Animationen
+aus Abschnitt 3 in fremd/rammbock/zuordnung.txt, Atlas rammbock_fremd.
+Fehlende Bilder (etwa Sprungtritt in der Luft) durch Wiederholung
+ersetzen und als Nachbestellung in docs/grafik.md nennen. Dieselben
+Prüfungen wie bei der Puppe. Tests: Zellenerkennung an einem
+synthetischen Blatt, Freistellen, Maßstab, Palettenabbildung (Abstand je
+Farbe protokolliert), Anker, Determinismus. Kontaktbögen
+kontakt_rammbock_fremd_*.png und ein Bild vergleich_rammbock.png: der
+Grok-Rammbock in Stand, Gehen (4 Bilder), Schlag und getroffen, 2×,
+daneben Vela aus G0 im Stand und im Schlag, dazu beide in Spielgröße 1×
+auf einem Ausschnitt des Platzhalter-Hintergrunds. Ablieferung: Code,
+Tests grün, docs/grafik.md Abschnitt Umsetzer mit der Liste der
+Nachbestellungen, zehn Zeilen Bericht. Nicht committen.
+```
+
+**Haltepunkt 1**: Opus committet „Grafik: Werkzeugkasten, Umsetzer, Vela
+und Rammbock (Entwurf)“ und zeigt dem Nutzer `vergleich_rammbock.png`,
+die Kontaktbögen beider Figuren und drei Sätze, was zu beurteilen ist:
+Lesbarkeit bei 1×, Farben nach der Abbildung auf die Palette, ob Puppe
+und Grok-Figur nebeneinander wie ein Spiel wirken. Der Nutzer entscheidet
+**E24**: Grok-Blätter als Standardweg für Figuren, Objekte und
+Hintergründe (Puppe nur für Effekte und Lücken) oder Gliederpuppe als
+Standardweg (Grok nur als Vorlage). Opus trägt E24 in
+`docs/erkenntnisse.md` ein und richtet Phase 2 danach aus. Ohne Freigabe
+keine Phase 2.
 
 ### Phase 2: Alle Grafiken (G1 bis G6, parallel; alle nutzen den Werkzeugkasten)
+
+Nach E24 gilt: Bei „Grok-Blätter“ setzen G1 bis G5 die vom Nutzer
+gelieferten Blätter (Bestellliste `docs/grafik-bestellung.md`) mit dem
+Umsetzer um und bauen mit der Puppe nur, was noch kein Blatt hat; bei
+„Gliederpuppe“ gilt der Text unten unverändert. In beiden Fällen bleibt
+die Puppe für Effekte (1.5) zuständig.
 
 Jeder Agent liest zuerst `docs/grafik.md` (Stilhandbuch, Pipeline),
 `spiel/grafik/quelle/` (Werkzeugkasten, `figuren/vela.ts` als Muster) und
