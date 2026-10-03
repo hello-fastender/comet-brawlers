@@ -1,0 +1,20 @@
+# Herkunft der Bildblätter für Vela (Auftrag 5, Abschnitt 2c, Weg D)
+#
+# Datum:      2026-10-03, vom Nutzer im Opus-Chat hochgeladen
+# Werkzeug:   Grok (Bilderzeugung), Projekt „Comet Brawlers“
+# Prompts:    nach docs/grafik-bestellung.md (Fassung nach E25, Vela), Teileblatt
+#             nach Auftrag 5, Abschnitt 2c
+# Umwandlung: beide kamen als WebP und sind mit Chromium (Canvas, sRGB)
+#             unverändert in PNG umgewandelt (Opus).
+#
+# vela_t_teile.png        Teileblatt, endgültige Fassung (1342 × 2000): Kopf, Zopf,
+#                         Rumpf mit offener Jacke (oranger Streifen) und dunklem Top,
+#                         Becken mit Gürtel, Ärmel gestreckt, Ärmel angewinkelt mit
+#                         Handschuh, Faust, offene Hand, zwei Hosenbeine (am Knie in
+#                         Ober- und Unterschenkel zu schneiden), Stiefel seitlich und
+#                         von vorn; rechts die ganze Figur als Maßstab.
+# vela_k_kampfhaltung.png Vorlage für Stand und Kampfhaltung (784 × 1168).
+#
+# Festlegung des Nutzers: Velas Aussehen folgt dem Teileblatt (offene Jacke mit
+# orangem Streifen, dunkles Top). Die Posenblätter vela_a bis vela_h sind Vorlage
+# für die übrigen Posen (noch nicht geliefert).
