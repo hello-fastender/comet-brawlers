@@ -1,6 +1,6 @@
 # Comet Brawlers: Erkenntnisse aus Captain Commando
 
-Stand 2026-10-02. Dieses Dokument fasst zusammen, was die Analyse von
+Stand 2026-10-03. Dieses Dokument fasst zusammen, was die Analyse von
 Captain Commando (Arcade, Fassung „World 911202“, MAME-Set `captcomm`) für
 Comet Brawlers ergeben hat, und legt fest, wie wir die Ergebnisse nutzen.
 Einzelheiten und Belege stehen in den verlinkten Dateien.
@@ -21,8 +21,10 @@ inspiriert, soll sich aber nicht 1:1 so spielen. Daraus folgt:
 
 ## Entscheidungen
 
-Entscheidungen des Nutzers vom 2026-10-02 (verbindlich; eingearbeitet in
-`docs/design.md` und `docs/design-gegner-stages.md`, Auftrag 2):
+Entscheidungen des Nutzers vom 2026-10-02 (E1 bis E9, Auftrag 2) und vom
+2026-10-03 (E10 bis E22, Auftrag 3), verbindlich; eingearbeitet in
+`docs/design.md` und `docs/design-gegner-stages.md`, E10 bis E22 auch in
+den beiden Spezifikationen:
 
 | Nr. | Datum | Entscheidung | Begründung |
 |---|---|---|---|
@@ -35,6 +37,19 @@ Entscheidungen des Nutzers vom 2026-10-02 (verbindlich; eingearbeitet in
 | E7 | 2026-10-02 | Helden Vela, Kord, Rin und Ollo mit den Werten aus `docs/design.md`, Abschnitt 5, als Arbeitsstand | Damit ist die vertikale Scheibe festgelegt; die Namen können später wechseln |
 | E8 | 2026-10-02 | Acht Stages, Sonderstage mit automatischem Scrollen an Position 5 | Wie im Designdokument geplant |
 | E9 | 2026-10-02 | Alle übrigen Vorschläge beider Designdokumente sind angenommen (Leben, Continues, Punkteschema, Zweispieler-Regeln, Fahrzeug, Essenswerte, Boss-LP 90 bis 120, Bossschaden bis 22, Flächenschaden bis 13, Wellenbonus, Gegner heben keine Waffen auf) | Keine Einwände; Einzelheiten stehen in den Designdokumenten |
+| E10 | 2026-10-03 | Alle Festlegungen, die in den Design- und Spezifikationsdokumenten als „Arbeitsregel“, „Platzhalter“ oder mit „Einverstanden?“ geführt sind, gelten als bestätigt, soweit E11 bis E21 nichts anderes sagen (unter anderem Schutz auch gegen Geschosse, Zuschnitt der Scheibe, Angreifergrenze je Figur, Ausnahmen über 13 LP) | Die Festlegungen schließen Lücken ohne Messgrundlage; bestätigt tragen sie die Scheibe ohne weiteren Vorbehalt |
+| E11 | 2026-10-03 | Super-Armor nach der festen Regel der Spezifikation (`spezifikation-welt.md`, 7.4, SA1 bis SA6): Kettenstufen 1 bis 3 ziehen LP vorläufig ab und springen 23 Frames nach dem letzten Treffer ohne Umwerfen zurück, danach Rückzug 54 Frames; umwerfende Treffer, Spezialangriff, Kniestoß, Wurf, Explosion, Sprintangriff, geworfener Gegner und Landung beim Neueinstieg zählen endgültig; keine zufällige Zurückweisung | Die Regel des Vorbilds ist unbekannt; eine feste Regel ist vorhersehbar, prüfbar und deterministisch |
+| E12 | 2026-10-03 | Festkomma 16.16 (`spezifikation-kampf.md`, 2.4) ist verbindlich für Positionen, Geschwindigkeiten und Beschleunigungen | Die Grundwerte aus `mechanik.md` sind exakte Vielfache von 1/65536, Ganzzahlen rechnen überall gleich, und Grenzen wie 85/86 px bleiben scharf |
+| E13 | 2026-10-03 | Bei zu langsamer Darstellung läuft die Logik in Echtzeit mit 60 Schritten je Sekunde weiter und lässt Bilder aus; höchstens 4 Logikschritte je Bild, darüber bleibt die Zeit stehen | Die Zeiten bleiben echt, und nach einer Stockung holt das Spiel nicht im Zeitraffer auf |
+| E14 | 2026-10-03 | Symmetrische Blickrichtung: Für Blick links gelten die Werte für Blick rechts aus `mechanik.md` (Reichweiten, Griffweiten, Aufnahmebereiche, Explosionsgrenzen); Griff von hinten 24 px in beide Richtungen | Die Unterschiede von 1 px sind Eigenheiten des Vorbilds; gleiche Werte sind einfacher zu bauen und zu prüfen |
+| E15 | 2026-10-03 | Der Sprint-Sprungangriff gehört in die Scheibe: 13 LP, Reichweite 38 bis 147 px in allen aktiven Frames | Er gehört zum Sprint, der in der Scheibe ist; die in A+20 gemessene Reichweite gilt, bis eine Messung mehr zeigt |
+| E16 | 2026-10-03 | Einheitlicher Tod: Neueinstieg N = t+120 für jede Todesart in der Scheibe, ohne die Sonderfälle Wand und Rollen des Vorbilds | Ein Ablauf für alle Todesarten ist einfacher zu bauen und zu prüfen |
+| E17 | 2026-10-03 | Der Zünder zielt 60 Frames sichtbar mit Zielrecht und schießt danach, nicht sofort wie im Vorbild; Schuss, Geschosse und Explosion wie gemessen | Die Ankündigung macht den Fernkämpfer lesbar und gibt der Figur Zeit zu reagieren |
+| E18 | 2026-10-03 | Armschwung des Bosses wie im Vorbild: der nächste Schwung nur, wenn der vorige getroffen hat, höchstens drei | So gemessen; wer dem ersten Schwung ausweicht, entgeht der ganzen Folge |
+| E19 | 2026-10-03 | Trefferreaktion des Bosses 23 Frames wie bei allen Gegnern (E3); die Folgefrist der Super-Armor ist h+23 | E3 gilt ohne Ausnahme, und die Kette hält auch so, wenn jeder Folgedruck rechtzeitig kommt |
+| E20 | 2026-10-03 | Welle 9 der vollen ersten Stage wie gemessen: Pistolen-Zünder nach dem Tod des ersten Arena-Bolzers, Raketen-Zünder bei einem Viertel der Boss-LP, ein zweiter nur ab Rang 16 und bei höchstens drei anderen lebenden Gegnern; in der Scheibe gilt der Zuschnitt | Die bisherige Fassung stützte sich auf eine überholte Beschreibung, die Messung ist gesichert |
+| E21 | 2026-10-03 | Griff mit Wurf des Bosses im Vollspiel ja (nach `mechanik.md`, „Boss“), in der Scheibe nein | Der Griff ist gemessen und gehört zum Boss; die Scheibe kommt mit drei Angriffen aus |
+| E22 | 2026-10-03 | Technik: TypeScript, reiner Logikkern ohne Browser, Darstellung über Canvas 2D in einer HTML-Seite, Prüfläufe und Abnahmetests in Node, Bildschirmfotos über Playwright, keine npm-Abhängigkeiten | Der Kern lässt sich ohne Browser in Node prüfen, und ohne Abhängigkeiten baut das Projekt auch ohne Zugang zur npm-Registry |
 
 ## Wo was steht
 
@@ -42,10 +57,11 @@ Entscheidungen des Nutzers vom 2026-10-02 (verbindlich; eingearbeitet in
 |---|---|
 | `docs/mechanik.md` | verbindliche Zahlenwerte für das Spiel, nur gesicherte Messungen |
 | `docs/erkenntnisse.md` | dieses Dokument: Überblick, Erkenntnisse, Richtwerte, offene Punkte |
-| `docs/design.md` | Designdokument Kern (Entwurf): Vision, Welt, technische Grundlage, Grundkit der Spielfigur, Helden, Lebenspunkte und Schwierigkeit, Rahmen, vertikale Scheibe, offene Entscheidungen |
+| `docs/design.md` | Designdokument Kern (Entwurf): Vision, Welt, technische Grundlage, Grundkit der Spielfigur, Helden, Lebenspunkte und Schwierigkeit, Rahmen, vertikale Scheibe, Entscheidungen des Nutzers (E1 bis E22) und offene Punkte |
 | `docs/design-gegner-stages.md` | Designdokument Gegner, Bosse und Stages (Entwurf): Gegnerrollen, Verhaltensmodell, Wiederverwendung, Bosse, Stage-Schablone, acht Stages, erste Stage im Detail, Gegenstände, Animationsplan |
-| `docs/spezifikation-kampf.md` | Spezifikation der vertikalen Scheibe, Kampfsystem: Zeit und Raum (60 Hz, Festkomma 16.16), Zustandsautomat der Figur, Trefferprüfung, Schaden, LP und Schutz, Trefferreaktion der Gegner, Griff und Wurf, Sprint und Spezialangriff, Waffen, Frame-Protokoll, Abnahmetests, offene Fragen |
-| `docs/spezifikation-welt.md` | Spezifikation der vertikalen Scheibe, Welt: Stage-Daten, Kamera, Aktivierung und Wellen, Gegnerlogik der Nah- und Fernkämpfer, Boss, Rang, Gegenstände und Behälter, Anzeige und Rahmen, Zufall und Determinismus, Abnahmetests, offene Fragen |
+| `docs/spezifikation-kampf.md` | Spezifikation der vertikalen Scheibe, Kampfsystem: Zeit und Raum (60 Hz, Festkomma 16.16), Zustandsautomat der Figur, Trefferprüfung, Schaden, LP und Schutz, Trefferreaktion der Gegner, Griff und Wurf, Sprint und Spezialangriff, Waffen, Frame-Protokoll, Abnahmetests, Platzhalter und Fragen (beantwortet mit E10 bis E22) |
+| `docs/spezifikation-welt.md` | Spezifikation der vertikalen Scheibe, Welt: Stage-Daten, Kamera, Aktivierung und Wellen, Gegnerlogik der Nah- und Fernkämpfer, Boss, Rang, Gegenstände und Behälter, Anzeige und Rahmen, Zufall und Determinismus, Abnahmetests, Fragen (beantwortet mit E10 bis E22) |
+| `docs/scheibe.md` | Programm der vertikalen Scheibe (im Aufbau, Auftrag 3; Code in `spiel/`): Bedienung, Bau und Befehle, Werkzeuge, Tests, Stand der Abnahme, Abweichungen und Lücken, die beim Codieren festgelegt wurden |
 | `research/captcomm/notes.md` | Methode, alle Messungen mit Status und Belegen, Speicheradressen |
 | `research/captcomm/grafik/README.md` | Stages, Spielfiguren und Gegner mit Bildern, Kennwerten und Animationsdauern |
 | `research/captcomm/logs/` | Belege der Messungen (CSV) |
@@ -115,9 +131,9 @@ Werte und Zeitfenster stehen in `mechanik.md`.
   nach einem Treffer, so trifft die zweite Kugel einer Salve des DICK in der
   Reaktion auf die erste (nach dem Aufstehen nicht gemessen; `mechanik.md`,
   „Unverwundbarkeit“, Zeile „gegen Geschosse“). In unserem Spiel bleiben
-  nach E2 auch Geschosse im Schutz wirkungslos (`design-gegner-stages.md`,
-  Abschnitt 2). Treffen sich Figur und Gegner im selben Frame, gewinnt die
-  Figur, auch gegen den Boss. Die Figur stirbt erst unter 0 LP. Nach einem
+  nach E2 und E10 auch Geschosse im Schutz wirkungslos
+  (`design-gegner-stages.md`, Abschnitt 2). Treffen sich Figur und Gegner
+  im selben Frame, gewinnt die Figur, auch gegen den Boss. Die Figur stirbt erst unter 0 LP. Nach einem
   Tod fällt sie von oben ins Bild, wirft beim Aufsetzen jeden aktiven Gegner
   im Bild um und ist ab dem Erscheinen etwa 4,2 s geschützt (252 Frames,
   davon 200 nach der Landung). Nahangriffe der Gegner bleiben in dieser Zeit
@@ -356,8 +372,8 @@ Gestalten hilft. In dieser Reihenfolge:
    (`mechanik.md`, „Boss“): Welche Treffer zählen, Reichweiten,
    Spezialangriff und Verstärkung sind gesichert. Offen bleibt, nach welcher
    Regel er einen Treffer zurückweist und wann er sich stattdessen abfängt;
-   für unser Spiel genügt eine eigene Regel (etwa eine mit dem Rang
-   steigende Wahrscheinlichkeit). Unsicher sind die Wurfweite (die
+   für unser Spiel gilt die feste Regel aus E11 (`spezifikation-welt.md`,
+   7.4). Unsicher sind die Wurfweite (die
    Messungen weichen ab), seine erste Aktion nach dem Aufstehen und die
    Zeiten bis zum Stagewechsel. Nicht einzeln gemessen sind seine LP bei
    Rang 10, 13, 14, 17, 18, 21 und 22; ob ein zweiter Spieler oder ein
@@ -391,7 +407,9 @@ Gestalten hilft. In dieser Reihenfolge:
    ist auch, ob die Landung nach dem Neueinstieg schwache Gegner (5 LP oder
    weniger) tötet und Gegner außerhalb des Bildes trifft. Der Schutz nach
    dem Neueinstieg ist nur für Captain Commando und nur in Stage 1
-   ausgewertet.
+   ausgewertet. Für die Scheibe ist das ohne Folgen: Jeder Tod führt zum
+   Neueinstieg in t+120 (E16), die Landung trifft alle Gegner im Bild, und
+   der Schutz dauert 252 Frames (E10).
 
 Weitere unsichere Einzelheiten stehen in `mechanik.md` unter „Nicht
 übernommen“ und in `research/captcomm/grafik/README.md`, deren Werte zu

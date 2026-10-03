@@ -1,8 +1,9 @@
 # Comet Brawlers: Gegner und Stages
 
-Stand 2026-10-02, Entwurf mit den Entscheidungen des Nutzers vom selben
-Tag (`docs/design.md`, Abschnitt 9). Dieses Dokument ergänzt `docs/design.md`
-(Spielfigur, Helden, Rahmen) um Gegner, Bosse, Stages und Gegenstände.
+Stand 2026-10-03, Entwurf mit den Entscheidungen des Nutzers vom
+2026-10-02 und 2026-10-03 (`docs/design.md`, Abschnitt 9). Dieses
+Dokument ergänzt `docs/design.md` (Spielfigur, Helden, Rahmen) um Gegner,
+Bosse, Stages und Gegenstände.
 Comet Brawlers ist von einem Arcade-Beat-'em-up von 1991 inspiriert, kein
 Nachbau: Rollen und Zahlen des Vorbilds dienen als Richtwert, Figuren,
 Namen und Schauplätze sind eigene. Welche Vorbilder hinter den
@@ -25,10 +26,10 @@ heißt Lebenspunkte; die Figur hat 72 LP.
 | unsicher | gemessen, aber nicht in allen Messungen gleich; beide Werte stehen dabei |
 | Workflow | in `mechanik.md` oder `research/captcomm/notes.md` so gekennzeichnet: unabhängig gemessen und gegengeprüft, ohne Skript im Repo |
 | beschrieben | aus Aufnahmen: `research/captcomm/grafik/README.md` (kurz G, mit der Stage des Vorbilds) oder `research/captcomm/grafik/gegner/ablaeufe.csv` (kurz A1 bis A9, Zuordnung in Abschnitt 10) |
-| beschlossen (E1) bis (E9) | Entscheidung des Nutzers vom 2026-10-02 (Tabelle in `docs/design.md`, Abschnitt 9); E9 umfasst alle eigenen Werte, die bisher „Vorschlag“ hießen; beim Testen anpassen |
+| beschlossen (E1) bis (E22) | Entscheidung des Nutzers vom 2026-10-02 (E1 bis E9) bzw. 2026-10-03 (E10 bis E22), Tabellen in `docs/design.md`, Abschnitt 9; E9 umfasst alle eigenen Werte, die bisher „Vorschlag“ hießen; beim Testen anpassen |
 | offen (M6, On) bis offen (M8, On) | Messpaket 2 misst den Wert (M6 Boss, M7 Fernkampf und Messerwurf, M8 Rest der Spielfigur); On ist die Nummer in der Liste „Offen bis Messpaket 2“ am Ende von Abschnitt 10 |
 | offen | auch nach den Messungen vom 2026-10-02 (Trefferreaktion, Verhalten, Reichweite der Gegnerangriffe, Spezialangriff und Sprint, Gegenstände) nicht bestimmt und nicht in Messpaket 2 (ohne Messauftrag, ohne Nummer); der Grund steht dabei. Gleiche Bedeutung wie in `docs/design.md` |
-| Arbeitsregel (Bestätigung des Nutzers offen) | eigene Festlegung für eine Lücke, die E1 bis E9 nicht decken; gilt, bis der Nutzer entscheidet, und steht in der Liste der offenen Entscheidungen (Abschnitt 10 bzw. `docs/design.md`, Abschnitt 9) |
+| beschlossen (E10) | eigene Festlegung für eine Lücke, die E1 bis E9 nicht deckten (bis 2026-10-02 „Arbeitsregel“ mit offener Bestätigung); mit E10 vom Nutzer bestätigt, soweit E11 bis E21 nichts anderes sagen |
 
 **Bezugsframes** wie in `docs/mechanik.md`, „Trefferreaktion der Gegner“
 und „Reichweite der Gegnerangriffe“: **h** Frame, in dem ein Treffer die
@@ -66,7 +67,7 @@ Hafenschläger im Overall mit Magnetstiefeln, das Fußvolk des Syndikats.
 | Aufgabe im Kampf | Grundgegner jeder Welle, Ziel der vollen Kette, Wurfgeschoss gegen andere | beschlossen (E9) |
 | LP | Startgegner 16: eine volle Kette (3 + 4 + 5 + 10 = 22) besiegt ihn. Später I / II / III / IV: 22 / 25 / 30 / 33 | 16 gesichert, Spanne 22–34 Workflow, Stufung beschlossen (E9) |
 | Schaden | Startgegner 5 je Treffer. Später I / II / III / IV: 7 / 8 / 9 / 10 | gesichert (Rang 7 und 9–12), sonst Workflow |
-| Geschwindigkeit | 1,75 px/Frame, so schnell wie die Figur; Tiefe 0,875 px/Frame; rund ein Drittel der Gehframes (29 bis 41 %) schnell mit 2,25 × 1,125 px/Frame | gesichert (notes.md, „Nachtrag: Verhalten der Nahkämpfer“); wonach er im Vorbild die Gehstufe wählt, ist offen. Arbeitsregel (Bestätigung des Nutzers offen): Gehstufe zufällig, etwa ein Drittel schnell |
+| Geschwindigkeit | 1,75 px/Frame, so schnell wie die Figur; Tiefe 0,875 px/Frame; rund ein Drittel der Gehframes (29 bis 41 %) schnell mit 2,25 × 1,125 px/Frame | gesichert (notes.md, „Nachtrag: Verhalten der Nahkämpfer“); wonach er im Vorbild die Gehstufe wählt, ist offen. Beschlossen (E10): Gehstufe zufällig, etwa ein Drittel schnell |
 | Angriffe | drei normale Schläge (Startup 9, 4 und 10 Frames ab Beginn der Angriffsanimation) und zwei Umwerfschläge (Startup 9 und 8; der zweite nur direkt nach dem ersten normalen Schlag), gesichert (notes.md, „Nachtrag: Reichweite der Gegnerangriffe“); davor je nach Rang 25 bis 5 Frames Kampfhaltung (notes.md, „Nachtrag: Verhalten der Nahkämpfer“). Trifft aus 46 px; Grenze in x: Er merkt sich beim Heranlaufen einen Zielabstand (höchstens 48 px) und trifft im ersten aktiven Frame, solange die Figur höchstens 32 px links und 31 px rechts vom Zielpunkt steht (je nach Blickrichtung 31 bzw. 32 px näher oder weiter) und nicht mehr als 3 bis 4 px hinter ihm, sonst bricht er ab (gesichert, notes.md, „Nachtrag: Reichweite der Gegnerangriffe“); Tiefe −10 bis +11 px; springende Figur bis 48 px Höhe | Workflow, sonst wie angegeben; 46 px: notes.md, „Szenarien“ |
 | Umriss | 57 × 72 px (Vorbild etwa 67 px hoch, Box 57 × 73) | beschlossen (E9) |
 
@@ -84,7 +85,7 @@ Breitschultriger Schlepperfahrer mit Polsterweste.
 | Aufgabe im Kampf | übersteht eine volle Kette (liegt danach mit 8 LP) und verlangt Wurf, Sprungangriff oder zweite Kette | gesichert (30 LP), sonst beschlossen (E9) |
 | LP | Startgegner 30. Später I / II / III / IV: 32 / 34 / 38 / 41 | 30 gesichert, Spanne 32–42 Workflow |
 | Schaden | Startgegner 6. Später I / II / III / IV: 8 / 9 / 10 / 11 | Workflow |
-| Geschwindigkeit | 1,6 px/Frame (Vorbild 1,45 bis 1,9 je Stage) | beschlossen (E9) |
+| Geschwindigkeit | 1,6 px/Frame (Vorbild 1,45 bis 1,9 je Stage); schnelle Gehstufe 2,0 px/Frame, gewählt wie beim Bolzer | 1,6 beschlossen (E9), schnelle Gehstufe beschlossen (E10; `docs/spezifikation-welt.md`, 5.1) |
 | Angriffe | zwei normale Schläge (Startup 9 und 10 Frames) und zwei Umwerf-Angriffe: Umwerfschlag (Startup 9) und Sprungtritt (Startup 9, aktiv bis A+45 in der Luft, in den Aufnahmen als Sprungknie aus etwa 30 px), gesichert (notes.md, „Nachtrag: Reichweite der Gegnerangriffe“). Davor je nach Rang 25 bis 5 Frames Kampfhaltung (in den Aufnahmen eine Hocke von 14 bis 21 Frames); zwischen zwei Angriffen einer Serie 38 bis 90 Frames, bei Rang 10 bis 11 52 bis 84 (notes.md, „Nachtrag: Verhalten der Nahkämpfer“). Der Sprungtritt trifft eine springende Figur bis 50 px Höhe. Reichweite: Schläge wie beim Bolzer (Zielabstand höchstens 48 px, Abbruch außerhalb von 32 px links und 31 px rechts vom Zielpunkt), Tiefe −10 bis +11 px; Sprungtritt trifft im ersten aktiven Frame 0 bis 59 px vor ihm, Tiefe ±12 px, bricht nie ab (gesichert, notes.md, „Nachtrag: Reichweite der Gegnerangriffe“) | Workflow; beschrieben (A6, G Stage 1 und 8) |
 | Umriss | 60 × 76 px (Vorbild 66 px hoch; größer als der Bolzer, damit die Rolle lesbar ist) | beschlossen (E9) |
 
@@ -92,7 +93,9 @@ Verhalten: Der Rammbock kommt etwas langsamer als die Figur und kündigt
 jeden Angriff mit einer deutlichen Hocke an. Er mischt kurze Schläge mit
 einem Sprungtritt aus mittlerer Distanz, der eine fliehende Figur
 einholt. Nach einem Umwerf-Angriff pausiert er länger als der Bolzer,
-damit zwei Rammböcke nicht im Wechsel pausenlos drücken.
+damit zwei Rammböcke nicht im Wechsel pausenlos drücken: Er wartet nach
+einer Serie 90 bis 180 Frames statt 50 bis 140, beschlossen (E10;
+`docs/spezifikation-welt.md`, 5.1).
 
 ### 1.3 Schneller Messerkämpfer: Splitter
 
@@ -121,13 +124,13 @@ Raketenwerfer.
 |---|---|---|
 | Aufgabe im Kampf | hält Abstand und zwingt die Figur, sich aus der Gruppe zu lösen; seine Waffe bleibt als Gegenstand liegen | beschrieben |
 | LP | I / II / III / IV: 16 / 19 / 24 / 27 (Vorbild 16 bis 28) | beschrieben, Stufung beschlossen (E9) |
-| Schaden | Pistole 5 / 6 / 6 / 7 je Schuss; Salven wie unter „Angriffe“, im Takt von 17 Frames abwechselnd normal und umwerfend. Nach einem wirksamen Treffer kommt der nächste Schuss im Schutz der Figur an und bleibt wirkungslos (E2; `docs/spezifikation-kampf.md`, P17); im Vorbild trifft er in der Trefferreaktion und wirft um. Rakete 12 / 13 / 14 / 15 | Vorbild 4–7 und 12–15 je nach Rang (notes.md, „Nachtrag: Fernangriffe der Gegner“), Stufung beschlossen (E9) |
+| Schaden | Pistole 5 / 6 / 6 / 7 je Schuss; Salven wie unter „Angriffe“, im Takt von 17 Frames abwechselnd normal und umwerfend. Nach einem wirksamen Treffer kommt der nächste Schuss im Schutz der Figur an und bleibt wirkungslos (E2 und E10; `docs/spezifikation-kampf.md`, P17); im Vorbild trifft er in der Trefferreaktion und wirft um. Rakete 12 / 13 / 14 / 15 | Vorbild 4–7 und 12–15 je nach Rang (notes.md, „Nachtrag: Fernangriffe der Gegner“), Stufung beschlossen (E9) |
 | Geschwindigkeit | 1,75 px/Frame (Vorbild 1,6 bis 2,0) | beschrieben |
-| Angriffe | Zielen 60 bis 120 Frames als Ankündigung, Schuss 17 Frames, Kugel 8 px/Frame; Rakete 5 px/Frame, Explosion sichtbar etwa 90 bis 95 Frames, trifft keine Gegner; Kolbenhieb 42 Frames. Pistole und Rakete (notes.md, „Nachtrag: Fernangriffe der Gegner“): Er schießt aus 112 bis 136 px (Zielpunkt 128 px vor der Figur in ihrer Tiefe oder 120 px mit 24 px Versatz) und gleicht vorher die Tiefe bis ±6 px an; das Geschoss erscheint in A+6. Pistole: Salven zu 2 bis 8 Schüssen im Takt von 17 Frames, Kugel 8,0 px/Frame in 58 px Höhe, abwechselnd normal und umwerfend (die erste nie umwerfend), trifft bis 59 px Höhe und Tiefe ±12, ein Schlag zerstört sie nicht, ein Sprung weicht nicht aus. Rakete: ein Schuss je Angriff, 5,0 px/Frame, trifft im Flug nicht; die Explosion 145 px vor ihm trifft 9 Frames lang etwa 89 bis 192 px vor ihm, Tiefe ±12, bis 25 px Höhe (ein Sprung weicht aus), wirft um und trifft keine Gegner. Rhythmus unsicher: Pistole 0,82 und 1,57 Salven je 1000 Frames (Messagent), 0,38 bis 1,76 (Gegenprüfer), 0,50 bis 2,34 (dritte Messung); Rakete 1,27 und 1,42, 1,03 bis 2,05 bzw. 1,03 bis 2,39. Schaden und Reichweite des Kolbenhiebs im Vorbild offen (ohne Messauftrag); Arbeitsregel (Bestätigung des Nutzers offen): wie Schlag A des Bolzers (Startup 9, aktiv A+9 bis A+13, Reichweite und Schaden wie beim Bolzer, wirft nicht um) | beschrieben (G Stage 1, 6, 8) |
+| Angriffe | Zielen 60 Frames als sichtbare Ankündigung, solange er das Zielrecht hält, danach Schuss 17 Frames, beschlossen (E17); im Vorbild gleicht er nur 1 bis 22 Frames die Tiefe an und schießt sofort, die 60 bis 120 Frames der Aufnahmen sind eine Pose nach dem Schuss (notes.md, „Nachtrag: Fernangriffe der Gegner“). Kugel 8 px/Frame; Rakete 5 px/Frame, Explosion sichtbar etwa 90 bis 95 Frames, trifft keine Gegner; Kolbenhieb 42 Frames. Schuss, Geschosse und Explosion wie gemessen (E17). Pistole und Rakete (notes.md, „Nachtrag: Fernangriffe der Gegner“): Er schießt aus 112 bis 136 px (Zielpunkt 128 px vor der Figur in ihrer Tiefe oder 120 px mit 24 px Versatz; wir wählen zufällig aus diesen drei Punkten, ohne die Doppelschüsse des Vorbilds, beschlossen (E10)) und gleicht vorher die Tiefe bis ±6 px an; das Geschoss erscheint in A+6. Pistole: Salven zu 2 bis 8 Schüssen im Takt von 17 Frames, Kugel 8,0 px/Frame in 58 px Höhe, abwechselnd normal und umwerfend (die erste nie umwerfend), trifft bis 59 px Höhe und Tiefe ±12, ein Schlag zerstört sie nicht, ein Sprung weicht nicht aus. Rakete: ein Schuss je Angriff, 5,0 px/Frame, trifft im Flug nicht; die Explosion 145 px vor ihm trifft 9 Frames lang etwa 89 bis 201 px vor ihm (Rakete nach rechts: 89 bis 192 px, wenn die Figur wegschaut, 97 bis 200 px, wenn sie zu ihm schaut; nach links 90 bis 193 bzw. 98 bis 201 px; `docs/spezifikation-welt.md`, 6), Tiefe ±12, bis 25 px Höhe (ein Sprung weicht aus), wirft um und trifft keine Gegner. Rhythmus unsicher: Pistole 0,82 und 1,57 Salven je 1000 Frames (Messagent), 0,38 bis 1,76 (Gegenprüfer), 0,50 bis 2,34 (dritte Messung); Rakete 1,27 und 1,42, 1,03 bis 2,05 bzw. 1,03 bis 2,39. Schaden und Reichweite des Kolbenhiebs im Vorbild offen (ohne Messauftrag); beschlossen (E10): wie Schlag A des Bolzers (Startup 9, aktiv A+9 bis A+13, Reichweite und Schaden wie beim Bolzer, wirft nicht um) | beschrieben (G Stage 1, 6, 8); Zielen beschlossen (E17) |
 | Umriss | 64 × 72 px (Vorbild 68 px hoch) | beschlossen (E9) |
 
 Verhalten: Der Zünder sucht einen Platz 100 bis 140 px vor der Figur in
-ihrer Tiefe und zielt sichtbar. Kommt sie näher, weicht er zurück, statt
+ihrer Tiefe und zielt 60 Frames sichtbar, bevor er schießt (E17). Kommt sie näher, weicht er zurück, statt
 zu schlagen; nur in einer Ecke setzt er den Kolben ein. Er zielt nur, wenn
 er die Erlaubnis dazu hat (Abschnitt 2).
 
@@ -198,13 +201,12 @@ Angriffserlaubnis regelt den Druck:
   der Figur höchstens einer (E5).
 - Höchstens ein Fernkämpfer zielt gleichzeitig, ab Stage 6 zwei (E5; im
   Vorbild feuern in späten Stages Paare gleichzeitig, G Stage 8).
-- Arbeitsregel (Bestätigung des Nutzers offen): Der Boss zählt nicht mit
-  und greift nach seinem eigenen Rhythmus an (Abschnitt 4). Zielende
-  Fernkämpfer haben ihre eigene Grenze aus E5 und zählen nicht als
-  Nahangreifer.
-- Arbeitsregel (Bestätigung des Nutzers offen): Bei zwei Spielern gilt die
-  Grenze je Figur, also je Figur höchstens zwei Angreifer, je Seite einer
-  (`docs/design.md`, Abschnitt 7).
+- Beschlossen (E10): Der Boss zählt nicht mit und greift nach seinem
+  eigenen Rhythmus an (Abschnitt 4). Zielende Fernkämpfer haben ihre
+  eigene Grenze aus E5 und zählen nicht als Nahangreifer.
+- Beschlossen (E10): Bei zwei Spielern gilt die Grenze je Figur, also je
+  Figur höchstens zwei Angreifer, je Seite einer (`docs/design.md`,
+  Abschnitt 7).
 - Die Erlaubnis hängt nicht von Schutz oder Liegen der Figur ab (E2):
   Gegner greifen auch in den Schutzfenstern der Figur an (27 Frames nach
   einem Treffer, vom Umwerfen bis zum Aufstehen, 35 nach dem Aufstehen,
@@ -213,9 +215,11 @@ Angriffserlaubnis regelt den Druck:
   7 mehr –, nach dem Neueinstieg vom Erscheinen bis 199 Frames nach der
   Landung; mechanik.md, „Unverwundbarkeit“; `docs/design.md`, Abschnitt
   4.7) und ebenso eine liegende Figur; ihre Treffer bleiben dort
-  wirkungslos, auch die von Geschossen (im Vorbild treffen Geschosse im
-  Schutz nach einem Treffer, notes.md, „Nachtrag: Fernangriffe der
-  Gegner“). Das ist im Vorbild gemessen (notes.md, „Nachtrag: Verhalten
+  wirkungslos, auch die von Geschossen (E10; im Vorbild treffen Geschosse
+  im Schutz nach einem Treffer, notes.md, „Nachtrag: Fernangriffe der
+  Gegner“). Ein wirkungsloser Treffer löst beim Gegner keinen Trefferstopp
+  aus, sein Angriff bleibt aktiv (E10; `docs/spezifikation-kampf.md`,
+  P11). Das ist im Vorbild gemessen (notes.md, „Nachtrag: Verhalten
   der Nahkämpfer“), einfacher als eine Erlaubnis mit Rücksicht auf den
   Schutz, und die Gegner wirken nicht passiv. Ausnahme, wie im Vorbild:
   Vom Tod der Figur bis zu ihrem Erscheinen beim Neueinstieg beginnt kein
@@ -235,7 +239,8 @@ Entscheidung des Nutzers und geht der Sammelannahme E9 vor: Die
 23 Frames gelten für alle Gegner, auch für den Koloss und die Bosse. Bei
 Bossen regelt die Super-Armor (Abschnitt 4) zusätzlich, welche Treffer
 zählen und wann die LP zurückspringen; reagiert ein Boss auf einen
-Treffer, dauert die Reaktion wie bei allen Gegnern 23 Frames.
+Treffer, dauert die Reaktion wie bei allen Gegnern 23 Frames, beschlossen
+(E19; im Vorbild 27 Frames, von hinten im Warten oder Angriff 15).
 
 | Größe | Vorbild | Comet Brawlers | Status |
 |---|---|---|---|
@@ -245,7 +250,7 @@ Treffer, dauert die Reaktion wie bei allen Gegnern 23 Frames.
 | Treffer von hinten | eigene Trefferanimation | eigene Trefferanimation, kein Rückstoß (E3) | offen: Treffer von hinten wurden nicht gemessen |
 | Umwerfen | Stufe 4, Sprungangriffe, Wurf, dritter Kniestoß; Gegner fliegt nach Sprungangriff 135 px (notes.md, „Nachtrag: Trefferreaktion der Gegner“), Wurf 184–185 px, Kniestoß etwa 165 px, Spezialangriff im Griff etwa 158 px | übernehmen | gesichert, wo nicht anders vermerkt |
 | Ablauf Umwerfen | Stillstand K+1 bis K+8, Flug ab K+9, erster Bodenkontakt K+46, Ruhe ab K+55 (mechanik.md, „Trefferreaktion der Gegner“); in den Aufnahmen 2 / 8 / 37 / 9 Frames (A3, A7) | übernehmen | gesichert |
-| Liegen | 33 Frames (leichter), 41 Frames (schwerer Nahkämpfer) nach dem Sprungtritt (A3, A7); andere Typen 27 bis 44 | übernehmen: leichter Nahkämpfer 32 Frames (nach einem Wurf 16), schwerer 16 bis 44 Frames; Arbeitsregel (Bestätigung des Nutzers offen): beim schweren gleichverteilt in Schritten von 4 | gesichert: leichter Nahkämpfer 32 Frames (nach einem Wurf 16), schwerer 16 bis 44 Frames (Auswahl offen, vermutlich zufällig); Ruhe vorher K+55, nach dem dritten Kniestoß K+58, nach Wurf K+70 (notes.md, „Nachtrag: Trefferreaktion der Gegner“) |
+| Liegen | 33 Frames (leichter), 41 Frames (schwerer Nahkämpfer) nach dem Sprungtritt (A3, A7); andere Typen 27 bis 44 | übernehmen: leichter Nahkämpfer 32 Frames (nach einem Wurf 16), schwerer 16 bis 44 Frames; beschlossen (E10): beim schweren gleichverteilt in Schritten von 4 | gesichert: leichter Nahkämpfer 32 Frames (nach einem Wurf 16), schwerer 16 bis 44 Frames (Auswahl offen, vermutlich zufällig); Ruhe vorher K+55, nach dem dritten Kniestoß K+58, nach Wurf K+70 (notes.md, „Nachtrag: Trefferreaktion der Gegner“) |
 | Aufstehen | 8 / 8 / 1 Frames (A3, A7); vom Treffer bis zur Haltung bei beiden 126 Frames | übernehmen: 18 Frames | gesichert: 18 Frames; wieder handlungsfähig (G) beim leichten Nahkämpfer K+105 nach Tritt oder Sprungangriff, beim schweren K+89 bis K+117 (notes.md, „Nachtrag: Trefferreaktion der Gegner“) |
 | Schutz nach dem Aufstehen | keiner (siehe Status) | keiner, beschlossen (E4): sofort verwundbar und greifbar ab G, dem ersten handlungsfähigen Frame (auch nach einem Wurf; im Vorbild dort erst ab G+1, siehe Status) | im Vorbild gesichert: kein Schutz; vom Umwerfen bis G−1 kein Schaden, ab G sofort verwundbar und greifbar (nach einem Wurf ab G+1) (notes.md, „Nachtrag: Trefferreaktion der Gegner“) |
 | am Boden treffbar | nein (siehe Status) | nein | gesichert: nein, weder im Flug noch liegend noch beim Aufstehen (notes.md, „Nachtrag: Trefferreaktion der Gegner“) |
@@ -304,24 +309,32 @@ Typ × Stage: Variante und Anzahl, „–“ heißt nicht vorhanden.
 Prinzipien, angelehnt an den ersten Boss des Vorbilds (erkenntnisse.md,
 „Gegner als Vorbild“; G Stage 1):
 
-1. **Super-Armor**: Eine Kette, die den Boss nicht umwirft, bricht er mit
-   einem Stoß ab (Vorbild 54 Frames, etwa 48 px), und seine LP springen
-   auf den Wert vor der Kette zurück. Es zählen nur Ketten mit Umwerfen,
-   Würfe und Sprungangriffe. Im Vorbild (notes.md, „Nachtrag: Boss“) wirken
-   Spezialangriff, Kniestoß, Wurf, Rakete und Laser immer; Kettenschläge,
-   Sprung- und Sprintangriff weist er manchmal zurück: Die LP sinken in h
-   und kehren in h+1 auf den Wert vor diesem Treffer zurück. Bei
-   umwerfenden Treffern fängt er sich stattdessen manchmal ab und behält
-   die Hälfte des Schadens. Der Abbruchstoß ist ein Rückzug (54 Frames,
-   48 px) ohne Schaden und ohne Umwerfen. Der Spezialangriff macht auch am
-   Boss 6 LP, der Boss taumelt danach 78 Frames, statt zu liegen. Wann er
-   zurückweist, ist unsicher: Der Anteil steigt mit dem Rang (Bot:
-   Messagent 15 bis 39 %, Gegenprüfer 16 bis 36 %), eine Regel fand keine
-   Messung.
+1. **Super-Armor**, beschlossen (E11) als feste Regel nach
+   `docs/spezifikation-welt.md`, 7.4 (SA1 bis SA6): Kettenstufen 1 bis 3
+   ziehen LP nur vorläufig ab und eröffnen eine Folge. Kommt bis h+23 kein
+   weiterer Treffer (h = letzter Treffer der Folge; Frist nach E19),
+   springen die LP auf den Wert vor der Folge zurück, und der Boss zieht
+   sich mit einem Stoß zurück: 54 Frames, 48 px, ohne Schaden und ohne
+   Umwerfen. Endet die Folge mit einem umwerfenden Treffer, bleiben alle
+   Abzüge. Endgültig zählen umwerfende Treffer (Kettenstufe 4, Sprung- und
+   Sprintangriffe, geworfener Gegner), Spezialangriff, Kniestoß, Wurf,
+   Explosion und die Landung der Figur beim Neueinstieg; der Sprungangriff
+   runter zählt ebenfalls endgültig, ohne umzuwerfen. Eine zufällige
+   Zurückweisung gibt es nicht. Der Spezialangriff macht auch am Boss
+   6 LP, der Boss taumelt danach 78 Frames, statt zu liegen. Im Vorbild
+   (notes.md, „Nachtrag: Boss“) wirken Spezialangriff, Kniestoß, Wurf,
+   Rakete und Laser immer; Kettenschläge, Sprung- und Sprintangriff weist
+   er manchmal zurück: Die LP sinken in h und kehren in h+1 auf den Wert
+   vor diesem Treffer zurück, danach weicht er 54 Frames und 48 px zurück.
+   Bei umwerfenden Treffern fängt er sich stattdessen manchmal ab und
+   behält die Hälfte des Schadens. Wann er zurückweist, ist unsicher: Der
+   Anteil steigt mit dem Rang (Bot: Messagent 15 bis 39 %, Gegenprüfer 16
+   bis 36 %), eine Regel fand keine Messung.
 2. **Rhythmus**: Gegen eine passive Figur greift er alle 170 bis 200
    Frames an (andere Bosse des Vorbilds 155 bis 466 Frames).
 3. **Fall**: Fällt der Boss, sind im selben Frame alle übrigen Gegner
-   besiegt.
+   besiegt; sie geben keinen Bonus und lassen keine Waffe fallen,
+   beschlossen (E10).
 4. **LP 90 bis 120**, beschlossen (E9). Der erste Boss hat im Vorbild je
    nach Rang beim Erscheinen 90 (Rang 7–8), 100 (9–15), 110 (16–23) oder
    120 LP (24) (notes.md, „Nachtrag: Boss“); daher nennt grafik/README.md 100, die
@@ -334,15 +347,18 @@ Prinzipien, angelehnt an den ersten Boss des Vorbilds (erkenntnisse.md,
 6. **Ankündigung**: mindestens 15 Frames sichtbare Vorbereitung je Angriff,
    beschlossen (E9).
 7. **Verstärkung** kommt an LP-Schwellen, nicht nach Zeit (G Stage 2, 3);
-   welche LP zählen, regelt Abschnitt 7 (Arbeitsregel).
+   welche LP zählen, regelt Abschnitt 7 (beschlossen, E10).
 
 ### Boss-Skizzen
 
 **Ballast** (Stage 1, Frachtkai, 100 LP). Der Vorarbeiter des Syndikats
 trägt einen hydraulischen Ladearm. Er bricht aus der Asservatenkammer,
 sobald die Kamera die Arena erreicht. Er stürmt durch den Raum, schwingt
-den Arm dreimal und springt mit ganzem Gewicht auf die Figur. Kommt er nah
-heran, packt und wirft er sie. In Stage 8 kehrt er mit 110 LP zurück.
+den Arm bis zu dreimal und springt mit ganzem Gewicht auf die Figur. Wie im
+Vorbild folgt ein weiterer Schwung nur, wenn der vorige getroffen hat,
+beschlossen (E18). Kommt er nah heran, packt und wirft er sie; diesen
+Griff hat er im Vollspiel, nicht in der vertikalen Scheibe, beschlossen
+(E21). In Stage 8 kehrt er mit 110 LP zurück.
 
 **Bohrmeisterin Halde** (Stage 2, Eisbergwerk, 100 LP). Sie führt die
 Sprengtrupps. Ihre Bohrkanone verschießt Eissplitter. Sie hält Abstand,
@@ -396,10 +412,10 @@ aus dem Vorbild (G), sonst beschlossen (E9).
 
 | Boss | Angriff | Ablauf | Reichweite | Schaden | Umwerfen |
 |---|---|---|---|---|---|
-| Ballast | Ansturm | Lauf, bei Kontakt Übergang in den Griff; in der Scheibe ohne Griff, wirft bei Kontakt um (Arbeitsregel, Abschnitt 7) | 140 bis 205 px Laufweg | 12–17 | ja |
-| Ballast | dreifacher Armschwung | je etwa 38 Frames | etwa 78 px | 9–12 | dritter Schwung, beschlossen (E9) |
+| Ballast | Ansturm | Lauf, wirft bei Kontakt um, ohne Übergang in den Griff: in der Scheibe beschlossen (E10; Abschnitt 7), im Vollspiel nach E21, denn dort greift er wie in `mechanik.md`, „Boss“, nur im Entscheidungsframe eines Angriffs (Zeile „Griff mit Wurf“), nicht aus dem Ansturm | 140 bis 205 px Laufweg | 12–17 | ja |
+| Ballast | Armschwung, bis zu dreimal | je etwa 38 Frames; der nächste Schwung folgt nur, wenn der vorige getroffen hat, höchstens drei, ohne Treffer bleibt es bei einem; beschlossen (E18) wie im Vorbild | etwa 78 px | 9–12 | dritter Schwung, beschlossen (E9) |
 | Ballast | Sprung-Körperpresse | Scheitel etwa 107 px, zielt auf die Figur | bis etwa 200 px | 16–22 | ja |
-| Ballast | Griff mit Wurf | Griff aus dem Stand oder dem Ansturm | im Vorbild (notes.md, „Nachtrag: Boss“): packt nur im Entscheidungsframe eines neuen Angriffs, wenn die Figur bis 49 px vor ihm steht (Tiefe −7 bis +6), sonst kurzer Schlag; wirft nach 59 Frames (mit Tragen 67 bis 74) hinter sich. Wurfweite unsicher: Ruhe 225 bis 230 px nach dem Wurf (Messagent, dritte Messung), erster Bodenkontakt 223 bis 301 px (Gegenprüfer, mit Tragen) bzw. 174 bis 196 px vom Griffort (dritte Messung), an der Wand 95 und 151 px | 16–22 | ja |
+| Ballast | Griff mit Wurf | nur im Vollspiel, nicht in der Scheibe, beschlossen (E21); Griff nach `mechanik.md`, „Boss“: nur im Entscheidungsframe eines neuen Angriffs, wenn die Figur bis 49 px vor ihm steht (Tiefe −7 bis +6), nicht aus dem Ansturm; Haltedauer, Wurf und Schaden ebenda | im Vorbild (notes.md, „Nachtrag: Boss“): packt nur im Entscheidungsframe eines neuen Angriffs, wenn die Figur bis 49 px vor ihm steht (Tiefe −7 bis +6), sonst kurzer Schlag; wirft nach 59 Frames (mit Tragen 67 bis 74) hinter sich. Wurfweite unsicher: Ruhe 225 bis 230 px nach dem Wurf (Messagent, dritte Messung), erster Bodenkontakt 223 bis 301 px (Gegenprüfer, mit Tragen) bzw. 174 bis 196 px vom Griffort (dritte Messung), an der Wand 95 und 151 px | 16–22 | ja |
 | Halde | Splittersalve | kniet, 5 bis 7 Splitter im 10-Frame-Takt, 8 px/Frame | ganze Bildbreite, nur ihre Tiefe | 12–15 je Splitter | ja |
 | Halde | Bohrkugel | Hocke, Aufstieg, Rolle in Höhe 52, dann waagrecht 4,4 px/Frame | quer durch die Arena | 16–20 | ja |
 | Halde | Bohrerstoß | 24 Frames, beschlossen (E9) | etwa 90 px, beschlossen (E9) | 9–12 | nein |
@@ -447,7 +463,7 @@ Jede Stage wird gegen diese Liste geprüft.
 | 9 | Vordergrund | 1 bis 3 Objekte vor den Figuren; keines verdeckt eine Figur ganz | Säulen, Fahrzeug, Geländer; Vorhänge, die den Helden fast ganz verdecken (Stage 9), vermeiden |
 | 10 | Parallaxe | höchstens eine ferne Ebene mit Faktor 1/2, 1/4 oder 1/8, sonst alles 1:1 | meist 1:1; 0,5, 1/4, 1/8, 1/16 |
 | 11 | Gegenstände | 2 bis 4 Behälter, ein großes Essen vor dem Boss | Stage 1: 2 Fässer, 3 Kassetten |
-| 12 | Auslöser | Kamera-x, Tod eines Gegners oder LP des Bosses; reine Zeit nur beim zeitgesteuerten Halt | Erste Stage gesichert: Nachschub an festen Kamerapositionen; es zählt nicht, ob Gegner sterben, sondern wie viele leben (ein Gegner erscheint erst bei höchstens 3 Lebenden, bis dahin hält die Kamera); beim Boss kommen zwei schwere Nahkämpfer, sobald seine LP auf die Hälfte oder darunter fallen, bei einem Viertel ein Fernkämpfer mit Raketenwerfer, ein zweiter 39 bis 40 Frames später nur ab Rang 16 und nur, wenn dann neben dem Boss höchstens drei Gegner leben; neben dem Boss leben nie mehr als vier Gegner, und der Fernkämpfer mit Pistole kommt schon nach dem ersten besiegten leichten Nahkämpfer der Arena, bei Rang 16 bis 19 nicht (notes.md, „Nachtrag: Boss“ und „Nachtrag: Fernangriffe der Gegner“). Weitere Kamerahalte unsicher (Schwelle nur an einer Stelle gesehen) |
+| 12 | Auslöser | Kamera-x, Tod eines Gegners oder LP des Bosses; reine Zeit nur beim zeitgesteuerten Halt | Erste Stage gesichert: Nachschub an festen Kamerapositionen; es zählt nicht, ob Gegner sterben, sondern wie viele leben (ein Gegner erscheint erst bei höchstens 3 Lebenden, bis dahin hält die Kamera); beim Boss kommen zwei schwere Nahkämpfer, sobald seine LP auf die Hälfte oder darunter fallen, bei einem Viertel ein Fernkämpfer mit Raketenwerfer, ein zweiter nur ab Rang 16 (maßgeblich ist der Rang am Ende der Wartezeit), und zwar 39 bis 40 Frames, nachdem neben dem Boss höchstens drei andere Gegner leben: nach dem ersten, wenn das mit ihm schon gilt, sonst nach dem Freiwerden eines Platzes; neben dem Boss leben nie mehr als vier Gegner, und der Fernkämpfer mit Pistole kommt schon nach dem ersten besiegten leichten Nahkämpfer der Arena, bei Rang 16 bis 19 nicht (notes.md, „Nachtrag: Boss“ und „Nachtrag: Fernangriffe der Gegner“). Weitere Kamerahalte unsicher (Schwelle nur an einer Stelle gesehen) |
 | 13 | Abschluss | Fall des Bosses besiegt alle; Abschlussanzeige mit Punkten | alle Stages |
 
 Zu Punkt 6: 1500 px Scroll sind 857 Frames reines Gehen (14,3 s bei
@@ -580,43 +596,49 @@ Rangstufe III (etwa Rang 14 bis 19); dort gelten die Werte aus Abschnitt 1
 | 3 | Kamera-x 512 | Splitter, rennt herein | 1 | rechts | 37 | Stich 8, Wurf 11 | nein |
 | 4 | Kamera-x 700 | Bolzer aus der Wartungsluke bei Welt-x 1000 | 2 | Luke | 25 | 8 | nein |
 | 5 | Kamera-x 900 | Rammböcke aus der Luke bei Welt-x 1190 | 2 | Luke | 34 | 9 | nein |
-| 6 | Kamera-x 1090 | Lastläufer bricht durch das Glastor, Bolzer am Steuer | 1 + 1 | Zollamt | 85 und 27 | Armschlag 12, Griff 15 (genannte Ausnahme über 13 LP, Arbeitsregel, `docs/design.md`, Abschnitt 6) | ja, Kamera-x 1100 bis beide besiegt sind |
+| 6 | Kamera-x 1090 | Lastläufer bricht durch das Glastor, Bolzer am Steuer | 1 + 1 | Zollamt | 85 und 27 | Armschlag 12, Griff 15 (genannte Ausnahme über 13 LP, beschlossen (E10), `docs/design.md`, Abschnitt 6) | ja, Kamera-x 1100 bis beide besiegt sind |
 | 7 | Kamera-x 1792 | Boss erwacht; Bolzer laufen ein | 1 + 2 | Arena, von links | Boss 100, Bolzer 29 | siehe Abschnitt 4; Bolzer 8 | Arena |
 | 8 | Boss bei höchstens 50 LP (die Hälfte) | Rammböcke | 2 | links | 36 | 9 | Arena |
-| 9 | Boss bei höchstens 25 LP (ein Viertel) | Zünder mit Pistole, 40 Frames später Zünder mit Raketenwerfer | 1 + 1 | links | 19 und 19 | 6 je Schuss und 13 | Arena |
+| 9 | Zünder mit Pistole: Tod des ersten Bolzers der Arena (Welle 7). Zünder mit Raketenwerfer: Boss bei höchstens 25 LP (ein Viertel); ein zweiter nur ab Rang 16, 40 Frames nachdem neben dem Boss höchstens drei andere Gegner leben | Zünder mit Pistole, Zünder mit Raketenwerfer, ab Rang 16 ein zweiter mit Raketenwerfer | 1 + 1, ab Rang 16 + 1 | links | 19 und 19; der zweite mit Raketenwerfer nach Rang (ab Rang 16) | 6 je Schuss und 13; der zweite 14 oder 15 (Rangstufe III oder IV) | Arena |
 
-Gesamt: 7 Bolzer (einer am Steuer), 5 Rammböcke, 1 Splitter, 2 Zünder,
-1 Lastläufer, 1 Boss. Wellenbonus, beschlossen (E9): Welle 6 und 8 +2 LP,
-Welle 7 +4 LP. Welle 8 und 9 folgen der Reihenfolge des Vorbilds: Dort
-kommt die Welle der schweren Nahkämpfer, sobald die LP des Bosses auf die
-Hälfte fallen, zwei Fernkämpfer bei einem Viertel, der zweite 40 Frames
-nach dem ersten (notes.md, „Nachtrag: Verhalten der Nahkämpfer“). Die
-zwei leichten Nahkämpfer, die im Vorbild dazwischen von links kommen
-(unsicher), lassen wir weg.
+Gesamt: 7 Bolzer (einer am Steuer), 5 Rammböcke, 1 Splitter, 2 Zünder
+(ab Rang 16 drei), 1 Lastläufer, 1 Boss. Wellenbonus, beschlossen (E9):
+Welle 6 und 8 +2 LP, Welle 7 +4 LP. Welle 8 folgt dem Vorbild: Die
+schweren Nahkämpfer kommen, sobald die LP des Bosses auf die Hälfte
+fallen. Welle 9 folgt dem gemessenen Vorbild, beschlossen (E20; Abschnitt
+5, Punkt 12; Einzelheiten in `mechanik.md`, „Boss“, Verstärkung, und
+„Fernangriffe der Gegner“): Der Zünder mit Pistole kommt schon nach dem
+Tod des ersten Arena-Bolzers, also meist vor Welle 8; der Zünder mit
+Raketenwerfer bei einem Viertel der Boss-LP; einen zweiten mit
+Raketenwerfer gibt es nur ab Rang 16 und nur bei höchstens drei anderen
+lebenden Gegnern neben dem Boss. Die frühere Fassung (beide Zünder fest
+bei einem Viertel, der zweite 40 Frames nach dem ersten) stützte sich auf
+eine überholte Beschreibung. Die zwei leichten Nahkämpfer, die im Vorbild
+dazwischen von links kommen (unsicher), lassen wir weg. Für die Scheibe
+gilt der Zuschnitt unten (E10, E20).
 
-Arbeitsregel (Bestätigung des Nutzers offen): Die Schwellen der Wellen 8
-und 9 gelten für die dauerhaft abgezogenen LP des Bosses, nicht für
-Werte, die die Super-Armor wieder zurücknimmt; das ist robust gegen
-zurückspringende LP. Im Vorbild richten sich die Wellen nach dem
-niedrigen Wert (notes.md, „Gefundene Adressen“, LP des ersten Bosses unter
-S+0x40): Auch ein zurückgewiesener Treffer, dessen LP die Super-Armor
+Beschlossen (E10): Die Schwellen der Wellen 8 und 9 gelten für die
+dauerhaft abgezogenen LP des Bosses, nicht für Werte, die die Super-Armor
+wieder zurücknimmt; das ist robust gegen zurückspringende LP. Im Vorbild
+richten sich die Wellen nach dem niedrigen Wert (notes.md, „Gefundene
+Adressen“, LP des ersten Bosses unter S+0x40): Auch ein zurückgewiesener Treffer, dessen LP die Super-Armor
 einen Frame später zurückgibt, löst die Welle aus, wenn er die LP unter
 die Schwelle senkt (notes.md, „Nachtrag: Boss“).
 
 **Zuschnitt der Scheibe.** Die vertikale Scheibe (`docs/design.md`,
-Abschnitt 8) nutzt einen Ausschnitt dieser Stage. Arbeitsregel
-(Bestätigung des Nutzers offen):
+Abschnitt 8) nutzt einen Ausschnitt dieser Stage, beschlossen (E10):
 
 | Punkt | Festlegung |
 |---|---|
 | Abschnitte | A, B und F |
-| Wellen | 1 (Startgegner in A), 2 als Sperrwelle, 7 und 9; Welle 9 nur mit dem Zünder mit Raketenwerfer. Die Wellen 3 bis 6 und 8 fehlen |
+| Wellen | 1 (Startgegner in A), 2 als Sperrwelle, 7 und 9; Welle 9 nur mit einem Zünder mit Raketenwerfer bei 25 LP des Bosses, ohne Zünder mit Pistole und ohne zweiten Zünder (E20 gilt nur für die volle Stage). Die Wellen 3 bis 6 und 8 fehlen |
 | Sperre für Welle 2 | Die Kamera hält bei Kamera-x 400, bis Bolzer und Rammbock besiegt sind |
+| Halt vor der Blende | Die Kamera hält bei Kamera-x 440, solange noch ein Gegner aus A oder B lebt; erst dann erreicht die Figur die Blende am rechten Ende von B (beschlossen, E10; `docs/spezifikation-welt.md`, 2.3 und KA6) |
 | Übergang von B nach F | Schnitt mit Blende (28 Frames zu, 78 schwarz, 28 auf) am rechten Ende von B; danach beginnt F bei Kamera-x 1792, die Welt-x von F bleiben wie in der vollen Stage |
 | LP in Welle 7 und 9 | nach Rang beim Erscheinen, ohne Wellenbonus, weil die Wellen 4 bis 6 und 8 fehlen (bei Rang 11: Bolzer 25, Zünder 19 LP); Boss 100 |
 | Essen | ein Treibstofffass in Abschnitt B mit dem Kometenbraten (heilt voll), anstelle der Fässer in C |
 | Asservatenkisten | zweimal Raketenwerfer, die dritte leer; kein Laser |
-| Boss | Ballast greift nur mit Ansturm, Armschwung und Körperpresse an. Der Ansturm wirft bei Kontakt um (12 bis 17 LP), ohne Übergang in den Griff; ob der Ballast einen Griff bekommt, entscheidet der Nutzer (O17; das Vorbild ist gemessen, notes.md, „Nachtrag: Boss“) |
+| Boss | Ballast greift nur mit Ansturm, Armschwung und Körperpresse an; einen Griff hat er in der Scheibe nicht (E21; Vorbild gemessen, notes.md, „Nachtrag: Boss“, O17). Der Ansturm wirft bei Kontakt um (12 bis 17 LP), ohne Übergang in den Griff (E10). Armschwung nach E18, Super-Armor nach E11 (Abschnitt 4) |
 
 **Boss.** Ballast erwacht bei Kamera-x 1792, zerschlägt die
 Asservatenkisten und bricht heraus; zugleich laufen zwei Bolzer von links
@@ -640,7 +662,7 @@ beschrieben. Waffen besiegter Zünder fallen als Gegenstand.
 | Eisnudelschale (mittel) | mittlere Heilung | Reisschale, Braten auf Teller | Vorbild gesichert: Reisschale +55 LP (bei vollen LP 800 Punkte), ein weiteres Essen +40 LP (notes.md, „Nachtrag: Gegenstände und Waffen“); Braten auf Teller offen, nicht gemessen |
 | Sternbeeren (klein) | kleine Heilung, von Formations-Statisten | Kirschen | Vorbild gesichert: Kirschen +16 LP, das kleinste Essen +12 LP, bei vollen LP je 100 Punkte (notes.md, „Nachtrag: Gegenstände und Waffen“) |
 | Bolzenpistole | Einzelschüsse auf Abstand; fällt von Zündern der Variante A | Pistole der Fernkämpfer bleibt liegen (G Stage 7) | Vorbild gesichert: 5 Schuss, Aktion 17 Frames, Kugel ab P+7 mit 8 px/Frame in 54 px Höhe, 6 LP, wirft um (notes.md, „Nachtrag: Gegenstände und Waffen“); Lebensdauer der Kugel (32 Frames, rund 300 px) unsicher, weil Wände die Messung begrenzten |
-| Raketenwerfer | Flächenschaden auf Abstand, wenige Schuss | Explosion etwa 90 bis 95 Frames, verbrennt alle in der Nähe | Vorbild gesichert: 3 Schuss, Aktion 17 Frames; Einschlag nach 21 Frames 163 px vor der Figur (früher an Wänden); nur die Explosion trifft, 15 Frames lang, 8 LP, wirft um, mehrere Gegner, von 66 bis 67 px vor bis etwa 90 px hinter dem Einschlag, Tiefe ±28 px (notes.md, „Nachtrag: Gegenstände und Waffen“) |
+| Raketenwerfer | Flächenschaden auf Abstand, wenige Schuss | Explosion etwa 90 bis 95 Frames, verbrennt alle in der Nähe | Vorbild gesichert: 3 Schuss, Aktion 17 Frames; Einschlag nach 21 Frames 163 px vor der Figur (früher an Wänden); nur die Explosion trifft, 15 Frames lang, 8 LP, wirft um, mehrere Gegner, von 66 bis 67 px vor bis etwa 90 px hinter dem Einschlag, Tiefe ±28 px (notes.md, „Nachtrag: Gegenstände und Waffen“); bei uns gelten für beide Blickrichtungen die Grenzen und der Aufnahmebereich bei Blick rechts, beschlossen (E14) |
 | Laser | durchschlagender Strahl in einer Tiefe | aus einer Kassette in Stage 1 | Vorbild gesichert: 4 Schuss, Aktion 25 Frames; Strahl ab P+7, wächst 16 px/Frame, 6 LP, wirft um, Tiefe ±12 px, endet am ersten Gegner, der überlebt (notes.md, „Nachtrag: Gegenstände und Waffen“). Unsicher: untere Grenze 52 px (nur Messagent), größte Reichweite (245 bis 350 px je nach Messung) und ob der Strahl weiterläuft, wenn der erste Gegner stirbt (Gegenprüfung ja, dritte Messung nein) |
 | Maschinengewehr | Dauerfeuer, kleiner Schaden je Treffer | aus Fässern und von Fernkämpfern | Vorbild gesichert: 5 Salven zu 4 Kugeln (P+7, +12, +17, +22), 10 px/Frame, 8 LP je Kugel, wirft um, Aktion 37 Frames (notes.md, „Nachtrag: Gegenstände und Waffen“); Flugdauer der Kugeln (14 Frames) unsicher, weil Wände die Messung begrenzten |
 | Wurfsterne | gerader Wurf; ein Fehlwurf bleibt liegen und lässt sich wieder aufheben | Wurfstern 5 px/Frame in Höhe 80, liegt 451 bis 783 Frames | Vorbild gesichert: Die gemessene Figur nimmt Wurfsterne nicht als Waffe, sie geben 300 Punkte (notes.md, „Nachtrag: Gegenstände und Waffen“); als Waffe offen, weil im Vorbild nur eine andere Figur sie nutzt und das nicht gemessen ist |
@@ -653,7 +675,7 @@ Eisnudelschale +55 oder +40 LP, Sternbeeren +16 oder +12 LP, nie über
 |---|---|---|
 | Fass | fest, ein Treffer zerbricht es, gibt einen Gegenstand frei | Fässer und Metallkisten mit Wert 777, die trotzdem ein Schlag öffnet (G Stage 1, 8) |
 | Kiste | wie Fass, tiefensortiert; übrige Kisten zerplatzen beim Verlassen des Abschnitts | Stage 4, Inhalt dort je Lauf verschieden |
-| Rollfass | fällt von oben (288 px in 45 Frames), rollt etwa 2,5 px/Frame, 16 LP bei Kontakt (genannte Ausnahme über 13 LP, Arbeitsregel, `docs/design.md`, Abschnitt 6), zerbricht bei Treffer, kann eine Waffe enthalten | Stage 7 |
+| Rollfass | fällt von oben (288 px in 45 Frames), rollt etwa 2,5 px/Frame, 16 LP bei Kontakt (genannte Ausnahme über 13 LP, beschlossen (E10), `docs/design.md`, Abschnitt 6), zerbricht bei Treffer, kann eine Waffe enthalten | Stage 7 |
 | Glasscheibe | zerbricht beim ersten Treffer oder Wurf, ohne Inhalt | Stage 1, 2 |
 | Bosskiste | nur der Boss zerschlägt sie | Stage 1 |
 
@@ -734,7 +756,7 @@ werden sie auf die 23 Frames aus E3 gestreckt (Abschnitt 2).
 | Animation | Bilder und Dauern | Summe | Quelle |
 |---|---|---|---|
 | Gehen | 8 × 4 | 32 | G Stage 1 |
-| Zielen | gehalten | 60 bis 120 | G Stage 1, 8 |
+| Zielen | gehalten | 60, beschlossen (E17); in den Aufnahmen 60 bis 120, im Vorbild eine Pose nach dem Schuss | G Stage 1, 8 |
 | Schuss | 5 / 1 / 10 / 1 | 17 | G Stage 1, 4 |
 | Nachladen | 10 / 8 / 8 / 4–8 | 30 bis 34 | G Stage 6 |
 | Kolbenhieb | ein Ablauf | 42 | G Stage 8 |
@@ -795,8 +817,8 @@ Abschnitt 9). Für dieses Dokument heißt das:
   Abschnitt 4) und geht E9 vor (Abschnitte 1.6, 2 und 9).
 - **E4** Kein Schutz der Gegner nach dem Aufstehen (Abschnitt 2).
 - **E5** Höchstens zwei Angreifer, je Seite der Figur einer; ein
-  zielender Fernkämpfer, ab Stage 6 zwei (Abschnitt 2, dazu zwei
-  Arbeitsregeln).
+  zielender Fernkämpfer, ab Stage 6 zwei (Abschnitt 2, dazu zwei Regeln
+  nach E10).
 - **E6** 60 Hz, Sekunden = Frames ÷ 60 (Einheiten, Abschnitte 5 und 6).
 - **E7** betrifft dieses Dokument nicht (Helden, `docs/design.md`,
   Abschnitt 5).
@@ -810,6 +832,36 @@ Abschnitt 9). Für dieses Dokument heißt das:
   keine Waffen auf, Essen heilt wie im Vorbild (Abschnitt 8), dazu alle
   Werte, die bisher „Vorschlag“ hießen.
 
+Am 2026-10-03 entschieden (Tabelle E10 bis E22 in `docs/design.md`,
+Abschnitt 9; Begründungen in `docs/erkenntnisse.md`, „Entscheidungen“).
+Für dieses Dokument heißt das:
+
+- **E10** Alle bisherigen Arbeitsregeln sind bestätigt: Boss und zielende
+  Fernkämpfer außerhalb der Nahkampfgrenze, Grenze je Figur bei zwei
+  Spielern, Geschosse und wirkungslose Treffer im Schutz (Abschnitt 2),
+  Gehstufe der Nahkämpfer, schnelle Gehstufe und Wartezeit des Rammbocks,
+  Kolbenhieb, Zielpunkt des Zünders ohne Doppelschüsse (Abschnitt 1),
+  Liegedauer des schweren Nahkämpfers (Abschnitt 2), Fall des Bosses ohne
+  Bonus und Waffe (Abschnitt 4), Verstärkungsschwellen, Zuschnitt der
+  Scheibe, Ansturm in der Scheibe ohne Griff, Ausnahmen über 13 LP
+  (Abschnitte 4, 7 und 8). Im Text steht dafür „beschlossen (E10)“.
+- **E11** Super-Armor als feste Regel nach `docs/spezifikation-welt.md`,
+  7.4, SA1 bis SA6, ohne zufällige Zurückweisung (Abschnitt 4,
+  Prinzip 1).
+- **E14** Gleiche Werte für beide Blickrichtungen, auch beim
+  Raketenwerfer (Abschnitt 8).
+- **E17** Der Zünder zielt 60 Frames sichtbar mit Zielrecht, dann schießt
+  er (Abschnitte 1.4 und 9).
+- **E18** Armschwung des Ballast wie im Vorbild: der nächste nur nach
+  einem Treffer, höchstens drei (Abschnitt 4).
+- **E19** Trefferreaktion der Bosse 23 Frames, Folgefrist der
+  Super-Armor h+23 (Abschnitte 2 und 4).
+- **E20** Welle 9 der vollen ersten Stage wie gemessen (Abschnitt 7).
+- **E21** Griff mit Wurf des Ballast nur im Vollspiel (Abschnitte 4
+  und 7).
+- E12, E13, E15, E16 und E22 betreffen Figur, Technik und Rahmen
+  (`docs/design.md`, Abschnitte 3, 4.5 und 8).
+
 ### Offene Entscheidungen
 
 1. **Sonderstage**: Endet die Stage trotzdem, wenn Doktor Apsis nach 40 s
@@ -817,51 +869,60 @@ Abschnitt 9). Für dieses Dokument heißt das:
 2. **Trefferreaktion des schweren Gegners**: Soll der schwere Gegner
    kürzer reagieren? Bis dahin gelten nach E3 auch für ihn 23 Frames
    (Abschnitt 1.6).
-3. **Arbeitsregel, E5 und der Boss**: Der Boss zählt nicht mit und greift
-   nach eigenem Rhythmus an; zielende Fernkämpfer haben ihre eigene Grenze
-   aus E5 und zählen nicht als Nahangreifer (Abschnitt 2).
-4. **Arbeitsregel, Verstärkungsschwellen beim Boss**: Sie gelten für die
-   dauerhaft abgezogenen LP; im Vorbild zählt auch der vorübergehend
-   gesenkte Wert (O18, Abschnitt 7).
-5. **Arbeitsregel, Ansturm in der Scheibe**: Er wirft bei Kontakt um (12
-   bis 17 LP), ohne Griff; ob der Ballast einen Griff bekommt, entscheidet
-   der Nutzer (Abschnitt 7, Zuschnitt der Scheibe; Vorbild in notes.md,
-   „Nachtrag: Boss“).
-6. **Arbeitsregel, Zuschnitt der Scheibe**: Wellen 1, 2, 7 und 9, Sperre
-   bei Kamera-x 400, Blende von B nach F, LP ohne Wellenbonus, Essen aus
-   einem Fass in B, Kisten ohne Laser (Abschnitt 7).
-7. **Arbeitsregel, Gehstufe der Nahkämpfer**: zufällig, etwa ein Drittel
-   schnell (Abschnitt 1.1).
-8. **Arbeitsregel, Liegedauer des schweren Nahkämpfers**: gleichverteilt
-   16 bis 44 Frames in Schritten von 4 (Abschnitt 2).
-9. **Arbeitsregel, Kolbenhieb des Fernkämpfers**: wie Schlag A des leichten
-   Nahkämpfers (Abschnitt 1.4).
-10. **Welle 9 der vollen ersten Stage**: Soll sie dem gemessenen Vorbild
-    folgen (Zünder mit Pistole nach dem Tod des ersten Arena-Bolzers, bei
-    einem Viertel ein Zünder mit Raketenwerfer, ein zweiter nur ab Rang
-    16, höchstens vier Gegner neben dem Boss), oder kommen beide Zünder
-    fest bei einem Viertel, unabhängig von Rang und Zahl der Lebenden
-    (so steht es bisher in Abschnitt 7)? Die Begründung in Abschnitt 7,
-    Welle 8 und 9 folgten der Reihenfolge des Vorbilds, stützt sich auf
-    eine überholte Beschreibung (Vorbild: Abschnitt 5, Punkt 12;
-    mechanik.md, „Boss“, Verstärkung).
-11. **Super-Armor, welche Treffer zählen**: Sollen gegen den Boss außer
-    Ketten mit Umwerfen, Würfen und Sprungangriffen (Abschnitt 4,
-    Prinzip 1) auch Spezialangriff, Kniestoß, Raketenexplosion,
-    Sprintangriff, geworfener Gegner und die Landung beim Neueinstieg
-    dauerhaft zählen, wie in `docs/spezifikation-welt.md`, 7.4, SA1 und
-    im Vorbild?
 
-Offene Entscheidungen und weitere Arbeitsregeln zu Figur, Helden, Rahmen
-und Schaden (zwei Spieler, Ausnahmen über 13 LP, Spezialangriff aus dem
-Griff) stehen in `docs/design.md`, Abschnitt 9.
+Bis 2026-10-02 offen, am 2026-10-03 entschieden:
+
+3. **E5 und der Boss**: Der Boss zählt nicht mit und greift nach eigenem
+   Rhythmus an; zielende Fernkämpfer haben ihre eigene Grenze aus E5 und
+   zählen nicht als Nahangreifer. Beschlossen (E10) (Abschnitt 2).
+4. **Verstärkungsschwellen beim Boss**: Sie gelten für die dauerhaft
+   abgezogenen LP; im Vorbild zählt auch der vorübergehend gesenkte Wert
+   (O18). Beschlossen (E10) (Abschnitt 7).
+5. **Ansturm in der Scheibe**: Er wirft bei Kontakt um (12 bis 17 LP),
+   ohne Griff, beschlossen (E10); einen Griff mit Wurf hat der Ballast im
+   Vollspiel, nicht in der Scheibe, beschlossen (E21) (Abschnitte 4 und 7;
+   Vorbild in notes.md, „Nachtrag: Boss“).
+6. **Zuschnitt der Scheibe**: Wellen 1, 2, 7 und 9, Sperre bei Kamera-x
+   400, Halt bei Kamera-x 440, solange ein Gegner aus A oder B lebt, Blende
+   von B nach F, LP ohne Wellenbonus, Essen aus einem Fass in B, Kisten
+   ohne Laser. Beschlossen (E10) (Abschnitt 7).
+7. **Gehstufe der Nahkämpfer**: zufällig, etwa ein Drittel schnell.
+   Beschlossen (E10) (Abschnitt 1.1).
+8. **Liegedauer des schweren Nahkämpfers**: gleichverteilt 16 bis 44
+   Frames in Schritten von 4. Beschlossen (E10) (Abschnitt 2).
+9. **Kolbenhieb des Fernkämpfers**: wie Schlag A des leichten
+   Nahkämpfers. Beschlossen (E10) (Abschnitt 1.4).
+10. **Welle 9 der vollen ersten Stage**: wie im gemessenen Vorbild,
+    beschlossen (E20): Zünder mit Pistole nach dem Tod des ersten
+    Arena-Bolzers, bei einem Viertel der Boss-LP ein Zünder mit
+    Raketenwerfer, ein zweiter nur ab Rang 16 und bei höchstens drei
+    anderen lebenden Gegnern; in der Scheibe gilt der Zuschnitt
+    (Abschnitt 7).
+11. **Super-Armor, welche Treffer zählen**: Außer Ketten mit Umwerfen,
+    Würfen und Sprungangriffen zählen auch Spezialangriff, Kniestoß,
+    Explosion, Sprintangriff, geworfener Gegner und die Landung beim
+    Neueinstieg endgültig, wie in `docs/spezifikation-welt.md`, 7.4, SA1.
+    Beschlossen (E11) (Abschnitt 4, Prinzip 1).
+
+Dazu entschieden, ohne bisher in dieser Liste zu stehen: Zielen des
+Zünders (E17), Armschwung des Ballast (E18), Trefferreaktion der Bosse
+(E19).
+
+Die übrigen Entscheidungen zu Figur, Helden, Rahmen und Schaden (zwei
+Spieler, Ausnahmen über 13 LP, Spezialangriff aus dem Griff,
+Blickrichtung) und die dort noch offenen Punkte (Heldennamen, Grafikstil
+und Sound, Continues, Extraleben) stehen in `docs/design.md`,
+Abschnitt 9.
 
 ### Quellen
 
 | Datei | Abschnitte | verwendet für |
 |---|---|---|
-| `docs/design.md` | Abschnitt 2, 3, 4.7, 6, 7, 8 und 9 | Welt, Spielschritt 60 Hz, Stillstand des Getroffenen, Schutzfenster der Figur, LP-Regel nach Rang, Schätzung des Rangs und Treffer, die die Figur aushält, Ausnahmen über 13 LP, Punkte, zwei Spieler, Umfang der vertikalen Scheibe und Liste „Offen bis Messpaket 2“ (O1 bis O12), Entscheidungen E1 bis E9 |
+| `docs/design.md` | Abschnitt 2, 3, 4.7, 6, 7, 8 und 9 | Welt, Spielschritt 60 Hz, Stillstand des Getroffenen, Schutzfenster der Figur, LP-Regel nach Rang, Schätzung des Rangs und Treffer, die die Figur aushält, Ausnahmen über 13 LP, Punkte, zwei Spieler, Umfang der vertikalen Scheibe und Liste „Offen bis Messpaket 2“ (O1 bis O12), Entscheidungen E1 bis E22 |
 | `docs/auftraege/2026-10-02-opus-auftrag-2-boss-fernkampf-spezifikation.md` | Abschnitt 1, Auftrag D3, Messpaket 2 | Entscheidungen E1 bis E9, Messpakete M6 bis M8 |
+| `docs/auftraege/2026-10-03-opus-auftrag-3-codierung-scheibe.md` | Abschnitt 1, Auftrag D4 | Entscheidungen E10 bis E22 |
+| `docs/spezifikation-welt.md` | 5.1, 6, 7.4 | Gehstufe und Wartezeit des Rammbocks, Zünder, Super-Armor (SA1 bis SA6) |
+| `docs/spezifikation-kampf.md` | 13.2 (P11, P17) | wirkungslose Treffer und Geschosse im Schutz |
 | `docs/mechanik.md` | „Schaden der Gegner“, „Lebenspunkte“, „Unverwundbarkeit“, „Angriff“, „Griff und Wurf“, „Sprungangriff“; seit 2026-10-02 auch „Trefferreaktion der Gegner“, „Reichweite der Gegnerangriffe“, „Spezialangriff“, „Gegenstände und Waffen“ | Rang, Schaden und LP der Nahkämpfer und des Messerkämpfers, Schutzfenster, Reichweiten der Kette, Flugweiten, Trefferreaktion, Gegnerangriffe, Waffen |
 | `docs/erkenntnisse.md` | „Gegner als Vorbild“, „Stages als Vorbild“, „Hinweise für die eigene Grafik“ | Rollen, Bossprinzipien, Stage-Muster, Größen |
 | `research/captcomm/notes.md` | „Nachtrag: Schaden der Gegner“, „Szenarien“, „Gefundene Adressen“ (LP des ersten Bosses); Nachträge vom 2026-10-02: „Trefferreaktion der Gegner“, „Verhalten der Nahkämpfer“, „Reichweite der Gegnerangriffe“, „Spezialangriff“, „Gegenstände und Waffen“; aus Messpaket 2: „Boss“, „Fernangriffe der Gegner“ | Angriffe der beiden Nahkämpfer, Treffer aus 46 px; alle Werte mit Quelle „Nachtrag“ in den Abschnitten 1, 2, 4, 8 und 9 |

@@ -1,13 +1,15 @@
 # Comet Brawlers: Spezifikation Kampfsystem (vertikale Scheibe)
 
-Stand 2026-10-02. Technische Spezifikation ohne Code und ohne Festlegung
-auf Engine oder Sprache. Sie beschreibt, was für das Kampfsystem der
+Stand 2026-10-03, Entscheidungen E10 bis E22 eingearbeitet. Technische
+Spezifikation ohne Code; Sprache und Technik legt E22 fest (Abschnitt 1,
+„Technik“). Sie beschreibt, was für das Kampfsystem der
 vertikalen Scheibe (`docs/design.md`, Abschnitt 8) gebaut werden muss.
 Grundlagen: `docs/design.md` (Abschnitte 3, 4, 8), `docs/design-gegner-stages.md`
-(Abschnitte 2, 7, 8), `docs/mechanik.md` und die Entscheidungen E1 bis E9
-(`docs/design.md`, Abschnitt 9). Gegnerlogik, Stage, Kamera, Wellen, Boss,
+(Abschnitte 2, 7, 8), `docs/mechanik.md`, die Entscheidungen E1 bis E9
+(`docs/design.md`, Abschnitt 9) und E10 bis E22 (`docs/erkenntnisse.md`,
+„Entscheidungen“). Gegnerlogik, Stage, Kamera, Wellen, Boss,
 Rang, Erscheinen und Verschwinden der Gegenstände, Anzeige und Zufall
-stehen in `docs/spezifikation-welt.md` (entsteht parallel).
+stehen in `docs/spezifikation-welt.md`.
 
 | Kennzeichnung | Bedeutung |
 |---|---|
@@ -15,9 +17,10 @@ stehen in `docs/spezifikation-welt.md` (entsteht parallel).
 | notes.md, „…“ | Abschnitt in `research/captcomm/notes.md` |
 | Welt n | Abschnitt n in `docs/spezifikation-welt.md` |
 | E1 bis E9 | Entscheidung des Nutzers vom 2026-10-02 |
-| Arbeitsregel | Klarstellung der Projektleitung vom 2026-10-02, Bestätigung des Nutzers offen (Fragen in Abschnitt 13.3) |
+| E10 bis E22 | Entscheidung des Nutzers vom 2026-10-03 (`docs/auftraege/2026-10-03-opus-auftrag-3-codierung-scheibe.md`, Abschnitt 1) |
+| beschlossen (E10) | bisher Arbeitsregel: Klarstellung der Projektleitung vom 2026-10-02, vom Nutzer bestätigt (E10; Fragen und Antworten in Abschnitt 13.3) |
 | Kn | Stelle, die Messpaket 2 (M6 bis M8) gemessen hat; Ergebnis und verbleibende offene Teile in Abschnitt 13.1 |
-| Platzhalter (Pn) | Wert ohne Messgrundlage und ohne Messauftrag, von dieser Spezifikation gesetzt, damit gebaut und geprüft werden kann; Liste in Abschnitt 13.2 |
+| Platzhalter (Pn) | Wert ohne Messgrundlage und ohne Messauftrag, von dieser Spezifikation gesetzt, damit gebaut und geprüft werden kann; vom Nutzer bestätigt (E10); Liste in Abschnitt 13.2 |
 
 Bezugsframes (wie in `mechanik.md`, ergänzt):
 
@@ -49,8 +52,8 @@ können, ohne Designfragen zu stellen; wo die Messung fehlt, steht ein
 gekennzeichneter Platzhalter.
 
 Inhalt der Scheibe (`design.md`, Abschnitt 8): die Heldin Vela mit dem
-Grundkit aus `design.md`, Abschnitt 4, einschließlich Sprint und
-Sprintangriff; der leichte und der schwere Nahkämpfer (Bolzer, Rammbock);
+Grundkit aus `design.md`, Abschnitt 4, einschließlich Sprint,
+Sprintangriff und Sprint-Sprungangriff (E15); der leichte und der schwere Nahkämpfer (Bolzer, Rammbock);
 ein Fernkämpfer (Zünder mit Raketenwerfer); der Boss Ballast; Essen und
 der Raketenwerfer als Gegenstände; Anzeige, Rang, Tod und Neueinstieg.
 
@@ -63,16 +66,35 @@ Gegenstände, Anzeige, Neueinstieg und Zufall regelt Welt 2 bis 11.
 Nicht enthalten: Titel, Figurenwahl, zweiter Spieler, die Helden Kord, Rin
 und Ollo, Sonderstage, Sound außer Platzhaltern, Waffen außer dem
 Raketenwerfer, der Messerkämpfer und sein Messerwurf, das Fahrzeug, Griffe
-von Gegnern gegen die Figur (der Boss greift in der Scheibe nicht,
-`design-gegner-stages.md`, Abschnitt 7).
+von Gegnern gegen die Figur (der Boss greift in der Scheibe nicht, im
+Vollspiel nach `mechanik.md`, „Boss“: E21; `design-gegner-stages.md`,
+Abschnitt 7).
+
+**Technik (E22, E13).** Das Programm ist in TypeScript geschrieben, ohne
+npm-Abhängigkeiten. Die Logik dieses Dokuments und der Welt liegt in einem
+reinen Logikkern ohne Browser- und ohne Node-Abhängigkeit; die Darstellung
+zeichnet über Canvas 2D in einer HTML-Seite und liest den Kern nur (2.5).
+Prüfläufe (11.2) und Abnahmetests (Abschnitt 12) laufen in Node, ohne
+Fenster; Bildschirmfotos entstehen über Playwright. Die Spielschleife folgt
+E13 (2.1): Echtzeit mit 60 Logikschritten je Sekunde, ausgelassene Bilder
+statt langsamerer Logik, höchstens 4 Logikschritte je Bild. Ablage,
+Befehle, Stand der Abnahme und Festlegungen beim Codieren stehen in
+`docs/scheibe.md`.
 
 ## 2. Zeit und Raum
 
 ### 2.1 Zeit und Eingabe
 
 Die Logik läuft in einem festen Schritt von 60 Hz (E6): genau ein
-Logikschritt je Frame, nie ausgelassen; ist die Darstellung zu langsam,
-wird das Spiel langsamer. Alle Dauern sind Frames, die Frame-Zahlen aus
+Logikschritt je Frame, nie ausgelassen und immer mit derselben
+Schrittweite. Gespielt wird in Echtzeit mit 60 Logikschritten je Sekunde
+(E13): Ist die Darstellung zu langsam, lässt sie Bilder aus; die Logik
+läuft nicht langsamer. Je dargestelltem Bild laufen höchstens 4
+Logikschritte; wären es mehr, laufen 4, und die übrige Zeit verfällt, das
+Spiel bleibt für diesen Rest stehen (kein Aufholen über mehr als 4
+Schritte). T(f) wird je Logikschritt bestimmt und aufgezeichnet, auch wenn
+mehrere Schritte zu einem Bild laufen. Der Prüflauf läuft ohne Fenster so
+schnell wie möglich (11.2). Alle Dauern sind Frames, die Frame-Zahlen aus
 `mechanik.md` gelten unverändert („Konventionen“). Frame 1 ist der erste
 Logikschritt nach dem Laden einer Stage oder Prüfszene.
 
@@ -132,10 +154,10 @@ Ziel z: dx = ⌊x_z⌋ − ⌊x_a⌋, dz = ⌊z_z⌋ − ⌊z_a⌋, d_vorn = dx 
 Vorbild gemeinsame Grenzen für alle Annäherungen (notes.md, „Nachtrag:
 Sprung und Schlagreichweite“).
 
-### 2.4 Zahlendarstellung: Empfehlung Festkomma 16.16
+### 2.4 Zahlendarstellung: Festkomma 16.16 (E12)
 
-Empfohlen ist **Festkomma 16.16** für alle Positionen, Geschwindigkeiten
-und Beschleunigungen: eine vorzeichenbehaftete 32-Bit-Ganzzahl, deren
+Verbindlich ist **Festkomma 16.16** (E12) für alle Positionen,
+Geschwindigkeiten und Beschleunigungen: eine vorzeichenbehaftete 32-Bit-Ganzzahl, deren
 untere 16 Bit den Nachkommaanteil tragen (Wert = Rohwert ÷ 65536). Gründe:
 
 1. Die Grundwerte in `mechanik.md` (Geschwindigkeiten, Beschleunigungen,
@@ -154,15 +176,19 @@ untere 16 Bit den Nachkommaanteil tragen (Wert = Rohwert ÷ 65536). Gründe:
    (notes.md, „Gefundene Adressen“).
 
 Rechenregeln: Multiplikation mit 64-Bit-Zwischenwert und arithmetischer
-Verschiebung um 16 (rundet in Richtung −∞). Division nur, wo Welt sie
-vorschreibt (lineare Verläufe von Bandgrenzen und Ky in 2.1 und 2.4,
-Sprungtritt 5.5, Bogen der Waffe 6, LP nach Rang 8, Flug der Gegenstände
-9.3, Zufall 11.1): ganzzahlig durch eine positive ganze Zahl, das Ergebnis
-rundet in Richtung −∞ (⌊a/b⌋) auf ganze Einheiten des Zielwerts (Pixel,
-LP, Index der Ziehung; beim Sprungtritt 1/65536); sonst keine Division in
-der Logik. ±32767 px reichen auch für die Sonderstage (10.800 px). Gleitkomma ginge
-nur mit 64-Bit-Zahlen und Rundung auf 1/65536 nach jeder Operation; das
-ist fehleranfällig und nicht empfohlen.
+Verschiebung um 16 (rundet in Richtung −∞). Division nur, wo diese
+Spezifikation oder Welt sie vorschreibt (hier: Tempostufe des Sprints
+⌊(n − 1)/6⌋ in 9.2; in Welt: lineare Verläufe von Bandgrenzen und Ky in
+2.1 und 2.4, Pause nach Rang 29 − 4·⌊Rang/4⌋ in 5.1 und 8, Sprungtritt
+5.5, Bogen der Waffe 6, x der Körperpresse 7.3 nach k Bahnframes
+x(A) + ⌊d·k/64⌋ mit d = Ort der Figur in A minus x(A) in 1/65536,
+höchstens 200 px weit, LP nach Rang 8, Flug der Gegenstände 9.3, Zufall
+11.1): ganzzahlig durch eine positive ganze Zahl, das Ergebnis rundet in
+Richtung −∞ (⌊a/b⌋) auf ganze Einheiten des Zielwerts (Pixel, LP, Frames,
+Stufe, Index der Ziehung; beim Sprungtritt und bei der Körperpresse
+1/65536); sonst keine Division in der Logik. ±32767 px reichen auch für die Sonderstage (10.800 px). Gleitkomma ist
+für diese Größen nicht zulässig (E12): Es ginge nur mit 64-Bit-Zahlen und
+Rundung auf 1/65536 nach jeder Operation und ist fehleranfällig.
 
 Die Figur steht auf Höhe 0. Im Vorbild steht sie auf 0,25, weil das
 Nachkommawort bei der Landung nicht genullt wird (notes.md, „Gefundene
@@ -205,7 +231,7 @@ Gemeinsame Felder:
 | vx, vz, vh, ax, gh | Geschwindigkeiten und Beschleunigungen laufender Bahnen (Sprung, Flug, Rutschen), 16.16 |
 | x_vor, z_vor, h_vor | ganzzahlige Position am Ende des Vorframes; für Regeln, die eine Bewegung im Frame brauchen (Wand, Bildrand, Aufwachen; Welt 2 bis 4) |
 | lp, lp_vor, lp_max | Lebenspunkte, Vorframe-LP, Höchstwert (vorzeichenbehaftet) |
-| zustand | 0 frei, 1 normal (verwundbar), 2 am Boden oder unverwundbar (umgeworfen, liegend, aufstehend, tot, gehalten, wartend), 3 Trefferreaktion bzw. geschützt |
+| zustand | 0 frei, 1 normal (verwundbar), 2 am Boden oder unverwundbar (umgeworfen, liegend, aufstehend, tot, gehalten, wartend, im Auftritt nach Welt 4.2; wartend und im Auftritt nicht treffbar und nicht greifbar, beschlossen E10), 3 Trefferreaktion bzw. geschützt |
 | aktion, phase | Aktion (Codes in 4.3 und 7) und Unterphase (Stufe, Variante, Abschnitt) |
 | uhr | Aktionsuhr: Frames seit Aktionsbeginn ohne Stoppframes (Beginn = 1) |
 | stopp | verbleibende Stoppframes des Trefferstopps (5.3) |
@@ -275,7 +301,7 @@ Protokollspalte f_akt zeigt den Folgezustand schon ab X.
 | LAUF | Richtung in T(f−1), Rang 8 in 4.2 | solange gedrückt; gedrückt in P bis q, Bewegung in P+1 bis q+1 | 4.2; GRIFF (8.1) | jederzeit | x 1,75, Tiefe 1,0, diagonal 1,25 und 0,75 px/Frame; ohne Anlauf, Bremsweg und Wendeverzögerung | „Bewegung“ |
 | SPRINT | Doppeltipp (9.1), Sprintframe 1 = D2+1 | solange die Richtung gehalten ist, höchstens 90 Sprintframes | 9.2; SPRINTANGRIFF, SPRINTSPRUNG, SPEZIAL; kein Griff | jederzeit | Tabelle 9.2 | „Sprint“ |
 | SPRUNG | S neu in J | Aktion ab J+1, Absprung J+2, Luft J+2 bis J+41, Aufsetzen J+42 | SPRUNGANGRIFF (A neu in J+1 bis J+41), LANDUNG, UMGEWORFEN | A ab J+1; O, U jederzeit | 4.4 | „Sprung“ |
-| LANDUNG | Aufsetzen (J+42; mit Sprungangriff 1 Frame später, je Frame mit Treffer 7 Frames später) | 6 Frames (J+42 bis J+47) | STAND ab J+48; A und S neu in Landeframe 1 bis 5: neuer SPRUNG ab Druck+1, A verfällt; Druck in Landeframe 6 verfällt; S allein ebenso (P2); alle anderen Drücke verfallen | J+48 | x im Aufsetzframe noch 2,25 (Teil der 41 Frames), sonst keine | „Sprung“, „Spezialangriff“ (Einschränkungen) |
+| LANDUNG | Aufsetzen (J+42; mit Sprungangriff 1 Frame später, je Frame mit Treffer 7 Frames später; im Sprintsprung mit Sprint-Sprungangriff ohne den Frame Pause und 7 Frames später nur nach einem Treffer in A+13, Treffer ab A+20 verschieben nichts, 9.3) | 6 Frames (J+42 bis J+47) | STAND ab J+48; A und S neu in Landeframe 1 bis 5: neuer SPRUNG ab Druck+1, A verfällt; Druck in Landeframe 6 verfällt; S allein ebenso (P2); alle anderen Drücke verfallen | J+48 | x im Aufsetzframe noch 2,25 (Teil der 41 Frames), sonst keine | „Sprung“, „Spezialangriff“ (Einschränkungen) |
 | SCHLAG Stufe 1 | A neu in P (4.2 Rang 5), keine laufende Kette (5.6) | Aktion ab P+1; aktiv P+2 bis P+5 (uhr 2 bis 5) | mit Treffer h: Stufe 2 bei A neu in h+12 bis h+27; Pose ohne Druck bis h+27, STAND ab h+28. Ohne Treffer: LEERSCHLAG | mit Treffer: A und S ab h+12, Richtung mit L oder R ab h+13 (Bewegung ab h+14); Richtung nur in der Tiefe bricht die Pose nicht ab (Bewegung ab h+29, P31) | keine | „Angriff (Standardschlag, Kette)“; Tiefe: notes.md, „Nachtrag: Rest der Spielfigur“ (nur Messagent, unsicher; `mechanik.md`, „Nicht übernommen“) |
 | LEERSCHLAG | Stufe 1 ohne Treffer in uhr 2 bis 5 | Aktion P+1 bis P+16 | STAND ab P+17; Drücke nach 4.2 (A beginnt eine neue Kette) | A und S ab P+7 (wirken P+8), Richtung ab P+8 (Bewegung ab P+9) | keine | „Angriff“, Recovery Leerschlag; notes.md, „Nachtrag: Rest der Spielfigur“ |
 | SCHLAG Stufe 2 | A neu in D = h₁+12 bis h₁+27 | Aktion ab D+1; aktiv D+3 bis D+6 | mit Treffer h₂: Stufe 3 bei A neu in h₂+11 bis h₂+26; Pose ohne Druck bis h₂+26, STAND ab h₂+27. Ohne Treffer: Aktion D+1 bis D+16, STAND ab D+17 (K1) | mit Treffer: A und S ab h₂+11, Richtung mit L oder R ab h₂+12 (Bewegung ab h₂+13), nur Tiefe Bewegung ab h₂+28; ohne Treffer: A und S ab D+7 (A beginnt eine neue Kette), Richtung ab D+8 | keine | „Angriff“, Kettenstufen; notes.md, „Nachtrag: Rest der Spielfigur“ |
@@ -287,12 +313,12 @@ Protokollspalte f_akt zeigt den Folgezustand schon ab X.
 | WURF | A neu mit Richtung im GRIFF, Druck E | Figur gebunden E+1 bis E+37 | STAND ab E+38 | E+38 | keine | „Griff und Wurf“ |
 | SPEZIAL | 9.4 | P+1 bis P+50, je Bild mit Treffer 7 Frames mehr | STAND | Frame nach dem Ende (ohne Treffer P+51; Druck in P+50 verfällt) | keine; eine Laufbewegung stoppt in P+1 | „Spezialangriff“ |
 | SPRINTANGRIFF | A neu in A, Figur in A im SPRINT | A+1 bis A+35, mit Treffer 7 Frames je Frame mit Treffer mehr | STAND | A+36 (Bewegung ab A+37), mit Treffer A+43 | Rutschen (9.3) | „Sprint“ |
-| SPRINTSPRUNG | S neu in J im SPRINT | wie SPRUNG nach vorn in Sprintrichtung | Angriff: Sprint-Sprungangriff (9.3); LANDUNG | wie SPRUNG | wie Vorwärtssprung, Sprinttempo verfällt | „Sprint“ |
+| SPRINTSPRUNG | S neu in J im SPRINT | wie SPRUNG nach vorn in Sprintrichtung | Angriff: Sprint-Sprungangriff (A neu in J+1 bis J+41, 9.3, E15); LANDUNG | wie SPRUNG | wie Vorwärtssprung, Sprinttempo verfällt | „Sprint“ |
 | GETROFFEN | wirksamer Gegnertreffer in H ohne Umwerfen, Figur am Boden, LP danach ≥ 0 | 27 Frames, H bis H+26 (schutz = 27 in H) | SPEZIAL bei A und S neu in H+8 bis H+26 (ab Druck+1); STAND in H+27 (P3) | H+27 (P3); Drücke in H bis H+7 verfallen, in H+8 bis H+26 außer dem Spezialangriff ebenso (P3) | keine (P3) | „Unverwundbarkeit“, „Spezialangriff“ |
 | UMGEWORFEN | wirksamer Treffer mit Umwerfen, jeder wirksame Treffer bei h > 0, LP < 0 (dann TOT) | Flug F1 (5.7) vom Angreifer weg: H+1 bis H+8 Stillstand, Bodenkontakt H+46, Ruhe H+55 | LIEGEN ab H+54 | keine; Drücke im Flug zählen nicht | Bahn F1 | „Umgeworfen werden“, „Schaden der Gegner“ |
 | LIEGEN | H+54 | bis L_end = H+94 oder 2 Frames nach dem sechsten Druck (siehe unten) | AUFSTEHEN | nur Zählen der Drücke | keine | „Umgeworfen werden“ |
 | AUFSTEHEN | L_end+1 | 26 Frames | STAND in U = L_end+27 mit schutz = 35 | U (P4) | keine | „Umgeworfen werden“, „Unverwundbarkeit“ |
-| TOT | wirksamer Treffer in t, nach dem die LP unter 0 liegen | Bahn F4 (Bodenkontakt t+40), Neueinstieg in t+120, Sonderfälle in 6.5 | NEUEINSTIEG (6.5) | keine | Bahn F4 | „Schaden der Gegner“ (Tod); notes.md, „Nachtrag: Rest der Spielfigur“ |
+| TOT | wirksamer Treffer in t, nach dem die LP unter 0 liegen | Bahn F4 (Bodenkontakt t+40), Neueinstieg in t+120 bei jeder Todesart (E16, 6.5) | NEUEINSTIEG (6.5) | keine | Bahn F4 | „Schaden der Gegner“ (Tod); notes.md, „Nachtrag: Rest der Spielfigur“ |
 | WAFFE | A neu mit Waffe (4.2 Rang 4) | Raketenwerfer: P+1 bis P+17 | STAND | P+18 (P5) | keine (P5) | „Gegenstände und Waffen“ |
 | AUFNEHMEN | A neu, Gegenstand in Reichweite (10.1), Figur am Boden | Wirkung in P+1, Aktion P+1 bis P+7 | STAND | P+8 | keine | „Gegenstände und Waffen“, Aufnehmen |
 | NEUEINSTIEG | N = t+120 (6.5) | Erscheinen in N+1, Fall bis LN = N+53, Landung LN bis LN+5 | STAND ab LN+6; S neu in LN bis LN+4: neuer SPRUNG ab Druck+1 | A ab LN+6, Richtung ab LN+6 (Bewegung ab LN+7); S siehe Ausgänge, Druck in LN+5 verfällt | Fall (P28) | notes.md, „Nachtrag: Rest der Spielfigur“ |
@@ -326,30 +352,34 @@ Im Sprungangriff entfällt der Schritt in A+1 und in jedem Stoppframe
 Eine Trefferfläche ist ein Bereich von Abständen (2.3), keine
 Bildüberlappung (`design.md`, Abschnitt 3): d_vorn von −hinten bis +vorn,
 |dz| ≤ Tiefe, dazu eine Grenze für die Höhe des Angreifers; die Zielhöhe
-zählt nicht (P6). Bei Blick nach links reichen Kette und Sprungangriff
-neutral und Richtung nach vorn 1 px kürzer (K9; notes.md, „Nachtrag: Rest der Spielfigur“), die
-Raketenexplosion beginnt 1 px näher an der Figur (96 statt 97 px, 10.3), der Griff nach
-8.1; alle übrigen Werte gelten für beide Blickrichtungen.
+zählt nicht (P6). Alle Reichweiten, Griffweiten, Aufnahmebereiche und
+Explosionsgrenzen der Figur gelten für beide Blickrichtungen gleich, mit
+den Werten für Blick rechts aus `mechanik.md` (E14; 5.2, 8.1, 10.1, 10.3).
+Die Abweichungen des Vorbilds bei Blick links (Kette und Sprungangriff
+neutral und Richtung 1 px kürzer, K9; Raketenexplosion ab 96 statt 97 px;
+Griff vorn 38, von hinten 25 px; Aufnahmebereiche) sind nicht übernommen.
+E14 betrifft die Figur; die gemessenen Flächen der Gegnerangriffe und
+Geschosse (Welt 5 bis 7) bleiben, wie sie sind.
 
 ### 5.2 Angriffe der Figur
 
 | Angriff (Code) | aktiv | vorn | hinten | Tiefe | Höhe der Figur | Schaden | Umwerfen | Trefferstopp | Quelle |
 |---|---|---|---|---|---|---|---|---|---|
-| Kette Stufe 1 (KT1) | P+2 bis P+5 | 85 (Blick links 84) | 28; Ziel schaut weg: 4 (K8) | 12 (E9: Grenzfall 12 trifft) | Boden | 3 | nein | ja | „Angriff (Standardschlag, Kette)“; Blick links, hinten: notes.md, „Nachtrag: Rest der Spielfigur“ |
-| Kette Stufe 2 (KT2) | D+3 bis D+6 | 87 (86) | 26; weg: 2 | 12 | Boden | 4 | nein | ja | wie oben |
-| Kette Stufe 3 (KT3) | D+4 bis D+7 | 91 (90) | 26; weg: 2 | 12 | Boden | 5 | nein | ja | wie oben |
-| Kette Stufe 4 (KT4) | D+3 bis D+6, ohne Treffer dort D+17 bis D+20 | 100 (99) | 25; weg: 1 | 12 | Boden | 10 | ja, F1 in Blickrichtung | ja | wie oben |
-| Sprungangriff neutral (SN) | A+5 bis A+28, solange in der Luft | 76 (75) | 27 | 12 | ≤ 45 | 7 | ja, F1 in Blickrichtung | ja | „Sprungangriff“ |
-| Sprungangriff Richtung (SR) | wie SN | 99 (98) | 24 | 12 | ≤ 41 | 7 | ja | ja | wie oben |
+| Kette Stufe 1 (KT1) | P+2 bis P+5 | 85 | 28; Ziel schaut weg: 4 (K8) | 12 (E9: Grenzfall 12 trifft) | Boden | 3 | nein | ja | „Angriff (Standardschlag, Kette)“; hinten: notes.md, „Nachtrag: Rest der Spielfigur“; beide Blickrichtungen: E14 |
+| Kette Stufe 2 (KT2) | D+3 bis D+6 | 87 | 26; weg: 2 | 12 | Boden | 4 | nein | ja | wie oben |
+| Kette Stufe 3 (KT3) | D+4 bis D+7 | 91 | 26; weg: 2 | 12 | Boden | 5 | nein | ja | wie oben |
+| Kette Stufe 4 (KT4) | D+3 bis D+6, ohne Treffer dort D+17 bis D+20 | 100 | 25; weg: 1 | 12 | Boden | 10 | ja, F1 in Blickrichtung | ja | wie oben |
+| Sprungangriff neutral (SN) | A+5 bis A+28, solange in der Luft | 76 | 27 | 12 | ≤ 45 | 7 | ja, F1 in Blickrichtung | ja | „Sprungangriff“ |
+| Sprungangriff Richtung (SR) | wie SN | 99 | 24 | 12 | ≤ 41 | 7 | ja, F1 in Blickrichtung | ja | wie oben |
 | Sprungangriff hoch (SH) | A+7 bis A+10, solange in der Luft (K4) | 85 | 32 | 12 | ≤ 48 | 12 | ja, F1 in Blickrichtung | ja | notes.md, „Nachtrag: Rest der Spielfigur“ |
 | Sprungangriff runter (ST) | A+9 bis A+32, solange in der Luft (K5) | 42 | 41 | 12 | ≤ 41 | 4 | nein | ja | notes.md, „Nachtrag: Rest der Spielfigur“ |
 | Sprintangriff (SA) | A+5 bis A+14 | 105 | 26 | 12 | Boden | 9 | ja, F1 in Blickrichtung | ja | „Sprint“ |
-| Sprint-Sprungangriff (SS) | A+13 (Figur ≤ 16 hoch) und A+20 bis A+39 (≤ 20), auch nach der Landung | 147 | −38 (erst ab 38 vor der Figur) | 12 | siehe aktiv | 13 | ja | ja | „Sprint“; Reichweite außer A+20: P7 |
+| Sprint-Sprungangriff (SS) | A+13 (Figur ≤ 16 hoch) und A+20 bis A+39 (≤ 20), auch nach der Landung | 147 | −38 (erst ab 38 vor der Figur) | 12 | siehe aktiv | 13 | ja, F1 in Blickrichtung (Festlegung wie bei den übrigen umwerfenden Angriffen der Figur; im Vorbild fällt der Gegner unsicher auf der Stelle, mechanik.md, „Nicht übernommen“) | nur in A+13 (9.3) | „Sprint“; Reichweite außer A+20: P7, E15; Trefferstopp: notes.md, „Nachtrag: Sprint“ |
 | Kniestoß (KN) | K+5, nur der gehaltene Gegner | – | – | – | Boden | 4 | beim dritten, Bahn F2 | nein | „Griff und Wurf“ |
 | Wurf (WU) | E+1, nur der gehaltene Gegner | – | – | – | Boden | 14 | ja, Bahn F3 | nein | „Griff und Wurf“ |
 | Geworfener Gegner (WG) | E+1 bis E+58 | \|dx\| ≤ 52 um den Geworfenen (P8) | – | 17 | – | 3 | ja, F1 in seiner Flugrichtung | nein | „Griff und Wurf“ |
 | Spezialangriff (SP) | P+8 bis P+43 (uhr 8 bis 43), Fläche nach 9.4 | 43 bis 123 | 42 bis 122 | 28 | Boden | 6 | ja, F1 von der Figur weg | je Bild (9.4) | „Spezialangriff“ |
-| Raketenexplosion (RX) | P+28 bis P+42 (frei fliegend) | Einschlag −66 (Blick links −67) bis +90 in Flugrichtung | – | 28 | – | 8 | ja, F1 in Flugrichtung (P9) | nein | „Gegenstände und Waffen“ |
+| Raketenexplosion (RX) | P+28 bis P+42 (frei fliegend) | Einschlag −66 bis +90 in Flugrichtung (beide Blickrichtungen, E14) | – | 28 | – | 8 | ja, F1 in Flugrichtung (P9) | nein | „Gegenstände und Waffen“ |
 
 Variante des Sprungangriffs (Unterphase T, R, H, N): runter (T), wenn
 T(A) U enthält, auch nach einem Sprung mit Richtung (notes.md, „Nachtrag: Rest der Spielfigur“); sonst Richtung
@@ -371,7 +401,8 @@ Instanz prüft nicht, stopp zählt 6 bis 0. Danach verschieben sich die
 restlichen aktiven Frames um 7. Das ergibt die Messwerte: Schlagbild 4 + 7
 = 11 Frames, handlungsfähig ab h+13 statt P+8 (notes.md, „Messungen im
 Einzelnen“). Mehrere Treffer im selben Frame geben einen Stopp; der
-Spezialangriff stoppt höchstens einmal je Flächenstufe (9.4); Kniestoß,
+Spezialangriff stoppt höchstens einmal je Flächenstufe (9.4), der
+Sprint-Sprungangriff nur bei einem Treffer in A+13 (9.3); Kniestoß,
 Wurf, geworfener Gegner und Explosion stoppen nicht (feste gemessene
 Abläufe). Der Getroffene hat keine Stoppframes, die seine Reaktion
 verlängern; sein Stillstand h+1 bis h+8 liegt innerhalb der 23 Frames
@@ -403,7 +434,7 @@ oder Sprint-Sprungangriff, ein Spezialangriff, ein Wurfgeschoss, eine
 Explosion) führt die Menge ihrer getroffenen Ziele und trifft jedes
 höchstens einmal, aber alle passenden Ziele im selben Frame, jedes mit
 vollem Schaden („Trefferreaktion der Gegner“, Mehrere Gegner). Nicht treffbar sind Gegner in Zustand 0 und
-2 (umgeworfen, liegend, aufstehend, tot, wartend; gehaltene nur für
+2 (umgeworfen, liegend, aufstehend, tot, wartend, im Auftritt; gehaltene nur für
 Kniestoß, Wurf und Spezialangriff der haltenden Figur). Gegner in Zustand 3
 (Trefferreaktion) sind treffbar. Ein nicht treffbares Ziel bleibt für
 spätere aktive Frames derselben Instanz offen. Behälter zerbrechen beim
@@ -471,12 +502,14 @@ der Gegnerangriffe“. Ein Gegnerangriff ist eine Angriffsinstanz wie in 5.5
 und trifft die Figur in seinem ersten aktiven Frame, in dem sie in der
 Fläche steht. Ist die Figur dort geschützt, ist der Treffer wirkungslos
 (6.3). Nach einem wirksamen Treffer gilt der Trefferstopp des Gegners nach
-Welt 5. Für die Scheibe gilt als Arbeitsregel: Der Ansturm des Bosses wirft
-die Figur bei Kontakt um (12 bis 17 LP nach Rang, ohne Griff). Geschosse
+Welt 5. Für die Scheibe gilt (beschlossen, E10; ohne Griff, E21): Der
+Ansturm des Bosses wirft die Figur bei Kontakt um (12 bis 17 LP nach
+Rang). Geschosse
 der Gegner regelt Welt 6 nach notes.md, „Nachtrag: Fernangriffe der
 Gegner“ (K15): Die Rakete trifft im Flug nicht, ihre Explosion trifft die
 Figur nur bis 25 px Höhe, ein Schlag zerstört kein Geschoss, Geschosse
-treffen keine Gegner. Im Schutz bleibt es bei E2 (P17).
+treffen keine Gegner. Im Schutz bleibt es bei E2: Auch Geschosse sind dort
+wirkungslos (P17, E10).
 
 ## 6. Schaden, LP, Schutz
 
@@ -499,14 +532,15 @@ zurückspringen, regelt Welt 7. Im Vorbild (notes.md, „Nachtrag: Boss“)
 werden Spezialangriff, Kniestoß, Wurf, Rakete und Laser nie
 zurückgewiesen, Kette, Sprungangriff neutral und hoch sowie Sprintangriff
 manchmal (Regel unsicher, K13); dann steigen die LP in h+1 auf den Wert
-vor diesem Treffer.
+vor diesem Treffer. Die Scheibe weist nicht zufällig zurück, sondern folgt
+der festen Regel SA1 bis SA6 aus Welt 7.4 (E11).
 
 ### 6.3 Schutz der Figur
 
 Gegnertreffer sind wirkungslos, solange die Figur geschützt ist (zustand
 2 oder 3). Die Gegner greifen trotzdem an und prüfen ihre Flächen wie
 sonst (E2): kein LP-Verlust, keine Reaktion, kein Waffenverlust, kein
-Ende eines Griffs, kein Trefferstopp des Angreifers (P11). Das gilt auch für Geschosse (P17).
+Ende eines Griffs, kein Trefferstopp des Angreifers (P11). Das gilt auch für Geschosse (P17, E10).
 
 | Fenster | geschützt | verwundbar ab | Quelle |
 |---|---|---|---|
@@ -514,7 +548,7 @@ Ende eines Griffs, kein Trefferstopp des Angreifers (P11). Das gilt auch für Ge
 | umgeworfen, liegend, aufstehend | H bis U−1 (zustand 2) | – | „Unverwundbarkeit“, Liegen |
 | nach dem Aufstehen | U bis U+34 (35 Frames; schutz = 35 in U) | U+35 | „Unverwundbarkeit“ |
 | Spezialangriff | ab P+1 während der Aktion, danach 20 Frames schutz; ohne Treffer P+1 bis P+70, mit einem Bild mit Treffer bis P+77 | P+71 bzw. P+78 | „Spezialangriff“, Schutz |
-| nach dem Neueinstieg | N+1 bis LN+199 (schutz = 200 ab N+1, zählt ab LN+1; bei Landung auf dem Boden 252 Frames) | LN+200 | notes.md, „Nachtrag: Rest der Spielfigur“ |
+| nach dem Neueinstieg | N+1 bis LN+199 (schutz = 200 ab N+1, zählt ab LN+1; bei Landung auf dem Boden 252 Frames) | LN+200 | notes.md, „Nachtrag: Rest der Spielfigur“; beschlossen (E10) |
 
 Ein Treffer in H+27 bzw. U+35 ist wirksam (notes.md, „Messgrößen“:
 mehrfach genau beim Ablauf). schutz zählt in KS2 vor der
@@ -538,26 +572,27 @@ und Anzeige regelt Welt 8 und 10. Ablauf für die Figur (K7; notes.md,
 
 | Größe | Wert |
 |---|---|
-| Tod (t) | Bahn F4 vom Angreifer weg, Bodenkontakt t+40; Neueinstieg N = t+120 |
-| Sonderfall Wand | endet der Flug vor t+40 an einer Begrenzung der Stage oder einer Sperre (Welt 2, 3; Bildränder zählen nicht): senkrechter Fall, Bodenkontakt t+40, N = t+108 |
-| Sonderfall Rollen | nach einem tödlichen Treffer von vorn mit Rollmerkmal (Vorbild: Attribut-Bit 0x0400; welche Angriffe es tragen, legt Welt 5 fest): nach dem Bodenkontakt 32 Frames Rollen mit 2,0 px/Frame, N = t+151 |
+| Tod (t) | Bahn F4 vom Angreifer weg, Bodenkontakt t+40; Neueinstieg N = t+120 bei jeder Todesart (E16) |
+| Sonderfall Wand | nicht in der Scheibe (E16): Eine Begrenzung hält den Flug nur in x auf (Welt 2.2), Bodenkontakt t+40 und N = t+120 bleiben. Vorbild: endet der Flug vor t+40 an einer Begrenzung der Stage oder einer Sperre (Bildränder zählen nicht), senkrechter Fall, N = t+108 |
+| Sonderfall Rollen | nicht in der Scheibe (E16): kein Rollen nach dem Bodenkontakt, N = t+120. Vorbild: nach einem tödlichen Treffer von vorn mit Rollmerkmal (Attribut-Bit 0x0400) 32 Frames Rollen mit 2,0 px/Frame, N = t+151 |
 | Neueinstieg N | LP 72 |
 | Erscheinen in N+1 | x = Kamera-x + 64, Tiefe = Kamera-y + 48, Höhe 256, Blick rechts; schutz = 200, zustand 3 |
 | Fall | keine Eingabe wirkt; Landung LN = N+53 (= t+173) auf dem Boden, N+50 auf einem tragenden Behälter (Vorbild: Ölfass, Oberkante 48 px; welche tragen, legt Welt 9 fest); Höhenverlauf P28 |
-| Landung LN | trifft jeden wachen Gegner im Bild (0 ≤ x − Kamera-x ≤ 383) mit 5 LP, den Boss mit 10 LP, und wirft ihn um (F1 von der Figur weg, P30); wartende Gegner nicht |
+| Landung LN | trifft jeden wachen Gegner im Bild (0 ≤ x − Kamera-x ≤ 383) mit 5 LP, den Boss mit 10 LP (endgültig, Welt 7.4, E11), und wirft ihn um (F1 von der Figur weg, P30); wartende und auftretende Gegner nicht (Welt 4.2); beschlossen (E10) |
 | Steuerung | nach Zeile NEUEINSTIEG in 4.3 |
 | Schutz | N+1 bis LN+199, verwundbar ab LN+200 (6.3) |
 | Gegner | beginnen von t+1 bis N+1 keinen Angriff, danach greifen sie an, ohne Wirkung (Welt 5) |
 
-Nicht nachgebildet: t+121 und t+152 (längerer Rückprall), Klingentod
-t+107 (keine Klingen in der Scheibe).
+Nicht nachgebildet (E16, einheitlich N = t+120): Wand t+108, Rollen
+t+151, t+121 und t+152 (längerer Rückprall), Klingentod t+107 (keine
+Klingen in der Scheibe).
 
 ## 7. Trefferreaktion der Gegner als Gegenstück
 
 Gilt für alle Gegner (E3, E4), auch für den schweren Gegner (Koloss)
 außerhalb der Scheibe und für Bosse: Die Trefferreaktion ohne Umwerfen
-dauert bei allen 23 Frames. Bei Bossen kommt die Super-Armor hinzu (Welt
-7.4): Sie regelt, welche Treffer zählen und wann die LP zurückspringen;
+dauert bei allen 23 Frames (E3; für den Boss bestätigt, E19). Bei Bossen
+kommt die Super-Armor hinzu (Welt 7.4, E11; Folgefrist h+23): Sie regelt, welche Treffer zählen und wann die LP zurückspringen;
 ein Treffer von vorn bricht einen Angriff des Bosses nicht ab (5.4, Welt
 7.4, SA3), und nach einer Folge ohne Umwerfen beginnt sein Stoß (SA5).
 Umwerfen, Liegen und Aufstehen des Bosses stehen in Welt 7.1 (Vorbild in
@@ -596,9 +631,9 @@ Angriffsframes, am Boden), |dz| ≤ 10 und
 
 | Lage des Gegners | Grenze in d_vorn | Quelle |
 |---|---|---|
-| vor der Figur, schaut sie an | 0 bis 39 bei Blick rechts, 0 bis 38 bei Blick links | „Griff und Wurf“ |
+| vor der Figur, schaut sie an | 0 bis 39 in beiden Blickrichtungen (E14; im Vorbild bei Blick links 0 bis 38) | „Griff und Wurf“ |
 | vor der Figur, schaut weg | 0 bis 14 | notes.md, „Nachtrag: Griff und Würfe“ (Workflow) |
-| hinter der Figur, schaut sie an | −24 bis −1 (im Vorbild bei Blick links −25; es gilt 24 wie in `mechanik.md`, „Griff und Wurf“, und `design.md`, 4.4, bis der Nutzer über die Blickrichtung entscheidet: `design.md`, 9, Offen 5; Frage 6 in 13.3) | wie oben (Workflow) |
+| hinter der Figur, schaut sie an | −24 bis −1 in beiden Blickrichtungen (E14; im Vorbild bei Blick links −25) | wie oben (Workflow) |
 | hinter der Figur, schaut weg | kein Griff | wie oben |
 
 Kein Griff: ohne Richtung, in SPRUNG und LANDUNG, im SPRINT, in GETROFFEN
@@ -684,7 +719,7 @@ die Bewegung, der Sprint läuft weiter. Blick = Sprintrichtung.
 
 Weg in 90 Sprintframes: 267,875 px („Sprint“, Tempo x). Der Fehler des
 Vorbilds (diagonal nach rechts in Sprintframe 7 bis 12 x 4,8125 statt
-2,8125) wird nicht übernommen (P23; `design.md`, Abschnitt 4.5:
+2,8125) wird nicht übernommen (P23, E10; `design.md`, Abschnitt 4.5:
 diagonal das 0,75-fache).
 
 ### 9.3 Sprintangriff, Sprintsprung, Sprint-Sprungangriff
@@ -701,10 +736,26 @@ einmal, und schiebt keinen mit („Sprint“).
 Sprintrichtung (2,25 px/Frame, 92,25 px, Scheitel 51,25 in J+21, Drücke
 ab J+48); das Sprinttempo verfällt.
 
-**Sprint-Sprungangriff.** A neu im Sprintsprung: 13 LP, wirft um. Die
-Angriffsinstanz läuft bis A+39 mit der Figur weiter, auch nach der Landung;
-Werte in 5.2, Reichweite nach P7. Er fehlt in `design.md`, Abschnitt 4.5;
-ob er in die Scheibe gehört, fragt 13.3 (Frage 4).
+**Sprint-Sprungangriff.** Er gehört zur Scheibe (E15). A neu im
+Sprintsprung (J+1 bis J+41): 13 LP, wirft um, Tiefe 12, nichts hinter
+der Figur; Reichweite 38 bis 147 px vor der Figur in
+allen aktiven Frames (P7, E15). Die Figur bleibt in SPRINTSPRUNG (f_ph SS
+ab A+1); ihre Bahn läuft ohne Höhenpause in A+1 weiter (P7). Aktiv sind
+A+13 (Figur höchstens 16 px hoch) und A+20 bis A+39 (höchstens 20 px
+hoch). Die Angriffsinstanz läuft mit der Figur bis A+39 weiter, auch nach
+der Landung und wenn die Figur danach schon steht oder geht; A+20 bis
+A+39 zählen in echten Frames ab A. Weitere A-Drücke im Sprintsprung nach
+A verfallen bis zur Landung. Beginnt die Figur vor dem Ende der Instanz
+eine andere Aktion als LANDUNG, STAND oder LAUF (Schlag, Sprung, Sprint,
+Spezialangriff, Waffe, Aufnehmen, Griff) oder wird sie wirksam getroffen,
+endet die Instanz SS in diesem Frame; die Figur führt also nie zwei
+Angriffsinstanzen zugleich (Feld angriff, Abschnitt 3). Festlegung ohne
+Messung (im Vorbild ist nach der Landung nur das Gehen gemessen,
+notes.md, „Nachtrag: Sprint“). Ein Treffer in A+13 gibt den
+Trefferstopp nach 5.3 (Bahn, Aktionsuhr und Instanz stehen 7 Frames, alle
+späteren Frames einschließlich Aufsetzen und A+20 bis A+39 verschieben
+sich um 7); Treffer ab A+20 geben keinen Trefferstopp und verschieben nichts
+(notes.md, „Nachtrag: Sprint“, aktive Frames). Werte in 5.2.
 
 ### 9.4 Spezialangriff
 
@@ -736,7 +787,7 @@ ohne Treffer P+50, mit einer Stufe P+57, zwei P+64, drei P+71, vier P+78).
 sonst nach hinten); Kosten 6.4, Schutz 6.3 („Spezialangriff“).
 
 **Aus dem Griff.** A und S im Griff (E): derselbe Spezialangriff mit
-denselben aktiven Frames wie der freie (Arbeitsregel); der gehaltene
+denselben aktiven Frames wie der freie (beschlossen, E10); der gehaltene
 Gegner steht in der Haltelage und wird in Stufe 1 getroffen (E+8, 6 LP,
 umgeworfen, etwa 158 px von der Figur), die Figur verliert 9 LP in E+16
 und nimmt Drücke ab E+58 an („Griff und Wurf“).
@@ -754,13 +805,15 @@ A neu, Figur am Boden in STAND oder LAUF, ein aufnehmbarer Gegenstand mit
 LP bzw. Waffe), Aktion P+1 bis P+7, Drücke ab P+8. Darüberlaufen nimmt
 nichts auf; im Sprung gibt A den Sprungangriff. Aufnehmen geht dem Schlag
 und dem Waffeneinsatz vor (4.2). Mehrere Gegenstände: P20. Die Figur
-bleibt dabei verwundbar (P25).
+bleibt dabei verwundbar (P25). Die Bereiche gelten für beide
+Blickrichtungen mit den Werten für Blick rechts (E14; im Vorbild beim
+Raketenwerfer bei Blick links vorn 36, hinten 29).
 
-| Gegenstand | vorn, Blick rechts | vorn, Blick links | hinten, Blick rechts | hinten, Blick links | Quelle |
-|---|---|---|---|---|---|
-| Raketenwerfer | 35 (unsicher 35 oder 37; es gilt 35, P26) | 36 | 28 | 29 | „Gegenstände und Waffen“, Aufnehmen |
-| Kometenbraten, Eisnudelschale | 29 | 29 (P26) | 29 (P26) | 29 (P26) | wie oben (Brathähnchen) |
-| Sternbeeren | 22 | 22 (P26) | 22 (P26) | 22 (P26) | wie oben (Kirschen) |
+| Gegenstand | vorn | hinten | Quelle |
+|---|---|---|---|
+| Raketenwerfer | 35 (unsicher 35 oder 37; es gilt 35, P26) | 28 | „Gegenstände und Waffen“, Aufnehmen |
+| Kometenbraten, Eisnudelschale | 29 | 29 (P26) | wie oben (Brathähnchen) |
+| Sternbeeren | 22 | 22 (P26) | wie oben (Kirschen) |
 
 ### 10.2 Essen
 
@@ -779,7 +832,7 @@ Waffe bleibt. Essen läuft nicht ab.
 | Abschuss | in P+7: Munition −1, Rakete im ersten freien Slot g0 bis g4, 58 px vor der Figur, 50 px hoch, in ihrer Tiefe, Blickrichtung der Figur | wie oben |
 | Flug | 5,0 px/Frame in x; Höhe sinkt (Verlauf P9); im Flug kein Treffer | wie oben |
 | Einschlag | frei fliegend in P+28 bei 163 px vor der Figur; früher an Wänden, Behältern und am Bildrand (Welt 2, 3) | wie oben |
-| Explosion | Angriffsinstanz RX nach 5.2, aktiv P+28 bis P+42 (15 Frames), Bereich Einschlag −66 bis +90 in Flugrichtung (Blick links −67 bis +90), also 97 bis 253 px vor der Figur (Blick links 96 bis 253); trifft keine Gegner ab Kamera-x + 448; zerbricht Behälter | wie oben, Explosion; Waffen allgemein |
+| Explosion | Angriffsinstanz RX nach 5.2, aktiv P+28 bis P+42 (15 Frames), Bereich Einschlag −66 bis +90 in Flugrichtung, also 97 bis 253 px vor der Figur, in beiden Blickrichtungen (E14; im Vorbild bei Blick links −67, also ab 96 px); trifft keine Gegner ab Kamera-x + 448; zerbricht Behälter | wie oben, Explosion; Waffen allgemein |
 | Munition leer | nach dem dritten Schuss in P+18 weggeworfen, nicht aufnehmbar, nach 61 Frames verschwunden; weitere A-Drücke geben Schläge | wie oben, Lebensdauer |
 | Sprung, Griff, Wurf mit Waffe | wie ohne Waffe; Sprungangriff ohne Munition; Waffe bleibt | wie oben, Waffen allgemein |
 
@@ -848,7 +901,7 @@ exakte Dezimalzahl des 16.16-Werts ohne überflüssige Nullen (135.125,
 | tasten | T(f), Buchstaben in der Reihenfolge L R O U A S |
 | f_x, f_z, f_h | Position der Figur am Frame-Ende |
 | f_lp, f_zst | LP, Zustand 0 bis 3 |
-| f_akt, f_ph | Aktion (Code aus 4.3), Unterphase (Stufe 1 bis 4, Variante N/R/H/T, Wurf V/R, Bahn F/B/R) |
+| f_akt, f_ph | Aktion (Code aus 4.3), Unterphase (Stufe 1 bis 4, Variante N/R/H/T, Sprint-Sprungangriff SS, Wurf V/R, Bahn F/B/R) |
 | f_uhr, f_stopp, f_schutz | Aktionsuhr, verbleibende Stoppframes, Schutz-Timer |
 | f_blick | R oder L |
 | kombo | 0 bis 4 |
@@ -898,8 +951,10 @@ gleicher Seed ergeben bitgleiche Protokolle (gleiche MD5 von
 Uhrzeit, keine Bildrate und kein ungesteuerter Zufall in der Logik; jeder
 Zufall über den seedbaren Generator aus Welt 11; feste Reihenfolge nach
 2.2 und aufsteigenden Slots, nie über ungeordnete Mengen; Festkomma nach
-2.4; Darstellung, Ton und Ladezeiten wirken nicht auf die Logik; feste
-Zahlenformatierung nach 11.3. Der Prüflauf gibt die MD5 beider Dateien aus.
+2.4; Darstellung, Ton und Ladezeiten wirken nicht auf die Logik; die
+Spielschleife nach E13 (2.1) bestimmt nur, wann ein Logikschritt läuft,
+nie, was er tut; feste Zahlenformatierung nach 11.3. Der Prüflauf gibt die
+MD5 beider Dateien aus.
 
 ## 12. Abnahmetests
 
@@ -914,8 +969,8 @@ keine. Werte, die von einem Platzhalter abhängen, nennen ihn.
 | T2 | Kriterium 2, Sprung | – | S 10, R 30–70, R und S 100 | – |
 | T3 | Kriterium 3, volle Kette | Puppe leicht s0 x 146, 16 LP, vorplatziert | A 10, 24, 38, 53 | – |
 | T4 | Kriterium 4, Kombofenster | Puppe schwer s0 x 146, 30 LP | A 10 und je Lauf ein zweiter Druck | – |
-| T5 | Kriterium 5, Reichweite | Puppe schwer s0, 30 LP, Lage je Lauf | A 10 (Lauf e, f: A 10, 24, 38, 53) | Lauf e: in 43 s0_x := 200; Lauf f: s0_x := 201 |
-| T6 | Kriterium 6, Griff und Wurf | Puppe leicht s0 x 160, Puppe leicht s1 x 240, je 16 LP | R 10–21, A und R 27 | – |
+| T5 | Kriterium 5, Reichweite | Puppe schwer s0, 30 LP, Lage je Lauf; Lauf g, h: Figur Blick links (E14) | A 10 (Lauf e, f: A 10, 24, 38, 53) | Lauf e: in 43 s0_x := 200; Lauf f: s0_x := 201 |
+| T6 | Kriterium 6, Griff und Wurf | Puppe leicht s0 x 160, Puppe leicht s1 x 240, je 16 LP; Lauf b: Figur x 300, Blick links (E14), Puppe leicht s0 x 240, Puppe leicht s1 x 160, je 16 LP | R 10–21, A und R 27 (Lauf b: L 10–21, A und L 27) | – |
 | T7 | Kriterium 7, Schutzfenster | Figur x 300; Puppe leicht s0 x 346, s1 x 118 (dort liegt die Figur später) | Lauf b: A 154, 156, 158, 160, 162, 164 | s0: 5 in 19; s0: 5 in 20–46; s0: 5 mit Umwerfen in 100; s1: 5 in 101–260 |
 | T8 | Kriterium 8, 0 LP und gleichzeitiger Treffer | Puppe leicht s0 x 146, 16 LP | je Lauf | je Lauf |
 | T9 | Kriterium 9, Rang | Rang nicht fest; Lauf b: Puppe leicht s0 x 146 | keine | Lauf b: in 500 Prüfangriff 80; Lauf c: in 100 erscheint ein leichter Nahkämpfer (nicht vorplatziert, Logik an) bei x 300 |
@@ -996,6 +1051,8 @@ keine. Werte, die von einem Platzhalter abhängen, nennen ihn.
 | d | x 185, z 112 | s0_lp 27 in 12 (E9) |
 | e | x 146 | s0_lp 18 in 42, 8 in 56, s0_akt UMGEWORFEN; s0_x 200 bis 64, 202.875 in 65 |
 | f | x 146 | s0_lp 18 von 42 bis 90 (kein Treffer in 56–59 und 70–73) |
+| g | x 15, z 100 (Figur Blick links, d_vorn 85) | s0_lp 27 in 12 (E14; im Vorbild bei Blick links kein Treffer) |
+| h | x 14, z 100 (Figur Blick links, d_vorn 86) | s0_lp 30 in 11 bis 30 |
 
 **T6**
 
@@ -1009,6 +1066,17 @@ keine. Werte, die von einem Platzhalter abhängen, nennen ihn.
 | 65 | f_akt STAND |
 | 86 | s0_x 277.375, s0_h 0 |
 | 98 | s0_x 305.5 (184,5 px von der Figur) |
+
+| Frame (Lauf b) | erwartet |
+|---|---|
+| 21 | f_akt LAUF, f_x 280.75 (d_vorn 40, kein Griff) |
+| 22 | f_x 279, f_akt GRIFF, Ereignis G:F>s0; s0_x 260 (Haltelage, P19) |
+| 28 | s0_lp 2, f_akt WURF, Ereignis T:F>s0:WU:14:U |
+| 49 | s0_x 266, s0_h 59 (losgelassen, P19) |
+| 61 | s1_lp 13, Ereignis T:s0>s1:WG:3:U (P8, P19) |
+| 65 | f_akt STAND |
+| 86 | s0_x 122.625, s0_h 0 |
+| 98 | s0_x 94.5 (184,5 px von der Figur) |
 
 **T7**
 
@@ -1037,14 +1105,14 @@ keine. Werte, die von einem Platzhalter abhängen, nennen ihn.
 
 **T9.** Rang mit der Frame-Zählung nach Welt 8: 9 in 408, 10 in 409, 10 in
 1008, 11 in 1009, 24 in 8809 und 9409. Lauf b: f_akt TOT in 500, rang 10
-in 619 und 7 in 620 (N = t+120, 6.5). Lauf c: Der erste wirksame
+in 619 und 7 in 620 (N = t+120, 6.5; bei jeder Todesart, E16). Lauf c: Der erste wirksame
 Treffer des erscheinenden Nahkämpfers hat Schaden 8 (Rang 9 oder 10,
 „Schaden der Gegner“).
 
 **T10.** kamera_x bleibt am Sperrwert nach Welt 3, solange ein Gegner der
 Sperrwelle lebt, und läuft im Frame nach dem Tod des letzten weiter. Eine
 Kette der Stufen 1 bis 3 gegen den Boss ohne Umwerfen endet mit seinem
-Abbruchstoß, seine LP stehen danach auf dem Wert nach Welt 7 (K13). Im Frame, in dem die LP des Bosses unter
+Abbruchstoß, seine LP stehen danach auf dem Wert nach Welt 7.4 (E11; Welt-Test T7). Im Frame, in dem die LP des Bosses unter
 0 fallen, haben alle übrigen Gegner s_akt TOT.
 
 **T11**
@@ -1174,6 +1242,11 @@ demselben nicht.
 
 ## 13. Offen bis Messpaket 2
 
+Messpaket 2 ist eingearbeitet (13.1). Die Platzhalter (13.2) und die
+Fragen an den Nutzer (13.3) sind durch die Entscheidungen E10 bis E22 vom
+2026-10-03 entschieden; die Fragen stehen mit ihrer Antwort und der Nummer
+der Entscheidung da.
+
 ### 13.1 Ergebnisse von Messpaket 2
 
 Die Nummern Kn gelten in diesem Dokument; die Spalte On verweist auf die
@@ -1189,17 +1262,21 @@ K13 und K14 notes.md, „Nachtrag: Boss“; K15 notes.md, „Nachtrag: Fernangri
 | K4 | 5.2 Sprungangriff hoch | aktiv A+7 bis A+10, bis 48 px Höhe, 85 vorn, 32 hinten, Tiefe 12, 12 LP, wirft um; Aktion bis A+29 | gesichert | O4 |
 | K5 | 5.2 Sprungangriff runter | aktiv A+9 bis A+32, bis 41 px Höhe, 42 vorn, 41 hinten, Tiefe 12, 4 LP, wirft nicht um; auch nach einem Sprung mit Richtung | gesichert | O5 |
 | K6 | 7 | Gegner mit genau 0 LP lebt weiter und greift an; Tod erst unter 0 | gesichert | O9 |
-| K7 | 6.3, 6.5, 4.3 | Tod und Neueinstieg nach 6.5: N = t+120 (Wand t+108, Rollen t+151), Erscheinen bei Kamera-x + 64, Fall 52 Frames, Landung trifft alle Gegner im Bild, Steuerung ab LN+6, Schutz bis LN+199. Offen: ob die Landung Gegner außerhalb des Bildes trifft; Schutzdauer in anderen Stages (nur Stage 1 gemessen) | gesichert (3. Messung); Rest offen, weil nicht gemessen | O10 |
+| K7 | 6.3, 6.5, 4.3 | Tod und Neueinstieg nach 6.5: N = t+120 (im Vorbild Wand t+108, Rollen t+151; nicht übernommen, E16), Erscheinen bei Kamera-x + 64, Fall 52 Frames, Landung trifft alle Gegner im Bild, Steuerung ab LN+6, Schutz bis LN+199. Offen: ob die Landung Gegner außerhalb des Bildes trifft; Schutzdauer in anderen Stages (nur Stage 1 gemessen) | gesichert (3. Messung); Rest offen, weil nicht gemessen | O10 |
 | K8 | 5.2 Kette | kein Mindestabstand; hinten 28 / 26 / 26 / 25 px, wenn das Ziel zur Figur schaut, sonst 4 / 2 / 2 / 1 px | gesichert (3. Messung) | – |
-| K9 | 5.1, 5.2 | Blick links 1 px kürzer: Kette 84 / 86 / 90 / 99, Sprungangriff Richtung 98, neutral 75. Für hoch, runter und Sprintangriff nicht gemessen; dort gilt der Wert für beide Richtungen | gesichert | – |
+| K9 | 5.1, 5.2 | Blick links 1 px kürzer: Kette 84 / 86 / 90 / 99, Sprungangriff Richtung 98, neutral 75. Für hoch, runter und Sprintangriff nicht gemessen | gesichert; nicht übernommen (E14): alle Werte gelten für beide Blickrichtungen wie bei Blick rechts | – |
 | K10 | 5.6 | Ausfallschritt bzw. Schritt weg nach 5.6. Reichweite im Ausfallschritt und Nachlauf danach nicht gemessen (P29) | gesichert | – |
 | K11 | 6.2 | Treffer in der Luft werfen immer um, bei jeder Höhe | gesichert | – |
 | K12 | 5.4 | gleichzeitiger Treffer: nur der Gegner verliert LP; einen Frame später nur die Figur | gesichert | – |
-| K13 | 6.2, 12 (T10) | Super-Armor im Vorbild nach 6.2; Regel der Zurückweisung unsicher (Anteile im Bot: Messagent 15 bis 39 %, Gegenprüfer 16 bis 36 %, steigend mit dem Rang); unsere Regel steht in Welt 7 | Arten gesichert, Regel unsicher | O12 |
-| K14 | 7 | Reaktion des Bosses im Vorbild: 27 Frames am Ort (von hinten im Warten oder Angriff 15), nach Stufe 2 15 Frames; Umwerfen mit Flug bis W+55 und variabler Liegezeit (42 bis 70 Frames); trefferbar im eigenen Angriff. Umsetzung: Reaktion 23 Frames wie bei allen Gegnern (7, E3), sonst Welt 7 | gesichert (3. Messung) | O12 |
-| K15 | 5.8, 6.3 | Rakete des Fernkämpfers: Explosion 9 Frames, trifft bis 25 px Höhe, 12 bis 15 LP nach Rang, wirft um; Schlag zerstört sie nicht; Geschosse treffen im Vorbild auch im Schutz (für uns E2, P17). Werte in Welt 6 | gesichert (Höhe 26 px unsicher) | O11 |
+| K13 | 6.2, 12 (T10) | Super-Armor im Vorbild nach 6.2; Regel der Zurückweisung unsicher (Anteile im Bot: Messagent 15 bis 39 %, Gegenprüfer 16 bis 36 %, steigend mit dem Rang); unsere feste Regel steht in Welt 7.4 (E11) | Arten gesichert, Regel unsicher | O12 |
+| K14 | 7 | Reaktion des Bosses im Vorbild: 27 Frames am Ort (von hinten im Warten oder Angriff 15), nach Stufe 2 15 Frames; Umwerfen mit Flug bis W+55 und variabler Liegezeit (42 bis 70 Frames); trefferbar im eigenen Angriff. Umsetzung: Reaktion 23 Frames wie bei allen Gegnern (7, E3, E19), sonst Welt 7 | gesichert (3. Messung) | O12 |
+| K15 | 5.8, 6.3 | Rakete des Fernkämpfers: Explosion 9 Frames, trifft bis 25 px Höhe, 12 bis 15 LP nach Rang, wirft um; Schlag zerstört sie nicht; Geschosse treffen im Vorbild auch im Schutz (für uns E2, P17, E10). Werte in Welt 6 | gesichert (Höhe 26 px unsicher) | O11 |
 
-### 13.2 Platzhalter ohne Messauftrag
+### 13.2 Platzhalter ohne Messauftrag, beschlossen (E10)
+
+Alle Festlegungen P1 bis P31 hat der Nutzer bestätigt (beschlossen, E10).
+P7 bestätigt zusätzlich E15; P9 und P26 gelten nach E14 für beide
+Blickrichtungen.
 
 | Nr. | Stelle | Festlegung |
 |---|---|---|
@@ -1209,9 +1286,9 @@ K13 und K14 notes.md, „Nachtrag: Boss“; K15 notes.md, „Nachtrag: Fernangri
 | P4 | 4.3 AUFSTEHEN | Drücke ab U |
 | P5 | 4.3 WAFFE | Drücke verfallen bis P+17, ab P+18 angenommen; keine Bewegung |
 | P6 | 5.1 | Zielhöhe begrenzt Angriffe der Figur nicht (Vorbild: Spezialangriff unsicher bis 53 px) |
-| P7 | 9.3 | Sprint-Sprungangriff: 38 bis 147 px in allen aktiven Frames (gemessen nur A+20, danach unsicher), keine Höhenpause in A+1 |
+| P7 | 9.3 | Sprint-Sprungangriff: 38 bis 147 px in allen aktiven Frames (gemessen nur A+20, danach unsicher), keine Höhenpause in A+1 (E15) |
 | P8 | 8.5 | geworfener Gegner trifft bei \|dx\| ≤ 52 (unsicher, „etwa 52 px“), ohne Höhengrenze |
-| P9 | 5.7, 10.3 | Rakete sinkt 2,375 px/Frame; Explosion auch nach frühem Einschlag −66 (Blick links −67) bis +90; Getroffene fliegen in Flugrichtung der Rakete; die Explosion trifft die Figur nicht |
+| P9 | 5.7, 10.3 | Rakete sinkt 2,375 px/Frame; Explosion auch nach frühem Einschlag −66 bis +90 in beiden Blickrichtungen (E14); Getroffene fliegen in Flugrichtung der Rakete; die Explosion trifft die Figur nicht |
 | P10 | 5.2 | Variante des Sprungangriffs: Richtung vor hoch (runter vor Richtung ist gemessen) |
 | P11 | 5.5, 6.3 | wirkungslose Treffer im Schutz zählen für den Angreifer nicht: kein Trefferstopp, Angriff bleibt aktiv |
 | P12 | 5.6 | Kette endet beim Verlassen von SCHLAG; Behältertreffer setzt die Kette fort |
@@ -1228,31 +1305,34 @@ K13 und K14 notes.md, „Nachtrag: Boss“; K15 notes.md, „Nachtrag: Fernangri
 | P23 | 9.2 | diagonaler Sprint ohne den Fehler des Vorbilds |
 | P24 | 9.3 | Rutschen nur in x, steht in Stoppframes |
 | P25 | 10.1 | Aufnehmen lässt die Figur verwundbar (Vorbild setzt einen Grundzustand, dessen Wirkung nicht gemessen ist) |
-| P26 | 10.1 | Aufnahmebereich von Essen: hinten und bei Blick links wie vorn bei Blick rechts; Raketenwerfer vorn bei Blick rechts 35 (gemessen unsicher 35 oder 37) |
+| P26 | 10.1 | Aufnahmebereich von Essen: hinten wie vorn; Raketenwerfer vorn 35 (gemessen bei Blick rechts unsicher 35 oder 37); alle Bereiche in beiden Blickrichtungen (E14) |
 | P27 | 10.4 | fallen gelassene Waffe liegt in H+1 am Ort der Figur, L = H+1 |
 | P28 | 6.5 | Höhenverlauf im Fall nach dem Neueinstieg: frei für die Darstellung, die Landung liegt fest in N+53 bzw. N+50 |
 | P29 | 5.6 | Ausfallschritt: Reichweite wie in 5.2, Nachlauf ab h wie ohne Schritt; Schritt weg wie Leerschlag der Stufe; diagonale Richtung zählt wie gerade |
 | P30 | 6.5 | Landung beim Neueinstieg: „im Bild“ heißt 0 ≤ x − Kamera-x ≤ 383; Getroffene fliegen von der Figur weg |
 | P31 | 4.3 SCHLAG Stufe 1 | Nach einem Treffer der Stufe 1 bricht eine Richtung nur in der Tiefe die Pose nicht ab; Bewegung ab h+29, ein Frame nach STAND (h+28), wie bei Stufe 2 und 3. Vorbild nur vom Messagenten gemessen (unsicher); `mechanik.md` nennt „handlungsfähig ab h+13 (Laufen oder nächster Schlag)“, gemessen nur für Laufen zur Seite |
 
-Fragen an den Nutzer zu diesen Festlegungen und zu den Arbeitsregeln:
-Abschnitt 13.3.
+Die Fragen an den Nutzer zu diesen Festlegungen und zu den bisherigen
+Arbeitsregeln stehen mit ihren Antworten in 13.3.
 
-### 13.3 Fragen an den Nutzer
+### 13.3 Fragen an den Nutzer und Entscheidungen
 
-1. Schutz gegen Geschosse: Im Vorbild treffen Geschosse auch im Schutz nach einem Treffer (jetzt gesichert, notes.md, „Nachtrag: Fernangriffe der Gegner“). Die Spezifikation macht nach E2 alle Gegnertreffer im Schutz wirkungslos (P17). Bleibt es dabei?
-2. Arbeitsregel: Der Spezialangriff aus dem Griff hat dieselben aktiven Frames wie der freie (9.4). Bestätigen?
-3. Arbeitsregel: Der Ansturm des Bosses wirft die Figur in der Scheibe bei Kontakt um (12 bis 17 LP), ohne Griff (5.8). Bestätigen?
-4. Der Sprint-Sprungangriff (13 LP) steht nicht in `design.md` 4.5. Gehört er in die Scheibe? Dann gilt seine Reichweite aus A+20 bis zur Messung in allen aktiven Frames (P7).
-5. Der Fehler des Vorbilds beim diagonalen Sprint nach rechts (12 px mehr Weg) wird nicht übernommen (P23). Einverstanden?
-6. Blickrichtung: Griff links 38 statt 39 px, Kette und Sprungangriff bei Blick links 1 px kürzer (jetzt gesichert), die Raketenexplosion bei Blick links ab 96 statt 97 px und die Aufnahmebereiche je Blickrichtung folgen dem Vorbild (5.2, 8.1, 10.1); der Griff von hinten bleibt bei 24 px (Vorbild links 25). Übernehmen oder symmetrisch machen (auch `design.md` 9, Offen 5)?
-7. Die Kette endet, wenn die Figur den Schlag verlässt (P12); eine Richtung beim Kettendruck gibt wie im Vorbild einen Ausfallschritt von 20 px bzw. bricht die Kette ab (5.6, gemessen). Einverstanden?
-8. Treffer, die im Schutz der Figur wirkungslos bleiben, zählen für den Gegner nicht: kein Trefferstopp, sein Angriff bleibt aktiv und kann im ersten Frame nach dem Schutz treffen (P11). Einverstanden?
-9. Gegriffene Gegner werden auf 19 px vor die Figur gesetzt und beim Wurf in E+22 13 px vor bzw. hinter ihr losgelassen; das ergibt die gemessenen 184,5 px (P19). Passt das zur geplanten Wurfanimation?
-10. Festkomma 16.16 für Positionen und Geschwindigkeiten als verbindliche Vorgabe für den Codierauftrag (2.4), oder nur als Empfehlung?
-11. Neueinstieg: Im Vorbild trifft die Landung nach dem Neueinstieg jeden Gegner im Bild (5 LP, Boss 10 LP, wirft um), und der Schutz dauert 252 Frames (6.5). Beides übernehmen? Leben (Vorbild 2, Design 3) regelt spezifikation-welt.md.
-12. Tod der Figur: Die Sonderfälle des Vorbilds Wand (Neueinstieg t+108 statt t+120) und Rollen (t+151) sind übernommen; welche Gegnerangriffe Rollen auslösen, muss spezifikation-welt.md festlegen. Übernehmen oder einheitlich t+120?
-13. Spielschritt bei zu langsamer Darstellung (2.1): E6 legt 60 Hz fest, sagt aber nichts dazu, wenn die Darstellung keine 60 Bilder je Sekunde schafft. Soll das Spiel dann wie ein Automat langsamer laufen (so steht es jetzt in 2.1), oder soll die Logik in Echtzeit bei 60 Schritten je Sekunde bleiben und dafür Bilder auslassen?
+Die Fragen stehen wie gestellt; dahinter die Antwort des Nutzers vom
+2026-10-03 mit der Nummer der Entscheidung.
+
+1. Schutz gegen Geschosse: Im Vorbild treffen Geschosse auch im Schutz nach einem Treffer (jetzt gesichert, notes.md, „Nachtrag: Fernangriffe der Gegner“). Die Spezifikation macht nach E2 alle Gegnertreffer im Schutz wirkungslos (P17). Bleibt es dabei? **Entschieden (E10, P17):** ja, der Schutz wirkt auch gegen Geschosse (5.8, 6.3).
+2. Arbeitsregel: Der Spezialangriff aus dem Griff hat dieselben aktiven Frames wie der freie (9.4). Bestätigen? **Entschieden (E10):** bestätigt (9.4).
+3. Arbeitsregel: Der Ansturm des Bosses wirft die Figur in der Scheibe bei Kontakt um (12 bis 17 LP), ohne Griff (5.8). Bestätigen? **Entschieden (E10, dazu E21):** bestätigt; in der Scheibe greift der Boss nicht, im Vollspiel greift er mit Wurf (5.8).
+4. Der Sprint-Sprungangriff (13 LP) steht nicht in `design.md` 4.5. Gehört er in die Scheibe? Dann gilt seine Reichweite aus A+20 bis zur Messung in allen aktiven Frames (P7). **Entschieden (E15):** ja, 13 LP, 38 bis 147 px in allen aktiven Frames (5.2, 9.3).
+5. Der Fehler des Vorbilds beim diagonalen Sprint nach rechts (12 px mehr Weg) wird nicht übernommen (P23). Einverstanden? **Entschieden (E10, P23):** ja, kein Fehler im Diagonalsprint (9.2).
+6. Blickrichtung: Griff links 38 statt 39 px, Kette und Sprungangriff bei Blick links 1 px kürzer (jetzt gesichert), die Raketenexplosion bei Blick links ab 96 statt 97 px und die Aufnahmebereiche je Blickrichtung folgen dem Vorbild (5.2, 8.1, 10.1); der Griff von hinten bleibt bei 24 px (Vorbild links 25). Übernehmen oder symmetrisch machen (auch `design.md` 9, Offen 5)? **Entschieden (E14):** symmetrisch; für Blick links gelten die Werte für Blick rechts, Griff von hinten 24 px in beiden Richtungen (5.1, 5.2, 8.1, 10.1, 10.3; K9 nicht übernommen; Test T5, Lauf g und h).
+7. Die Kette endet, wenn die Figur den Schlag verlässt (P12); eine Richtung beim Kettendruck gibt wie im Vorbild einen Ausfallschritt von 20 px bzw. bricht die Kette ab (5.6, gemessen). Einverstanden? **Entschieden (E10, P12):** ja (5.6).
+8. Treffer, die im Schutz der Figur wirkungslos bleiben, zählen für den Gegner nicht: kein Trefferstopp, sein Angriff bleibt aktiv und kann im ersten Frame nach dem Schutz treffen (P11). Einverstanden? **Entschieden (E10, P11):** ja (5.5, 6.3).
+9. Gegriffene Gegner werden auf 19 px vor die Figur gesetzt und beim Wurf in E+22 13 px vor bzw. hinter ihr losgelassen; das ergibt die gemessenen 184,5 px (P19). Passt das zur geplanten Wurfanimation? **Entschieden (E10, P19):** ja, Haltelage 19 px (8.1, 8.4).
+10. Festkomma 16.16 für Positionen und Geschwindigkeiten als verbindliche Vorgabe für den Codierauftrag (2.4), oder nur als Empfehlung? **Entschieden (E12):** verbindlich für Positionen, Geschwindigkeiten und Beschleunigungen (2.4).
+11. Neueinstieg: Im Vorbild trifft die Landung nach dem Neueinstieg jeden Gegner im Bild (5 LP, Boss 10 LP, wirft um), und der Schutz dauert 252 Frames (6.5). Beides übernehmen? Leben (Vorbild 2, Design 3) regelt spezifikation-welt.md. **Entschieden (E10):** beides übernommen (6.3, 6.5); die Landung zählt beim Boss endgültig (E11, Welt 7.4).
+12. Tod der Figur: Die Sonderfälle des Vorbilds Wand (Neueinstieg t+108 statt t+120) und Rollen (t+151) sind übernommen; welche Gegnerangriffe Rollen auslösen, muss spezifikation-welt.md festlegen. Übernehmen oder einheitlich t+120? **Entschieden (E16):** einheitlich N = t+120 für jede Todesart; Wand und Rollen kommen nicht in die Scheibe (4.3, 6.5; Welt 5.5, 10.3).
+13. Spielschritt bei zu langsamer Darstellung (2.1): E6 legt 60 Hz fest, sagt aber nichts dazu, wenn die Darstellung keine 60 Bilder je Sekunde schafft. Soll das Spiel dann wie ein Automat langsamer laufen (so steht es jetzt in 2.1), oder soll die Logik in Echtzeit bei 60 Schritten je Sekunde bleiben und dafür Bilder auslassen? **Entschieden (E13):** Echtzeit mit 60 Logikschritten je Sekunde, Bilder auslassen, höchstens 4 Logikschritte je Bild, darüber bleibt die Zeit stehen (2.1).
 
 ## Quellen
 
@@ -1265,6 +1345,8 @@ Abschnitt 13.3.
 | `docs/erkenntnisse.md` | Was das Kampfgefühl ausmacht; Hinweise für die eigene Grafik |
 | `research/captcomm/scripts/grafik/streifen.py` | Bildschirm-y aus Tiefe und Kamera-y (Konstante 234) |
 | `docs/auftraege/2026-10-02-opus-auftrag-2-boss-fernkampf-spezifikation.md` | Auftrag S1, Messpaket 2 (M6 bis M8) |
+| `docs/auftraege/2026-10-03-opus-auftrag-3-codierung-scheibe.md` | Entscheidungen E10 bis E22 (Abschnitt 1), technische Vorgaben (Abschnitt 2) |
+| `docs/scheibe.md` | Programm der Scheibe: Ablage, Befehle, Abnahme, Festlegungen beim Codieren |
 
 Vorbild ist Captain Commando (Capcom 1991, Arcade, MAME-Set `captcomm`).
 Zuordnung: Referenzfigur und Vela = Captain Commando; Nahkämpfer leicht
