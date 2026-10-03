@@ -1,0 +1,41 @@
+# version=comet-brawlers-scheibe-0.1
+# szene=T19_c
+# seed=1
+# eingabe_md5=b949430f7b61214970349849efcd7ed4
+frame,slot,typ,art,x,z,h,zst,lp,munition,liegezeit,inhalt,flugphase
+17,g0,Rakete,,158,100,50,1,0,0,0,,FLUG
+18,g0,Rakete,,163,100,47.625,1,0,0,0,,FLUG
+19,g0,Rakete,,168,100,45.25,1,0,0,0,,FLUG
+20,g0,Rakete,,173,100,42.875,1,0,0,0,,FLUG
+21,g0,Rakete,,178,100,40.5,1,0,0,0,,FLUG
+22,g0,Rakete,,183,100,38.125,1,0,0,0,,FLUG
+23,g0,Rakete,,188,100,35.75,1,0,0,0,,FLUG
+24,g0,Rakete,,193,100,33.375,1,0,0,0,,FLUG
+25,g0,Rakete,,198,100,31,1,0,0,0,,FLUG
+26,g0,Rakete,,203,100,28.625,1,0,0,0,,FLUG
+27,g0,Rakete,,208,100,26.25,1,0,0,0,,FLUG
+28,g0,Rakete,,213,100,23.875,1,0,0,0,,FLUG
+29,g0,Rakete,,218,100,21.5,1,0,0,0,,FLUG
+30,g0,Rakete,,223,100,19.125,1,0,0,0,,FLUG
+31,g0,Rakete,,228,100,16.75,1,0,0,0,,FLUG
+32,g0,Rakete,,233,100,14.375,1,0,0,0,,FLUG
+33,g0,Rakete,,238,100,12,1,0,0,0,,FLUG
+34,g0,Rakete,,243,100,9.625,1,0,0,0,,FLUG
+35,g0,Rakete,,248,100,7.25,1,0,0,0,,FLUG
+36,g0,Rakete,,253,100,4.875,1,0,0,0,,FLUG
+37,g0,Rakete,,258,100,2.5,1,0,0,0,,FLUG
+38,g0,Rakete,,263,100,0.125,1,0,0,0,,EXPLOSION
+39,g0,Rakete,,263,100,0.125,1,0,0,0,,EXPLOSION
+40,g0,Rakete,,263,100,0.125,1,0,0,0,,EXPLOSION
+41,g0,Rakete,,263,100,0.125,1,0,0,0,,EXPLOSION
+42,g0,Rakete,,263,100,0.125,1,0,0,0,,EXPLOSION
+43,g0,Rakete,,263,100,0.125,1,0,0,0,,EXPLOSION
+44,g0,Rakete,,263,100,0.125,1,0,0,0,,EXPLOSION
+45,g0,Rakete,,263,100,0.125,1,0,0,0,,EXPLOSION
+46,g0,Rakete,,263,100,0.125,1,0,0,0,,EXPLOSION
+47,g0,Rakete,,263,100,0.125,1,0,0,0,,EXPLOSION
+48,g0,Rakete,,263,100,0.125,1,0,0,0,,EXPLOSION
+49,g0,Rakete,,263,100,0.125,1,0,0,0,,EXPLOSION
+50,g0,Rakete,,263,100,0.125,1,0,0,0,,EXPLOSION
+51,g0,Rakete,,263,100,0.125,1,0,0,0,,EXPLOSION
+52,g0,Rakete,,263,100,0.125,1,0,0,0,,EXPLOSION

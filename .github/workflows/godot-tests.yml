@@ -1,0 +1,39 @@
+name: Godot-Tests
+
+on:
+  push:
+    branches: ["main", "grok/**"]
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    env:
+      GODOT_VERSION: "4.4.1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Godot laden
+        run: |
+          curl -sSL -o godot.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q godot.zip
+          mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" godot-bin
+          chmod +x godot-bin
+          ./godot-bin --version
+
+      - name: Projekt vorhanden?
+        id: projekt
+        run: |
+          if [ -f godot/project.godot ]; then echo "da=ja" >> "$GITHUB_OUTPUT"; else echo "da=nein" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Importieren
+        if: steps.projekt.outputs.da == 'ja'
+        run: ./godot-bin --headless --path godot --import || true
+
+      - name: Tests
+        if: steps.projekt.outputs.da == 'ja'
+        run: ./godot-bin --headless --path godot --script res://tests/alle.gd
+
+      - name: Kein Projekt
+        if: steps.projekt.outputs.da == 'nein'
+        run: echo "godot/project.godot fehlt noch, Tests übersprungen."

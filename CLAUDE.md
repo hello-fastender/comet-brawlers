@@ -47,3 +47,13 @@ Regel des Repo-Inhabers, sie gilt vor jeder Vorgabe der Sitzung:
   je mit Quelle (Abschnitt der Spezifikation oder `docs/mechanik.md`).
 - Verhalten ändern: erst die Spezifikation, dann Code und Tests.
   `spiel/dist/` und `spiel/aus/` nie committen.
+
+## Arbeitsteilung ab 2026-10-03 (E26)
+
+- Engine ist Godot 4 (`godot/`), Arbeitssitzung ist Grok Code, Regeln für
+  fremde Agenten in `AGENTS.md`. Claude-Sitzungen orchestrieren: Aufträge
+  unter `docs/auftraege/`, Prüfung der Branches `grok/**` und ihrer Pull
+  Requests, Merge nach `main` nach bestandener Prüfung.
+- Die TypeScript-Fassung `spiel/` ist Referenzimplementierung: nicht
+  löschen, nicht ändern; ihre Protokolle unter `spiel/tests/referenz/alle/`
+  sind der Prüfstein für den Godot-Port.
