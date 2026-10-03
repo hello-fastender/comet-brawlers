@@ -1,0 +1,45 @@
+# Vorführung der Scheibe für werkzeuge/foto.mjs und den Browser-Test
+# (Format docs/spezifikation-kampf.md, 11.1; geprüft am Protokoll).
+# Bühne scheibe ab Spielstart ohne Prüfstart, 1500 Frames.
+# seed=1
+# Szene für den Prüflauf: szene name=vorfuehrung endframe=1500 seed=1 buehne=scheibe
+#
+# Laufen nach rechts bis vor das Versteck; Welle 1 löst bei x 218 aus (WL:1 in 89)
+1,100,R
+# Kette gegen den Bolzer der Welle 1 (s1): KT1 in 162, KT2 in 179, KT3 in 196, KT4 in 212 besiegt ihn
+160,160,A
+176,176,A
+192,192,A
+209,209,A
+# Sprung nach vorn (Scheitel in Frame 301)
+280,280,RS
+# Laufen bis zum Weckreiz der Hockenden (WL:2 in 398, WK:s2 in 399)
+330,400,R
+# Hineinlaufen in den Bolzer der Welle 2 (s2): Griff in 523
+518,530,R
+# Wurf vorwärts: Druck in 545, Treffer in 546 (14 LP); der Geworfene zerbricht das Fass F1, ein Kometenbraten erscheint
+545,545,RA
+# Laufen weckt den Rammbock (WK:s3 in 610)
+600,615,R
+# Spezialangriff, Druck in 705: besiegt den Bolzer (s2) in 719, wirft den Rammbock (s3) in 738 um, kostet 9 LP (727)
+705,705,AS
+# Kette gegen den Rammbock: KT4 in 1000 wirft ihn mit 2 LP um
+948,948,A
+964,964,A
+980,980,A
+997,997,A
+# ein Schlag besiegt den Rammbock (1176); Welle 2 besiegt
+1174,1174,A
+# Kometenbraten holen und aufnehmen (AU in 1251, LP wieder 72)
+1210,1225,RU
+1226,1240,R
+1250,1250,A
+# Sprung auf der Stelle mit Sprungangriff
+1290,1290,S
+1305,1305,A
+# ein paar Schritte zurück und wieder nach rechts schauen
+1350,1370,L
+1380,1384,R
+# Sprint nach rechts: Doppeltipp, Sprintbeginn in 1449 (SP:F:1)
+1440,1443,R
+1448,1500,R

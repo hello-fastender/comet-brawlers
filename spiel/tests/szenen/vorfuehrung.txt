@@ -1,0 +1,3 @@
+# Vorführung der Scheibe (Eingabe: tests/eingaben/vorfuehrung.txt).
+# Bühne scheibe ab Spielstart ohne Prüfstart.
+szene name=vorfuehrung endframe=1500 seed=1 buehne=scheibe

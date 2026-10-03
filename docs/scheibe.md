@@ -8,7 +8,169 @@ Abnahme und die Festlegungen, die beim Codieren nötig waren.
 
 ## Bedienung
 
-Folgt mit der Darstellung (Stufe 3).
+### Start
+
+Im Ordner `spiel/`, mit `PATH=/opt/node22/bin:$PATH`:
+
+```
+npm run bauen     # tsc -p tsconfig.browser.json: Kern, src/pruef (eingabe, protokoll, szene) und Darstellung nach dist/
+npm start         # http-server im Ordner spiel/ auf Port 8080
+```
+
+Dann `http://localhost:8080/` öffnen (ES-Module laufen nicht über
+`file://`). `index.html` lädt `dist/darstellung/main.js`, das die Stage
+`daten/stages/scheibe.txt` per `fetch` holt; fehlt der Bau, nennt die Seite
+den Befehl. Adresszusätze: `?seed=N` wählt den Seed (Standard 1),
+`?debug=1` schaltet die Debug-Anzeige gleich ein. Das Spiel beginnt sofort
+ab Spielstart (Bühne `scheibe`, Rang 9, ohne Prüfstart); nach GAME OVER und
+nach dem Ende der Scheibe beginnt es neu mit Seed + 1 (Welt 10.3, 10.5).
+
+### Tasten
+
+| Taste | Wirkung |
+|---|---|
+| Pfeile | L, R, O (in der Tiefe nach hinten), U (nach vorn) |
+| Y oder Z | Angriff A (erkannt nach der Lage der Taste, also auf QWERTZ und QWERTY gleich) |
+| X | Sprung S |
+| P | Pause an/aus, außerhalb der Logik (Welt 10.4): kein Logikschritt, Anzeige „PAUSE“ |
+| N | in der Pause ein Einzelschritt mit dem aktuellen Tastenstand als T(f) (Welt 10.6) |
+| F1 | Debug-Anzeige an/aus (ändert weder Logik noch Protokoll) |
+| F2 | Eingabeaufzeichnung starten; erneut F2 beendet sie und bietet die Datei zum Herunterladen an |
+| F3 | Neustart mit Seed + 1 (auch aus einer geladenen Eingabedatei zurück zur Tastatur) |
+
+Spielzüge nach Kampf 4 bis 9: A und S zugleich = Spezialangriff;
+Doppeltipp L oder R = Sprint; in einen Gegner hineinlaufen = Griff, im
+Griff A = Kniestoß, Richtung und A = Wurf; im Sprung A = Sprungangriff.
+T(f) ist der Tastenstand zu Beginn jedes Logikschritts; ein Druck, der
+zwischen zwei Abfragen beginnt und endet, zählt in der nächsten Abfrage
+noch als gedrückt (Festlegung K6). P, N und F1 bis F3 gehören nicht zu T
+und werden nicht aufgezeichnet.
+
+### Spielschleife
+
+Nach E13 (Kampf 2.1): `requestAnimationFrame` mit Akkumulator, 60
+Logikschritte je Sekunde in Echtzeit, Bilder werden ausgelassen, je
+dargestelltem Bild höchstens 4 Logikschritte; was darüber liegt, verfällt
+(kein Aufholen, etwa nach einem verborgenen Fenster). Ein Bild, das bis zu
+1/8 Schritt zu früh kommt, zählt schon als Schritt; der Akkumulator trägt
+den Rest weiter, damit ein 60-Hz-Bildschirm mit Zeitstempel-Zittern nicht
+abwechselnd 0 und 2 Schritte läuft (Festlegung K6, nur Darstellung). Pause
+und eine geladene Eingabedatei halten die Schleife an.
+
+### Bild
+
+Logisches Raster 384 × 224, ganzzahlig auf die Fenstergröße skaliert
+(Gerätepixel), `image-rendering: pixelated`, schwarzer Rand. Lage und
+Reihenfolge nach Kampf 2.5; Bildschütteln (KA10) verschiebt nur die Szene,
+die Blende (KA13, Welt 10.5) dunkelt die Szene ab, die Anzeigeleiste bleibt.
+
+| Element | Darstellung |
+|---|---|
+| Figuren | gefüllte Rechtecke in den Umrissen mit Schatten: Vela 57 × 76, Bolzer 57 × 72, Rammbock 60 × 76, Zünder 64 × 72, Ballast 70 × 100, Puppe wie Bolzer; Schatten als flache Ellipse am Fußpunkt; Höhe als Versatz nach oben; weißes Dreieck = Blickrichtung |
+| Farben im Stand | Vela blau, Bolzer grün, Rammbock braun, Zünder türkis, Ballast violett, Puppe beige |
+| Zustand als Farbe | rot = Angriff in aktiven Frames; orange = Angriff außerhalb der aktiven Frames (Ausholen, Nachlauf); gelb = Ankündigung (Kampfhaltung, Zielen, Ankündigung des Bosses); weiß = getroffen; grau = umgeworfen, liegend, tot (flach) und aufstehend (hockend); hellviolett = gehalten; hellblau = Figur in Griff, Kniestoß, Wurf; nur Umriss im Wechsel von 2 Frames = Schutz blinkend; Striche hinter der Figur = Sprint |
+| Gegner | nur im aktiven Fenster (Welt 4.1); wartende Hockende grau und hockend, versteckte Gegner und der wartende Boss unsichtbar (Welt 4.2) |
+| Objekte | Fass braun, Bosskiste grau, zerbrochen als Trümmer; Kometenbraten orange, Eisnudelschale hellblau, Sternbeeren magenta, Raketenwerfer und leere Waffe grün (blinken nach Welt 9.3); Rakete gelb mit Spitze, Explosion als orange Ellipse |
+| Hintergrund | Farbflächen je Tiefenband (Wand darüber, Boden im Band); Tiefenband als Linien (Grenzen hell, Tiefenlinien alle 16 px, Bodenmarken alle 64 px); Hintergrundbilder der Stage als beschriftete Flächen; Vordergrund als halbtransparente Streifen am unteren Rand |
+| Anzeige (Welt 10.1) | VELA, Punkte (8 Ziffern), Leben, LP-Balken der Figur, Name und Balken des zuletzt getroffenen Gegners, Balken in Lagen grün, gelb, orange, Pfeil „weiter“; große Texte PAUSE, STAGE CLEAR, BALLAST BESIEGT 5000, GAME OVER; „AUFZ“ oben rechts während der Aufzeichnung |
+
+### Debug-Anzeige (F1)
+
+Nach Welt 10.6. Text oben links: Frame, T(f), gehaltene Tasten, Quelle
+(Tastatur oder Eingabedatei), Rang und Rang-Uhr, Seed und Ziehungen des
+Hauptgenerators, K, Ky, Kameramodus, Bildschütteln, aktives Fenster,
+Halter der Rechte, Lebende, Wellen, Phase, Steuerung, Leben, Punkte, Lage
+und Zustand der Figur, Ereignisse des Frames. In der Szene:
+
+| Zeichen | Bedeutung |
+|---|---|
+| Kasten cyan | Trefferfläche eines Angriffs gegen Gegner (Figur, Raketen, geworfener Gegner), in aktiven Frames |
+| Kasten rot | Trefferfläche eines Angriffs gegen die Figur (Gegner, Geschosse, Prüfangriff), in aktiven Frames |
+| Kasten grau gestrichelt | Angriffsinstanz außerhalb ihrer aktiven Frames |
+| Kasten gestrichelt darüber | Höhengrenze des Ziels |
+| Kasten weiß | Ziel eines Treffers in diesem Frame |
+| gelbes Kreuz, gestrichelte Linie | Zielpunkt x_Z eines Nahkämpfers und sein Abbruchfenster (Welt 5.4); Zielpunkt des Zünders; Zielpunkt des Bosses |
+| Marken über den Gegnern | Slot, Zustand, Frames im Zustand, Aktion, LP, Seite, Recht, Angriffscode, Zielabstand, Schaden |
+| Marke unter der Figur | Aktion, Unterphase, Aktionsuhr |
+| grün gestrichelt | Aufnahmebereich eines Gegenstands (Fußpunkte, von denen die Figur ihn aufnimmt) |
+| orange gestrichelt | Grundfläche eines Behälters (Hindernis bis zum Zerbrechen) |
+| senkrechte Linien | Folgepunkt der Kamera (x 200); in der Arena die Totzone (128 und 256) |
+
+Die Trefferflächen sind die Bereiche der Fußpunkte möglicher Ziele, wie
+`inFlaeche` in `src/kern/treffer.ts` sie prüft.
+
+### Eingabeaufzeichnung (F2)
+
+Die Datei hat das Format der Eingabedatei (Kampf 11.1) und enthält immer
+alle Frames ab Frame 1 des laufenden Spiels bis zum Stopp, damit sie sich ab
+Spielstart abspielen lässt; der Kopf nennt Seed (`# seed=N`), Bühne und den
+Bereich zwischen Start und Stopp. Ein Neustart (F3, Game Over) beendet eine
+laufende Aufzeichnung und speichert sie. Abspielen im Browser:
+`comet.ladeEingabe(text)` in der Konsole, dann `comet.schritt(n)`. Prüflauf
+derselben Eingabe in Node: eine Szene `szene name=… endframe=<Frames>
+seed=<Seed> buehne=scheibe` ohne weitere Sätze ist der Spielstart, also
+`npm run lauf -- --szene <szene> --eingabe <datei> --aus aus/<name>`.
+
+### Debug-Schnittstelle `window.comet`
+
+Für Playwright und die Konsole. Sie läuft unabhängig von der Spielschleife;
+solange eine Eingabedatei geladen ist, steht die Schleife.
+
+| Aufruf | Wirkung |
+|---|---|
+| `ladeEingabe(text, seed?)` | ersetzt die Tastatur durch eine Eingabedatei und beginnt ab Spielstart neu; Seed: Argument, sonst `# seed=N` der Datei, sonst der bisherige |
+| `ladeSzene(szene, eingabe?)` | lädt eine Prüfszene (Format „Formate“, auch Prüfbühne) mit Eingabedatei; der Lauf endet nach `endframe` wie der Prüflauf (Promise) |
+| `schritt(n = 1)` | führt n Logikschritte aus, zeichnet und gibt `zustand()` zurück; nach dem Ende der Scheibe läuft kein Schritt mehr |
+| `zustand()` | serialisierbare Sicht: frame, seed, szene, Quelle, Pause, Debug, Figur, belegte Gegner und Objekte, Kamera, Rang, Rahmen, Anzeige-Daten und `protokoll`, die Zeile von `protokoll.csv` für den letzten Schritt (gleiche Spalten) |
+| `spalten()` | Spalten von `protokoll.csv` |
+| `debug(an?)`, `pause(an?)` | Debug-Anzeige bzw. Pause schalten (ohne Argument umschalten) |
+| `spielen()` | zurück zur Tastatur, die Schleife läuft vom aktuellen Frame weiter |
+| `neustart(seed?)` | neuer Lauf mit Tastatur (Standard Seed + 1) |
+| `aufzeichnung()` | Eingabedatei des laufenden Spiels wie bei F2 |
+
+### Bildschirmfotos und Vorführung
+
+`npm run foto` (`werkzeuge/foto.mjs`) baut die Browserfassung, startet
+einen eigenen Webserver (`node:http`, freier Port), öffnet die Seite in
+Chromium (Playwright global, Browser unter `/opt/pw-browsers`), spielt
+`tests/eingaben/vorfuehrung.txt` über `window.comet` ab, speichert alle 300
+Frames ein Bild (768 × 448, zweifach skaliert) und eines mit
+Debug-Anzeige und beendet Browser und Server. Optionen: `--eingabe`,
+`--abstand`, `--debug-frame` (Standard 718), `--ohne-bau`, `--szene` (eine
+Prüfszene statt des Spielstarts), `--aus` und `--praefix` (Ordner und
+Namensanfang der Bilder).
+
+Die Vorführung (Seed 1, 1500 Frames, ab Spielstart) ist am Protokoll
+geprüft: Laufen, Welle 1 löst aus, Kette KT1 bis KT4 besiegt den Bolzer der
+Welle 1 (Frame 212), Sprung nach vorn, Weckreiz der Welle 2, Griff (523)
+und Wurf vorwärts (Druck 545, Treffer 546), der Geworfene zerbricht das
+Fass, Spezialangriff (Druck 705) besiegt den Bolzer (719) und wirft den
+Rammbock um (738), Kette gegen den
+Rammbock, ein Schlag besiegt ihn (1176), Kometenbraten aufnehmen (1251),
+Sprungangriff, Sprint ab 1449. Nachprüfen: Szene `szene name=vorfuehrung
+endframe=1500 seed=1 buehne=scheibe` (steht im Kopf der Eingabedatei) mit
+`npm run lauf`.
+
+| Bild | Inhalt |
+|---|---|
+| `docs/bilder/scheibe_0300.png` | Frame 300: Sprung nach der Kette, Welle 1 besiegt |
+| `docs/bilder/scheibe_0600.png` | Frame 600: geworfener Bolzer im Flug, Kometenbraten aus dem Fass, der Rammbock hockt noch |
+| `docs/bilder/scheibe_0900.png` | Frame 900: der Rammbock kommt nach dem Spezialangriff wieder heran |
+| `docs/bilder/scheibe_1200.png` | Frame 1200: Rammbock besiegt, die Figur im Nachlauf des Schlags |
+| `docs/bilder/scheibe_1500.png` | Frame 1500: Sprint nach rechts |
+| `docs/bilder/scheibe_debug.png` | Frame 718 mit Debug-Anzeige: Spezialangriff Stufe 1 aktiv, Bolzer s2 beginnt Schlag BA (Instanz noch nicht aktiv, Zielpunkt und Abbruchfenster), Rammbock s3 im Anmarsch, Aufnahmebereich des Kometenbratens |
+
+### Prüfung der Darstellung
+
+`tests/darstellung_typen.test.ts`: `main.ts` gehört zu
+`tsconfig.browser.json` und typprüft dort gegen den unveränderten Kern
+(`tsc --noEmit`, Exit 0). `tests/darstellung_browser.test.ts`: baut die
+Browserfassung, lädt die Seite in Chromium, spielt die Vorführung über
+`window.comet` 600 Schritte mit Debug-Anzeige (sie darf das Protokoll nach
+Welt 10.6 nicht ändern) und vergleicht jede Protokollzeile Spalte für
+Spalte mit dem Prüflauf in Node für dieselbe Szene und Eingabe (etwa 4 s;
+ohne Playwright wird der Test übersprungen). Hilfen:
+`tests/darstellung_hilfe.ts`.
 
 ## Bau und Befehle
 
@@ -38,12 +200,32 @@ Geprüft in Phase 0 (2026-10-03):
 
 ## Tests
 
-Folgt mit den Abnahmetests (Stufe 3).
+`npm test` führt alle Dateien `tests/*.test.ts` mit `node:test` aus (Stand
+2026-10-03: 204 Tests, etwa 25 s). Gruppen:
+
+| Dateien in `spiel/tests/` | Inhalt |
+|---|---|
+| `festkomma`, `zufall`, `stage`, `szene`, `eingabe`, `protokoll`, `welt`, `reinheit`, `determinismus` | Grundlagen aus K0: Festkomma, Xorshift, Formate, Protokoll, Logikschritt; `reinheit` prüft, dass `src/kern` weder Browser noch Node, Uhrzeit oder `Math.random` nutzt |
+| `figur_*` | Spielfigur (K1): Zustandsautomat, Angriffe, Griff und Würfe, Schaden und Neueinstieg |
+| `treffer_*` | Treffer (K2): Flächen, Reihenfolge, Reaktionsbahnen, Prüfangriffe |
+| `welt_*` | Welt (K3): Nah- und Fernkämpfer, Kamera und Wellen, Rang und Rahmen, Gegenstände |
+| `boss_*` | Boss (K4): Angriffe, Super-Armor SA1 bis SA6 |
+| `abnahme_*` | Abnahmetests der Spezifikationen (K5), siehe „Abnahme“ |
+| `darstellung_*` | Browserfassung (K6), siehe „Prüfung der Darstellung“ |
+
+Szenen liegen unter `tests/szenen/`, Eingabedateien unter `tests/eingaben/`,
+Referenzprotokolle unter `tests/referenz/`. `tests/szenen/vorfuehrung.txt`
+ist die Szene zur Vorführung:
+
+```
+npm run lauf -- --szene tests/szenen/vorfuehrung.txt --eingabe tests/eingaben/vorfuehrung.txt --aus aus/vorfuehrung
+```
 
 ## Abnahme
 
 Stand 2026-10-03 (Stufe 3): alle 31 Abnahmetests der Spezifikationen grün,
-dazu der Determinismus- und der Referenztest (`npm test`: 202 Tests grün).
+dazu der Determinismus- und der Referenztest (`npm test`: 204 Tests grün,
+mit den zwei Darstellungstests).
 
 | Datei in `spiel/tests/` | Inhalt |
 |---|---|
@@ -353,3 +535,9 @@ Festlegung, Grund, ob die Spezifikation anzupassen ist.
 | L106 | Kampf 12, T20 Lauf b | Kometenbraten in z 100 | Tiefe nicht genannt; Standard der Puppen (Kampf 12) | Klarstellung |
 | L107 | Kampf 12, D1 („und auf einem zweiten Rechner“) | im Test zweimal auf demselben Rechner; dazu der Vergleich mit dem Referenzprotokoll von W-T8_a in `spiel/tests/referenz/` (`abnahme_referenz.test.ts`) | ein zweiter Rechner steht im Testlauf nicht zur Verfügung | nein, Hinweis |
 | L108 | Welt 12, T10 b („sichtbar“, „blinkt“) | geprüft über `liegezeit` im Objektprotokoll: 699 in 760 (sichtbar), 700 in 761 und 791 in 852 (Blinken nach Welt 9.3) | die Sichtbarkeit ist keine Spalte (Kampf 11.5) | Klarstellung |
+| L109 | Auftrag 3, 2.5 (Umrisse) | Bolzer 57 × 72, Rammbock 60 × 76, Zünder 64 × 72 nach `design-gegner-stages.md` 1 (E9); Ballast 70 × 100 nach dem Auftrag; Konstanten in `src/darstellung/masse.ts` | der Auftrag nennt die Boxen des Vorbilds (57 × 73, 49 × 71, 65 × 74), das Design will den Rammbock größer als den Bolzer | ja (Auftrag und Design angleichen) |
+| L110 | Welt 10.6, Tastenabfrage | ein Druck, der zwischen zwei Abfragen beginnt und endet, zählt in der nächsten Abfrage als gedrückt | sonst gingen kurze Drücke bei übersprungenen Bildern verloren | Klarstellung |
+| L111 | E13, Takt | ein Bild, das bis zu 1/8 Schritt zu früh kommt, zählt schon als Schritt | E13 regelt das Zittern der Bildwiederholung nicht | Klarstellung |
+| L112 | Kampf 11.1, Aufzeichnung (F2) | die Datei enthält immer alle Frames ab 1 und den Seed als Kommentar `# seed=N`, den das Laden liest | nur so ist sie abspielbar; Kampf 11.1 kennt keinen Seed in der Eingabedatei | ja |
+| L113 | Welt 10.6, Bedienung | Einzelschritt auf Taste N; nach dem Ende der Scheibe Neustart wie nach Game Over mit Seed + 1; F3 kehrt aus einer geladenen Eingabedatei zur Tastatur zurück | Welt 10.6 nennt keine Taste für den Einzelschritt und kein Verhalten nach dem Ende | Klarstellung |
+| L114 | Welt 3 (KA13), Darstellung | die Blende deckt nur die Szene, nicht die Anzeigeleiste; eine weggeworfene leere Waffe steht in der Zeichenreihenfolge wie die Gegenstände | nicht geregelt | Klarstellung |
