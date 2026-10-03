@@ -9,10 +9,11 @@
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import type { Umriss } from '../../src/darstellung/masse.ts';
-import { SCHATTEN_HOEHE, UMRISS_FIGUR } from '../../src/darstellung/masse.ts';
+import { SCHATTEN_HOEHE, UMRISS_FIGUR, UMRISS_GEGNER } from '../../src/darstellung/masse.ts';
 import type { Animation } from './blatt.ts';
 import { blattBytes, blattPacken, blattSchreiben, zugeschnitten } from './blatt.ts';
 import { GEHEN_SCHRITT, velaAnimationen } from './figuren/vela.ts';
+import { GEHEN_SCHRITT as RAMMBOCK_SCHRITT, GLANZ_RAMMBOCK, rammbockAnimationen } from './figuren/rammbock.ts';
 import { kontaktBogen, kontaktSchreiben } from './kontakt.ts';
 import { konturLuecken, streupixel } from './kontur.ts';
 import type { Leinwand, Pixel } from './leinwand.ts';
@@ -147,7 +148,7 @@ export function figurPruefen(figur: Figur): Befund[] {
   return befunde;
 }
 
-/** Alle Figuren der Erzeugung (Phase 1: Vela). */
+/** Alle Figuren der Erzeugung (Phase 1: Vela; Rammbock als Gliederpuppe für den Vergleich an Haltepunkt 1, Auftrag 4, 9.4). */
 export function figuren(): Figur[] {
   return [
     {
@@ -158,6 +159,15 @@ export function figuren(): Figur[] {
       budget: FARBBUDGET.figur,
       gehen: 'gehen',
       schritt: GEHEN_SCHRITT,
+    },
+    {
+      name: 'rammbock',
+      umriss: UMRISS_GEGNER.Rammbock,
+      animationen: rammbockAnimationen(),
+      glanz: GLANZ_RAMMBOCK,
+      budget: FARBBUDGET.figur,
+      gehen: 'gehen',
+      schritt: RAMMBOCK_SCHRITT,
     },
   ];
 }

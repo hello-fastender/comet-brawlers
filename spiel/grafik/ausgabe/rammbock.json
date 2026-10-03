@@ -1,0 +1,50 @@
+{
+  "blatt": "rammbock.png",
+  "animationen": {
+    "stand": {
+      "schleife": true,
+      "bilder": [
+        { "x": 1, "y": 1, "b": 47, "h": 70, "ankerX": 18, "ankerY": 69, "dauer": 0 }
+      ]
+    },
+    "gehen": {
+      "schleife": true,
+      "bilder": [
+        { "x": 1, "y": 72, "b": 52, "h": 69, "ankerX": 22, "ankerY": 68, "dauer": 4 },
+        { "x": 54, "y": 72, "b": 48, "h": 70, "ankerX": 18, "ankerY": 69, "dauer": 4 },
+        { "x": 103, "y": 72, "b": 39, "h": 71, "ankerX": 12, "ankerY": 70, "dauer": 4 },
+        { "x": 143, "y": 72, "b": 36, "h": 70, "ankerX": 13, "ankerY": 69, "dauer": 4 },
+        { "x": 180, "y": 72, "b": 36, "h": 69, "ankerX": 16, "ankerY": 68, "dauer": 4 },
+        { "x": 217, "y": 72, "b": 36, "h": 70, "ankerX": 13, "ankerY": 69, "dauer": 4 },
+        { "x": 254, "y": 72, "b": 39, "h": 71, "ankerX": 12, "ankerY": 70, "dauer": 4 },
+        { "x": 294, "y": 72, "b": 48, "h": 70, "ankerX": 18, "ankerY": 69, "dauer": 4 }
+      ]
+    },
+    "kampfhaltung": {
+      "schleife": true,
+      "bilder": [
+        { "x": 1, "y": 144, "b": 53, "h": 63, "ankerX": 21, "ankerY": 62, "dauer": 8 },
+        { "x": 55, "y": 144, "b": 53, "h": 64, "ankerX": 21, "ankerY": 63, "dauer": 8 }
+      ]
+    },
+    "schlag": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 209, "b": 49, "h": 66, "ankerX": 21, "ankerY": 65, "dauer": 5 },
+        { "x": 51, "y": 209, "b": 53, "h": 68, "ankerX": 29, "ankerY": 67, "dauer": 4 },
+        { "x": 105, "y": 209, "b": 68, "h": 65, "ankerX": 19, "ankerY": 64, "dauer": 5 },
+        { "x": 174, "y": 209, "b": 64, "h": 65, "ankerX": 20, "ankerY": 64, "dauer": 3 },
+        { "x": 239, "y": 209, "b": 56, "h": 65, "ankerX": 21, "ankerY": 64, "dauer": 2 }
+      ],
+      "aktiv": [2]
+    },
+    "getroffen": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 278, "b": 58, "h": 68, "ankerX": 31, "ankerY": 67, "dauer": 9 },
+        { "x": 60, "y": 278, "b": 41, "h": 68, "ankerX": 19, "ankerY": 67, "dauer": 12 },
+        { "x": 102, "y": 278, "b": 47, "h": 65, "ankerX": 20, "ankerY": 64, "dauer": 2 }
+      ]
+    }
+  }
+}

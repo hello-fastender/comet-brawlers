@@ -542,6 +542,87 @@ Eingaben zweier Schlüsselhaltungen (höchstens ein Zwischenbild).
 `animation(name, haltungen, dauern, schleife, aktiv)` rastert und prüft
 die Länge; aktive Bilder aus `werte.ts` über `bildBeiUhr`.
 
+### 4.2 Rammbock (Gliederpuppe)
+
+Stand G0c (Phase 1, Vergleich an Haltepunkt 1 nach Auftrag 4, 9.4).
+Quelle `spiel/grafik/quelle/figuren/rammbock.ts`, Blatt
+`spiel/grafik/ausgabe/rammbock.png` mit `rammbock.json`, Kontaktbögen
+`docs/bilder/kontakt_rammbock_<animation>.png`, Tests
+`spiel/tests/grafik_rammbock.test.ts`. Die Fassung aus Grok-Blättern heißt
+später `rammbock_fremd` (Abschnitt 5). Aussehen nach Auftrag 4, 4: breiter,
+kahler Schlepperfahrer mit kurzem Vollbart, olivgrüner Polsterweste offen
+über nacktem Oberkörper, brauner Hose mit Gürtel und Stahlschnalle,
+Knieschützern aus Stahl und schweren dunkelbraunen Arbeitsstiefeln.
+Gedrungen-kräftig: breite Schultern, dicke Arme, große kantige Fäuste.
+Gesicht: Auge 2 × 2 in `KONTUR` unter einer Braue im Hautdunkel, Nase als
+Vorsprung im Profil, Ohr als eigene Form; in der Trefferreaktion ist das
+Auge zugekniffen (zweite Gesichtsmaske).
+
+**Ansicht** (G0c-1): Der Rumpf ist halb von vorn gesehen, die Brust zum
+Betrachter gedreht. Die nahe (vordere) Schulter liegt links der Mitte über
+der Flanke, die ferne (hintere) rechts hinter der Brust. Zwei gepolsterte
+Vorderteile der Weste mit drei Steppnähten rahmen Brust und Bauch, dazu ein
+Kragenpolster im Nacken und ein Schulterpolster über dem nahen Oberarm.
+
+**Maße** (px; Körper im Stand 47 × 70 mit Kontur, Umriss 60 × 76 mit
+Schatten, `masse.ts` `UMRISS_GEGNER.Rammbock`): Sohle bis Knöchel 6,
+Oberschenkel 13, Unterschenkel 13 (Hüfte im Stand bei −29, gestreckt −32),
+Taille 3 über der Hüfte, Schultergelenke 19 über der Taille bei x −4 (nah)
+und +9 (fern), Rumpf ±12,4 breit (Weste ±13,6), Kopf mit Bart 15 hoch
+(etwa 1/5 der Körperhöhe), Oberarm 12 (Radius 4,8 bis 4,2), Unterarm 11
+(4,2 bis 3,6), Faust 10,4 × 9,8, Stiefel gut 16 lang, Knieschützer 7 × 9.
+Zeichenreihenfolge: ferner Arm (10), fernes Bein (20, Knieschützer 22),
+nahes Bein (26, Knieschützer 28), Becken (29), Rumpf (30, Brustlinie 31,
+Gürtel 32, Schnalle 33), Weste (32, Nähte 33), Kopf (35, Ohr 35,5, Bart 36),
+naher Arm (50), Faust (51), Schulterpolster (52).
+
+**Tonzuteilung** (15 Farben plus durchsichtig = 16, Farbbudget 1.2; G0c-2):
+
+| Farbe | Wert | Verwendung |
+|---|---|---|
+| `KONTUR` | `#140E22` | Außenkontur, Auge, Innenkontur (Ton 0) von Weste, Hose, Stiefeln, Gürtel und Bart |
+| `HAUT_MITTEL` 0 | `#802F27` | Innenkontur der Haut (Arm vor Rumpf, Faust vor Unterarm, Ohr), Braue |
+| `HAUT_MITTEL` 1 | `#B0563A` | Hautschatten; Brustlinie, Nabel, Fingerfalten |
+| `HAUT_MITTEL` 2 | `#C98E68` | Haut |
+| `HAUT_MITTEL` 3 | `#D6B493` | Hautlicht |
+| `WESTE_OLIV` 1 | `#3B4B21` | Westenschatten, Steppnähte |
+| `WESTE_OLIV` 2 | `#6B7A3A` | Weste |
+| `WESTE_OLIV` 3 | `#939E4E` | Westenlicht |
+| `HOSE_BRAUN` 1 | `#3B231A` | Hosenschatten; Grundton von Bart, Stiefeln und Gürtel |
+| `HOSE_BRAUN` 2 | `#6A4A32` | Hose; Licht von Bart, Stiefeln und Gürtel |
+| `HOSE_BRAUN` 3 | `#8E6C46` | Hosenlicht |
+| `STAHL` 1 | `#4D5374` | Schatten der Knieschützer und der Schnalle |
+| `STAHL` 2 | `#6F7C99` | Knieschützer, Schnalle |
+| `STAHL` 3 | `#929DAE` | Stahllicht |
+| `STAHL` 4 | `#B6BCC2` | Glanz (einzige Glanzfarbe, darf allein stehen) |
+
+**Animationen** (Zeiten in Frames ohne Trefferstopp). Beim Schlag zeigt die
+Zeit A + d (d = 0 im ersten Frame des Angriffs) das Bild
+`bildBeiUhr(dauern, d + 1)`. Bei der Trefferreaktion zeigt die Zeit h + d
+(d ab 1) das Bild `bildBeiUhr(dauern, d)`. Die Dauern von `schlag` und
+`getroffen` sind dieselben wie in `fremd/rammbock/zuordnung.txt` (G0b-9).
+So zählen Gliederpuppe und Umsetzer gleich.
+
+| Animation | Bilder | Dauern | Summe | aktiv | Inhalt |
+|---|---|---|---|---|---|
+| `stand` | 1 | 0 | – | – | aufrecht, Beine breit, Fäuste bereit vor dem Bauch; Brust und offene Weste frei (Rückfall der Darstellung und Prüfbild, wie G0b-8) |
+| `gehen` | 8 | je 4 | 32, Schleife | – | schwerer Gang: Standfuß rückt je Bild 6, 7, 6, 7, 6, 6, 7, 6 px zurück, 51 px je Zyklus (G0c-3); Ferse setzt in Bild 0 (nahes Bein) und 4 (fernes) auf, die Spitze rollt in Bild 4 bzw. 0 ab; Hüfte wippt um 1 px (tief beim Aufsetzen, hoch beim Durchschwingen); naher Arm schwingt gegen das nahe Bein und winkelt vorn an |
+| `kampfhaltung` | 2 | 8/8 | 16, Schleife | – | deutliche Hocke vor dem Angriff (design-gegner-stages.md 1.2): Hüfte −23 statt −29, Rumpf vorgebeugt, Fäuste vor Brust und Kinn; Bild 1 eine Spur höher (Atmen); Dauer als Richtwert (G0c-5) |
+| `schlag` | 5 | 5/4/5/3/2 | 19 | [2] (A+9 bis A+13) | Code RA (`NAH_ANGRIFFE.RA`): Ausholen 2 Bilder über den Startup 9 (naher Arm weit zurück, Gewicht hinten), Trefferbild über die aktiven Frames 5 (wuchtige Gerade mit dem nahen Arm aus der Hüfte, Faust bis 48 px vor dem Fußpunkt bei 41 bis 53 px Höhe, höchstens `ZIELABSTAND_MAX`), Rückzug 2 Bilder über den festen Rückzug 5 (Zwischenbild, Hocke mit Deckung); danach hält die Darstellung bis zum Ende des Nachlaufs |
+| `getroffen` | 3 | 9/12/2 | 23 | – | Bildwechsel bei h+1, h+10, h+22 (`REAKTION_ANIMATION`, `REAKTION_DAUER`): Kopf und Rumpf fliegen zurück, naher Arm nach hinten, ferner nach vorn, Auge zugekniffen; gekrümmt mit gesenktem Kopf; zurück in die Hocke |
+
+**Knieschützer als Splitter** (G0c-4): Liegt ein Knieschützer fast ganz
+hinter dem anderen Bein, entfällt er in diesem Bild. Das gilt, wenn sein
+sichtbarer Rest in keiner Zeile breiter als 4 px Stahl ist (`KNIE_SPLITTER`,
+gut die Hälfte der Platte). Das trifft den fernen Knieschützer in Bild 3 und
+4 von `gehen`.
+
+**Bauen weiterer Animationen** (Phase 2): wie bei Vela (4.1) über
+`Haltung`, `pose()`, `zwischen()` und `animation()`. Die Haltung hat statt
+des Pferdeschwanzes das Feld `getroffen` (Gesicht der Trefferreaktion).
+Weitere Angriffe (RB, RU, RS) nehmen Startup, aktive Frames und Rückzug aus
+`NAH_ANGRIFFE` und das Trefferbild über `bildBeiAbstand(dauern, aktiv_von)`.
+
 ## 5. Umsetzer für Bildblätter
 
 Stand G0b (Phase 1). `spiel/grafik/quelle/umsetzer.ts` macht aus
@@ -787,3 +868,8 @@ Nachbestellungen:
 | G0-10 | Auftrag 4, 1.1 (Körper im Stand etwa 5 px niedriger als der Umriss) | Prüfung: Höhe im Stand höchstens 71 und mindestens 90 % davon; Vela 69 × 46 | „etwa“ braucht eine Grenze für die Prüfung in `bauen.ts` |
 | G0-11 | Auftrag 4, 1.4 (Fußkontakt prüfen) | Prüfung am Bild: Läufe deckender Pixel auf der Ankerzeile (Kontur unter den Sohlen); zwischen zwei Bildern muss ein Lauf mit Anfang oder Ende um genau den Schritt zurückrücken (±1 px) | Prüft die Pixel statt der Puppenrechnung, gilt damit auch für den Umsetzer; die Puppenrechnung prüft `grafik_vela.test.ts` exakt |
 | G0-12 | Auftrag 4, 2.4 (Spiegelung) | Gespiegelte Posen (Blick nach hinten in der Drehung von `kette4`) spiegeln die Formen, nicht das Bild: Licht bleibt links oben | Ein gespiegeltes Bild hätte das Licht von rechts |
+| G0c-1 | Auftrag 4, 2.4 (Zeichenreihenfolge; Vela: vordere Schulter rechts der Mitte) | Rammbock: Rumpf halb von vorn mit der Brust zum Betrachter; nahe Schulter links der Mitte (x −4), ferne rechts hinter der Brust (x +9); der nahe Arm liegt vor dem linken Westenteil und schlägt | Mit Velas Anordnung verdeckte der breite Rumpf den fernen Arm ganz, und der linke Westenteil las sich als Panzer. So bleiben Brust und offene Weste frei, und der Schlagarm ist vom Ausholen bis zur Streckung ganz sichtbar |
+| G0c-2 | Auftrag 4, 4 (Bart; Rammbock: Weste, Hose, Haut, Knieschützer) und 1.2 (Farbbudget) | Bart, Stiefel und Gürtel in `HOSE_BRAUN` 1 (Grund) und 2 (Licht) mit `KONTUR` als Innenkontur; kein eigenes `HAAR_DUNKEL`, kein `LEDER`; Weste und Hose ohne Ton 0 | `HOSE_BRAUN` 1 `#3B231A` liegt neben dem Grundton von `HAAR_DUNKEL` `#3B2B25`. Haut 4, Weste 3, Hose 3, Stahl 4 Töne und `KONTUR` füllen die 15 Farben |
+| G0c-3 | Auftrag 4, 1.4 (Standfuß rückt je Bild um 4 · 1,6 = 6,4 px zurück) | Knöchel des Standfußes auf ganze px nach `round(n · 6,4)`, n = 0 … 8: 0, 6, 13, 19, 26, 32, 38, 45, 51; Schritte 6, 7, 6, 7, 6, 6, 7, 6 = 51 px je Zyklus. `bauen.ts` prüft mit `schritt` 6,4 ± 1, der Test exakt | 51,2 px je Zyklus gehen in ganzen Pixeln nicht auf. Die Rundung über den Zyklus hält den Fehler unter 0,5 px je Bild und bei 0,2 px je Zyklus (0,025 px je Frame); streng abwechselnd 6 und 7 ergäbe 52 px |
+| G0c-4 | Auftrag 4, 2.4 (Teile je Pose) | Ein Knieschützer, der nur als Streifen von höchstens 4 px Stahl hinter dem anderen Bein hervorschaut, entfällt im Bild (`KNIE_SPLITTER`; betrifft `gehen` Bild 3 und 4) | Ein schmaler Stahlstreifen neben der Faust las sich als Stab (Lesbarkeit, Auftrag 4, 1.4) |
+| G0c-5 | Auftrag 4, 3 (Rammbock `kampfhaltung` 2, Schleife; keine Dauer genannt) | `kampfhaltung` 8/8 als Richtwert wie `hocke_ankuendigung` in `fremd/rammbock/zuordnung.txt`; zwei Bilder der Hocke im Wechsel, Bild 1 eine Spur höher | Die Logik hält die Kampfhaltung 25 bis 5 Frames je nach Rang (design-gegner-stages.md 1.2); die Darstellung schleift |
