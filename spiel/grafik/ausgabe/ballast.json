@@ -1,0 +1,158 @@
+{
+  "blatt": "ballast.png",
+  "animationen": {
+    "stand": {
+      "schleife": true,
+      "bilder": [
+        { "x": 1, "y": 1, "b": 51, "h": 94, "ankerX": 21, "ankerY": 93, "dauer": 20 },
+        { "x": 53, "y": 1, "b": 50, "h": 95, "ankerX": 21, "ankerY": 94, "dauer": 20 }
+      ]
+    },
+    "gehen": {
+      "schleife": true,
+      "bilder": [
+        { "x": 1, "y": 97, "b": 57, "h": 94, "ankerX": 21, "ankerY": 93, "dauer": 8 },
+        { "x": 59, "y": 97, "b": 59, "h": 93, "ankerX": 26, "ankerY": 92, "dauer": 8 },
+        { "x": 119, "y": 97, "b": 42, "h": 93, "ankerX": 19, "ankerY": 92, "dauer": 8 },
+        { "x": 162, "y": 97, "b": 45, "h": 92, "ankerX": 21, "ankerY": 91, "dauer": 8 },
+        { "x": 208, "y": 97, "b": 52, "h": 93, "ankerX": 19, "ankerY": 92, "dauer": 8 }
+      ]
+    },
+    "ankuendigung": {
+      "schleife": true,
+      "bilder": [
+        { "x": 1, "y": 192, "b": 86, "h": 94, "ankerX": 47, "ankerY": 93, "dauer": 8 },
+        { "x": 88, "y": 192, "b": 84, "h": 89, "ankerX": 45, "ankerY": 88, "dauer": 7 }
+      ]
+    },
+    "armschwung": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 287, "b": 79, "h": 92, "ankerX": 52, "ankerY": 91, "dauer": 9 },
+        { "x": 81, "y": 287, "b": 86, "h": 91, "ankerX": 59, "ankerY": 90, "dauer": 8 },
+        { "x": 168, "y": 287, "b": 80, "h": 87, "ankerX": 23, "ankerY": 86, "dauer": 3 },
+        { "x": 249, "y": 287, "b": 67, "h": 86, "ankerX": 23, "ankerY": 85, "dauer": 8 },
+        { "x": 317, "y": 287, "b": 52, "h": 90, "ankerX": 22, "ankerY": 89, "dauer": 8 },
+        { "x": 370, "y": 287, "b": 61, "h": 86, "ankerX": 34, "ankerY": 85, "dauer": 9 },
+        { "x": 432, "y": 287, "b": 59, "h": 82, "ankerX": 32, "ankerY": 81, "dauer": 8 },
+        { "x": 492, "y": 287, "b": 70, "h": 99, "ankerX": 23, "ankerY": 98, "dauer": 3 },
+        { "x": 563, "y": 287, "b": 58, "h": 108, "ankerX": 23, "ankerY": 107, "dauer": 8 },
+        { "x": 622, "y": 287, "b": 52, "h": 94, "ankerX": 22, "ankerY": 93, "dauer": 8 },
+        { "x": 675, "y": 287, "b": 53, "h": 111, "ankerX": 26, "ankerY": 110, "dauer": 9 },
+        { "x": 729, "y": 287, "b": 60, "h": 110, "ankerX": 33, "ankerY": 109, "dauer": 8 },
+        { "x": 790, "y": 287, "b": 80, "h": 83, "ankerX": 23, "ankerY": 82, "dauer": 3 },
+        { "x": 871, "y": 287, "b": 67, "h": 79, "ankerX": 23, "ankerY": 78, "dauer": 8 },
+        { "x": 939, "y": 287, "b": 52, "h": 87, "ankerX": 22, "ankerY": 86, "dauer": 8 }
+      ],
+      "aktiv": [2, 7, 12]
+    },
+    "ansturm": {
+      "schleife": true,
+      "bilder": [
+        { "x": 1, "y": 399, "b": 74, "h": 84, "ankerX": 23, "ankerY": 83, "dauer": 4 },
+        { "x": 76, "y": 399, "b": 65, "h": 86, "ankerX": 13, "ankerY": 85, "dauer": 4 },
+        { "x": 142, "y": 399, "b": 68, "h": 84, "ankerX": 17, "ankerY": 83, "dauer": 4 },
+        { "x": 211, "y": 399, "b": 64, "h": 86, "ankerX": 13, "ankerY": 85, "dauer": 4 }
+      ],
+      "aktiv": [0, 1, 2, 3]
+    },
+    "ansturm_bremsen": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 486, "b": 69, "h": 91, "ankerX": 31, "ankerY": 90, "dauer": 16 }
+      ]
+    },
+    "koerperpresse": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 578, "b": 64, "h": 87, "ankerX": 37, "ankerY": 86, "dauer": 3 },
+        { "x": 66, "y": 578, "b": 46, "h": 121, "ankerX": 21, "ankerY": 120, "dauer": 12 },
+        { "x": 113, "y": 578, "b": 88, "h": 89, "ankerX": 46, "ankerY": 88, "dauer": 36 },
+        { "x": 202, "y": 578, "b": 98, "h": 40, "ankerX": 48, "ankerY": 39, "dauer": 13 },
+        { "x": 301, "y": 578, "b": 102, "h": 40, "ankerX": 50, "ankerY": 39, "dauer": 12 },
+        { "x": 404, "y": 578, "b": 76, "h": 63, "ankerX": 37, "ankerY": 62, "dauer": 14 },
+        { "x": 481, "y": 578, "b": 62, "h": 81, "ankerX": 23, "ankerY": 80, "dauer": 12 }
+      ],
+      "aktiv": [3]
+    },
+    "stoss_rueckzug": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 700, "b": 74, "h": 93, "ankerX": 42, "ankerY": 92, "dauer": 8 },
+        { "x": 76, "y": 700, "b": 74, "h": 92, "ankerX": 44, "ankerY": 91, "dauer": 8 },
+        { "x": 151, "y": 700, "b": 67, "h": 86, "ankerX": 24, "ankerY": 85, "dauer": 18 },
+        { "x": 219, "y": 700, "b": 58, "h": 90, "ankerX": 23, "ankerY": 89, "dauer": 20 }
+      ]
+    },
+    "getroffen": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 794, "b": 78, "h": 93, "ankerX": 47, "ankerY": 92, "dauer": 9 },
+        { "x": 80, "y": 794, "b": 54, "h": 90, "ankerX": 21, "ankerY": 89, "dauer": 12 },
+        { "x": 135, "y": 794, "b": 53, "h": 92, "ankerX": 21, "ankerY": 91, "dauer": 2 }
+      ]
+    },
+    "umgeworfen": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 888, "b": 78, "h": 99, "ankerX": 52, "ankerY": 98, "dauer": 8 },
+        { "x": 80, "y": 888, "b": 85, "h": 95, "ankerX": 44, "ankerY": 94, "dauer": 18 },
+        { "x": 166, "y": 888, "b": 103, "h": 70, "ankerX": 54, "ankerY": 69, "dauer": 19 },
+        { "x": 270, "y": 888, "b": 100, "h": 60, "ankerX": 53, "ankerY": 59, "dauer": 5 },
+        { "x": 371, "y": 888, "b": 111, "h": 42, "ankerX": 58, "ankerY": 41, "dauer": 5 }
+      ]
+    },
+    "liegen": {
+      "schleife": true,
+      "bilder": [
+        { "x": 371, "y": 888, "b": 111, "h": 42, "ankerX": 58, "ankerY": 41, "dauer": 0 }
+      ]
+    },
+    "aufstehen": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 988, "b": 102, "h": 50, "ankerX": 49, "ankerY": 49, "dauer": 3 },
+        { "x": 104, "y": 988, "b": 68, "h": 62, "ankerX": 32, "ankerY": 61, "dauer": 3 },
+        { "x": 173, "y": 988, "b": 66, "h": 78, "ankerX": 34, "ankerY": 77, "dauer": 3 },
+        { "x": 240, "y": 988, "b": 63, "h": 81, "ankerX": 23, "ankerY": 80, "dauer": 3 },
+        { "x": 304, "y": 988, "b": 57, "h": 88, "ankerX": 22, "ankerY": 87, "dauer": 3 },
+        { "x": 362, "y": 988, "b": 54, "h": 92, "ankerX": 22, "ankerY": 91, "dauer": 3 }
+      ]
+    },
+    "fall": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 1081, "b": 83, "h": 93, "ankerX": 46, "ankerY": 92, "dauer": 2 },
+        { "x": 85, "y": 1081, "b": 73, "h": 94, "ankerX": 47, "ankerY": 93, "dauer": 18 },
+        { "x": 159, "y": 1081, "b": 103, "h": 71, "ankerX": 59, "ankerY": 70, "dauer": 19 },
+        { "x": 263, "y": 1081, "b": 98, "h": 64, "ankerX": 53, "ankerY": 63, "dauer": 4 },
+        { "x": 362, "y": 1081, "b": 108, "h": 43, "ankerX": 58, "ankerY": 42, "dauer": 5 },
+        { "x": 471, "y": 1081, "b": 109, "h": 40, "ankerX": 56, "ankerY": 39, "dauer": 1 }
+      ]
+    },
+    "auftritt": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 1176, "b": 75, "h": 84, "ankerX": 26, "ankerY": 83, "dauer": 15 },
+        { "x": 77, "y": 1176, "b": 50, "h": 107, "ankerX": 22, "ankerY": 106, "dauer": 15 },
+        { "x": 128, "y": 1176, "b": 80, "h": 106, "ankerX": 41, "ankerY": 105, "dauer": 15 },
+        { "x": 209, "y": 1176, "b": 53, "h": 91, "ankerX": 21, "ankerY": 90, "dauer": 15 }
+      ]
+    },
+    "taumeln": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 794, "b": 78, "h": 93, "ankerX": 47, "ankerY": 92, "dauer": 8 },
+        { "x": 76, "y": 700, "b": 74, "h": 92, "ankerX": 44, "ankerY": 91, "dauer": 20 },
+        { "x": 151, "y": 700, "b": 67, "h": 86, "ankerX": 24, "ankerY": 85, "dauer": 30 },
+        { "x": 219, "y": 700, "b": 58, "h": 90, "ankerX": 23, "ankerY": 89, "dauer": 20 }
+      ]
+    },
+    "gehalten": {
+      "schleife": true,
+      "bilder": [
+        { "x": 1, "y": 1284, "b": 57, "h": 89, "ankerX": 21, "ankerY": 88, "dauer": 0 }
+      ]
+    }
+  }
+}

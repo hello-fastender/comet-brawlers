@@ -256,3 +256,16 @@ export function treppenFarben(materialien: readonly Material[], toene: readonly 
   for (const m of materialien) for (const t of toene) if (!aus.includes(m.treppe[t])) aus.push(m.treppe[t]);
   return aus;
 }
+
+// ===========================================================================
+// Ergänzung G5 (Hintergründe, Auftrag 4, Phase 2; docs/grafik.md 4.8 und 7, G5-2)
+// ===========================================================================
+
+/** Schein um die Neonschrift des Funkladens (Rasterhof auf der Wand und Spiegelung am Boden), gedämpftes Magenta. */
+export const NEON_SCHEIN = hintergrund('NEON_SCHEIN', '#B84AA6');
+/** Beschlagnahmte Holzkisten in den Regalen der Asservatenkammer (Hintergrund, nicht die Bosskiste). */
+export const ASSERVAT_HOLZ = hintergrund('ASSERVAT_HOLZ', '#7E5E3E');
+/** Hintergrundmaterialien der Ergänzung G5 nach Namen (HINTERGRUND_MATERIALIEN bleibt unverändert). */
+export const HINTERGRUND_MATERIALIEN_G5: Readonly<Record<string, Material>> = Object.fromEntries([NEON_SCHEIN, ASSERVAT_HOLZ].map((m) => [m.name, m]));
+/** Farbe der Blende und ihrer Rasterkante (wie heute FARBE.rand in src/darstellung/masse.ts: Schwarz). */
+export const BLENDE_DUNKEL: Pixel = hexZuPixel('#000000');

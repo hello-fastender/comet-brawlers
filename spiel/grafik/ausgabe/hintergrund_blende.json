@@ -1,0 +1,8 @@
+{
+  "blatt": "hintergrund_blende.png",
+  "kachel": 16,
+  "kante": { "x": 1, "y": 1, "b": 16, "h": 16 },
+  "weg": 400,
+  "zu": 28,
+  "regel": "Szene mit BLENDE_DUNKEL und Deckkraft d/zu abdunkeln; dunkles Feld ab x F = weg - floor(weg*d/zu) bis zum rechten Rand; Kante (dicht rechts) auf x F-16 bis F-1, 14-mal untereinander"
+}

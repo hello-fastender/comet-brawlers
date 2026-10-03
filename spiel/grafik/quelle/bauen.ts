@@ -30,6 +30,7 @@ import { FARBBUDGET, KONTUR, SPULE, farbenZaehlen } from './palette.ts';
 import { md5, pngSchreiben } from './png.ts';
 import { umsetzenOrdner } from './umsetzer.ts';
 import { VERGLEICH_DATEI, vergleichRammbock } from './vergleich.ts';
+import { UEBERSICHT_DATEI, uebersicht } from './uebersicht.ts';
 
 /** Ordner spiel/ (zwei Ebenen über grafik/quelle/). */
 const SPIEL = fileURLToPath(new URL('../../', import.meta.url));
@@ -283,6 +284,10 @@ export function bauen(optionen: { nurKontakt?: boolean; hinweis?: (zeile: string
       alle.set(datei, md5(inhalt));
     }
   }
+  const uebersichtBytes = pngSchreiben(uebersicht(new Map(gebaut.map((f) => [f.name, f.animationen] as const))));
+  mkdirSync(BILDER, { recursive: true });
+  writeFileSync(join(BILDER, UEBERSICHT_DATEI), uebersichtBytes);
+  alle.set(UEBERSICHT_DATEI, md5(uebersichtBytes));
   const vergleich = vergleichBytes(gebaut);
   if (vergleich !== null) {
     mkdirSync(BILDER, { recursive: true });
