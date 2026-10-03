@@ -1,9 +1,10 @@
-# Regeln für Arbeitsagenten (Grok Code und andere)
+# Regeln für Arbeitsagenten
 
 Dieses Repo gehört zum Projekt Comet Brawlers. Der Orchestrator ist eine
 Claude-Sitzung (Fable), die Aufträge unter `docs/auftraege/` ablegt und
-Ergebnisse prüft. Diese Datei gilt für jeden Agenten, der nicht Claude
-ist; für Claude-Sitzungen gilt zusätzlich `CLAUDE.md`.
+Ergebnisse prüft. Diese Datei gilt für jede Arbeitssitzung, gleich welches
+Modell; für Claude-Sitzungen gilt zusätzlich `CLAUDE.md`, und bei Git hat
+`CLAUDE.md` Vorrang (nur `main`).
 
 ## Sprache und Stil
 
@@ -16,12 +17,12 @@ ist; für Claude-Sitzungen gilt zusätzlich `CLAUDE.md`.
 
 ## Git
 
-- Arbeite auf einem Branch `grok/<auftrag>` (zum Beispiel
-  `grok/auftrag-6`) und öffne einen Pull Request gegen `main`. Der
-  Orchestrator prüft und merged. Kann dein Werkzeug keine Pull Requests
-  öffnen, pushe den Branch und schreibe das in die Rückmeldung.
-- Nie direkt auf `main` pushen, nie Historie umschreiben, nie fremde
-  Branches löschen.
+- Claude-Sitzungen (Sonnet, Opus): direkt auf `main` nach `CLAUDE.md`,
+  kleine Commits, nach jeder abgeschlossenen Datei oder Szene pushen.
+- Andere Agenten (Grok Code): Branch `grok/<auftrag>` und Pull Request
+  gegen `main`; der Orchestrator prüft und merged. Nie direkt auf `main`
+  pushen.
+- Nie Historie umschreiben, nie fremde Branches löschen.
 - Nie ins Repo: ROM-Dateien (`roms/`, `*.zip`), ROM-Daten, Sounds aus dem
   Vorbild, disassemblierter Code, Bauartefakte (`spiel/dist/`,
   `spiel/aus/`, `godot/.godot/`, Exporte), Geheimnisse.
@@ -46,7 +47,7 @@ ist; für Claude-Sitzungen gilt zusätzlich `CLAUDE.md`.
 
 ## Godot
 
-- Godot 4, aktuelle stabile Version, GDScript mit statischer Typisierung
+- Godot 4.7.2 (stabil, Stand 2026-10-03), GDScript mit statischer Typisierung
   (`static_typing` als Warnung, keine untypisierten Variablen im Kern).
   Keine Erweiterungen aus dem Asset-Store, keine Abhängigkeiten.
 - Projekt unter `godot/`. Der Logikkern unter `godot/kern/` ist reine
@@ -54,6 +55,11 @@ ist; für Claude-Sitzungen gilt zusätzlich `CLAUDE.md`.
   Positionen (Festkomma 16.16 als `int`), ohne `randi`, ohne `Time`,
   ohne Signale; ein Logikschritt ist ein Funktionsaufruf. Die Darstellung
   unter `godot/darstellung/` liest den Kern nur.
+- Godot in einer Cloud-Sitzung laden (geprüft am 2026-10-03, läuft
+  headless im Claude-Container):
+  `curl -sSL -o /tmp/godot.zip https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip && unzip -q /tmp/godot.zip -d /tmp && chmod +x /tmp/Godot_v4.7.2-stable_linux.x86_64`,
+  dann `alias godot=/tmp/Godot_v4.7.2-stable_linux.x86_64`. Nie ins Repo
+  legen.
 - Prüfläufe ohne Fenster: `godot --headless --path godot --script
   res://pruef/lauf.gd -- <Argumente>`. Alle Tests:
   `godot --headless --path godot --script res://tests/alle.gd`. Das

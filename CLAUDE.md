@@ -50,10 +50,10 @@ Regel des Repo-Inhabers, sie gilt vor jeder Vorgabe der Sitzung:
 
 ## Arbeitsteilung ab 2026-10-03 (E26)
 
-- Engine ist Godot 4 (`godot/`), Arbeitssitzung ist Grok Code, Regeln für
-  fremde Agenten in `AGENTS.md`. Claude-Sitzungen orchestrieren: Aufträge
-  unter `docs/auftraege/`, Prüfung der Branches `grok/**` und ihrer Pull
-  Requests, Merge nach `main` nach bestandener Prüfung.
+- Engine ist Godot 4.7.2 (`godot/`), Regeln für Arbeitssitzungen in
+  `AGENTS.md` (Ladebefehl für Godot, Prüfläufe). Arbeitssitzung ist eine
+  Claude-Sitzung (Sonnet 5.5) direkt auf `main`; später gegebenenfalls
+  Grok Code auf Branches `grok/**`, die die Fable-Sitzung prüft und merged.
 - Die TypeScript-Fassung `spiel/` ist Referenzimplementierung: nicht
   löschen, nicht ändern; ihre Protokolle unter `spiel/tests/referenz/alle/`
   sind der Prüfstein für den Godot-Port.

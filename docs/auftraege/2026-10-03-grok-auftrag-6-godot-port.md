@@ -1,13 +1,14 @@
-# Auftrag 6: Port der vertikalen Scheibe nach Godot 4 (Arbeitssitzung: Grok Code)
+# Auftrag 6: Port der vertikalen Scheibe nach Godot 4 (Arbeitssitzung: Claude Sonnet 5.5)
 
-Stand 2026-10-03. Orchestrator ist die Fable-Sitzung des Nutzers. Dieser
-Auftrag ist der erste für Grok Code als Arbeitssitzung. Es gelten
-`AGENTS.md` (Regeln für Agenten) und die Entscheidungen in
-`docs/erkenntnisse.md`, zuletzt E26.
+Stand 2026-10-03. Orchestrator ist die Fable-Sitzung des Nutzers. Die
+Arbeitssitzung ist eine Claude-Cloud-Sitzung mit Sonnet 5.5 (Grok Code
+war geplant, ist bis zum 6. Oktober gesperrt; der Auftrag ist für beide
+geschrieben). Es gelten `CLAUDE.md`, `AGENTS.md` und die Entscheidungen
+in `docs/erkenntnisse.md`, zuletzt E26.
 
-**Entscheidung E26 (Nutzer, 2026-10-03)**: Die Engine ist Godot 4 mit
-GDScript. Die Arbeitssitzung ist Grok Code, der Orchestrator bleibt die
-Fable-Sitzung. Die TypeScript-Fassung unter `spiel/` bleibt als
+**Entscheidung E26 (Nutzer, 2026-10-03)**: Die Engine ist Godot 4.7.2
+mit GDScript. Die Arbeitssitzung ist Claude Sonnet 5.5 (später
+gegebenenfalls Grok Code), der Orchestrator bleibt die Fable-Sitzung. Die TypeScript-Fassung unter `spiel/` bleibt als
 Referenzimplementierung und Prüfstein erhalten; sie wird nicht mehr
 weiterentwickelt.
 
@@ -19,20 +20,28 @@ Aufträgen.
 
 ---
 
-## 0. Startprompt für Grok Code
+## 0. Startprompt für die Arbeitssitzung
+
+Für eine Claude-Sitzung (Sonnet 5.5) im Repo:
 
 ```text
-Du arbeitest im GitHub-Repo hello-fastender/comet-brawlers als
-Arbeitssitzung für das Spielprojekt Comet Brawlers. Lies zuerst AGENTS.md,
-dann docs/auftraege/2026-10-03-grok-auftrag-6-godot-port.md vollständig,
-dann die dort in Abschnitt 2 genannten Dokumente in der genannten
-Reihenfolge. Arbeite die Phasen 0 bis 4 des Auftrags der Reihe nach ab,
-auf dem Branch grok/auftrag-6 mit Pull Request gegen main. Halte an den
-Haltepunkten an und warte auf meine Freigabe. Antworte auf Deutsch. Am
-Ende schreibst du die Rückmeldung als Datei
+Du bist die Arbeitssitzung für das Spielprojekt Comet Brawlers. Lies
+zuerst CLAUDE.md und AGENTS.md, dann
+docs/auftraege/2026-10-03-grok-auftrag-6-godot-port.md vollständig, dann
+die dort in Abschnitt 2 genannten Dokumente in der genannten Reihenfolge.
+Lade Godot 4.7.2 wie in AGENTS.md beschrieben und prüfe mit
+--headless --version, dass es läuft. Arbeite die Phasen 0 bis 4 des
+Auftrags der Reihe nach ab, direkt auf main mit kleinen Commits und
+Pushes nach jeder fertigen Datei oder Szene. Nutze Unteragenten für
+unabhängige Module des Kerns, aber nur ein Agent schreibt je Datei.
+Halte an den Haltepunkten an und warte auf meine Freigabe. Antworte auf
+Deutsch. Am Ende schreibst du die Rückmeldung als Datei
 docs/rueckmeldungen/auftrag-6.md im Format aus Abschnitt 8 des Auftrags
 und committest sie mit.
 ```
+
+Für Grok Code gilt derselbe Text mit „auf dem Branch grok/auftrag-6 mit
+Pull Request gegen main“ statt „direkt auf main“.
 
 ---
 
@@ -134,8 +143,8 @@ Die TypeScript-Fassung bleibt unter `spiel/` unverändert.
   fünf Zeilen davor.
 - Das Workflow `.github/workflows/godot-tests.yml` läuft bei jedem Push
   auf `main` und `grok/**` und bei jedem Pull Request. Die Godot-Version
-  darin (`GODOT_VERSION`) passt du an die Version an, die du nutzt;
-  beides muss gleich sein.
+  darin (`GODOT_VERSION`, 4.7.2) und die genutzte Version müssen gleich
+  sein.
 
 ### 3.4 Darstellung (Phase 2)
 
@@ -169,8 +178,9 @@ Die TypeScript-Fassung bleibt unter `spiel/` unverändert.
 
 ### Phase 0: Einrichtung
 
-1. Branch `grok/auftrag-6` von `main`. Godot-Version festlegen (aktuelle
-   stabile 4.x), in `AGENTS.md` ergänzen und im Workflow eintragen.
+1. Godot 4.7.2 laden (Befehl in `AGENTS.md`), `--headless --version`
+   muss `4.7.2.stable` ausgeben. Workflow und `AGENTS.md` nennen dieselbe
+   Version; weicht sie ab, beides anpassen.
 2. `godot/project.godot` mit den Einstellungen aus 3.1 und 3.4; leere
    Hauptszene; `godot/tests/alle.gd` mit einem Rauchtest; Push; das
    Workflow auf GitHub muss grün sein, bevor Phase 1 beginnt.
@@ -191,11 +201,11 @@ T1 bis T20, D1, dann W-T1 bis W-T10, dann die übrigen (boss_*, treffer_*,
 beispiel_*, vorfuehrung). Jede Szene ist fertig, wenn `protokoll.csv` und
 `objekte.csv` bitgleich sind.
 
-**Haltepunkt 1**: Alle 74 Szenen bitgleich, Workflow grün, Pull Request
-offen mit einem Kommentar, der die Zahl der portierten Zeilen, die
-Laufzeit des Testlaufs und die Liste der Stellen nennt, an denen die
-TypeScript-Fassung Verhalten hat, das die Spezifikation nicht beschreibt
-(zur Nachpflege durch den Orchestrator). Der Nutzer gibt frei.
+**Haltepunkt 1**: Alle 74 Szenen bitgleich, Workflow auf GitHub grün,
+Zwischenstand der Rückmeldung committet mit der Zahl der portierten
+Zeilen, der Laufzeit des Testlaufs und der Liste der Stellen, an denen
+die TypeScript-Fassung Verhalten hat, das die Spezifikation nicht
+beschreibt (zur Nachpflege durch den Orchestrator). Der Nutzer gibt frei.
 
 ### Phase 2: Darstellung, dann Haltepunkt 2
 
@@ -210,7 +220,7 @@ TypeScript-Fassung Verhalten hat, das die Spezifikation nicht beschreibt
    (Vorführung 600 Ticks mit Darstellung aktiv, Protokoll bitgleich zur
    Referenz).
 
-**Haltepunkt 2**: Bilder im Pull Request, Freigabe des Nutzers.
+**Haltepunkt 2**: Bilder committet unter `docs/bilder/`, Freigabe des Nutzers.
 
 ### Phase 3: Abnahme
 
@@ -225,8 +235,7 @@ TypeScript-Fassung Verhalten hat, das die Spezifikation nicht beschreibt
 - `docs/erkenntnisse.md`: Stand-Zeile „Vertikale Scheibe (Godot)“, „Wo
   was steht“ um `docs/godot.md` und `godot/`.
 - `docs/scheibe.md`: Hinweis oben, dass `spiel/` Referenzfassung ist.
-- Rückmeldung fertigstellen, Pull Request zur Prüfung an den
-  Orchestrator.
+- Rückmeldung fertigstellen und pushen; der Orchestrator prüft `main`.
 
 ---
 
@@ -260,18 +269,18 @@ Rückmeldung.
 
 ## 7. Haltepunkte
 
-Zwei, nach Phase 1 und Phase 2. An beiden steht der Pull Request offen
-und der Workflow ist grün.
+Zwei, nach Phase 1 und Phase 2. An beiden ist alles gepusht und der
+Workflow auf GitHub grün.
 
 ---
 
 ## 8. Rückmeldung (`docs/rueckmeldungen/auftrag-6.md`)
 
 ```text
-# Rückmeldung Grok Code, Auftrag 6, <Datum>
+# Rückmeldung Arbeitssitzung (<Modell>), Auftrag 6, <Datum>
 
-## Branch und Pull Request
-Branch, Nummer und Link des Pull Requests, Stand des Workflows
+## Commits
+Erster und letzter Commit auf main (oder Branch und Pull Request), Stand des Workflows
 
 ## Godot-Version und Umgebung
 Version, Betriebssystem der Sitzung, Laufzeit des Testlaufs
