@@ -33,9 +33,9 @@ const anim = (name: string): Animation => VELA.animationen.find((a) => a.name ==
 const alleBilder = (): { name: string; i: number; b: Bild }[] =>
   VELA.animationen.flatMap((a) => a.bilder.map((b, i) => ({ name: a.name, i, b: zugeschnitten(b) })));
 
-test('Vela: Animationen der Phase 1 vollständig, gehen 12 Bilder zu 4 Frames, 84 px je Zyklus', () => {
+test('Vela: Animationen der Phase 1 vorn im Blatt, gehen 12 Bilder zu 4 Frames, 84 px je Zyklus (Phase 2: grafik_vela_phase2.test.ts)', () => {
   assert.deepEqual(
-    VELA.animationen.map((a) => [a.name, a.bilder.length]),
+    VELA.animationen.slice(0, 6).map((a) => [a.name, a.bilder.length]),
     [
       ['stand', 1],
       ['gehen', 12],
@@ -65,10 +65,10 @@ test('Vela: Farbzählung ≤ 16 je Bild und über alle Bilder (einschließlich d
   assert.equal(FARBBUDGET.figur, 16);
 });
 
-test('Vela: Anker im Bild, bei Bodenposen in der Konturzeile unter den Sohlen', () => {
+test('Vela: Anker im Bild, in der Konturzeile unter dem tiefsten Pixel (Bodenposen: unter den Sohlen)', () => {
   for (const { name, i, b } of alleBilder()) {
     assert.ok(b.ankerX >= 0 && b.ankerX < b.leinwand.breite && b.ankerY >= 0 && b.ankerY < b.leinwand.hoehe, `${name} Bild ${i}`);
-    // Alle Bilder der Phase 1 stehen am Boden: unterste Zeile ist die Ankerzeile, darin Kontur
+    // Phase 1 steht am Boden; Phase 2 legt den Anker auch in der Luft auf die unterste Zeile (docs/grafik.md 4.1)
     assert.equal(b.ankerY, b.leinwand.hoehe - 1, `${name} Bild ${i}`);
   }
 });

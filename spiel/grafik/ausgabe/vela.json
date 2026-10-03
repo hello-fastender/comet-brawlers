@@ -74,6 +74,263 @@
         { "x": 1, "y": 1, "b": 46, "h": 69, "ankerX": 18, "ankerY": 68, "dauer": 1 }
       ],
       "aktiv": [2, 8]
+    },
+    "sprint": {
+      "schleife": true,
+      "bilder": [
+        { "x": 1, "y": 424, "b": 43, "h": 67, "ankerX": 20, "ankerY": 66, "dauer": 4 },
+        { "x": 45, "y": 424, "b": 33, "h": 67, "ankerX": 13, "ankerY": 66, "dauer": 4 },
+        { "x": 79, "y": 424, "b": 47, "h": 70, "ankerX": 23, "ankerY": 69, "dauer": 4 },
+        { "x": 127, "y": 424, "b": 47, "h": 67, "ankerX": 20, "ankerY": 66, "dauer": 4 },
+        { "x": 175, "y": 424, "b": 37, "h": 67, "ankerX": 13, "ankerY": 66, "dauer": 4 },
+        { "x": 213, "y": 424, "b": 47, "h": 70, "ankerX": 23, "ankerY": 69, "dauer": 4 }
+      ]
+    },
+    "sprung": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 495, "b": 42, "h": 77, "ankerX": 16, "ankerY": 76, "dauer": 6 },
+        { "x": 44, "y": 495, "b": 41, "h": 68, "ankerX": 16, "ankerY": 67, "dauer": 6 },
+        { "x": 86, "y": 495, "b": 31, "h": 63, "ankerX": 8, "ankerY": 62, "dauer": 6 },
+        { "x": 118, "y": 495, "b": 34, "h": 57, "ankerX": 10, "ankerY": 56, "dauer": 6 },
+        { "x": 153, "y": 495, "b": 43, "h": 66, "ankerX": 18, "ankerY": 65, "dauer": 6 },
+        { "x": 197, "y": 495, "b": 45, "h": 73, "ankerX": 18, "ankerY": 72, "dauer": 6 },
+        { "x": 243, "y": 495, "b": 44, "h": 75, "ankerX": 18, "ankerY": 74, "dauer": 5 },
+        { "x": 288, "y": 495, "b": 45, "h": 63, "ankerX": 18, "ankerY": 62, "dauer": 5 },
+        { "x": 334, "y": 495, "b": 46, "h": 65, "ankerX": 18, "ankerY": 64, "dauer": 1 }
+      ]
+    },
+    "sprungangriff": {
+      "schleife": false,
+      "bilder": [
+        { "x": 381, "y": 495, "b": 33, "h": 63, "ankerX": 10, "ankerY": 62, "dauer": 2 },
+        { "x": 415, "y": 495, "b": 34, "h": 64, "ankerX": 10, "ankerY": 63, "dauer": 2 },
+        { "x": 450, "y": 495, "b": 48, "h": 63, "ankerX": 11, "ankerY": 62, "dauer": 24 },
+        { "x": 415, "y": 495, "b": 34, "h": 64, "ankerX": 10, "ankerY": 63, "dauer": 2 },
+        { "x": 381, "y": 495, "b": 33, "h": 63, "ankerX": 10, "ankerY": 62, "dauer": 1 }
+      ],
+      "aktiv": [2]
+    },
+    "richtung": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 573, "b": 33, "h": 63, "ankerX": 9, "ankerY": 62, "dauer": 2 },
+        { "x": 35, "y": 573, "b": 36, "h": 65, "ankerX": 14, "ankerY": 64, "dauer": 2 },
+        { "x": 72, "y": 573, "b": 65, "h": 64, "ankerX": 21, "ankerY": 63, "dauer": 24 },
+        { "x": 35, "y": 573, "b": 36, "h": 65, "ankerX": 14, "ankerY": 64, "dauer": 2 },
+        { "x": 1, "y": 573, "b": 33, "h": 63, "ankerX": 9, "ankerY": 62, "dauer": 1 },
+        { "x": 243, "y": 495, "b": 44, "h": 75, "ankerX": 18, "ankerY": 74, "dauer": 1 }
+      ],
+      "aktiv": [2]
+    },
+    "hoch": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 639, "b": 32, "h": 63, "ankerX": 9, "ankerY": 62, "dauer": 3 },
+        { "x": 34, "y": 639, "b": 34, "h": 52, "ankerX": 11, "ankerY": 51, "dauer": 3 },
+        { "x": 69, "y": 639, "b": 61, "h": 52, "ankerX": 28, "ankerY": 51, "dauer": 4 },
+        { "x": 131, "y": 639, "b": 51, "h": 35, "ankerX": 23, "ankerY": 34, "dauer": 3 },
+        { "x": 183, "y": 639, "b": 50, "h": 40, "ankerX": 24, "ankerY": 39, "dauer": 3 },
+        { "x": 234, "y": 639, "b": 35, "h": 51, "ankerX": 17, "ankerY": 50, "dauer": 3 },
+        { "x": 270, "y": 639, "b": 40, "h": 50, "ankerX": 18, "ankerY": 49, "dauer": 3 },
+        { "x": 311, "y": 639, "b": 51, "h": 35, "ankerX": 20, "ankerY": 34, "dauer": 3 },
+        { "x": 363, "y": 639, "b": 50, "h": 39, "ankerX": 18, "ankerY": 38, "dauer": 2 },
+        { "x": 414, "y": 639, "b": 37, "h": 50, "ankerX": 11, "ankerY": 49, "dauer": 1 },
+        { "x": 452, "y": 639, "b": 40, "h": 62, "ankerX": 15, "ankerY": 61, "dauer": 1 }
+      ],
+      "aktiv": [2]
+    },
+    "runter": {
+      "schleife": false,
+      "bilder": [
+        { "x": 493, "y": 639, "b": 36, "h": 63, "ankerX": 13, "ankerY": 62, "dauer": 4 },
+        { "x": 530, "y": 639, "b": 39, "h": 73, "ankerX": 18, "ankerY": 72, "dauer": 4 },
+        { "x": 570, "y": 639, "b": 50, "h": 88, "ankerX": 24, "ankerY": 87, "dauer": 24 }
+      ],
+      "aktiv": [2]
+    },
+    "griff": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 728, "b": 45, "h": 67, "ankerX": 18, "ankerY": 66, "dauer": 1 },
+        { "x": 47, "y": 728, "b": 43, "h": 67, "ankerX": 18, "ankerY": 66, "dauer": 2 },
+        { "x": 91, "y": 728, "b": 40, "h": 68, "ankerX": 18, "ankerY": 67, "dauer": 2 },
+        { "x": 132, "y": 728, "b": 41, "h": 68, "ankerX": 18, "ankerY": 67, "dauer": 56 }
+      ]
+    },
+    "kniestoss": {
+      "schleife": false,
+      "bilder": [
+        { "x": 174, "y": 728, "b": 40, "h": 69, "ankerX": 18, "ankerY": 68, "dauer": 2 },
+        { "x": 215, "y": 728, "b": 40, "h": 70, "ankerX": 18, "ankerY": 69, "dauer": 2 },
+        { "x": 256, "y": 728, "b": 41, "h": 71, "ankerX": 17, "ankerY": 70, "dauer": 9 },
+        { "x": 298, "y": 728, "b": 40, "h": 70, "ankerX": 17, "ankerY": 69, "dauer": 2 },
+        { "x": 174, "y": 728, "b": 40, "h": 69, "ankerX": 18, "ankerY": 68, "dauer": 1 },
+        { "x": 132, "y": 728, "b": 41, "h": 68, "ankerX": 18, "ankerY": 67, "dauer": 6 }
+      ],
+      "aktiv": [2]
+    },
+    "wurf": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 800, "b": 40, "h": 63, "ankerX": 19, "ankerY": 62, "dauer": 9 },
+        { "x": 42, "y": 800, "b": 40, "h": 73, "ankerX": 19, "ankerY": 72, "dauer": 7 },
+        { "x": 83, "y": 800, "b": 40, "h": 81, "ankerX": 19, "ankerY": 80, "dauer": 5 },
+        { "x": 124, "y": 800, "b": 40, "h": 80, "ankerX": 19, "ankerY": 79, "dauer": 10 },
+        { "x": 165, "y": 800, "b": 43, "h": 68, "ankerX": 18, "ankerY": 67, "dauer": 5 },
+        { "x": 209, "y": 800, "b": 44, "h": 68, "ankerX": 18, "ankerY": 67, "dauer": 1 }
+      ],
+      "aktiv": [0]
+    },
+    "spezial": {
+      "schleife": false,
+      "bilder": [
+        { "x": 254, "y": 800, "b": 37, "h": 67, "ankerX": 17, "ankerY": 66, "dauer": 2 },
+        { "x": 292, "y": 800, "b": 32, "h": 80, "ankerX": 15, "ankerY": 79, "dauer": 2 },
+        { "x": 325, "y": 800, "b": 42, "h": 69, "ankerX": 20, "ankerY": 68, "dauer": 2 },
+        { "x": 368, "y": 800, "b": 46, "h": 55, "ankerX": 21, "ankerY": 54, "dauer": 1 },
+        { "x": 415, "y": 800, "b": 43, "h": 52, "ankerX": 22, "ankerY": 51, "dauer": 6 },
+        { "x": 459, "y": 800, "b": 43, "h": 53, "ankerX": 22, "ankerY": 52, "dauer": 6 },
+        { "x": 503, "y": 800, "b": 43, "h": 52, "ankerX": 22, "ankerY": 51, "dauer": 6 },
+        { "x": 503, "y": 800, "b": 43, "h": 52, "ankerX": 22, "ankerY": 51, "dauer": 6 },
+        { "x": 459, "y": 800, "b": 43, "h": 53, "ankerX": 22, "ankerY": 52, "dauer": 6 },
+        { "x": 415, "y": 800, "b": 43, "h": 52, "ankerX": 22, "ankerY": 51, "dauer": 6 },
+        { "x": 368, "y": 800, "b": 46, "h": 55, "ankerX": 21, "ankerY": 54, "dauer": 2 },
+        { "x": 325, "y": 800, "b": 42, "h": 69, "ankerX": 20, "ankerY": 68, "dauer": 2 },
+        { "x": 292, "y": 800, "b": 32, "h": 80, "ankerX": 15, "ankerY": 79, "dauer": 2 },
+        { "x": 254, "y": 800, "b": 37, "h": 67, "ankerX": 17, "ankerY": 66, "dauer": 1 }
+      ],
+      "aktiv": [4, 5, 6, 7, 8, 9]
+    },
+    "sprintangriff": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 882, "b": 41, "h": 65, "ankerX": 18, "ankerY": 64, "dauer": 1 },
+        { "x": 43, "y": 882, "b": 49, "h": 63, "ankerX": 20, "ankerY": 62, "dauer": 1 },
+        { "x": 93, "y": 882, "b": 68, "h": 61, "ankerX": 23, "ankerY": 60, "dauer": 2 },
+        { "x": 162, "y": 882, "b": 81, "h": 60, "ankerX": 23, "ankerY": 59, "dauer": 10 },
+        { "x": 244, "y": 882, "b": 72, "h": 61, "ankerX": 23, "ankerY": 60, "dauer": 20 },
+        { "x": 317, "y": 882, "b": 60, "h": 65, "ankerX": 21, "ankerY": 64, "dauer": 1 }
+      ],
+      "aktiv": [3]
+    },
+    "sprint_sprungangriff": {
+      "schleife": false,
+      "bilder": [
+        { "x": 378, "y": 882, "b": 39, "h": 62, "ankerX": 16, "ankerY": 61, "dauer": 4 },
+        { "x": 418, "y": 882, "b": 64, "h": 66, "ankerX": 24, "ankerY": 65, "dauer": 8 },
+        { "x": 483, "y": 882, "b": 86, "h": 39, "ankerX": 40, "ankerY": 38, "dauer": 7 },
+        { "x": 570, "y": 882, "b": 86, "h": 35, "ankerX": 41, "ankerY": 34, "dauer": 20 },
+        { "x": 657, "y": 882, "b": 54, "h": 55, "ankerX": 20, "ankerY": 54, "dauer": 6 }
+      ],
+      "aktiv": [2, 3]
+    },
+    "getroffen_vorn": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 949, "b": 38, "h": 69, "ankerX": 18, "ankerY": 68, "dauer": 1 },
+        { "x": 40, "y": 949, "b": 40, "h": 67, "ankerX": 20, "ankerY": 66, "dauer": 13 },
+        { "x": 81, "y": 949, "b": 40, "h": 65, "ankerX": 18, "ankerY": 64, "dauer": 6 },
+        { "x": 122, "y": 949, "b": 46, "h": 68, "ankerX": 18, "ankerY": 67, "dauer": 6 },
+        { "x": 169, "y": 949, "b": 46, "h": 68, "ankerX": 18, "ankerY": 67, "dauer": 1 }
+      ]
+    },
+    "getroffen_hinten": {
+      "schleife": false,
+      "bilder": [
+        { "x": 216, "y": 949, "b": 38, "h": 68, "ankerX": 18, "ankerY": 67, "dauer": 1 },
+        { "x": 255, "y": 949, "b": 37, "h": 67, "ankerX": 16, "ankerY": 66, "dauer": 13 },
+        { "x": 293, "y": 949, "b": 40, "h": 66, "ankerX": 18, "ankerY": 65, "dauer": 6 },
+        { "x": 122, "y": 949, "b": 46, "h": 68, "ankerX": 18, "ankerY": 67, "dauer": 6 },
+        { "x": 169, "y": 949, "b": 46, "h": 68, "ankerX": 18, "ankerY": 67, "dauer": 1 }
+      ]
+    },
+    "umgeworfen": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 1019, "b": 42, "h": 64, "ankerX": 22, "ankerY": 63, "dauer": 1 },
+        { "x": 44, "y": 1019, "b": 44, "h": 66, "ankerX": 23, "ankerY": 65, "dauer": 8 },
+        { "x": 89, "y": 1019, "b": 65, "h": 62, "ankerX": 32, "ankerY": 61, "dauer": 6 },
+        { "x": 155, "y": 1019, "b": 69, "h": 34, "ankerX": 39, "ankerY": 33, "dauer": 31 },
+        { "x": 225, "y": 1019, "b": 66, "h": 42, "ankerX": 30, "ankerY": 41, "dauer": 8 }
+      ]
+    },
+    "liegen": {
+      "schleife": true,
+      "bilder": [
+        { "x": 292, "y": 1019, "b": 71, "h": 24, "ankerX": 36, "ankerY": 23, "dauer": 41 }
+      ]
+    },
+    "aufstehen": {
+      "schleife": false,
+      "bilder": [
+        { "x": 364, "y": 1019, "b": 62, "h": 36, "ankerX": 28, "ankerY": 35, "dauer": 5 },
+        { "x": 427, "y": 1019, "b": 42, "h": 42, "ankerX": 15, "ankerY": 41, "dauer": 5 },
+        { "x": 470, "y": 1019, "b": 41, "h": 52, "ankerX": 18, "ankerY": 51, "dauer": 5 },
+        { "x": 512, "y": 1019, "b": 42, "h": 60, "ankerX": 17, "ankerY": 59, "dauer": 5 },
+        { "x": 555, "y": 1019, "b": 41, "h": 65, "ankerX": 18, "ankerY": 64, "dauer": 5 },
+        { "x": 597, "y": 1019, "b": 44, "h": 67, "ankerX": 18, "ankerY": 66, "dauer": 1 }
+      ]
+    },
+    "tot": {
+      "schleife": true,
+      "bilder": [
+        { "x": 292, "y": 1019, "b": 71, "h": 24, "ankerX": 36, "ankerY": 23, "dauer": 0 }
+      ]
+    },
+    "waffe_stand": {
+      "schleife": true,
+      "bilder": [
+        { "x": 1, "y": 1087, "b": 38, "h": 69, "ankerX": 18, "ankerY": 68, "dauer": 0 }
+      ]
+    },
+    "waffe_gehen": {
+      "schleife": true,
+      "bilder": [
+        { "x": 40, "y": 1087, "b": 62, "h": 65, "ankerX": 29, "ankerY": 64, "dauer": 4 },
+        { "x": 103, "y": 1087, "b": 50, "h": 68, "ankerX": 24, "ankerY": 67, "dauer": 4 },
+        { "x": 154, "y": 1087, "b": 38, "h": 69, "ankerX": 17, "ankerY": 68, "dauer": 4 },
+        { "x": 193, "y": 1087, "b": 33, "h": 69, "ankerX": 12, "ankerY": 68, "dauer": 4 },
+        { "x": 227, "y": 1087, "b": 35, "h": 69, "ankerX": 14, "ankerY": 68, "dauer": 4 },
+        { "x": 263, "y": 1087, "b": 40, "h": 66, "ankerX": 18, "ankerY": 65, "dauer": 4 },
+        { "x": 304, "y": 1087, "b": 52, "h": 65, "ankerX": 24, "ankerY": 64, "dauer": 4 },
+        { "x": 357, "y": 1087, "b": 40, "h": 68, "ankerX": 19, "ankerY": 67, "dauer": 4 },
+        { "x": 398, "y": 1087, "b": 33, "h": 69, "ankerX": 12, "ankerY": 68, "dauer": 4 },
+        { "x": 432, "y": 1087, "b": 33, "h": 69, "ankerX": 12, "ankerY": 68, "dauer": 4 },
+        { "x": 466, "y": 1087, "b": 37, "h": 69, "ankerX": 16, "ankerY": 68, "dauer": 4 },
+        { "x": 504, "y": 1087, "b": 50, "h": 66, "ankerX": 23, "ankerY": 65, "dauer": 4 }
+      ]
+    },
+    "waffe_schuss": {
+      "schleife": false,
+      "bilder": [
+        { "x": 555, "y": 1087, "b": 41, "h": 68, "ankerX": 19, "ankerY": 67, "dauer": 6 },
+        { "x": 597, "y": 1087, "b": 42, "h": 68, "ankerX": 20, "ankerY": 67, "dauer": 4 },
+        { "x": 640, "y": 1087, "b": 41, "h": 68, "ankerX": 19, "ankerY": 67, "dauer": 7 }
+      ],
+      "aktiv": [1]
+    },
+    "aufnehmen": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 1157, "b": 38, "h": 59, "ankerX": 17, "ankerY": 58, "dauer": 2 },
+        { "x": 40, "y": 1157, "b": 40, "h": 54, "ankerX": 17, "ankerY": 53, "dauer": 3 },
+        { "x": 81, "y": 1157, "b": 42, "h": 62, "ankerX": 17, "ankerY": 61, "dauer": 2 }
+      ]
+    },
+    "neueinstieg_fall": {
+      "schleife": true,
+      "bilder": [
+        { "x": 124, "y": 1157, "b": 44, "h": 86, "ankerX": 21, "ankerY": 85, "dauer": 4 },
+        { "x": 169, "y": 1157, "b": 46, "h": 86, "ankerX": 21, "ankerY": 85, "dauer": 4 }
+      ]
+    },
+    "neueinstieg_landung": {
+      "schleife": false,
+      "bilder": [
+        { "x": 216, "y": 1157, "b": 43, "h": 58, "ankerX": 22, "ankerY": 57, "dauer": 5 },
+        { "x": 260, "y": 1157, "b": 48, "h": 60, "ankerX": 21, "ankerY": 59, "dauer": 1 }
+      ]
     }
   }
 }

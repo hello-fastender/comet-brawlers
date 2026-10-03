@@ -1,5 +1,7 @@
 // Vela, Lotsin des Hafens, als Gliederpuppe (Auftrag 4, 2.4 und 4; Phase 1:
-// stand, gehen, kette1 bis kette4). Vorlage ist Vela der gewählten
+// stand, gehen, kette1 bis kette4; Phase 2, G1: alle übrigen Animationen aus
+// Auftrag 4, Abschnitt 3, in vela_bewegung.ts, vela_kampf.ts und
+// vela_reaktion.ts, Zeiten in vela_zeiten.ts). Vorlage ist Vela der gewählten
 // Stilprobe (docs/bilder/stil_1_arcade_nah.png, stilproben.html VELA):
 // Pferdeschwanz, blaue Lotsenjacke mit orangem Querstreifen, dunkle Hose,
 // schwere Stiefel, dicke Magnethandschuhe mit leuchtenden Spulen. Sauberer
@@ -14,6 +16,7 @@
 
 import type { Animation, Bild } from '../blatt.ts';
 import type { Form, Punkt } from '../geometrie.ts';
+import { drehe } from '../geometrie.ts';
 import type { Pixel } from '../leinwand.ts';
 import {
   HAAR_VELA,
@@ -27,23 +30,29 @@ import {
 } from '../palette.ts';
 import type { Gerastert, Pose, Stil, TeilDef, Toene } from '../puppe.ts';
 import { Puppe } from '../puppe.ts';
+import { NACHBARN_4, NACHBARN_8, streupixel } from '../kontur.ts';
+import type { Leinwand } from '../leinwand.ts';
+import { deckend } from '../leinwand.ts';
 import { KETTE4_ZWEITES_FENSTER_VON, KETTE_AKTIV_VON, LAUF_X } from '../../../src/kern/werte.ts';
 import { EINS } from '../../../src/kern/festkomma.ts';
+import { bewegungAnimationen, neueinstiegAnimationen } from './vela_bewegung.ts';
+import { kampfAnimationen, waffeAnimationen } from './vela_kampf.ts';
+import { reaktionAnimationen } from './vela_reaktion.ts';
 
 // ===========================================================================
 // Maße
 // ===========================================================================
 
 /** Sohle bis Knöchel (schwere Stiefel; Stilprobe: Stiefel 8 px hoch, Knöchel bei 5). */
-const KNOECHEL = 5;
+export const KNOECHEL = 5;
 /** Hüfte bis Knie und Knie bis Knöchel (Beinlänge 30: Hüfte im Stand bei 35, Stilprobe 34 bei 76 px Gesamthöhe). */
-const SCHENKEL = 15;
-const SCHIENBEIN = 15;
+export const SCHENKEL = 15;
+export const SCHIENBEIN = 15;
 /** Schulter bis Ellbogen, Ellbogen bis Handgelenk (Stilprobe 10 und 9; je 1 px länger für die Reichweite der Kette, Auftrag 4, 1.1). */
 const OBERARM = 11;
 const UNTERARM = 9;
 /** Mitte des Handschuhs unter dem Handgelenk, Halbachsen (dicke Handschuhe; Stilprobe rx 6, ry 5,5 vorn). */
-const HAND_MITTE = 3.5;
+export const HAND_MITTE = 3.5;
 const HAND_RX = 4.6;
 const HAND_RY = 5;
 /** Hüftgelenke links und rechts der Beckenmitte. */
@@ -58,7 +67,7 @@ const TAILLE = 2;
 // Teile
 // ===========================================================================
 
-const P = (x: number, y: number): Punkt => ({ x, y });
+export const P = (x: number, y: number): Punkt => ({ x, y });
 const kapsel = (ax: number, ay: number, bx: number, by: number, ra: number, rb: number = ra): Form => ({
   art: 'kapsel',
   a: P(ax, ay),
@@ -92,8 +101,8 @@ const STIEFEL = polygon([-4, -5], [3.6, -5], [4, -0.6], [7, 0.4], [9.4, 1.9], [1
 /** Sohlenpunkt (Mitte der Sohle) im Rahmen des Knöchels. */
 const SOHLE = P(2.5, KNOECHEL);
 /** Ferse und Spitze der Sohle (Drehpunkte beim Abrollen). */
-const FERSE = P(-4.5, KNOECHEL);
-const SPITZE = P(10, KNOECHEL);
+export const FERSE = P(-4.5, KNOECHEL);
+export const SPITZE = P(10, KNOECHEL);
 
 /** Spulen auf dem Handschuh: zwei Leuchtlinien quer über den Handrücken (Stilprobe: zwei Linien je Handschuh). */
 const SPULEN: Form[] = [kapsel(-2.2, 2.2, 2.4, 1.6, 0.6), kapsel(-2.2, 5, 2.4, 4.4, 0.6)];
@@ -286,12 +295,23 @@ export const STIL_VELA: Stil = {
   gesicht: GESICHT,
 };
 
+/**
+ * Gesicht der Trefferreaktion (Phase 2, G1; wie der Rammbock, docs/grafik.md
+ * 4.2): Auge zugekniffen (2 × 1 in der unteren Augenzeile), Mund offen (2 × 1
+ * in KONTUR, damit kein Pixel allein steht, Regel 1.3).
+ */
+const GESICHT_GETROFFEN = { ...GESICHT, zeilen: ['...', '.kk', '...', '.kk'] };
+/** Gesicht mit geschlossenem Auge (Liegen nach dem Umwerfen, Tod; Phase 2, G1): Lidstrich 2 × 1, ohne Mund. */
+const GESICHT_ZU = { ...GESICHT, zeilen: ['...', '.kk'] };
+const STIL_GETROFFEN: Stil = { ...STIL_VELA, gesicht: GESICHT_GETROFFEN };
+const STIL_ZU: Stil = { ...STIL_VELA, gesicht: GESICHT_ZU };
+
 // ===========================================================================
 // Haltungen
 // ===========================================================================
 
 /** Arm: Ziel des Handgelenks (Figurkoordinaten), Weltwinkel der Hand (Vorgabe: wie der Unterarm). */
-interface Arm {
+export interface Arm {
   readonly ziel: Punkt;
   readonly hand?: number;
   /** true: ziel relativ zum Schultergelenk statt zum Fußpunkt. */
@@ -299,7 +319,7 @@ interface Arm {
 }
 
 /** Bein: Knöchel (Figurkoordinaten) und Weltwinkel des Stiefels (0 flach, + Spitze hoch, − Ferse hoch). */
-interface Bein {
+export interface Bein {
   readonly knoechel: Punkt;
   readonly fuss: number;
 }
@@ -322,6 +342,10 @@ export interface Haltung {
   readonly ebenen?: Pose['ebenen'];
   readonly spiegeln?: boolean;
   readonly ohneGesicht?: boolean;
+  /** Gesicht (Phase 2, G1): fehlt = ruhig; 'getroffen' zugekniffen mit offenem Mund; 'zu' Auge geschlossen. */
+  readonly gesicht?: 'getroffen' | 'zu';
+  /** nicht gezeichnete Teile (Pose.versteckt). */
+  readonly versteckt?: readonly string[];
 }
 
 /** Beuge der Gelenke: Knie nach vorn, Ellbogen nach unten und hinten. */
@@ -338,6 +362,7 @@ export function pose(h: Haltung): Pose {
     ...(h.ebenen !== undefined ? { ebenen: h.ebenen } : {}),
     ...(h.spiegeln !== undefined ? { spiegeln: h.spiegeln } : {}),
     ...(h.ohneGesicht !== undefined ? { ohneGesicht: h.ohneGesicht } : {}),
+    ...(h.versteckt !== undefined ? { versteckt: h.versteckt } : {}),
   };
   const mit = (w: Record<string, number>): void => {
     p = { ...p, winkel: { ...p.winkel, ...w } };
@@ -360,7 +385,8 @@ export function pose(h: Haltung): Pose {
 
 /** Rastert eine Haltung. */
 export function zeichne(h: Haltung): Gerastert {
-  return PUPPE_VELA.rastern(pose(h), STIL_VELA);
+  const stil = h.gesicht === 'getroffen' ? STIL_GETROFFEN : h.gesicht === 'zu' ? STIL_ZU : STIL_VELA;
+  return PUPPE_VELA.rastern(pose(h), stil);
 }
 
 function bild(h: Haltung, dauer: number): Bild {
@@ -390,8 +416,8 @@ export const STAND: Haltung = {
 // ---------------------------------------------------------------------------
 
 /** Bilder des Gehzyklus und Frames je Bild (docs/design.md 8). */
-const GEHEN_BILDER = 12;
-const GEHEN_DAUER = 4;
+export const GEHEN_BILDER = 12;
+export const GEHEN_DAUER = 4;
 /** px je Bild: Frames je Bild · Laufgeschwindigkeit x (werte.ts LAUF_X = 1,75). */
 export const GEHEN_SCHRITT = (GEHEN_DAUER * LAUF_X) / EINS;
 /** Bilder, die ein Fuß steht (halber Zyklus, an den Enden beide Füße am Boden). */
@@ -402,7 +428,7 @@ const FERSE_AUF = 12;
 const SPITZE_AB = -22;
 
 /** Knöchel, wenn der Stiefel um winkel Grad um den Kontaktpunkt (Ferse oder Spitze) gedreht auf dem Boden steht. */
-function knoechelUeber(kontakt: Punkt, kontaktLokal: Punkt, winkel: number): Punkt {
+export function knoechelUeber(kontakt: Punkt, kontaktLokal: Punkt, winkel: number): Punkt {
   const w = (winkel * Math.PI) / 180;
   // drehe() der Geometrie: (x, y) → (x cos + y sin, −x sin + y cos)
   const dx = kontaktLokal.x * Math.cos(w) + kontaktLokal.y * Math.sin(w);
@@ -505,20 +531,20 @@ export function bildBeiUhr(dauern: readonly number[], uhr: number): number {
 }
 
 /** Hinteres Bein mit angehobener Ferse: Spitze auf dem Boden bei x, Stiefel um winkel Grad (negativ) gedreht. */
-function knoechelAufSpitze(x: number, winkel: number): Bein {
+export function knoechelAufSpitze(x: number, winkel: number): Bein {
   return { knoechel: knoechelUeber(P(x, 0), SPITZE, winkel), fuss: winkel };
 }
 
 /** Schlagarm im Trefferbild um diese px im Ellbogen und Handgelenk gestreckt (Zug wie im Zeichentrick, nur im Trefferbild; Festlegung G0). */
-const STRECKUNG_ARM = { UnterarmV: P(0, 1.5), HandV: P(0, 1) } as const;
-const STRECKUNG_ARM_H = { UnterarmH: P(0, 1.5), HandH: P(0, 1) } as const;
-const STRECKUNG_BEIN = { UnterschenkelV: P(0, 2), StiefelV: P(0, 1) } as const;
+export const STRECKUNG_ARM = { UnterarmV: P(0, 1.5), HandV: P(0, 1) } as const;
+export const STRECKUNG_ARM_H = { UnterarmH: P(0, 1.5), HandH: P(0, 1) } as const;
+export const STRECKUNG_BEIN = { UnterschenkelV: P(0, 2), StiefelV: P(0, 1) } as const;
 /** Hinterer Arm vorn gezeichnet (Auftrag 4, 2.4: der schlagende Arm liegt vorn). */
-const ARM_H_VORN = { OberarmH: 52, UnterarmH: 52, HandH: 53, SpuleH: 54 } as const;
+export const ARM_H_VORN = { OberarmH: 52, UnterarmH: 52, HandH: 53, SpuleH: 54 } as const;
 /** Vorderes Bein vor dem Rumpf (Tritt). */
-const BEIN_V_VORN = { OberschenkelV: 45, UnterschenkelV: 45, StiefelV: 46 } as const;
+export const BEIN_V_VORN = { OberschenkelV: 45, UnterschenkelV: 45, StiefelV: 46 } as const;
 /** Deckung: hintere Faust vor dem Kinn (relativ zur Schulter). */
-const DECKUNG_H: Arm = { ziel: P(9, 5), hand: 130, schulter: true };
+export const DECKUNG_H: Arm = { ziel: P(9, 5), hand: 130, schulter: true };
 
 function kette1(): Haltung[] {
   // Gerade mit der vorderen Faust aus dem Ausfallschritt
@@ -694,7 +720,7 @@ function kette4(): Haltung[] {
 // Animationen
 // ===========================================================================
 
-function animation(name: string, haltungen: readonly Haltung[], dauern: readonly number[], schleife: boolean, aktiv?: readonly number[]): Animation {
+export function animation(name: string, haltungen: readonly Haltung[], dauern: readonly number[], schleife: boolean, aktiv?: readonly number[]): Animation {
   if (haltungen.length !== dauern.length) throw new Error(`Vela ${name}: ${haltungen.length} Haltungen, ${dauern.length} Dauern`);
   const bilder = haltungen.map((h, i) => bild(h, dauern[i] as number));
   return aktiv !== undefined ? { name, schleife, bilder, aktiv } : { name, schleife, bilder };
@@ -707,7 +733,7 @@ export function trefferBild(stufe: number, dauern: readonly number[]): number {
 
 export const DAUERN = { kette1: KETTE1_DAUERN, kette2: KETTE2_DAUERN, kette3: KETTE3_DAUERN, kette4: KETTE4_DAUERN } as const;
 
-/** Alle Animationen von Vela (Phase 1). */
+/** Alle Animationen von Vela: Phase 1 (stand, gehen, Kette), dann Phase 2 (G1) in der Reihenfolge von Auftrag 4, Abschnitt 3. */
 export function velaAnimationen(): Animation[] {
   return [
     animation('stand', [STAND], [0], true),
@@ -716,7 +742,139 @@ export function velaAnimationen(): Animation[] {
     animation('kette2', kette2(), KETTE2_DAUERN, false, [trefferBild(2, KETTE2_DAUERN)]),
     animation('kette3', kette3(), KETTE3_DAUERN, false, [trefferBild(3, KETTE3_DAUERN)]),
     animation('kette4', kette4(), KETTE4_DAUERN, false, [trefferBild(4, KETTE4_DAUERN), bildBeiUhr(KETTE4_DAUERN, KETTE4_ZWEITES_FENSTER_VON)]),
+    ...bewegungAnimationen(),
+    ...kampfAnimationen(),
+    ...reaktionAnimationen(),
+    ...waffeAnimationen(),
+    ...neueinstiegAnimationen(),
   ];
+}
+
+// ===========================================================================
+// Werkzeuge für Phase 2 (G1)
+// ===========================================================================
+
+/**
+ * Bild mit dem Anker in der untersten Zeile (Phase 2, G1; docs/grafik.md
+ * 4.1): Der Anker liegt auf der Konturzeile unter dem tiefsten Pixel, die
+ * Figur steht also mit ihrem tiefsten Punkt auf der Höhe h der Logik (wie
+ * der Umsetzer, G0b; docs/grafik.md 5); in x bleibt er unter dem Fußpunkt
+ * der Puppe. Bodenposen setzen Sohle, Spitze, Knie oder Faust genau auf
+ * y = 0 (knoechelAufSpitze, knieAmBoden, faustAmBoden), dann ändert das nichts.
+ * Liegt der Anker in x außerhalb der Figur, rückt er an ihren Rand. Danach Streupixel entfernen wie im
+ * Schritt 6 der Puppe (docs/grafik.md 2.4), auch über Teilgrenzen.
+ */
+export function bildFrei(h: Haltung, dauer: number): Bild {
+  const g = zeichne(h);
+  streuAufraeumen(g.leinwand);
+  const r = g.leinwand.begrenzung();
+  if (r === null) return { leinwand: g.leinwand, ankerX: g.ankerX, ankerY: g.ankerY, dauer };
+  const ankerY = r.y + r.h - 1;
+  const ankerX = Math.max(r.x, Math.min(r.x + r.b - 1, g.ankerX));
+  return { leinwand: g.leinwand, ankerX, ankerY, dauer };
+}
+
+/**
+ * Streupixel über Teilgrenzen entfernen (das Aufräumen der Puppe wirkt nur
+ * innerhalb eines Teils; Regel 1.3): ein allein stehender Pixel bekommt die
+ * häufigste deckende Farbe seiner acht Nachbarn. Die Außenkontur (Kontur mit
+ * durchsichtigem Kantennachbarn) und die Glanzfarbe bleiben.
+ */
+function streuAufraeumen(l: Leinwand): void {
+  const RUNDEN = 4;
+  for (let r = 0; r < RUNDEN; r++) {
+    let geaendert = 0;
+    for (const q of streupixel(l, STIL_VELA.glanz)) {
+      const p = l.hole(q.x, q.y);
+      if (p === KONTUR && NACHBARN_4.some(([dx, dy]) => !deckend(l.hole(q.x + dx, q.y + dy)))) continue;
+      const zahl = new Map<Pixel, number>();
+      let beste = p;
+      let besteZahl = 0;
+      for (const [dx, dy] of NACHBARN_8) {
+        const n = l.hole(q.x + dx, q.y + dy);
+        if (!deckend(n)) continue;
+        const z = (zahl.get(n) ?? 0) + 1;
+        zahl.set(n, z);
+        if (z > besteZahl) {
+          besteZahl = z;
+          beste = n;
+        }
+      }
+      if (beste !== p) {
+        l.setze(q.x, q.y, beste);
+        geaendert++;
+      }
+    }
+    if (geaendert === 0) break;
+  }
+}
+
+/**
+ * Animation aus Haltungen mit dem Anker in der untersten Zeile (bildFrei).
+ * Gleiche Haltungen geben gleiche Bilder; das Blatt legt sie nur einmal ab
+ * (blatt.ts), etwa die rückwärts gezeigten Bilder des Spezialangriffs.
+ */
+export function animationFrei(name: string, haltungen: readonly Haltung[], dauern: readonly number[], schleife: boolean, aktiv?: readonly number[]): Animation {
+  if (haltungen.length !== dauern.length) throw new Error(`Vela ${name}: ${haltungen.length} Haltungen, ${dauern.length} Dauern`);
+  const cache = new Map<Haltung, Bild>();
+  const bilder = haltungen.map((h, i) => {
+    const dauer = dauern[i] as number;
+    const b = cache.get(h) ?? bildFrei(h, dauer);
+    cache.set(h, b);
+    return { ...b, dauer };
+  });
+  return aktiv !== undefined ? { name, schleife, bilder, aktiv } : { name, schleife, bilder };
+}
+
+/** Hinteres Bein kniend: Spitze bei x am Boden, Stiefel um 70° aufgestellt (Knie unten; Spezialangriff, Landungen). */
+export function knieAmBoden(x: number): Bein {
+  return knoechelAufSpitze(x, KNIE_STIEFEL);
+}
+
+/** Aufgestellter Stiefel beim Knien (Grad, Ferse oben; Festlegung G1). */
+const KNIE_STIEFEL = -70;
+
+/** Faust am Boden bei x: Handgelenk so hoch, dass der Handschuh (nach unten, Mitte HAND_MITTE, Halbachse HAND_RY) die Zeile über dem Boden noch füllt. */
+export function faustAmBoden(x: number): Arm {
+  return { ziel: P(x, -(HAND_MITTE + HAND_RY) - 0.1), hand: 0 };
+}
+
+/**
+ * Animation, die im Blatt die Zeile der vorigen fortsetzt (blatt.ts
+ * zeileFortsetzen, G1-8): Phase 2 packt verwandte Animationen in eine Zeile,
+ * sonst würde das Blatt höher als 2048 px (Auftrag 4, 2.2).
+ */
+export function fortsetzen(a: Animation): Animation {
+  return { ...a, zeileFortsetzen: true };
+}
+
+/**
+ * Haltung als Ganzes um den Punkt um gedreht (Grad, Konvention der Puppe:
+ * + dreht „unten“ nach „vorn“, der Kopf geht also nach hinten). Für Saltos,
+ * Flug und Liegen: Hüfte und Ziele drehen um den Punkt, Ziele relativ zur
+ * Schulter um die Schulter, Becken und Weltwinkel von Hand und Stiefel um
+ * den Winkel; Rumpf, Kopf und Pferdeschwanz bleiben relativ.
+ */
+export function gedreht(h: Haltung, winkel: number, um: Punkt): Haltung {
+  const dreh = (p: Punkt): Punkt => {
+    const v = drehe(P(p.x - um.x, p.y - um.y), winkel);
+    return P(um.x + v.x, um.y + v.y);
+  };
+  const arm = (a: Arm): Arm => ({
+    ziel: a.schulter === true ? drehe(a.ziel, winkel) : dreh(a.ziel),
+    ...(a.hand !== undefined ? { hand: a.hand + winkel } : {}),
+    ...(a.schulter !== undefined ? { schulter: a.schulter } : {}),
+  });
+  const bein = (b: Bein): Bein => ({ knoechel: dreh(b.knoechel), fuss: b.fuss + winkel });
+  return {
+    ...h,
+    huefte: dreh(h.huefte),
+    becken: (h.becken ?? 0) + winkel,
+    armV: arm(h.armV),
+    armH: arm(h.armH),
+    beinV: bein(h.beinV),
+    beinH: bein(h.beinH),
+  };
 }
 
 /** Ziel des Handgelenks in Figurkoordinaten (Schulterangaben aufgelöst). */
@@ -762,5 +920,7 @@ export function zwischen(a: Haltung, b: Haltung, t: number = 0.5): Haltung {
     ...(naeher.ebenen !== undefined ? { ebenen: naeher.ebenen } : {}),
     ...(naeher.spiegeln !== undefined ? { spiegeln: naeher.spiegeln } : {}),
     ...(naeher.ohneGesicht !== undefined ? { ohneGesicht: naeher.ohneGesicht } : {}),
+    ...(naeher.gesicht !== undefined ? { gesicht: naeher.gesicht } : {}),
+    ...(naeher.versteckt !== undefined ? { versteckt: naeher.versteckt } : {}),
   };
 }

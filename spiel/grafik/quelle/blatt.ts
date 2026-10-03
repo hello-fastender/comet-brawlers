@@ -28,6 +28,13 @@ export interface Animation {
   readonly bilder: readonly Bild[];
   /** Indizes der Bilder in den aktiven Frames der Logik (nur Angriffe; Auftrag 4, 2.3). */
   readonly aktiv?: readonly number[];
+  /**
+   * true: Die Animation setzt beim Packen die Zeile der vorigen fort, statt eine neue zu
+   * beginnen (umbrochen wird weiter bei maxBreite). Ergänzung G1 (Phase 2) für Figuren mit
+   * vielen Animationen, deren Blatt sonst höher als BLATT_MAX würde; ohne das Feld bleibt
+   * das Packen wie bisher (docs/grafik.md 7, G1-8).
+   */
+  readonly zeileFortsetzen?: boolean;
 }
 
 /** Eintrag eines Bildes im Atlas (Auftrag 4, 2.3). */
@@ -98,8 +105,8 @@ export function blattPacken(name: string, animationen: readonly Animation[], opt
   for (const anim of animationen) {
     if (namen.has(anim.name)) throw new Error(`Blatt ${name}: Animation ${anim.name} doppelt`);
     namen.add(anim.name);
-    // neue Zeile je Animation
-    if (zeilenHoehe > 0) {
+    // neue Zeile je Animation (außer zeileFortsetzen)
+    if (zeilenHoehe > 0 && anim.zeileFortsetzen !== true) {
       y += zeilenHoehe + abstand;
       x = abstand;
       zeilenHoehe = 0;
