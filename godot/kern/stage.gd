@@ -306,6 +306,10 @@ class Felder:
 
 	## Ganze Zahl; standard (null = keiner). Keine ganze Zahl: Meldung und 0.
 	func ganz(name: String, standard: Variant = null) -> int:
+		if standard == null and not werte.has(name):
+			# fehlendes Feld ohne Standard: text() meldet es einmal
+			text(name)
+			return 0
 		var w: String = text(name, null if standard == null else str(standard))
 		if KernStage.regexTreffer("^-?\\d+$", w) == null:
 			push_error(fehler("Feld „%s“ muss eine ganze Zahl sein, nicht „%s“" % [name, w]))
