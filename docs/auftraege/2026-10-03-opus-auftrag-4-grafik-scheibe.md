@@ -575,3 +575,27 @@ docs/bilder/kontakt_*.png, szene_*.png: <Liste>
 
 ### Fragen an den Nutzer (nummeriert, je ein Satz)
 ```
+
+---
+
+## 9. Fremdentwurf als Vergleich (Grok)
+
+Der Nutzer lässt testweise eine Figur, zuerst den Rammbock, auch von einem
+anderen Modell (Grok) entwerfen. Opus behandelt das so:
+
+1. **Konzeptbild**: Lädt der Nutzer ein Bild hoch, gilt es für G2 als
+   Entwurfsvorlage für Form, Haltung und Farben des Rammbocks; die
+   Stilregeln aus Abschnitt 1 (Palette, Umriss, Konturen) haben Vorrang,
+   Abweichungen stehen in `docs/grafik.md`.
+2. **Code**: Fügt der Nutzer eine Datei als Text ein (nach Haltepunkt 1,
+   erstellt gegen die Schnittstelle von `puppe.ts`), legt Opus sie als
+   `spiel/grafik/quelle/figuren/rammbock_fremd.ts` ab, lässt sie unverändert
+   durch `bauen.ts` laufen (gleiche Stilprüfungen wie alle Figuren) und
+   behebt nur, was den Bau verhindert (Typfehler, fehlende Importe), mit
+   Liste der Änderungen im Bericht. Kontaktbögen beider Fassungen nach
+   `docs/bilder/kontakt_rammbock.png` und `kontakt_rammbock_fremd.png`,
+   dazu ein Vergleichsbild `vergleich_rammbock.png` (beide im Stand und im
+   Schlag nebeneinander, 2×).
+3. Der Nutzer wählt an Haltepunkt 2, welche Fassung ins Spiel kommt; die
+   andere bleibt im Repo, wird aber nicht in den Atlas gepackt. Die
+   Entscheidung kommt als E24 nach `docs/erkenntnisse.md`.
