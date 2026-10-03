@@ -1,0 +1,166 @@
+{
+  "blatt": "objekte.png",
+  "animationen": {
+    "kometenbraten": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 1, "b": 28, "h": 18, "ankerX": 14, "ankerY": 17, "dauer": 0 }
+      ]
+    },
+    "eisnudelschale": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 20, "b": 20, "h": 14, "ankerX": 10, "ankerY": 13, "dauer": 0 }
+      ]
+    },
+    "sternbeeren": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 35, "b": 14, "h": 12, "ankerX": 6, "ankerY": 11, "dauer": 0 }
+      ]
+    },
+    "raketenwerfer": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 48, "b": 30, "h": 10, "ankerX": 15, "ankerY": 9, "dauer": 0 }
+      ]
+    },
+    "waffe_leer": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 59, "b": 30, "h": 10, "ankerX": 15, "ankerY": 9, "dauer": 0 }
+      ]
+    },
+    "rakete": {
+      "schleife": true,
+      "bilder": [
+        { "x": 1, "y": 70, "b": 16, "h": 6, "ankerX": 9, "ankerY": 3, "dauer": 2 },
+        { "x": 18, "y": 70, "b": 15, "h": 6, "ankerX": 8, "ankerY": 3, "dauer": 2 }
+      ]
+    },
+    "rakete_zuender": {
+      "schleife": true,
+      "bilder": [
+        { "x": 1, "y": 77, "b": 16, "h": 6, "ankerX": 9, "ankerY": 3, "dauer": 2 },
+        { "x": 18, "y": 77, "b": 15, "h": 6, "ankerX": 8, "ankerY": 3, "dauer": 2 }
+      ]
+    },
+    "fass": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 84, "b": 24, "h": 32, "ankerX": 12, "ankerY": 31, "dauer": 0 }
+      ]
+    },
+    "fass_truemmer": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 117, "b": 30, "h": 35, "ankerX": 15, "ankerY": 34, "dauer": 2 },
+        { "x": 32, "y": 117, "b": 47, "h": 47, "ankerX": 23, "ankerY": 46, "dauer": 4 },
+        { "x": 80, "y": 117, "b": 60, "h": 56, "ankerX": 30, "ankerY": 55, "dauer": 4 },
+        { "x": 141, "y": 117, "b": 69, "h": 43, "ankerX": 35, "ankerY": 42, "dauer": 6 },
+        { "x": 211, "y": 117, "b": 71, "h": 25, "ankerX": 36, "ankerY": 24, "dauer": 32 }
+      ]
+    },
+    "bosskiste": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 174, "b": 40, "h": 28, "ankerX": 20, "ankerY": 27, "dauer": 0 }
+      ]
+    },
+    "bosskiste_truemmer": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 203, "b": 44, "h": 31, "ankerX": 22, "ankerY": 30, "dauer": 2 },
+        { "x": 46, "y": 203, "b": 59, "h": 45, "ankerX": 29, "ankerY": 44, "dauer": 4 },
+        { "x": 106, "y": 203, "b": 64, "h": 54, "ankerX": 31, "ankerY": 53, "dauer": 4 },
+        { "x": 171, "y": 203, "b": 86, "h": 42, "ankerX": 41, "ankerY": 41, "dauer": 6 },
+        { "x": 258, "y": 203, "b": 90, "h": 11, "ankerX": 44, "ankerY": 10, "dauer": 32 }
+      ]
+    },
+    "magnetstoss1": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 258, "b": 13, "h": 16, "ankerX": 3, "ankerY": 8, "dauer": 2 },
+        { "x": 15, "y": 258, "b": 12, "h": 16, "ankerX": 2, "ankerY": 8, "dauer": 2 }
+      ],
+      "aktiv": [0, 1]
+    },
+    "magnetstoss2": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 275, "b": 15, "h": 18, "ankerX": 3, "ankerY": 9, "dauer": 2 },
+        { "x": 17, "y": 275, "b": 14, "h": 16, "ankerX": 2, "ankerY": 8, "dauer": 2 }
+      ],
+      "aktiv": [0, 1]
+    },
+    "magnetstoss3": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 294, "b": 26, "h": 26, "ankerX": 3, "ankerY": 18, "dauer": 2 },
+        { "x": 28, "y": 294, "b": 25, "h": 26, "ankerX": 2, "ankerY": 18, "dauer": 2 }
+      ],
+      "aktiv": [0, 1]
+    },
+    "magnetstoss4": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 321, "b": 31, "h": 26, "ankerX": 3, "ankerY": 13, "dauer": 2 },
+        { "x": 33, "y": 321, "b": 30, "h": 26, "ankerX": 2, "ankerY": 13, "dauer": 2 }
+      ],
+      "aktiv": [0, 1]
+    },
+    "funke": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 348, "b": 9, "h": 9, "ankerX": 4, "ankerY": 4, "dauer": 2 },
+        { "x": 11, "y": 348, "b": 16, "h": 16, "ankerX": 8, "ankerY": 8, "dauer": 2 },
+        { "x": 28, "y": 348, "b": 18, "h": 18, "ankerX": 9, "ankerY": 9, "dauer": 2 },
+        { "x": 47, "y": 348, "b": 18, "h": 18, "ankerX": 9, "ankerY": 9, "dauer": 2 }
+      ]
+    },
+    "eiswelle": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 367, "b": 45, "h": 35, "ankerX": 1, "ankerY": 34, "dauer": 6 },
+        { "x": 47, "y": 367, "b": 61, "h": 35, "ankerX": 1, "ankerY": 34, "dauer": 6 },
+        { "x": 109, "y": 367, "b": 77, "h": 35, "ankerX": 1, "ankerY": 34, "dauer": 6 },
+        { "x": 187, "y": 367, "b": 93, "h": 35, "ankerX": 1, "ankerY": 34, "dauer": 6 },
+        { "x": 281, "y": 367, "b": 109, "h": 35, "ankerX": 1, "ankerY": 34, "dauer": 6 },
+        { "x": 391, "y": 367, "b": 125, "h": 35, "ankerX": 1, "ankerY": 34, "dauer": 6 }
+      ],
+      "aktiv": [0, 1, 2, 3, 4, 5]
+    },
+    "explosion": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 403, "b": 24, "h": 24, "ankerX": 12, "ankerY": 23, "dauer": 2 },
+        { "x": 26, "y": 403, "b": 37, "h": 37, "ankerX": 19, "ankerY": 36, "dauer": 3 },
+        { "x": 64, "y": 403, "b": 47, "h": 48, "ankerX": 24, "ankerY": 47, "dauer": 4 },
+        { "x": 112, "y": 403, "b": 57, "h": 58, "ankerX": 29, "ankerY": 57, "dauer": 4 },
+        { "x": 170, "y": 403, "b": 66, "h": 66, "ankerX": 34, "ankerY": 65, "dauer": 5 },
+        { "x": 237, "y": 403, "b": 70, "h": 67, "ankerX": 36, "ankerY": 66, "dauer": 6 }
+      ],
+      "aktiv": [0, 1, 2, 3, 4]
+    },
+    "explosion_zuender": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 403, "b": 24, "h": 24, "ankerX": 12, "ankerY": 23, "dauer": 2 },
+        { "x": 26, "y": 403, "b": 37, "h": 37, "ankerX": 19, "ankerY": 36, "dauer": 3 },
+        { "x": 64, "y": 403, "b": 47, "h": 48, "ankerX": 24, "ankerY": 47, "dauer": 4 },
+        { "x": 112, "y": 403, "b": 57, "h": 58, "ankerX": 29, "ankerY": 57, "dauer": 4 },
+        { "x": 170, "y": 403, "b": 66, "h": 66, "ankerX": 34, "ankerY": 65, "dauer": 5 },
+        { "x": 237, "y": 403, "b": 70, "h": 67, "ankerX": 36, "ankerY": 66, "dauer": 6 }
+      ],
+      "aktiv": [0, 1, 2, 3]
+    },
+    "staub": {
+      "schleife": false,
+      "bilder": [
+        { "x": 1, "y": 471, "b": 22, "h": 6, "ankerX": 11, "ankerY": 5, "dauer": 3 },
+        { "x": 24, "y": 471, "b": 40, "h": 9, "ankerX": 20, "ankerY": 8, "dauer": 3 },
+        { "x": 65, "y": 471, "b": 54, "h": 8, "ankerX": 27, "ankerY": 7, "dauer": 3 }
+      ]
+    }
+  }
+}
