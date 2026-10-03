@@ -112,6 +112,42 @@ außerhalb, dann nur die gezogenen Bilder.
 
 ---
 
+### 2c. Teileblatt und Gliederpuppe mit echten Teilen (Weg D, bevorzugt)
+
+Die Posenblätter von Grok schwanken in Größe und Details (Jacke offen
+oder geschlossen). Einheitlich wird eine Figur nur, wenn sie genau einmal
+gezeichnet und danach bewegt wird (Cutout-Animation). Deshalb ist Weg D
+der bevorzugte Weg für Figuren, sobald der Nutzer ein Teileblatt liefert:
+
+1. Der Nutzer liefert `<figur>_t_teile.png`: alle Körperteile einzeln auf
+   einfarbigem Grund im selben Maßstab (Kopf, Zopf, Rumpf, Becken,
+   Oberarm, Unterarm, Faust, offene Hand, Oberschenkel, Unterschenkel, Fuß
+   seitlich, Fuß von vorn, dazu die ganze Figur im Stand als Maßstab),
+   Dreiviertelansicht, Licht von links oben.
+2. Opus schneidet die Teile aus (Zellen wie beim Umsetzer), kalibriert den
+   Maßstab an der ganzen Figur auf die Zielhöhe bei 2× (Abschnitt 1) und
+   legt sie als Bildteile unter `fremd/<figur>/teile/` ab, mit
+   `teile.txt`: je Teil Name, Ankerpunkt (Gelenk am Elternteil) und
+   Drehpunkt, von Opus nach dem Bild gesetzt.
+3. `puppe.ts` bekommt neben Kapseln und Polygonen eine Teilart „Bild“:
+   ein Bildteil mit Drehpunkt, der je Pose gedreht (in 15°-Schritten,
+   mit Nearest-Neighbour, danach Konturreparatur) und verschoben wird;
+   Zeichenreihenfolge je Pose wie bisher; Teiltausch je Pose (Faust oder
+   offene Hand, Fuß seitlich oder von vorn, Jacke beim Tritt).
+4. Die Posen der bestehenden Figurdateien (`figuren/vela.ts` usw.) bleiben
+   die Grundlage; sie werden nach den Grok-Posenblättern nachgestellt, wo
+   die Puppe steif wirkte (Getroffen, Umgeworfen, Aufstehen, Spott,
+   Sprungtritt). Fehlende Zwischenwinkel bei Ellbogen und Knie werden
+   durch Teiltausch gelöst (Unterarm gebeugt als eigenes Teil, wenn das
+   Teileblatt es hergibt; sonst Nachbestellung „Unterarm angewinkelt“).
+5. Kontaktbögen und Vergleichsbild wie in Phase 1; an Haltepunkt 1 stehen
+   dann drei Fassungen nebeneinander, wenn vorhanden: Gliederpuppe mit
+   Code-Teilen, Grok-Posenblätter umgesetzt, Puppe mit Grok-Teilen.
+
+Weg D hat Vorrang vor den Posenblättern, weil er Größe, Farben und
+Kleidung in jedem Bild gleich hält. Die Posenblätter bleiben Vorlage und
+Rückfall für einzelne Posen, die die Puppe nicht lesbar hinbekommt.
+
 ## 3. Phasen
 
 ### Phase 0: Einrichtung (Opus selbst)
