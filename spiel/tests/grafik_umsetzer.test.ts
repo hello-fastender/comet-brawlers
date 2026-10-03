@@ -17,7 +17,7 @@ import {
 } from '../grafik/quelle/palette.ts';
 import {
   bestimmeAnker, bestimmeFaktor, bildePalette, findeZellen, freistellen, gehgeschwindigkeit, glanzToene, innenkonturen, konturieren,
-  leseQuelle, leseZuordnung, pruefeGrundlinie, schneideAus, STANDARD, stufenFuer, stufenName, verkleinere,
+  leseQuelle, leseZuordnung, pruefeGrundlinie, schliesse, schneideAus, STANDARD, stufenFuer, stufenName, verkleinere,
 } from '../grafik/quelle/umsetzer.ts';
 
 const GRUND = NACHTHIMMEL.treppe[TON_GRUND];
@@ -260,4 +260,36 @@ test('Rammbock-Vorlage fremd/rammbock/zuordnung.txt: lesbar, Animationen nach Au
     assert.equal(a.dauern[i], w.aktiv_bis - w.aktiv_von + 1, `${name}: Trefferbild über die aktiven Frames`);
   }
   for (const [, wert] of z.gehen) assert.ok(gehgeschwindigkeit(wert) > 1, `${wert} aus werte.ts`);
+});
+
+test('Schließen (G0b-10): Innenlinie in Hintergrundfarbe verbindet, breite Lücke bleibt offen', () => {
+  const l = new Leinwand(80, 60);
+  l.fuelle(GRUND);
+  l.rechteck(10, 5, 20, 20, OLIV); // Hose
+  l.rechteck(10, 31, 20, 10, LEDER.treppe[TON_GRUND]); // Stiefel, 6 px Linie in Grundfarbe dazwischen
+  l.rechteck(50, 5, 20, 20, OLIV); // zweite Figur, 20 px entfernt
+  const fs = freistellen(l);
+  assert.equal(fs.maske[28 * 80 + 20], 1, 'Linie zwischen Hose und Stiefel wird Figur');
+  assert.equal(fs.maske[15 * 80 + 40], 0, 'breite Lücke bleibt Hintergrund');
+  assert.ok(fs.geschlossen >= 6 * 20);
+  assert.equal(findeZellen(fs).zellen.length, 2);
+  const offen = freistellen(l, { ...STANDARD, schliessen: 0 });
+  assert.equal(offen.geschlossen, 0);
+  assert.equal(findeZellen(offen, { ...STANDARD, schliessen: 0 }).verworfen.length + findeZellen(offen).zellen.length, 3, 'ohne Schließen zerfällt die erste Figur');
+  // Schließen ändert nur Hintergrund zu Figur, nie umgekehrt
+  const zeile = [1, 0, 0, 1, 0, 0, 0, 0, 1];
+  const m = new Uint8Array(9 * 5);
+  for (let y = 1; y <= 3; y++) zeile.forEach((v, x) => (m[y * 9 + x] = v));
+  const g = schliesse(m, 9, 5, 1);
+  assert.deepEqual([...g.subarray(2 * 9, 3 * 9)], [1, 1, 1, 1, 0, 0, 0, 0, 1], 'Lücke 2 px gefüllt, Lücke 4 px offen');
+  for (let j = 0; j < m.length; j++) assert.ok((g[j] as number) >= (m[j] as number));
+});
+
+test('Zuordnung: Maßstab je Blatt über eine Bezugszelle (G0b-11)', () => {
+  const kopf = 'figur x\nzielhoehe 71\nmaterialien HAUT_MITTEL\n';
+  const z = leseZuordnung(`${kopf}massstab a.png 1\nmassstab b.png 3 wie a.png 2\n`);
+  assert.deepEqual(z.massstab, { blatt: 'a.png', zelle: 1 });
+  assert.deepEqual(z.massstaebe, [{ blatt: 'b.png', zelle: 3, wie: { blatt: 'a.png', zelle: 2 } }]);
+  assert.throws(() => leseZuordnung(`${kopf}massstab a.png 1\nmassstab b.png 3 wie c.png 2\n`), /Bezugsblatt ohne Maßstab/);
+  assert.throws(() => leseZuordnung(`${kopf}massstab a.png 1\nmassstab a.png 3 wie a.png 2\n`), /zwei Maßstäbe/);
 });

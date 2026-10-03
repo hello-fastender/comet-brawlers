@@ -24,7 +24,7 @@
 // Aufruf: node --experimental-strip-types grafik/quelle/umsetzer.ts
 //         grafik/quelle/fremd/rammbock [--aus grafik/ausgabe] [--kontakt ../docs/bilder]
 
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import type { Befund as Stilbefund, Figur } from './bauen.ts';
@@ -100,6 +100,11 @@ export interface Parameter {
   readonly grundlinienToleranz: number;
   /** Höchstzahl der Durchgänge der Randentscheidung (größte Tiefe eines Randbereichs in Quellpixeln). */
   readonly durchgaenge: number;
+  /**
+   * Radius des Schließens in Quellpixeln (G0b-10): Lücken bis 2 · Radius zwischen Figurteilen werden
+   * Figur. Fremde Blätter zeichnen Innenlinien oft genau in der Hintergrundfarbe; 0 schaltet ab.
+   */
+  readonly schliessen: number;
   /** Höchstzahl der Runden beim Entfernen von Streupixeln (kontur.ts streupixelEntfernen). */
   readonly streuRunden: number;
 }
@@ -122,6 +127,7 @@ export const STANDARD: Parameter = {
   hoechstFarben: FARBBUDGET.figur - 1,
   grundlinienToleranz: 1 / 50,
   durchgaenge: 256,
+  schliessen: 4,
   streuRunden: 8,
 };
 
@@ -184,6 +190,8 @@ export interface Freistellung {
   /** Randpixel, die Figur wurden, und solche, die Hintergrund wurden. */
   readonly randFigur: number;
   readonly randHintergrund: number;
+  /** Pixel, die das Schließen zur Figur nahm (Innenlinien in Hintergrundfarbe). */
+  readonly geschlossen: number;
 }
 
 /** Abstand eines Pixels zum Hintergrund; durchsichtige Pixel gelten als Hintergrund. */
@@ -276,9 +284,48 @@ export function freistellen(bild: Leinwand, p: Parameter = STANDARD): Freistellu
       randHintergrund++;
     }
   }
-  const maske = new Uint8Array(n);
-  for (let j = 0; j < n; j++) maske[j] = klasse[j] === FIGUR ? 1 : 0;
-  return { breite, hoehe, maske, farbe, hintergrund: hg, randFigur, randHintergrund };
+  const offenMaske = new Uint8Array(n);
+  for (let j = 0; j < n; j++) offenMaske[j] = klasse[j] === FIGUR ? 1 : 0;
+  const maske = schliesse(offenMaske, breite, hoehe, p.schliessen);
+  let geschlossen = 0;
+  for (let j = 0; j < n; j++) if (maske[j] !== offenMaske[j]) geschlossen++;
+  return { breite, hoehe, maske, farbe, hintergrund: hg, randFigur, randHintergrund, geschlossen };
+}
+
+/**
+ * Laufende Summe eines Fensters der Breite 2r + 1 entlang Zeilen (schrittX 1) oder Spalten:
+ * Ergebnis 1, wo im Fenster mindestens `mindest` Einsen liegen (außerhalb zählt als 0).
+ */
+function fenster(m: Uint8Array, breite: number, hoehe: number, r: number, waagrecht: boolean, mindest: number): Uint8Array {
+  const aus = new Uint8Array(m.length);
+  const laenge = waagrecht ? breite : hoehe;
+  const linien = waagrecht ? hoehe : breite;
+  for (let l = 0; l < linien; l++) {
+    const idx = (i: number): number => (waagrecht ? l * breite + i : i * breite + l);
+    let summe = 0;
+    for (let i = 0; i < Math.min(r, laenge); i++) summe += m[idx(i)] as number;
+    for (let i = 0; i < laenge; i++) {
+      if (i + r < laenge) summe += m[idx(i + r)] as number;
+      if (i - r - 1 >= 0) summe -= m[idx(i - r - 1)] as number;
+      if (summe >= mindest) aus[idx(i)] = 1;
+    }
+  }
+  return aus;
+}
+
+/**
+ * Morphologisches Schließen mit einem Quadrat der Kantenlänge 2r + 1 (Dehnen, dann Schrumpfen,
+ * je getrennt nach Zeilen und Spalten). Füllt Lücken bis 2r px zwischen Figurteilen, lässt
+ * breitere Lücken und den Außenrand stehen. Die Maske wird nur größer.
+ */
+export function schliesse(maske: Uint8Array, breite: number, hoehe: number, r: number): Uint8Array {
+  if (r <= 0) return maske;
+  const voll = 2 * r + 1;
+  const gedehnt = fenster(fenster(maske, breite, hoehe, r, true, 1), breite, hoehe, r, false, 1);
+  const geschrumpft = fenster(fenster(gedehnt, breite, hoehe, r, true, voll), breite, hoehe, r, false, voll);
+  const aus = new Uint8Array(maske.length);
+  for (let j = 0; j < aus.length; j++) aus[j] = (maske[j] as number) | (geschrumpft[j] as number);
+  return aus;
 }
 
 /** Häufigste Farbe der Figurnachbarn eines Pixels (Gleichstand: erster in NACHBARN). */
@@ -1016,6 +1063,11 @@ export interface ZellBezug {
   readonly zelle: number;
 }
 
+/** Maßstab eines Blatts über eine Bezugszelle (Zeile `massstab <blatt> <zelle> wie <blatt> <zelle>`). */
+export interface MassstabBezug extends ZellBezug {
+  readonly wie: ZellBezug;
+}
+
 /** Bild einer Animation aus einer Zelle (Zeile `bild`). */
 export interface ZuordnungBild extends ZellBezug {
   readonly animation: string;
@@ -1042,6 +1094,11 @@ export interface Zuordnung {
   readonly zielhoehe: number;
   readonly materialien: readonly string[];
   readonly massstab: ZellBezug;
+  /**
+   * Maßstab weiterer Blätter (G0b-11): Zelle eines Blatts, die dieselbe Pose zeigt wie eine Zelle
+   * eines Blatts mit bekanntem Faktor; das Blatt wird so skaliert, dass beide gleich hoch sind.
+   */
+  readonly massstaebe: readonly MassstabBezug[];
   readonly animationen: readonly ZuordnungAnimation[];
   readonly bilder: readonly ZuordnungBild[];
   readonly kopien: readonly ZuordnungKopie[];
@@ -1059,7 +1116,7 @@ function ganz(text: string | undefined, zeile: number, was: string): number {
 /**
  * Liest fremd/<figur>/zuordnung.txt (Format in docs/grafik.md 5.3). Zeilen:
  *   figur <name> | typ <Typ> | zielhoehe <px> | materialien <M> …
- *   massstab <blatt> <zelle>
+ *   massstab <blatt> <zelle> [wie <blatt> <zelle>]
  *   animation <name> schleife|einmal <dauer> … [aktiv <i> …]
  *   bild <blatt> <zelle> <animation> <index> [liegend] [spiegeln]
  *   gleich|ersatz <animation> <index> <von> <vonIndex> [spiegeln]
@@ -1073,6 +1130,7 @@ export function leseZuordnung(text: string): Zuordnung {
   let zielhoehe = 0;
   let materialien: string[] = [];
   let massstab: ZellBezug | undefined;
+  const massstaebe: MassstabBezug[] = [];
   const animationen: ZuordnungAnimation[] = [];
   const bilder: ZuordnungBild[] = [];
   const kopien: ZuordnungKopie[] = [];
@@ -1096,9 +1154,13 @@ export function leseZuordnung(text: string): Zuordnung {
       case 'materialien':
         materialien = rest;
         break;
-      case 'massstab':
-        massstab = { blatt: rest[0] ?? '', zelle: ganz(rest[1], nr, 'Zelle') };
+      case 'massstab': {
+        const bezug = { blatt: rest[0] ?? '', zelle: ganz(rest[1], nr, 'Zelle') };
+        if (rest[2] === 'wie') massstaebe.push({ ...bezug, wie: { blatt: rest[3] ?? '', zelle: ganz(rest[4], nr, 'Bezugszelle') } });
+        else if (rest.length === 2) massstab = bezug;
+        else throw new Error(`zuordnung.txt, Zeile ${nr}: massstab <blatt> <zelle> [wie <blatt> <zelle>]`);
         break;
+      }
       case 'animation': {
         const name = rest[0];
         const art = rest[1];
@@ -1152,6 +1214,12 @@ export function leseZuordnung(text: string): Zuordnung {
   if (zielhoehe <= 0) throw new Error('zuordnung.txt: zielhoehe fehlt');
   if (materialien.length === 0) throw new Error('zuordnung.txt: materialien fehlen');
   if (massstab === undefined) throw new Error('zuordnung.txt: massstab fehlt');
+  const mitFaktor = new Set([massstab.blatt]);
+  for (const m of massstaebe) {
+    if (mitFaktor.has(m.blatt)) throw new Error(`zuordnung.txt: Blatt ${m.blatt} hat zwei Maßstäbe`);
+    if (!mitFaktor.has(m.wie.blatt)) throw new Error(`zuordnung.txt: massstab ${m.blatt} wie ${m.wie.blatt}: Bezugsblatt ohne Maßstab (vorher festlegen)`);
+    mitFaktor.add(m.blatt);
+  }
   const namen = new Set(animationen.map((a) => a.name));
   for (const b of bilder) {
     const a = animationen.find((x) => x.name === b.animation);
@@ -1161,7 +1229,7 @@ export function leseZuordnung(text: string): Zuordnung {
   for (const k of kopien) {
     if (!namen.has(k.animation) || !namen.has(k.von)) throw new Error(`zuordnung.txt: Kopie ${k.animation} ${k.index} ← ${k.von} ${k.vonIndex} nennt eine unbekannte Animation`);
   }
-  return { figur, typ, zielhoehe, materialien, massstab, animationen, bilder, kopien, gehen, parameter: parameter as Partial<Parameter> };
+  return { figur, typ, zielhoehe, materialien, massstab, massstaebe, animationen, bilder, kopien, gehen, parameter: parameter as Partial<Parameter> };
 }
 
 /** Angaben aus quelle.txt, die der Umsetzer braucht: festes Raster je Blatt. */
@@ -1227,6 +1295,8 @@ export interface Blattbericht {
   readonly verworfen: readonly Verworfen[];
   readonly leer: readonly number[];
   readonly grundlinie: readonly Grundlinienbefund[];
+  /** Pixel, die das Schließen zur Figur nahm. */
+  readonly geschlossen: number;
 }
 
 /** Ein nachzubestellendes Bild (fehlt im Blatt, im Atlas durch Wiederholung ersetzt). */
@@ -1245,18 +1315,23 @@ export interface Befund {
 
 export interface Ergebnis {
   readonly figur: string;
+  /** Faktor des Blatts mit der Stand-Zelle. */
   readonly faktor: number;
+  /** Faktor je benutztem Blatt (G0b-11). */
+  readonly faktoren: ReadonlyMap<string, number>;
   readonly blaetter: readonly Blattbericht[];
   readonly palette: Palettenergebnis;
   readonly animationen: readonly Animation[];
   readonly blatt: GepacktesBlatt;
   readonly nachbestellungen: readonly Nachbestellung[];
   readonly befunde: readonly Befund[];
+  /** Figur für die Prüfungen und den Bau in bauen.ts (mit den weichen Regeln, G0b-4). */
+  readonly pruefFigur: Figur;
 }
 
 /** Regeln aus figurPruefen (bauen.ts), die beim Umsetzer nur Befunde sind (Festlegung G0b-4). */
 const REGEL_FUSSKONTAKT = 'Fußkontakt';
-const WEICHE_REGELN: ReadonlySet<string> = new Set(['Umriss im Stand', REGEL_FUSSKONTAKT]);
+export const WEICHE_REGELN: ReadonlySet<string> = new Set(['Umriss im Stand', REGEL_FUSSKONTAKT]);
 
 /** Bild aus einer Zelle nach Palette und Kontur, mit Anker. */
 interface Zellbild {
@@ -1266,6 +1341,16 @@ interface Zellbild {
 
 function spiegelBild(z: Zellbild): Zellbild {
   return { leinwand: z.leinwand.gespiegelt(), anker: { x: z.leinwand.breite - 1 - z.anker.x, y: z.anker.y } };
+}
+
+/** Blätter, die eine Zuordnung braucht (Maßstab, Bezugszellen, Bilder), sortiert. */
+export function benutzteBlaetter(zu: Zuordnung): string[] {
+  const s = new Set<string>([zu.massstab.blatt, ...zu.bilder.map((b) => b.blatt)]);
+  for (const m of zu.massstaebe) {
+    s.add(m.blatt);
+    s.add(m.wie.blatt);
+  }
+  return [...s].sort();
 }
 
 /**
@@ -1279,10 +1364,10 @@ export function setzeUm(eingabe: Eingabe): Ergebnis {
   const befunde: Befund[] = [];
 
   // 1 und 2: Freistellen und Zellen je benutztem Blatt (Reihenfolge nach Namen).
-  const benutzt = new Set<string>([zu.massstab.blatt, ...zu.bilder.map((b) => b.blatt)]);
+  const benutzt = benutzteBlaetter(zu);
   const blaetter: Blattbericht[] = [];
   const zellbestand = new Map<string, { fs: Freistellung; zellen: Zellen }>();
-  for (const name of [...benutzt].sort()) {
+  for (const name of benutzt) {
     const bild = eingabe.blaetter.get(name);
     if (bild === undefined) throw new Error(`Umsetzer: Blatt ${name} fehlt`);
     const fs = freistellen(bild, p);
@@ -1292,7 +1377,7 @@ export function setzeUm(eingabe: Eingabe): Ergebnis {
     zellbestand.set(name, { fs, zellen });
     blaetter.push({
       blatt: name, breite: bild.breite, hoehe: bild.hoehe, hintergrund: fs.hintergrund, raster,
-      zellen: zellen.zellen, verworfen: zellen.verworfen, leer: zellen.leer, grundlinie,
+      zellen: zellen.zellen, verworfen: zellen.verworfen, leer: zellen.leer, grundlinie, geschlossen: fs.geschlossen,
     });
     if (fs.hintergrund.streuung > p.toleranzHintergrund) {
       befunde.push({ hart: false, text: `${name}: Hintergrund nicht einfarbig (Ecken weichen bis ${fs.hintergrund.streuung.toFixed(1)} ab)` });
@@ -1306,9 +1391,18 @@ export function setzeUm(eingabe: Eingabe): Ergebnis {
     return { ...b, zelle };
   };
 
-  // 3: Maßstab aus der Stand-Zelle, ein Faktor für alle Blätter.
+  // 3: Maßstab aus der Stand-Zelle; ein Faktor für alle Blätter, außer ein Blatt hat einen eigenen
+  // über eine Bezugszelle (G0b-11): dann so, dass seine Zelle so hoch wird wie die verkleinerte Bezugszelle.
   const stand = zelleVon(zu.massstab);
   const faktor = bestimmeFaktor(schneideAus(stand.fs, stand.zellen, stand.zelle), zu.zielhoehe, p);
+  const faktoren = new Map<string, number>([[zu.massstab.blatt, faktor]]);
+  for (const m of zu.massstaebe) {
+    const ref = zelleVon(m.wie);
+    const refHoehe = deckendeHoehe(verkleinertBereinigt(schneideAus(ref.fs, ref.zellen, ref.zelle), faktoren.get(m.wie.blatt) as number, p));
+    const z = zelleVon(m);
+    faktoren.set(m.blatt, bestimmeFaktor(schneideAus(z.fs, z.zellen, z.zelle), refHoehe, p));
+  }
+  const faktorVon = (blatt: string): number => faktoren.get(blatt) ?? faktor;
 
   // Verkleinerte Zellen in fester Reihenfolge (Stand zuerst, dann nach Zuordnung), jede nur einmal.
   const schluessel = (b: ZellBezug): string => `${b.blatt}#${b.zelle}`;
@@ -1316,7 +1410,7 @@ export function setzeUm(eingabe: Eingabe): Ergebnis {
   for (const b of zu.bilder) if (!reihenfolge.some((r) => schluessel(r) === schluessel(b))) reihenfolge.push(b);
   const verkleinert = reihenfolge.map((b) => {
     const z = zelleVon(b);
-    return verkleinertBereinigt(schneideAus(z.fs, z.zellen, z.zelle), faktor, p);
+    return verkleinertBereinigt(schneideAus(z.fs, z.zellen, z.zelle), faktorVon(b.blatt), p);
   });
 
   // 4: Palette über alle Bilder der Figur.
@@ -1406,20 +1500,36 @@ export function setzeUm(eingabe: Eingabe): Ergebnis {
   }
 
   const blatt = blattPacken(zu.figur, animationen);
-  return { figur: zu.figur, faktor, blaetter, palette, animationen, blatt, nachbestellungen, befunde };
+  const alleFaktoren = new Map([...benutzt].sort().map((b) => [b, faktorVon(b)] as const));
+  const [ersteGehen] = [...zu.gehen];
+  const pruefFigur: Figur = ersteGehen === undefined
+    ? { ...figur, weich: WEICHE_REGELN }
+    : {
+      ...figur,
+      weich: WEICHE_REGELN,
+      gehen: ersteGehen[0],
+      schritt: gehgeschwindigkeit(ersteGehen[1]) * ((animationen.find((a) => a.name === ersteGehen[0]) as Animation).bilder[0] as Bild).dauer,
+    };
+  return { figur: zu.figur, faktor, faktoren: alleFaktoren, blaetter, palette, animationen, blatt, nachbestellungen, befunde, pruefFigur };
 }
 
 // ===========================================================================
 // 10. Protokoll und Aufruf
 // ===========================================================================
 
+/** Höchstzahl der Quellfarben über dem Befundabstand, die das Protokoll einzeln nennt (die häufigsten). */
+const PROTOKOLL_FARBEN = 20;
+
 /** Protokoll als Markdown (für docs/grafik.md 5): Blätter, Zellen, Palette mit Abständen, Nachbestellungen, Befunde. */
 export function protokoll(e: Ergebnis, p: Parameter = STANDARD): string {
   const z: string[] = [];
-  z.push(`### Protokoll ${e.figur}`, '', `Faktor ${e.faktor.toFixed(6)}; MD5 des Blatts ${md5(blattBytes(e.blatt).png)}`, '');
-  z.push('| Blatt | Maß | Hintergrund | Zellen | verworfen | Raster |', '|---|---|---|---|---|---|');
+  z.push(`### Protokoll ${e.figur}`, '', `MD5 des Blatts ${md5(blattBytes(e.blatt).png)}`, '');
+  z.push('| Blatt | Maß | Hintergrund | Zellen je Zeile | verworfen | geschlossen px | Raster | Faktor |', '|---|---|---|---|---|---|---|---|');
   for (const b of e.blaetter) {
-    z.push(`| ${b.blatt} | ${b.breite} × ${b.hoehe} | ${pixelZuHex(b.hintergrund.farbe)} | ${b.zellen.length} | ${b.verworfen.length} | ${b.raster === undefined ? '–' : `${b.raster.spalten} × ${b.raster.zeilen}`} |`);
+    const jeZeile: number[] = [];
+    for (const c of b.zellen) jeZeile[c.zeile - 1] = (jeZeile[c.zeile - 1] ?? 0) + 1;
+    const raster = b.raster === undefined ? '–' : `${b.raster.spalten} × ${b.raster.zeilen}`;
+    z.push(`| ${b.blatt} | ${b.breite} × ${b.hoehe} | ${pixelZuHex(b.hintergrund.farbe)} | ${[...jeZeile].map((n) => n ?? 0).join(' + ')} = ${b.zellen.length} | ${b.verworfen.length} | ${b.geschlossen} | ${raster} | ${(e.faktoren.get(b.blatt) ?? e.faktor).toFixed(4)} |`);
   }
   z.push('', '| Stufe | Farbe | Pixel | mittlerer Abstand | größter Abstand |', '|---|---|---|---|---|');
   for (const s of e.palette.stufen) {
@@ -1433,8 +1543,9 @@ export function protokoll(e: Ergebnis, p: Parameter = STANDARD): string {
   z.push(`Abstand pixelgewichtet ${e.palette.mittlererAbstand.toFixed(1)}, größter ${e.palette.groessterAbstand.toFixed(1)}, über ${p.befundAbstand}: ${(e.palette.befundAnteil * 100).toFixed(1)} % der Pixel.`);
   const weit = e.palette.abbildungen.filter((a) => a.abstand > p.befundAbstand);
   if (weit.length > 0) {
-    z.push('', '| Quellfarbe | Stufe | Abstand | Pixel |', '|---|---|---|---|');
-    for (const a of weit) z.push(`| ${pixelZuHex(a.quelle)} | ${stufenName(a.stufe)} | ${a.abstand.toFixed(1)} | ${a.pixel} |`);
+    z.push('', `Quellfarben über ${p.befundAbstand}, die ${Math.min(weit.length, PROTOKOLL_FARBEN)} häufigsten von ${weit.length}:`, '');
+    z.push('| Quellfarbe | Stufe | Abstand | Pixel |', '|---|---|---|---|');
+    for (const a of weit.slice(0, PROTOKOLL_FARBEN)) z.push(`| ${pixelZuHex(a.quelle)} | ${stufenName(a.stufe)} | ${a.abstand.toFixed(1)} | ${a.pixel} |`);
   }
   z.push('', 'Nachbestellungen:');
   if (e.nachbestellungen.length === 0) z.push('- keine');
@@ -1451,7 +1562,7 @@ export function umsetzenOrdner(ordner: string, parameter: Partial<Parameter> = {
   const quellPfad = join(ordner, 'quelle.txt');
   const quelle = leseQuelle(existsSync(quellPfad) ? readFileSync(quellPfad, 'utf8') : '');
   const blaetter = new Map<string, Leinwand>();
-  for (const datei of readdirSync(ordner).filter((d) => d.endsWith('.png')).sort()) blaetter.set(datei, pngDateiLesen(join(ordner, datei)));
+  for (const datei of benutzteBlaetter(zuordnung)) blaetter.set(datei, pngDateiLesen(join(ordner, datei)));
   return setzeUm({ blaetter, zuordnung, quelle, parameter });
 }
 

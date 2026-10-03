@@ -225,6 +225,7 @@ spiel/grafik/quelle/
   bauen.ts       CLI und Prüfungen: baut alle Figuren, prüft, schreibt Blätter, Atlanten, Kontaktbögen, MD5
   figuren/vela.ts  Vela (Teile, Maße, Tonzuteilung, Posen)
   umsetzer.ts, fremd/   G0b (Abschnitt 5)
+  vergleich.ts   Vergleichsbild Rammbock für Haltepunkt 1 (G0b, Abschnitt 5.7)
 spiel/grafik/ausgabe/   <figur>.png und <figur>.json (werden committet)
 docs/bilder/kontakt_<figur>_<animation>.png
 ```
@@ -385,7 +386,11 @@ function textBreite(text: string, faktor = 1): number
 
 ```ts
 interface Figur { name: string; umriss: Umriss; animationen: Animation[]; glanz: Set<Pixel>;
-                  budget: number; schritt?: number; gehen?: string }  // schritt: px je Bild beim Gehen
+                  budget: number; schritt?: number; gehen?: string;  // schritt: px je Bild beim Gehen
+                  weich?: Set<string> }                              // Regeln nur als Hinweis (G0b, 5.4)
+function fremdFiguren(): Figur[]                     // Figuren aus Fremdblättern über den Umsetzer (G0b)
+function vergleichBytes(gebaut: Figur[]): Uint8Array | null  // vergleich_rammbock.png (G0b)
+const FREMD: string; FREMD_ORDNER: string[]          // spiel/grafik/quelle/fremd/, ['rammbock']
 interface Befund { figur: string; animation: string; bild: number; regel: string; text: string }
 function figurPruefen(figur: Figur): Befund[]       // alle Stilregeln aus 2.5
 function figurAusgeben(figur: Figur, optionen?: { blatt?: boolean; kontakt?: boolean; ausgabe?: string; bilder?: string }): Map<string, string>  // schreibt Blatt, Atlas, Kontaktbögen; Datei → MD5
@@ -450,6 +455,12 @@ Keine Änderung an den Signaturen aus 2.3. Ergänzt (Stand Ende G0):
 `figurBytes()`, `bauen()`, `AUSGABE`, `BILDER`. Kontaktbögen beschriften
 jedes Bild mit `Nummer:DauerF`. Berichtigt: `figurAusgeben` gibt eine
 Tabelle Datei → MD5 zurück (in 2.3 stand zuerst `{ md5 }`).
+
+Ergänzt durch G0b (Freigabe Opus): `bauen.ts` `Figur.weich`,
+`fremdFiguren()`, `vergleichBytes()`, `FREMD`, `FREMD_ORDNER`; `bauen()`
+baut zusätzlich die Fremdfiguren und `vergleich_rammbock.png` und meldet
+weiche Befunde über die Option `hinweis` (je Regel gezählt), ohne
+abzubrechen. `figuren()` bleibt unverändert (nur Gliederpuppen).
 
 ## 3. Zuordnung von Logik zu Animation
 
@@ -650,8 +661,14 @@ nicht.
    wird und am Hintergrund liegt, bekommt die häufigste Farbe seiner
    Figurnachbarn (Kantenglättung entfernt). Eines im Inneren behält seine
    Farbe (Innenlinien, dunkle Flächen). Gleichstand nach allen Durchgängen:
-   Abstand über der Mitte beider Toleranzen ist Figur. Ergebnis: Maske ohne
-   Halbtransparenz.
+   Abstand über der Mitte beider Toleranzen ist Figur. Danach
+   **Schließen** (G0b-10): Dehnen und Schrumpfen der Maske mit einem
+   Quadrat von 2r + 1 px (r = `schliessen`). Lücken bis 2r px zwischen
+   Figurteilen werden Figur und behalten ihre Farbe. Grok zeichnet
+   Innenlinien genau in der Hintergrundfarbe (Rammbock: Linie zwischen Hose
+   und Stiefel 6 px breit, Abstand zum Grund 4 bis 9), ohne Schließen
+   zerfällt die Figur. Breitere Lücken (zwischen Arm und Rumpf) und der
+   Außenrand bleiben. Ergebnis: Maske ohne Halbtransparenz.
 3. **Zellen**: Flutfüllung über die Maske (8er-Nachbarschaft). Ein Bereich
    ist groß, wenn sein Rechteck mindestens 1/50 der Blattfläche misst oder
    mindestens 1/4 des größten Rechtecks (G0b-1). Kleine Bereiche, deren
@@ -671,7 +688,11 @@ nicht.
    „Stand“): Rohfaktor Zielhöhe / Zellhöhe. Deckung und Rundung können oben
    oder unten eine Zeile kosten. Deshalb sucht eine Halbierung im Bereich
    ±1,5 Zeilen den kleinsten Faktor, bei dem der verkleinerte Stand genau
-   die Zielhöhe hat (G0b-3). Derselbe Faktor gilt für alle Blätter.
+   die Zielhöhe hat (G0b-3). Derselbe Faktor gilt für alle Blätter,
+   außer ein Blatt hat eine Zeile `massstab <blatt> <zelle> wie <blatt>
+   <zelle>` (G0b-11): Dann bekommt es den Faktor, mit dem seine Zelle so
+   hoch wird wie die verkleinerte Bezugszelle (dieselbe Pose auf einem
+   Blatt mit bekanntem Faktor).
 6. **Verkleinern** mit Flächenmittel: Jeder Zielpixel deckt
    1/Faktor × 1/Faktor Quellpixel. Ab einer Deckung von 1/2 wird er
    deckend, mit dem flächengewichteten Mittel der deckenden Quellfarben
@@ -727,6 +748,7 @@ je Figur mit `parameter <name> <zahl>` in `zuordnung.txt`.
 | `hoechstFarben` | 15 | `FARBBUDGET.figur` − 1 (durchsichtig) |
 | `grundlinienToleranz` | 1/50 der Zeilenhöhe | Festlegung G0b |
 | `durchgaenge` | 256 | größte Tiefe eines Randbereichs in Quellpixeln |
+| `schliessen` | 4 px (Quelle) | G0b-10: schließt Innenlinien bis 8 px; bei Grok-Blättern um 2000 px sind sie 3 bis 6 px breit |
 | `streuRunden` | 8 | Runden von `streupixelEntfernen` |
 
 ### 5.3 Dateien je Figur (`spiel/grafik/quelle/fremd/<figur>/`)
@@ -744,6 +766,7 @@ je Figur mit `parameter <name> <zahl>` in `zuordnung.txt`.
 | `zielhoehe <px>` | Höhe des Stands ohne Schatten (Rammbock 71 = 76 − 5) |
 | `materialien <M> …` | Materialien aus `palette.ts` (Tabelle 5.5) |
 | `massstab <blatt> <zelle>` | Zelle der Pose „Stand“ |
+| `massstab <blatt> <zelle> wie <blatt> <zelle>` | Faktor eines weiteren Blatts über dieselbe Pose auf einem Blatt mit bekanntem Faktor (G0b-11) |
 | `animation <name> schleife\|einmal <dauer> … [aktiv <i> …]` | Animation mit Richtwert der Dauer je Bild und aktiven Bildern |
 | `bild <blatt> <zelle> <animation> <index> [liegend] [spiegeln]` | Zelle → Animation und Bildindex |
 | `gleich <animation> <index> <von> <vonIndex> [spiegeln]` | gewollte Wiederholung |
@@ -757,8 +780,11 @@ Aufruf im Ordner `spiel/`:
 node --experimental-strip-types grafik/quelle/umsetzer.ts grafik/quelle/fremd/rammbock --kontakt ../docs/bilder
 ```
 
-Er schreibt `grafik/ausgabe/<figur>.png` und `.json` (mit `--aus` ein
-anderer Ordner) und mit `--kontakt` die Kontaktbögen
+`npm run grafik` baut die Ordner aus `FREMD_ORDNER` (`bauen.ts`) mit,
+zusammen mit den Gliederpuppen, samt Kontaktbögen und
+`vergleich_rammbock.png`. Einzeln aufgerufen schreibt der Umsetzer
+`grafik/ausgabe/<figur>.png` und `.json` (mit `--aus` ein anderer Ordner)
+und mit `--kontakt` die Kontaktbögen
 `kontakt_<figur>_<animation>.png`. Auf die Standardausgabe gehen das
 Protokoll als Markdown (Blätter, Palette mit Abständen je Stufe,
 Quellfarben über 72, Nachbestellungen, Befunde) und das MD5 des Blatts.
@@ -767,7 +793,9 @@ Das Exit-Ergebnis ist 1 bei harten Befunden.
 ### 5.4 Prüfungen
 
 Es gelten dieselben Prüfungen wie bei der Gliederpuppe (`figurPruefen`,
-2.5). **Hart** (Exit 1): Kontur geschlossen, Streupixel, Farbzählung je
+2.5), im Umsetzer und noch einmal in `bauen()`. Die Figur trägt
+`weich` = {Umriss im Stand, Fußkontakt}; `npm run grafik` meldet diese
+Befunde als Hinweis und bricht nur bei harten ab. **Hart** (Exit 1): Kontur geschlossen, Streupixel, Farbzählung je
 Bild und je Figur, Anker im Bild, aktive Indizes. **Befund** (G0b-4):
 Umriss im Stand, Fußkontakt je Zeile `gehen` (Schritt =
 Gehgeschwindigkeit × Dauer des ersten Bildes). Dazu kommen als Befunde:
@@ -810,30 +838,163 @@ eine Stufe aus dem Budget.
   sie auf, schmale Innenlinien können dabei verschwinden.
 - Der Fußkontakt fremder Gehzyklen trifft die Geschwindigkeit der Logik
   nur zufällig. Er ist ein Befund, keine Korrektur.
+- Das Schließen (G0b-10) füllt auch echte Spalten unter 2r px (eng
+  stehende Beine, Achsel). Im Zielmaßstab sind sie unter 1 px breit und
+  wären ohnehin verschwunden. Liegen zwei Figuren näher als 2r px
+  beieinander, verschmelzen sie zu einer Zelle; dann `schliessen`
+  verkleinern.
 
 ### 5.7 Stand Rammbock und Nachbestellungen
 
-Die Grok-Blätter des Rammbocks liegen noch nicht im Repo (Stand
-2026-10-03). `fremd/rammbock/zuordnung.txt` ist als Entwurf angelegt: alle
-Animationen aus Auftrag 4, 3 mit Richtwerten, die Angriffe nach
-`NAH_ANGRIFFE` (Ausholen = Startup, Trefferbild über die aktiven Frames,
-geprüft in `grafik_umsetzer.test.ts`), die gewollten Wiederholungen
-(`gehen_schnell` und `auftritt_versteck` = `gehen`, `kampfhaltung` =
-`hocke_ankuendigung`, `wiegen` = `spott`, `tot` = `umgeworfen` +
-`liegen`), Stand und Maßstab aus Blatt A Zelle 1. Die Zeilen `bild` folgen
-nach der Sichtprüfung der Blätter. Dann folgen hier das
-Palettenprotokoll und die Liste der Nachbestellungen.
+Stand 2026-10-03 (G0b): Die Grok-Blätter liegen unter
+`spiel/grafik/quelle/fremd/rammbock/` (A Posen, B Gehen, C Angriffe,
+D Reaktionen, E Griff; Konzeptbild nur als Referenz). `npm run grafik`
+baut daraus `spiel/grafik/ausgabe/rammbock_fremd.png` (346 × 1017,
+22 Animationen, 91 Bilder, MD5 `0aec056bbf47f89783e3adfeeeddf387`),
+`rammbock_fremd.json`, die Kontaktbögen
+`docs/bilder/kontakt_rammbock_fremd_<animation>.png` und
+`docs/bilder/vergleich_rammbock.png`. Keine harten Befunde.
 
-Laut Bestellliste (`docs/grafik-bestellung.md`, Rammbock) sind diese
-Reihen noch nicht erzeugt. Fehlen sie beim Umsetzen, werden sie zu
-Nachbestellungen:
+**Bildzahlen je Reihe** (vom Umsetzer gezählt, wie bestellt): A 4 + 4 + 4,
+B 8, C 5 + 5 + 4 + 2, D 3 + 5 + 6 + 6, E 3. Nichts verworfen.
+**Inhaltlich weicht die Sprungtritt-Reihe (C, Zellen 11 bis 14) ab:**
+Bild 1 zeigt eine Kampfhaltung statt der tiefen Hocke, Bild 4 einen
+Schlag im Stand statt der Landung in der Hocke. Bild 2 (Absprung) und
+Bild 3 (frei in der Luft mit Knie) sind brauchbar.
 
-- Sprungtritt, genau 4 Bilder: tiefe Hocke, Absprung, frei in der Luft
-  mit vorgestrecktem Knie, Landung (`sprungtritt` 0 bis 3).
-- Blatt D Reaktionen: getroffen 3, umgeworfen 5, aufstehen 6, Spott 6
-  (`getroffen`, `umgeworfen`, `aufstehen`, `spott`).
-- Festgehalten, geworfen kopfüber, geworfen waagrecht (`gehalten`,
-  `geworfen`).
+**Maßstab**: Grok hat die Figur auf jedem Blatt anders groß gezeichnet
+(Stand auf A 445 px, auf D 339 px, Festgehalten auf E 748 px). Deshalb hat
+jedes Blatt einen eigenen Faktor über eine gemeinsame Pose (G0b-11):
+
+| Blatt | Bezug | Faktor | geschlossen px |
+|---|---|---|---|
+| A Posen | Stand (Zelle 1) auf 71 px | 0,1596 | 75 229 |
+| B Gehen | Zelle 1 wie A 2 (Schrittstellung) | 0,2302 | 29 740 |
+| C Angriffe | Zelle 1 wie A 4 (Kampfhaltung) | 0,1680 | 98 420 |
+| D Reaktionen | Zelle 14 wie A 1 (Stand) | 0,2094 | 74 009 |
+| E Griff | Zelle 1 wie A 1 (Stand) | 0,0949 | 31 402 |
+
+**Zuordnung** (`zuordnung.txt`): stand und haltung 0 = A1; gehen = B1 bis
+B8; schlag_a (RA) = C1 bis C5; schlag_b (RB) = A4, A5, A6, Lücke, A4;
+umwerfschlag (RU) = C6 bis C10; sprungtritt (RS) = C12, C13, dann die Hocke
+C16 und C15 als Ersatz für die Landung; hocke_ankuendigung = C15, C16;
+auftritt_hocke = A11; aufstehen_hocke = D12 bis D14; getroffen = D1 bis
+D3; umgeworfen = D4 bis D8; liegen = D9; aufstehen = D9 bis D14; spott =
+D15 bis D20; gehalten = E1; geworfen = E2, E3. Gewollte Wiederholungen:
+gehen_schnell und auftritt_versteck = gehen, kampfhaltung = Hocke, wiegen
+= spott, tot = umgeworfen + liegen. Nicht verwendet: A2, A3, A7 bis A10,
+A12, C11, C14.
+
+**Palettenprotokoll** (eine Palette über alle 50 verwendeten Zellen):
+
+| Stufe | Farbe | Pixel | mittlerer Abstand | größter Abstand |
+|---|---|---|---|---|
+| HAUT_MITTEL:2 | #C98E68 | 5027 | 49,2 | 96,6 |
+| HAUT_MITTEL:3 | #D6B493 | 1299 | 65,5 | 101,8 |
+| WESTE_OLIV:0 | #151E0C | 1148 | 24,4 | 41,9 |
+| WESTE_OLIV:1 | #3B4B21 | 4452 | 25,8 | 54,7 |
+| WESTE_OLIV:2 | #6B7A3A | 1963 | 29,9 | 76,0 |
+| HOSE_BRAUN:0 | #0D0605 | 251 | 17,5 | 24,5 |
+| HOSE_BRAUN:1 | #3B231A | 10452 | 22,4 | 54,5 |
+| HOSE_BRAUN:2 | #6A4A32 | 7439 | 23,5 | 57,7 |
+| HOSE_BRAUN:3 | #8E6C46 | 5550 | 40,2 | 94,3 |
+| STAHL:0 | #31334E | 1047 | 41,1 | 60,4 |
+| STAHL:2 | #6F7C99 | 382 | 69,8 | 97,5 |
+| LEDER:1 | #1C110E | 3179 | 18,5 | 35,6 |
+| LEDER:2 | #4A3428 | 9292 | 22,6 | 53,5 |
+| LEDER:3 | #6D533D | 3579 | 39,1 | 77,3 |
+| KONTUR | #140E22 | 858 | 28,9 | 55,6 |
+
+Gestrichen (Farbbudget): STAHL:4, STAHL:1, STAHL:3, WESTE_OLIV:3. Abstand
+pixelgewichtet 29,9, größter 101,8; 0,9 % der Pixel liegen über 72
+(438 Quellfarben, vor allem helle gelbliche Haut um #DCAE60 und
+neutralgraue Knieschützer um #9A938A).
+
+**Befunde**:
+
+- Farbe: Grok malt die Haut gelblicher und heller als `HAUT_MITTEL`
+  (mittlerer Abstand 49, Lichter 65). Die Knieschützer sind neutralgrau
+  statt stahlblau. Nach der Abbildung wirkt die Figur dunkler und
+  bräunlicher als auf den Blättern. Die Knieschützer behalten nur zwei
+  Stahltöne, weil das Budget drei Stahlstufen streicht.
+- Umriss: Der Stand ist 22 × 71 px (Gliederpuppe 47 × 70, Umriss 60 × 76).
+  Grok zeigt den Rammbock streng von der Seite und schmal, nicht „breit
+  mit Polsterweste“ (Auftrag 4, 1.4). Geworfen kopfüber ist 69 px hoch
+  (Umriss 60, liegend gedreht geprüft).
+- Fußkontakt: In 7 von 8 Bildwechseln von gehen rückt keine Sohle um
+  6,4 px zurück. Der Grok-Gehzyklus ist kein gleichmäßiger Lauf auf der
+  Stelle; im Spiel rutschen die Füße.
+- Grundlinie: Abweichungen bei Luftposen (A7, A9, C13, D5, D6, E3) und
+  beim Liegen (D8, 19 px tiefer); dazu stehen in der Sprungtritt-Reihe
+  C11 und C14 24 px und auf E das Festgehalten (E1) 17 px tiefer als der
+  Median ihrer Reihe. Grok hält die Grundlinie also nicht genau ein; der
+  Anker liegt trotzdem je Bild an der untersten Zeile.
+- Stil: Die vielen kleinen Details der Vorlage (Gesicht, Steppnähte der
+  Weste) werden bei Faktor 0,1 bis 0,23 zu Flecken. Innenlinien werden
+  über das Schließen zu Innenkonturen.
+
+**Nachbestellungen** (fertige Prompts für Grok, im Projekt „Comet
+Brawlers“, nach `docs/grafik-bestellung.md`):
+
+1. Haltung (`haltung` 1 und 2 fehlen, ersetzt durch den Stand):
+
+```text
+Nur eine Reihe, genau 3 Bilder: der Rammbock in ruhiger Haltung im Stand,
+atmend. 1 Stand wie im ersten Bild, 2 Brust und Schultern leicht gehoben
+(einatmen), 3 Schultern leicht gesenkt (ausatmen). Die Füße stehen in
+allen drei Bildern genau an derselben Stelle, Blick nach rechts.
+Dieselbe Figur, dieselben Farben und Proportionen wie im ersten Bild,
+Figur im Stand genau so groß.
+```
+
+2. Rückzug nach dem zweiten Schlag (`schlag_b` 3 fehlt, ersetzt durch den
+   Schlag):
+
+```text
+Nur dieses eine Bild: der Rammbock zieht nach dem geraden Schlag die
+Faust zurück, der Schlagarm halb gebeugt auf dem Weg zurück in die
+Kampfhaltung, die andere Faust vor dem Kinn, Füße wie beim Schlag, Blick
+nach rechts. Zwischenbild zwischen „Schlag“ und „Kampfhaltung“ aus
+Blatt A. Dieselbe Figur, dieselben Farben und Proportionen wie im ersten
+Bild, Figur im Stand genau so groß.
+```
+
+3. Landung nach dem Sprungtritt (`sprungtritt` 2 und 3 fehlen, ersetzt
+   durch die Hocke; Bild 4 der Reihe zeigt einen Schlag im Stand):
+
+```text
+Nur eine Reihe, genau 2 Bilder, Landung nach dem Sprungtritt: 1 Aufsetzen
+in tiefer Hocke, beide Füße auf dem Boden, Knie stark gebeugt, Oberkörper
+vorgebeugt, Fäuste vor der Brust; 2 Aufrichten aus der Hocke, Knie noch
+gebeugt, Fäuste erhoben. Blick nach rechts, Füße auf der Grundlinie.
+Dieselbe Figur, dieselben Farben und Proportionen wie im ersten Bild,
+Figur im Stand genau so groß.
+```
+
+4. Tiefe Hocke zum Absprung (Bild 1 der Sprungtritt-Reihe zeigt eine
+   Kampfhaltung; zurzeit überbrückt die Hocke aus Reihe C4 das Bild,
+   daher nur wünschenswert):
+
+```text
+Nur dieses eine Bild: der Rammbock in tiefer Hocke zum Absprung für einen
+Sprungtritt, Knie stark gebeugt, Gewicht auf den Fußballen, beide Arme
+nach hinten geschwungen, beide Füße auf dem Boden, Blick nach rechts.
+Dieselbe Figur, dieselben Farben und Proportionen wie im ersten Bild,
+Figur im Stand genau so groß.
+```
+
+Der Tod braucht keine eigenen Bilder (Auftrag 4, 3: umgeworfen, liegen,
+Blinken). Beim Nachbestellen der Reihen 1 bis 3 sollte der Nutzer auf
+gleiche Figurgröße achten; abweichende Größen gleicht `massstab … wie …`
+aus.
+
+**Vergleichsbild** `docs/bilder/vergleich_rammbock.png` (`vergleich.ts`):
+Reihe 1 Grok-Rammbock (Stand, Gehen 0, 2, 4, 6, Schlag A im aktiven Bild,
+getroffen 1), Reihe 2 derselbe Satz der Gliederpuppe (Blatt `rammbock`),
+Reihe 3 Vela im Stand und im Trefferbild von kette1, alles 2×; darunter
+Vela, Gliederpuppe und Grok-Rammbock in Spielgröße 1× und 2× auf dem
+Platzhalter von Abschnitt A (Wand, Band 75 px, Kanten, Tiefenlinien,
+Schatten in Farben und Maßen aus `masse.ts`).
 
 ## 6. Stand
 
@@ -856,6 +1017,10 @@ Nachbestellungen:
 | G0b-7 | Auftrag 4, 9.3 (höchstens 15 Farben) | Kandidaten: Töne 0 bis 3 je Material, Glanz nur bei glänzendem; über dem Budget wird die am wenigsten belegte Stufe gestrichen | Fünf Materialien ergeben 22 Kandidaten |
 | G0b-8 | Auftrag 4, 3 (Rammbock wie Bolzer: `haltung`) | Der Rammbock bekommt zusätzlich `stand` (1 Bild, Zelle des Maßstabs) | Rückfall der Darstellung für fehlende Animationen (Auftrag 4, 3) und Prüfung „Umriss im Stand“ (2.5) |
 | G0b-9 | Auftrag 4, 3 und 9.3 (Dauern der Rammbock-Animationen) | Angriffe: Ausholen = Startup (A bis A+Startup−1), Trefferbild über die aktiven Frames ohne Treffer, Rest Rückzug (`NAH_ANGRIFFE`). Richtwerte ohne Quelle: `aufstehen_hocke` 6/6/6, `hocke_ankuendigung` 8/8, Aufteilung des Flugs bei `umgeworfen` (2/8/18/19/9), `geworfen` 21/21, `tot` | Die Darstellung nimmt die Dauer aus der Aktionsuhr; der Atlas trägt nur Richtwerte (Auftrag 4, 2.3) |
+| G0b-10 | Auftrag 4, 9.3 (Freistellen mit Toleranz) | Nach der Randentscheidung wird die Maske geschlossen (Quadrat 2r + 1, r = 4 px Quelle): Lücken bis 8 px zwischen Figurteilen werden Figur und behalten ihre Farbe | Grok zeichnet Innenlinien genau in der Hintergrundfarbe (Abstand 4 bis 9); ohne Schließen zerfallen die Figuren (Stiefel, Kopf und Rumpf getrennt) |
+| G0b-11 | Auftrag 4, 9.3 (Maßstab: derselbe Faktor für alle Blätter) | Ein Blatt kann seinen Faktor über eine gemeinsame Pose bekommen (`massstab <blatt> <zelle> wie <blatt> <zelle>`). Beim Rammbock gilt das für B bis E, Bezug ist A | Grok hat die verlangte gleiche Figurgröße nicht eingehalten (Stand 445, 339 und 748 px); mit einem Faktor wäre E 119 px und D 54 px hoch |
+| G0b-12 | Auftrag 4, 2.2 und 9.3 (Bau) | `bauen.ts` ergänzt: `fremdFiguren()` baut `rammbock_fremd` über den Umsetzer, `Figur.weich` lässt Umriss im Stand und Fußkontakt nur melden, `bauen()` schreibt zusätzlich `vergleich_rammbock.png` (`vergleich.ts`). `figuren()` bleibt unverändert | `npm run grafik` baut alles deterministisch; die Tests der Gliederpuppen laufen nicht durch den langsamen Umsetzer |
+| G0b-13 | Auftrag 4, 9.3 (Zuordnung nach Abschnitt 3) | Rammbock: Schlag B aus Blatt A (A4 bis A6), die Landung des Sprungtritts durch die Hocke C16 und C15 ersetzt, aufstehen_hocke aus D12 bis D14, auftritt_hocke = A11; die Zellen A2, A3, A7 bis A10, A12, C11 und C14 bleiben ungenutzt | Für Schlag B gibt es keine eigene Reihe; C14 zeigt einen Schlag statt der Landung; Gehen und Reaktionen kommen geschlossen aus B und D |
 | G0-1 | docs/design.md 8 (Kette Stufe 2: 1/1/11/1, Stufe 3: 1/1/1/11/2) | Atlas ohne Trefferstopp (11 = 4 + 7): Stufe 2 1/1/4/10, Stufe 3 1/1/1/4/10; das letzte Bild hält bis zum Ende der Aktion | Die Tabelle deckt ohne Stopp nur 7 bzw. 9 Frames, die Logik dauert ohne Treffer 16 bzw. 17 (`KETTE2_LEER_DAUER`, `KETTE3_LEER_DAUER`), mit Treffer hält die Pose bis h+26; es gilt die Logik |
 | G0-2 | Auftrag 4, 2.3 (`aktiv`) | `kette4` hat `aktiv` [2, 8]: Bild 8 (Dauer 4) liegt im zweiten aktiven Fenster uhr 17 bis 20 | werte.ts `KETTE4_ZWEITES_FENSTER_VON/BIS`; der zweite Tritt der Tabelle in design.md 8 fällt genau dorthin |
 | G0-3 | Auftrag 4, 4 (Vela: Leder dunkelbraun für die Stiefel) | Stiefel in Hosentönen (dunkles Graublau mit Jackenschatten), Gürtel als dunkles Becken unter dem Saum; kein `LEDER` | Farbbudget: eine eigene Treppe für Leder ginge nur auf Kosten von Haut, Jacke oder Handschuh; die Stilprobe zeigt die Stiefel ebenfalls graublau-dunkel (`#262a35`). Frage an den Nutzer, falls braune Stiefel gewünscht sind |

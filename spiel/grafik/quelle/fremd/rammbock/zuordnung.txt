@@ -1,17 +1,26 @@
 # Zuordnung Zelle → Animation für den Rammbock aus Grok-Blättern
 # (Auftrag 4, 9.3, Weg C; Format: docs/grafik.md 5.3).
 #
-# Stand 2026-10-03, Entwurf G0b: Die Blätter liegen noch nicht vor. Die
-# Animationen und ihre Richtwerte stehen fest; die Zeilen `bild` werden nach
-# der Sichtprüfung der Blätter gefüllt (Vorlage unten, auskommentiert).
-# Fehlende Bilder ersetzt der Umsetzer durch Wiederholung und meldet sie als
-# Nachbestellung.
+# Stand 2026-10-03 (G0b): Blätter gesichtet. Zellnummern zeilenweise, je
+# Blatt (Blatt A im Raster 4 × 3 aus quelle.txt). Zellen je Reihe am Blatt
+# nachgezählt und vom Umsetzer bestätigt: A 4 + 4 + 4, B 8, C 5 + 5 + 4 + 2,
+# D 3 + 5 + 6 + 6, E 3. Fehlende Bilder ersetzt der Umsetzer durch
+# Wiederholung und meldet sie als Nachbestellung (docs/grafik.md 5.7).
 
 figur rammbock_fremd
 typ Rammbock                    # Umriss 60 × 76 aus src/darstellung/masse.ts
 zielhoehe 71                    # 76 minus Schatten (Auftrag 4, 9.3, Maßstab)
 materialien HAUT_MITTEL WESTE_OLIV HOSE_BRAUN STAHL LEDER   # Auftrag 4, 4 und 9.3
-massstab rammbock_a_posen.png 1 # Pose „Stand“ auf Blatt A (nach Sichtprüfung bestätigen)
+
+# Maßstab: Stand auf Blatt A (Zelle 1) auf 71 px. Grok hat die Figur auf
+# den Blättern verschieden groß gezeichnet (Stand A 445 px, D 339 px,
+# E 748 px); jedes weitere Blatt bekommt seinen Faktor über eine Pose, die
+# es mit Blatt A teilt (G0b-11).
+massstab rammbock_a_posen.png 1
+massstab rammbock_b_gehen.png 1 wie rammbock_a_posen.png 2        # Schrittstellung, rechtes Bein vorn
+massstab rammbock_c_angriffe.png 1 wie rammbock_a_posen.png 4     # Kampfhaltung
+massstab rammbock_d_reaktionen.png 14 wie rammbock_a_posen.png 1  # Stand (Ende des Aufstehens)
+massstab rammbock_e_griff.png 1 wie rammbock_a_posen.png 1        # festgehalten, aufrecht wie der Stand
 
 # Fußkontakt beim Gehen: Geschwindigkeit aus werte.ts (Welt 5.1, E9, E10)
 gehen gehen RAMMBOCK_GEHEN_X
@@ -26,7 +35,6 @@ gehen gehen_schnell RAMMBOCK_SCHNELL_X
 # Stand: Rückfall der Darstellung für fehlende Animationen (Auftrag 4, 3) und
 # Prüfung „Umriss im Stand“ (docs/grafik.md 2.5); dieselbe Zelle wie massstab
 animation stand schleife 0
-bild rammbock_a_posen.png 1 stand 0
 # Haltung 3 × 5, Gehen 8 × 4 (design-gegner-stages.md 9, Rammbock)
 animation haltung schleife 5 5 5
 animation gehen schleife 4 4 4 4 4 4 4 4
@@ -61,7 +69,89 @@ animation geworfen einmal 21 21
 # Tod = umgeworfen und liegen, Blinken zeichnet die Darstellung
 animation tot einmal 2 8 18 19 9 28
 
+# ---------------------------------------------------------------------------
+# Zellen
+# ---------------------------------------------------------------------------
+
+# Blatt A, Posen 4 × 3: 1 Stand, 2 Gehen, 3 Gehen, 4 Kampfhaltung / 5 Ausholen,
+# 6 Schlag, 7 Sprung mit Knie, 8 getroffen / 9 umgeworfen im Flug, 10 liegend,
+# 11 Aufstehen aus der Hocke, 12 liegend. Nicht verwendet: 2, 3 (Gehen kommt
+# aus Blatt B), 7 (Sprungtritt aus Blatt C), 8, 9, 10, 12 (Reaktionen aus Blatt D).
+bild rammbock_a_posen.png 1 stand 0
+bild rammbock_a_posen.png 1 haltung 0                # haltung 1, 2 fehlen: Nachbestellung
+bild rammbock_a_posen.png 11 auftritt_hocke 0
+bild rammbock_a_posen.png 4 schlag_b 0               # zweiter Schlag: Kampfhaltung, Ausholen, Schlag aus Blatt A
+bild rammbock_a_posen.png 5 schlag_b 1
+bild rammbock_a_posen.png 6 schlag_b 2
+bild rammbock_a_posen.png 4 schlag_b 4               # schlag_b 3 (Rückzug) fehlt: Nachbestellung
+
+# Blatt B, Gehen 8 in einer Reihe
+bild rammbock_b_gehen.png 1 gehen 0
+bild rammbock_b_gehen.png 2 gehen 1
+bild rammbock_b_gehen.png 3 gehen 2
+bild rammbock_b_gehen.png 4 gehen 3
+bild rammbock_b_gehen.png 5 gehen 4
+bild rammbock_b_gehen.png 6 gehen 5
+bild rammbock_b_gehen.png 7 gehen 6
+bild rammbock_b_gehen.png 8 gehen 7
+
+# Blatt C, Reihe 1 Schlag 5 (1 bis 5), Reihe 2 Umwerfschlag von oben 5 (6 bis 10),
+# Reihe 3 Sprungtritt 4 (11 bis 14), Reihe 4 Hocke 2 (15, 16)
+bild rammbock_c_angriffe.png 1 schlag_a 0
+bild rammbock_c_angriffe.png 2 schlag_a 1
+bild rammbock_c_angriffe.png 3 schlag_a 2
+bild rammbock_c_angriffe.png 4 schlag_a 3
+bild rammbock_c_angriffe.png 5 schlag_a 4
+bild rammbock_c_angriffe.png 6 umwerfschlag 0
+bild rammbock_c_angriffe.png 7 umwerfschlag 1
+bild rammbock_c_angriffe.png 8 umwerfschlag 2
+bild rammbock_c_angriffe.png 9 umwerfschlag 3
+bild rammbock_c_angriffe.png 10 umwerfschlag 4
+# Sprungtritt: Zelle 11 zeigt Kampfhaltung statt tiefer Hocke (die Hocke liefert
+# hocke_ankuendigung), Zelle 14 einen Schlag im Stand statt der Landung in der
+# Hocke: Landung durch die Hocke ersetzt und nachbestellt.
+bild rammbock_c_angriffe.png 12 sprungtritt 0
+bild rammbock_c_angriffe.png 13 sprungtritt 1
+ersatz sprungtritt 2 hocke_ankuendigung 1
+ersatz sprungtritt 3 hocke_ankuendigung 0
+bild rammbock_c_angriffe.png 15 hocke_ankuendigung 0
+bild rammbock_c_angriffe.png 16 hocke_ankuendigung 1
+
+# Blatt D, Reihe 1 getroffen 3 (1 bis 3), Reihe 2 umgeworfen 5 (4 bis 8),
+# Reihe 3 aufstehen 6 (9 bis 14), Reihe 4 Spott 6 (15 bis 20)
+bild rammbock_d_reaktionen.png 1 getroffen 0
+bild rammbock_d_reaktionen.png 2 getroffen 1
+bild rammbock_d_reaktionen.png 3 getroffen 2
+bild rammbock_d_reaktionen.png 4 umgeworfen 0
+bild rammbock_d_reaktionen.png 5 umgeworfen 1 liegend
+bild rammbock_d_reaktionen.png 6 umgeworfen 2 liegend
+bild rammbock_d_reaktionen.png 7 umgeworfen 3 liegend
+bild rammbock_d_reaktionen.png 8 umgeworfen 4 liegend
+bild rammbock_d_reaktionen.png 9 liegen 0 liegend
+bild rammbock_d_reaktionen.png 9 aufstehen 0 liegend
+bild rammbock_d_reaktionen.png 10 aufstehen 1
+bild rammbock_d_reaktionen.png 11 aufstehen 2
+bild rammbock_d_reaktionen.png 12 aufstehen 3
+bild rammbock_d_reaktionen.png 13 aufstehen 4
+bild rammbock_d_reaktionen.png 14 aufstehen 5
+bild rammbock_d_reaktionen.png 12 aufstehen_hocke 0
+bild rammbock_d_reaktionen.png 13 aufstehen_hocke 1
+bild rammbock_d_reaktionen.png 14 aufstehen_hocke 2
+bild rammbock_d_reaktionen.png 15 spott 0
+bild rammbock_d_reaktionen.png 16 spott 1
+bild rammbock_d_reaktionen.png 17 spott 2
+bild rammbock_d_reaktionen.png 18 spott 3
+bild rammbock_d_reaktionen.png 19 spott 4
+bild rammbock_d_reaktionen.png 20 spott 5
+
+# Blatt E, Griff: 1 festgehalten, 2 geworfen kopfüber, 3 geworfen waagrecht
+bild rammbock_e_griff.png 1 gehalten 0
+bild rammbock_e_griff.png 2 geworfen 0 liegend
+bild rammbock_e_griff.png 3 geworfen 1 liegend
+
+# ---------------------------------------------------------------------------
 # Gewollte Wiederholungen (keine Nachbestellung)
+# ---------------------------------------------------------------------------
 gleich auftritt_versteck 0 gehen 0
 gleich auftritt_versteck 1 gehen 1
 gleich auftritt_versteck 2 gehen 2
@@ -92,31 +182,3 @@ gleich tot 2 umgeworfen 2
 gleich tot 3 umgeworfen 3
 gleich tot 4 umgeworfen 4
 gleich tot 5 liegen 0
-
-# ---------------------------------------------------------------------------
-# Zellen (nach Sichtprüfung der Blätter einkommentieren und anpassen).
-# Vorlage nach der Bestellliste (docs/grafik-bestellung.md, Rammbock und
-# Muster Bolzer): A Posen 12, B Gehen 8, C Angriffe, D Reaktionen.
-# Die Reihenfolge der Zeilen ist gleich: Kopien lösen ihre Quelle auf, auch
-# wenn diese erst ersetzt werden muss.
-# ---------------------------------------------------------------------------
-# bild rammbock_a_posen.png 1 haltung 0
-# bild rammbock_a_posen.png 2 hocke_ankuendigung 0
-# bild rammbock_a_posen.png 3 auftritt_hocke 0
-# bild rammbock_a_posen.png 4 aufstehen_hocke 1
-# bild rammbock_a_posen.png 5 schlag_a 1
-# bild rammbock_a_posen.png 6 schlag_a 2
-# bild rammbock_a_posen.png 7 umwerfschlag 1
-# bild rammbock_a_posen.png 8 umwerfschlag 2
-# bild rammbock_a_posen.png 9 getroffen 0
-# bild rammbock_a_posen.png 10 umgeworfen 1
-# bild rammbock_a_posen.png 11 liegen 0 liegend
-# bild rammbock_a_posen.png 12 aufstehen 2
-# bild rammbock_b_gehen.png 1 gehen 0
-# bild rammbock_b_gehen.png 2 gehen 1
-# bild rammbock_b_gehen.png 3 gehen 2
-# bild rammbock_b_gehen.png 4 gehen 3
-# bild rammbock_b_gehen.png 5 gehen 4
-# bild rammbock_b_gehen.png 6 gehen 5
-# bild rammbock_b_gehen.png 7 gehen 6
-# bild rammbock_b_gehen.png 8 gehen 7

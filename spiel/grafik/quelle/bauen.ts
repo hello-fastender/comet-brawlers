@@ -6,6 +6,7 @@
 //   node --experimental-strip-types grafik/quelle/bauen.ts            alles
 //   node --experimental-strip-types grafik/quelle/bauen.ts --nur-kontakt   nur Kontaktbögen
 
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import type { Umriss } from '../../src/darstellung/masse.ts';
@@ -20,6 +21,8 @@ import type { Leinwand, Pixel } from './leinwand.ts';
 import { deckend } from './leinwand.ts';
 import { FARBBUDGET, KONTUR, SPULE, farbenZaehlen } from './palette.ts';
 import { md5, pngSchreiben } from './png.ts';
+import { umsetzenOrdner } from './umsetzer.ts';
+import { VERGLEICH_DATEI, vergleichRammbock } from './vergleich.ts';
 
 /** Ordner spiel/ (zwei Ebenen über grafik/quelle/). */
 const SPIEL = fileURLToPath(new URL('../../', import.meta.url));
@@ -43,6 +46,11 @@ export interface Figur {
   readonly gehen?: string;
   /** px, um die der Standfuß je Bild nach hinten rückt. */
   readonly schritt?: number;
+  /**
+   * Regeln, die bei dieser Figur nur als Hinweis gemeldet werden und den Bau nicht abbrechen
+   * (Figuren aus Fremdblättern: Umriss im Stand, Fußkontakt; docs/grafik.md 5.4, G0b-4).
+   */
+  readonly weich?: ReadonlySet<string>;
 }
 
 /** Ein Befund einer Prüfung. */
@@ -172,6 +180,19 @@ export function figuren(): Figur[] {
   ];
 }
 
+/** Ordner der Fremdblätter je Figur (Auftrag 4, 9.3; docs/grafik.md 5.3). */
+export const FREMD = join(SPIEL, 'grafik', 'quelle', 'fremd');
+/** Figuren aus Fremdblättern: Ordnername unter FREMD (Weg C, Umsetzer G0b). */
+export const FREMD_ORDNER: readonly string[] = ['rammbock'];
+
+/**
+ * Figuren aus Grok-Blättern über den Umsetzer (Auftrag 4, 9.3): Blatt `<figur>_fremd` je Ordner
+ * unter FREMD. Getrennt von figuren(), weil das Umsetzen der großen Blätter einige Sekunden dauert.
+ */
+export function fremdFiguren(): Figur[] {
+  return FREMD_ORDNER.map((ordner) => umsetzenOrdner(join(FREMD, ordner)).pruefFigur);
+}
+
 /** Bytes aller Ausgaben einer Figur ohne zu schreiben (für den Determinismus-Test). */
 export function figurBytes(figur: Figur): Map<string, Uint8Array | string> {
   const aus = new Map<string, Uint8Array | string>();
@@ -205,18 +226,47 @@ export function figurAusgeben(figur: Figur, optionen: AusgabeOptionen = {}): Map
   return md5s;
 }
 
-/** Baut alle Figuren: prüfen, dann schreiben. Wirft bei Befunden. */
-export function bauen(optionen: { nurKontakt?: boolean } = {}): Map<string, string> {
+/**
+ * Baut alle Figuren (Gliederpuppen und Fremdblätter): prüfen, dann schreiben. Wirft bei
+ * Befunden; Befunde der weichen Regeln einer Figur gehen je Regel gezählt an `hinweis`.
+ */
+export function bauen(optionen: { nurKontakt?: boolean; hinweis?: (zeile: string) => void } = {}): Map<string, string> {
   const alle = new Map<string, string>();
-  for (const f of figuren()) {
-    const befunde = figurPruefen(f);
+  const gebaut = [...figuren(), ...fremdFiguren()];
+  for (const f of gebaut) {
+    const weich = f.weich ?? new Set<string>();
+    const alleBefunde = figurPruefen(f);
+    const befunde = alleBefunde.filter((b) => !weich.has(b.regel));
+    for (const regel of [...weich].sort()) {
+      const n = alleBefunde.filter((b) => b.regel === regel).length;
+      if (n > 0) optionen.hinweis?.(`Hinweis ${f.name}: ${n} Befunde „${regel}“ (nur gemeldet, docs/grafik.md 5.4)`);
+    }
     if (befunde.length > 0) {
       const text = befunde.map((b) => `  ${b.figur} / ${b.animation} / Bild ${b.bild}: ${b.regel}: ${b.text}`).join('\n');
       throw new Error(`Stilprüfung verletzt (${befunde.length}):\n${text}`);
     }
     for (const [k, v] of figurAusgeben(f, { blatt: optionen.nurKontakt !== true })) alle.set(k, v);
   }
+  const vergleich = vergleichBytes(gebaut);
+  if (vergleich !== null) {
+    mkdirSync(BILDER, { recursive: true });
+    writeFileSync(join(BILDER, VERGLEICH_DATEI), vergleich);
+    alle.set(VERGLEICH_DATEI, md5(vergleich));
+  }
   return alle;
+}
+
+/**
+ * Vergleichsbild Rammbock für Haltepunkt 1 (Auftrag 4, 9.4; vergleich.ts) als PNG-Bytes, wenn
+ * die Blätter vela, rammbock und rammbock_fremd gebaut sind; sonst null.
+ */
+export function vergleichBytes(gebaut: readonly Figur[]): Uint8Array | null {
+  const anim = (name: string): readonly Animation[] | undefined => gebaut.find((f) => f.name === name)?.animationen;
+  const fremd = anim('rammbock_fremd');
+  const puppe = anim('rammbock');
+  const vela = anim('vela');
+  if (fremd === undefined || puppe === undefined || vela === undefined) return null;
+  return pngSchreiben(vergleichRammbock(fremd, puppe, vela));
 }
 
 /** MD5 der Bytes (Wiederverwendung in Tests). */
@@ -224,7 +274,7 @@ export { md5 };
 
 if (process.argv[1] !== undefined && import.meta.url === pathToFileURL(process.argv[1]).href) {
   try {
-    const md5s = bauen({ nurKontakt: process.argv.includes('--nur-kontakt') });
+    const md5s = bauen({ nurKontakt: process.argv.includes('--nur-kontakt'), hinweis: (zeile) => console.error(zeile) });
     for (const [datei, summe] of md5s) console.log(`${summe}  ${datei}`);
   } catch (e) {
     console.error(e instanceof Error ? e.message : String(e));
