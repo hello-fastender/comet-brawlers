@@ -82,6 +82,34 @@ jede Figur gesammelt im Opus-Chat hoch:
 Opus beginnt mit dem, was da ist. Fehlt eine Figur, bleibt dort vorerst
 die Gliederpuppe aus Auftrag 4.
 
+### 2b. Videos für Bewegungszyklen
+
+Der Nutzer darf für Zyklen (gehen, sprint, haltung/atmen, spott, wiegen,
+zielen) statt eines Blatts ein kurzes Video liefern (5 bis 6 s, aus dem
+Konzeptbild der Figur erzeugt, Kamera fest, Figur auf der Stelle,
+einfarbiger Hintergrund), Dateiname `<figur>_v_<animation>.mp4`. Opus
+verarbeitet es so:
+
+1. Einzelbilder mit `ffmpeg` (vorhanden unter `/usr/bin/ffmpeg`) als PNG
+   ziehen (`-vsync 0`, alle Bilder), nach `fremd/<figur>/video_<animation>/`.
+2. Hintergrund wie bei Blättern freistellen (Farbe aus den Ecken, mit
+   größerer Toleranz wegen Videokompression); Bilder mit sichtbarer
+   Unschärfe (Kantenstärke unter einem Schwellwert) verwerfen.
+3. Einen sauberen Zyklus finden: Bildpaare mit kleinster Pixeldifferenz
+   zwischen Bild i und Bild i+n bestimmen die Zykluslänge n; daraus die
+   benötigte Bildzahl der Logik gleichmäßig auswählen (gehen 12 bzw. 8,
+   sprint 6, haltung 3, spott 6, wiegen 6, zielen 4).
+4. Wie Zellen durch den Umsetzer v2 (Maßstab aus dem Stand-Bild der
+   Figur, Palette, Kontur, Anker, Fußkontakt-Korrektur).
+5. Kontaktbogen und Befund (Unschärfe, Größenschwankung, Zyklustreffer)
+   in `docs/grafik.md`; taugt der Clip nicht, bleibt das Blatt B der
+   Weg, und der Nutzer bekommt eine Nachbestellung.
+
+Angriffe, Reaktionen, Griff, Wurf und Spezialangriff bleiben bei Blättern,
+weil ihr Trefferbild im ersten aktiven Frame stehen muss. Die Quelle
+(Video) liegt im Repo neben den Blättern; große Videos über 20 MB bleiben
+außerhalb, dann nur die gezogenen Bilder.
+
 ---
 
 ## 3. Phasen
