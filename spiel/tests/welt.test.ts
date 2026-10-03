@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { ausGanz } from '../src/kern/festkomma.ts';
-import { abstand, angriffsinstanz, beteiligter, freierGegner, freiesGeschoss, freiesObjekt, freigeben, gegnerBelegen, imFenster, istLebend, modusSetzen } from '../src/kern/entitaeten.ts';
+import { abstand, angriffsinstanz, beteiligter, freierGegner, freiesGeschoss, freiesObjekt, freigeben, gegnerBelegen, imFenster, istLebend, modusSetzen, objektVon } from '../src/kern/entitaeten.ts';
 import type { Gegner, Treffer } from '../src/kern/entitaeten.ts';
 import { EREIGNIS, ereignis, ereignisTreffer } from '../src/kern/ereignisse.ts';
 import { parseStage } from '../src/kern/stage.ts';
@@ -10,6 +10,9 @@ import { TASTE_A, TASTE_R } from '../src/kern/tasten.ts';
 import { erzeugeWelt, logikSchritt } from '../src/kern/welt.ts';
 import { rangstufe } from '../src/kern/rang.ts';
 import { parseSzene } from '../src/pruef/szene.ts';
+import { parseEingabe, tastenIn } from '../src/pruef/eingabe.ts';
+import { objektZeilen, protokollZeile } from '../src/pruef/protokoll.ts';
+import { SEED_WELT_TESTS } from '../src/kern/werte.ts';
 import { lies, stageText } from './hilfe.ts';
 
 function weltAus(szene: string) {
@@ -37,7 +40,7 @@ test('welt: Frame-Zähler und Eingabe mit einem Frame Latenz (Kampf 2.1)', () =>
 });
 
 test('welt: Slots der Bühne scheibe nach Welt 4.1 und 9.1', () => {
-  const w = erzeugeWelt(parseStage(stageText('scheibe')), standardStart(12345));
+  const w = erzeugeWelt(parseStage(stageText('scheibe')), standardStart(SEED_WELT_TESTS));
   assert.deepEqual(
     w.gegner.slice(0, 5).map((g) => [g.belegt, g.typ, g.modus, g.zustand]),
     [
@@ -171,4 +174,40 @@ test('welt: Ereignisse nach Kampf 11.4', () => {
 test('welt: Prüfstart verlangt die passende Bühne', () => {
   const start = parseSzene('szene name=a endframe=1 buehne=scheibe');
   assert.throws(() => erzeugeWelt(parseStage(stageText('pruefbuehne')), start), /Bühne/);
+});
+
+test('welt: objektVon liefert nur Objekte und Geschosse (o20 bis o59, g0 bis g4)', () => {
+  const w = erzeugeWelt(parseStage(stageText('scheibe')), standardStart(SEED_WELT_TESTS));
+  assert.equal(objektVon(w, 'o20'), w.objekte[0]);
+  assert.equal(objektVon(w, 'g4'), w.geschosse[4]);
+  assert.equal(objektVon(w, 'f'), null);
+  assert.equal(objektVon(w, 's1'), null);
+  assert.equal(objektVon(w, 'o60'), null);
+  assert.equal(objektVon(w, null), null);
+});
+
+test('welt: aller Zustand liegt in der Welt – eine Kopie (structuredClone) läuft bitgleich weiter (Kampf 11.6)', () => {
+  // T2 (Sprung, Figur), T4_a (Kette, Figur und Gegner), W-T8_a (Boss, Zünder, Bildschütteln nach dem Einschlag)
+  for (const name of ['T2', 'T4_a', 'W-T8_a']) {
+    const start = parseSzene(lies(`tests/szenen/${name}.txt`));
+    const stage = parseStage(stageText(start.buehne));
+    const eingabe = parseEingabe(lies(`tests/eingaben/${name}.txt`));
+    const zeile = (w: ReturnType<typeof erzeugeWelt>) => `${protokollZeile(w)}|${objektZeilen(w).join(';')}`;
+    const referenz: string[] = [];
+    const w = erzeugeWelt(stage, start);
+    while (w.frame < start.endframe && !w.beendet) {
+      logikSchritt(w, tastenIn(eingabe, w.frame + 1));
+      referenz.push(zeile(w));
+    }
+    for (const teil of [1, 2, 3, 4, 5, 6, 7]) {
+      const k = Math.floor((referenz.length * teil) / 8);
+      let kopie = erzeugeWelt(stage, start);
+      while (kopie.frame < k) logikSchritt(kopie, tastenIn(eingabe, kopie.frame + 1));
+      kopie = structuredClone(kopie);
+      while (kopie.frame < referenz.length) {
+        logikSchritt(kopie, tastenIn(eingabe, kopie.frame + 1));
+        assert.equal(zeile(kopie), referenz[kopie.frame - 1], `${name}: Kopie nach Frame ${k}, Frame ${kopie.frame}`);
+      }
+    }
+  }
 });

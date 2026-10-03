@@ -9,7 +9,7 @@
 // Stoppframes) und entfernt sie am Ende. Flächen nach entitaeten.ts Flaeche;
 // hoehe_angreifer_max ist die Grenze ⌊h⌋ der Figur (0 = nur am Boden).
 
-import type { AngriffCode, Angriffsinstanz, Blick, SlotKey } from '../entitaeten.ts';
+import type { AngriffCode, Angriffsinstanz, Blick, SlotKey, SprungVariante } from '../entitaeten.ts';
 import type { Welt } from '../welt.ts';
 import { angriffsinstanz } from '../entitaeten.ts';
 import {
@@ -51,9 +51,8 @@ import {
   WG_SCHADEN,
   WG_TIEFE,
   WURF_SCHADEN,
+  WURF_TREFFER,
 } from '../werte.ts';
-import type { Variante } from './intern.ts';
-import { intern } from './intern.ts';
 
 /** Eintrag i einer Wertetabelle (Index geprüft). */
 export function tab(werte: readonly number[], i: number): number {
@@ -66,7 +65,7 @@ export function tab(werte: readonly number[], i: number): number {
 const KETTE_CODES: readonly AngriffCode[] = ['KT1', 'KT2', 'KT3', 'KT4'];
 
 /** Sprungangriff-Werte je Variante (Kampf 5.2). */
-function sprungWerte(v: Variante): (typeof SPRUNGANGRIFF)[keyof typeof SPRUNGANGRIFF] {
+function sprungWerte(v: SprungVariante): (typeof SPRUNGANGRIFF)[keyof typeof SPRUNGANGRIFF] {
   switch (v) {
     case 'R':
       return SPRUNGANGRIFF.R;
@@ -110,7 +109,7 @@ export function ketteInstanz(stufe: number, beginn: number): Angriffsinstanz {
 }
 
 /** Sprungangriff N, R, H oder T (Kampf 5.2): Höhengrenze der Figur je Variante. */
-export function sprungangriffInstanz(v: Variante, beginn: number): Angriffsinstanz {
+export function sprungangriffInstanz(v: SprungVariante, beginn: number): Angriffsinstanz {
   const w = sprungWerte(v);
   return angriffsinstanz({
     code: w.code,
@@ -312,7 +311,6 @@ export function angriffAktivSetzen(welt: Welt, stoppframe: boolean): void {
     a.aktiv = false;
     return;
   }
-  const i = intern(f);
   switch (a.code) {
     case 'KT1':
     case 'KT2':
@@ -324,7 +322,7 @@ export function angriffAktivSetzen(welt: Welt, stoppframe: boolean): void {
     case 'SR':
     case 'SH':
     case 'ST': {
-      const w = sprungWerte(i.variante);
+      const w = sprungWerte(f.sprung_variante);
       a.aktiv = f.aktion === 'SPRUNGANGRIFF' && f.uhr >= w.aktiv_von && f.uhr <= w.aktiv_bis && f.h > 0;
       return;
     }
@@ -333,10 +331,10 @@ export function angriffAktivSetzen(welt: Welt, stoppframe: boolean): void {
       return;
     case 'SS': {
       const fl = a.flaeche;
-      if (i.ss_n === SS_ERSTER_AKTIV) {
+      if (f.ss_n === SS_ERSTER_AKTIV) {
         a.aktiv = true;
         if (fl.art === 'abstand') fl.hoehe_angreifer_max = SS_ERSTER_HOEHE_MAX;
-      } else if (i.ss_n >= SS_ZWEITER_AKTIV_VON && i.ss_n <= SS_ZWEITER_AKTIV_BIS) {
+      } else if (f.ss_n >= SS_ZWEITER_AKTIV_VON && f.ss_n <= SS_ZWEITER_AKTIV_BIS) {
         a.aktiv = true;
         if (fl.art === 'abstand') fl.hoehe_angreifer_max = SS_ZWEITER_HOEHE_MAX;
       } else {
@@ -357,7 +355,7 @@ export function angriffAktivSetzen(welt: Welt, stoppframe: boolean): void {
       a.aktiv = f.aktion === 'KNIESTOSS' && f.uhr === KNIESTOSS_TREFFER;
       return;
     case 'WU':
-      a.aktiv = f.aktion === 'WURF' && f.uhr === 1;
+      a.aktiv = f.aktion === 'WURF' && f.uhr === WURF_TREFFER;
       return;
     case 'LN':
       a.aktiv = welt.frame === f.landung_ln;

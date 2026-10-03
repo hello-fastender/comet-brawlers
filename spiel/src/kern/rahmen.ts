@@ -1,14 +1,10 @@
 // Anzeige-Daten, Punkte, Leben, Phasen, Stage-Ende und Game Over nach
 // docs/spezifikation-welt.md, Abschnitt 10 (K3, Stufe 2).
 //
-// Ablauf im Frame:
+// Ablauf im Frame (welt.ts logikSchritt ruft die drei Schritte direkt auf):
 //   W4 (Anfang) rahmenVorlauf  steuerung für diesen Frame (die Figur liest sie in KS1)
 //   W5          rahmenW5       Fall des Bosses (boss_t), Punkte, Gegneranzeige
 //   W8          rahmenSchritt  Leben −1 und NE:F im Frame N, GO, Phase, SC, Ende
-//
-// gegner/nah.ts rechteSchritt ruft rahmenVorlauf als Erstes auf, weil welt.ts
-// vor KS1 keinen eigenen Rahmenschritt hat. VORSCHLAG (welt.ts): rahmenVorlauf
-// im Vorlauf des Logikschritts aufrufen.
 //
 // Festlegungen K3 (Lücken, Bericht):
 // - steuerung ist 0 von t+1 bis LN+5 (Tod), von c+1 bis c+134 (Blende), ab
@@ -155,7 +151,9 @@ export function punkteAddieren(welt: Welt, punkte: number): void {
  * Phase ENDE ab t), Punkte für Treffer der Figur (10 je LP Schaden, auch über
  * die Rest-LP und bei vorläufigen Treffern auf den Boss), Punkte für besiegte
  * Gegner im Frame t (nicht bei ohne_punkte), Gegneranzeige (kleinster Slot
- * der in diesem Frame von einer Handlung der Figur getroffenen Gegner).
+ * der in diesem Frame von einer Handlung der Figur getroffenen Gegner; Name
+ * und LP gemerkt, die LP folgen dem Gegner bis zu seinem Tod bzw. bis sein
+ * Slot frei wird, Welt 10.1).
  */
 export function rahmenW5(welt: Welt): void {
   const r = welt.rahmen;
@@ -172,7 +170,22 @@ export function rahmenW5(welt: Welt): void {
     const nr = Number(t.ziel.slice(1));
     if (t.schaden > 0 && (anzeige === null || nr < anzeige)) anzeige = nr;
   }
-  if (anzeige !== null) r.anzeige = anzeige;
+  if (anzeige !== null) {
+    const g = welt.gegner[anzeige] as Gegner;
+    r.anzeige = anzeige;
+    r.anzeige_typ = g.typ;
+    r.anzeige_lp = g.lp;
+    r.anzeige_lebt = g.lp >= 0;
+  } else if (r.anzeige !== null && r.anzeige_lebt) {
+    const g = welt.gegner[r.anzeige] as Gegner;
+    if (g.belegt) {
+      r.anzeige_lp = g.lp;
+      r.anzeige_lebt = g.lp >= 0;
+    } else {
+      r.anzeige_lp = 0;
+      r.anzeige_lebt = false;
+    }
+  }
   for (const g of welt.gegner) {
     if (!g.belegt || g.ohne_punkte) continue;
     if (g.lp < 0 && g.lp_vor >= 0) r.punkte += punkteFuerGegner(g);
@@ -227,7 +240,7 @@ export interface AnzeigeDaten {
   punkte: string;
   leben: number;
   figur: Balken;
-  /** Gegneranzeige: Slot, Name, Balken; null = keine */
+  /** Gegneranzeige: Slot, Name und Balken des zuletzt von der Figur getroffenen Gegners (Welt 10.1); null = keine */
   gegner: { slot: number; name: string; balken: Balken } | null;
   pfeil: boolean;
   /** große Texte in der Bildmitte (STAGE CLEAR, BALLAST BESIEGT 5000, GAME OVER) */
@@ -273,10 +286,7 @@ export function anzeige(welt: Welt): AnzeigeDaten {
   }
   if (r.phase === 'GAMEOVER') texte.push('GAME OVER');
   let gegner: AnzeigeDaten['gegner'] = null;
-  if (r.anzeige !== null) {
-    const g = welt.gegner[r.anzeige] as Gegner;
-    gegner = { slot: r.anzeige, name: g.typ.toUpperCase(), balken: balken(g.belegt ? g.lp : 0) };
-  }
+  if (r.anzeige !== null) gegner = { slot: r.anzeige, name: r.anzeige_typ.toUpperCase(), balken: balken(r.anzeige_lp) };
   return {
     name: NAME_HELDIN,
     punkte: String(r.punkte).padStart(ANZEIGE.punkte.ziffern, '0'),

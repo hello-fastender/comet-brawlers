@@ -9,6 +9,7 @@
 //   (rundet nach −∞). Umgesetzt über eine Zerlegung in 16-Bit-Hälften, deren
 //   Teilprodukte in Gleitkomma exakt bleiben (< 2^53).
 // - divGanz: nur durch eine positive ganze Zahl, Ergebnis ⌊a/b⌋.
+// - produktGroesser: a·b > c·d mit BigInt-Zwischenwert (Produkte über 32 Bit).
 // - Gleitkomma nur in ausDezimal, also beim einmaligen Runden von Konstanten.
 
 /** Rohwert eines 16.16-Festkommawerts (vorzeichenbehaftete 32-Bit-Ganzzahl). */
@@ -85,6 +86,16 @@ export function mul(a: Fest, b: Fest): Fest {
 /** Produkt mit einer ganzen Zahl (kein Verschieben), 32 Bit. */
 export function mulGanz(a: Fest, n: number): Fest {
   return Math.imul(a, n | 0);
+}
+
+/**
+ * Vergleich a·b > c·d für ganze Zahlen mit exaktem Zwischenwert (BigInt,
+ * Kampf 2.4: 64-Bit-Zwischenwert): Verhältnisse ohne Division vergleichen,
+ * auch wenn ein Produkt 32 Bit übersteigt (z. B. |Δx| · tan in Welt 5.3).
+ * Wirft bei nicht ganzzahligen Faktoren.
+ */
+export function produktGroesser(a: number, b: number, c: number, d: number): boolean {
+  return BigInt(a) * BigInt(b) > BigInt(c) * BigInt(d);
 }
 
 /**

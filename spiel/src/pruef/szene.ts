@@ -3,7 +3,7 @@
 // (Welt 2.1): je Zeile ein Satz, Felder name=wert, # Kommentar. Beschreibung
 // in docs/scheibe.md, Abschnitt „Formate“. Ohne Node-APIs.
 //
-//   szene        name= endframe= seed=1 buehne=pruefbuehne|scheibe
+//   szene        name= endframe= seed=1 (SEED_KAMPF_TESTS) buehne=pruefbuehne|scheibe
 //   pruefstart   Schlüssel aus Welt 11.3 in deren Schreibweise (mehrere Sätze erlaubt,
 //                spätere Angaben gelten): rang= rang.fest kamera.x= kamera.modus=
 //                welle.N=aus|an|nur_boss sperre.ID=aus halt.ID=aus behaelter.ID=aus
@@ -30,7 +30,7 @@ import {
 } from '../kern/stage.ts';
 import { rolleVon } from '../kern/anlegen.ts';
 import { KAMERA_MODI } from '../kern/eingriffe.ts';
-import { GEGNER_SLOTS, OBJEKT_SLOT_ERSTER, OBJEKT_SLOT_LETZTER, PRUEF_RANG_STANDARD } from '../kern/werte.ts';
+import { BOSS_WELLE_SCHEIBE, GEGNER_SLOTS, OBJEKT_SLOT_ERSTER, OBJEKT_SLOT_LETZTER, PRUEF_RANG_STANDARD, SEED_KAMPF_TESTS } from '../kern/werte.ts';
 
 function fehlerIn(z: SatzZeile, text: string): SyntaxError {
   return new SyntaxError(`Szene Zeile ${z.nr} (${z.satzart}): ${text}`);
@@ -126,7 +126,7 @@ function pruefstartFeld(z: SatzZeile, s: Pruefstart, name: string, w: string): v
     } else if (w === 'an') {
       entferne(s.wellen_aus, nr);
     } else if (w === 'nur_boss') {
-      if (nr !== 7) throw fehlerIn(z, 'nur_boss gibt es nur für welle.7');
+      if (nr !== BOSS_WELLE_SCHEIBE) throw fehlerIn(z, `nur_boss gibt es nur für welle.${BOSS_WELLE_SCHEIBE}`);
       entferne(s.wellen_aus, nr);
       s.welle7_nur_boss = true;
     } else {
@@ -228,7 +228,7 @@ function objektSatz(z: SatzZeile): ObjektStart {
 
 /** Liest eine Prüfszene in einen Prüfstart (Kampf 11.2, Welt 11.3). */
 export function parseSzene(text: string): Pruefstart {
-  const s = standardStart(1, 'pruefbuehne');
+  const s = standardStart(SEED_KAMPF_TESTS, 'pruefbuehne');
   s.name = '';
   s.rang = PRUEF_RANG_STANDARD;
   let szeneGesehen = false;
@@ -241,7 +241,7 @@ export function parseSzene(text: string): Pruefstart {
         const f = new Felder(z);
         s.name = f.text('name');
         s.endframe = f.ganz('endframe');
-        s.seed = f.ganz('seed', 1);
+        s.seed = f.ganz('seed', SEED_KAMPF_TESTS);
         s.buehne = f.text('buehne', 'pruefbuehne');
         f.pruefeRest();
         if (s.endframe < 1) throw fehlerIn(z, 'endframe muss ≥ 1 sein');

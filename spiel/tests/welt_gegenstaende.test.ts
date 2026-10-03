@@ -21,6 +21,7 @@ import {
   leereWaffeWerfen,
 } from '../src/kern/gegenstaende.ts';
 import { parseSzene } from '../src/pruef/szene.ts';
+import { BLINKEN_TAKT, PFEIL_TAKT } from '../src/kern/werte.ts';
 import { stageText } from './hilfe.ts';
 
 function weltAus(text: string): Welt {
@@ -77,10 +78,11 @@ test('Welt 9.2, 9.3: Fass zerbricht in h, Raketenwerfer erscheint in h+1, landet
   behaelterGetroffen(w, t);
   assert.equal(t.wirkung, 'B');
   assert.deepEqual([fass.zerbrochen, fass.zerbrochen_h], [true, 12]);
-  assert.equal(behaelterHindernisse(w).length, 3, 'ab h+1 kein Hindernis');
+  assert.equal(behaelterHindernisse(w).length, 4, 'im Frame h noch Hindernis (Welt 9.2)');
   const verlauf: Record<number, string> = {};
   while (w.frame < 853) {
     logikSchritt(w, 0);
+    if (w.frame === 13) assert.equal(behaelterHindernisse(w).length, 3, 'ab h+1 kein Hindernis');
     const o = objekt(w, 23);
     verlauf[w.frame] = o.belegt
       ? `${o.typ}|${zuDezimalText(o.h)}|${o.liegezeit}|${o.sichtbar}|${o.aufnehmbar}|${w.ereignisse.join(';')}`
@@ -168,4 +170,10 @@ test('Welt 9.3, Kampf 10.1 bis 10.4: Hilfen für die Figur – ablegen, aufnehme
   logikSchritt(w, 0);
   assert.equal(leer.belegt, false);
   assert.ok(w.ereignisse.includes('EN:o20:L'));
+});
+
+test('Welt 9.3, 3 KA5: Blinken und Pfeil als Bitmaske – BLINKEN_TAKT und PFEIL_TAKT sind Zweierpotenzen (Kampf 2.4: keine Division)', () => {
+  for (const takt of [BLINKEN_TAKT, PFEIL_TAKT]) {
+    assert.ok(takt > 0 && (takt & (takt - 1)) === 0, `${takt} ist keine Zweierpotenz`);
+  }
 });

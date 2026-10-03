@@ -20,7 +20,7 @@ import type { Blick, Figur, Gegner, Objekt } from './entitaeten.ts';
 import type { EingriffDaten, GegnerStart } from './start.ts';
 import type { KameraModus, Welt } from './welt.ts';
 import { ausGanz } from './festkomma.ts';
-import { entitaet } from './entitaeten.ts';
+import { entitaet, objektVon } from './entitaeten.ts';
 import { EREIGNIS, ereignis, eingriffText } from './ereignisse.ts';
 import { kameraY, blickAusText } from './stage.ts';
 import { gegnerAusSzene, gegnerUebergeben, gegnerZufallGeben } from './anlegen.ts';
@@ -120,8 +120,8 @@ export function eingriffAnwenden(welt: Welt, e: EingriffDaten): void {
     if (!setzeGemeinsam(ziel, e)) {
       if (e.feld === 'blick') {
         ziel.blick = blickWert(e);
-      } else if (ziel.typ === 'Figur') {
-        const f = ziel as Figur;
+      } else if (ziel === welt.figur) {
+        const f = welt.figur;
         if (e.feld === 'schutz') f.schutz = ganzzahl(e);
         else if (e.feld === 'munition') f.munition = ganzzahl(e);
         else if (e.feld === 'waffe') {
@@ -129,7 +129,8 @@ export function eingriffAnwenden(welt: Welt, e: EingriffDaten): void {
           f.waffe = e.wert === 'RW' ? 'RW' : '';
         }
       } else {
-        const o = ziel as Objekt;
+        const o = objektVon(welt, ziel.schluessel);
+        if (o === null) throw fehler(e, 'Feld gibt es nur für Objekte');
         if (e.feld === 'munition') o.munition = ganzzahl(e);
         else if (e.feld === 'liegezeit') o.liegezeit = ganzzahl(e);
       }

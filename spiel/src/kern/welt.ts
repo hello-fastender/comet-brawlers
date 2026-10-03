@@ -16,7 +16,8 @@
 //    W1       eingriffeAusfuehren                       eingriffe.ts (K0)
 //    W2       rangSchritt                               rang.ts (K3)
 //    W3       wellenAnlegen                             wellen.ts (K3)
-//    W4       rechteSchritt                             gegner/nah.ts (K3)
+//    W4       rahmenVorlauf (steuerung, Phase)          rahmen.ts (K3)
+//             rechteSchritt                             gegner/nah.ts (K3)
 //             je Gegner: Ballast → bossEntscheidung     gegner/boss.ts (K4)
 //                        Logik aus/Puppe → puppeEntscheidung  gegner/reaktion.ts (K2)
 //                        in Reaktion → nichts (Logik ruht, Kampf 7)
@@ -100,20 +101,26 @@
 //    (K1). Der Eingriff welle.N jetzt ruft welleAusloesen (K3). Neue Gegner
 //    einer Welle legt K3 so an: freierGegner, gegnerBelegen, Felder setzen,
 //    gegnerZufallGeben, gegnerUebergeben (anlegen.ts). Bewegung mit Band,
-//    Hindernissen und Rändern: stage.ts schrittBegrenzt (behaelterHindernis
-//    für unzerbrochene Behälter). Abstände: entitaeten.ts abstand, blickZu,
-//    schautZu; aktives Fenster imFenster; lebend istLebend; Rangstufe:
-//    rang.ts rangstufe.
+//    Hindernissen und Rändern: stage.ts schrittBegrenzt mit
+//    gegenstaende.ts behaelterHindernisse (einzige Fassung: Behälter bis
+//    einschließlich Frame h des Zerbrechens, Welt 9.2). Flugbahnen F1 bis F4b:
+//    bahn.ts bahnStarten, bahnSchritt. Abstände: entitaeten.ts abstand,
+//    blickZu, schautZu; Slots entitaet, gegnerVon, objektVon; aktives Fenster
+//    imFenster; lebend istLebend; Rangstufe: rang.ts rangstufe.
+//
+// 9. Aller Zustand eines Laufs steht in der Welt (keine Modulvariablen, keine
+//    WeakMaps): eine Kopie der Welt (structuredClone) läuft bitgleich weiter.
 //
 // ===========================================================================
 
-import type { Gegner, SlotTabelle, Treffer } from './entitaeten.ts';
+import type { Gegner, GegnerTyp, SlotTabelle, Treffer } from './entitaeten.ts';
 import type { EintragSatz, HaltSatz, SperreSatz, Stage, WelleSatz } from './stage.ts';
 import type { Pruefstart } from './start.ts';
+import type { SchuettelnArt } from './kamera.ts';
 import type { Tasten } from './tasten.ts';
 import type { Zufall } from './zufall.ts';
 import { ausGanz, ganz } from './festkomma.ts';
-import { entitaet, gegnerVon, istGegnerSlot, istLebend, istReaktion, slotTabelleNeu, vorframeKopieren } from './entitaeten.ts';
+import { gegnerVon, istGegnerSlot, istLebend, istReaktion, objektVon, slotTabelleNeu, vorframeKopieren } from './entitaeten.ts';
 import { ALLE, KEINE, neuGedrueckt } from './tasten.ts';
 import { zufallNeu } from './zufall.ts';
 import { kameraY } from './stage.ts';
@@ -131,7 +138,7 @@ import { wellenAnlegen, wellenPruefen } from './wellen.ts';
 import { kameraSchritt } from './kamera.ts';
 import { rangSchritt } from './rang.ts';
 import { behaelterGetroffen, gegenstaendeSchritt, gegenstaendeScrollen } from './gegenstaende.ts';
-import { rahmenSchritt, rahmenW5 } from './rahmen.ts';
+import { rahmenSchritt, rahmenVorlauf, rahmenW5 } from './rahmen.ts';
 import {
   BOSS_SLOT,
   ERSTER_FRAME,
@@ -187,6 +194,9 @@ export interface KameraZustand {
   /** Bildschütteln (KA10), nur Darstellung: Spalte schuetteln „x/y“ */
   schuetteln_x: number;
   schuetteln_y: number;
+  /** Anlass und erster Frame des laufenden Bildschüttelns (KA10); '' = keins */
+  schuetteln_art: '' | SchuettelnArt;
+  schuetteln_ab: number;
   /** Pfeil „weiter“ (KA5), Spalte pfeil */
   pfeil: 0 | 1;
   /** Frame c der Blende (KA13), 0 = keine */
@@ -254,6 +264,16 @@ export interface RahmenZustand {
   punkte: number;
   /** Slot der Gegneranzeige (Welt 10.1), null = keine */
   anzeige: number | null;
+  /**
+   * Typ (Name) und LP des angezeigten Gegners (Welt 10.1), gesetzt in W5 beim
+   * Treffer durch die Figur. Die LP folgen ihm, solange er lebt und seinen
+   * Slot belegt (anzeige_lebt); danach bleibt die Anzeige mit leerem Balken,
+   * bis die Figur einen anderen Gegner trifft, auch wenn ein neuer Gegner den
+   * Slot belegt.
+   */
+  anzeige_typ: GegnerTyp | '';
+  anzeige_lp: number;
+  anzeige_lebt: boolean;
   phase: Phase;
   /** 1 wertet Eingaben aus, 0 nicht (Welt 11.4) */
   steuerung: 0 | 1;
@@ -299,6 +319,8 @@ export interface Welt extends SlotTabelle {
   treffer: Treffer[];
   /** Ereignisse dieses Frames (Kampf 11.4), Spalte ereignis */
   ereignisse: string[];
+  /** Prüfangriff i (Reihenfolge in start.pruefangriffe) ist beendet und beginnt nicht neu (Kampf 11.2) */
+  pruefangriffe_beendet: boolean[];
   vorframe: Vorframe;
   /** Ende der Scheibe erreicht (Welt 10.5): der Prüflauf hört nach dieser Zeile auf */
   beendet: boolean;
@@ -353,6 +375,8 @@ export function erzeugeWelt(stage: Stage, start: Pruefstart): Welt {
       fest: stage.kamera_fest,
       schuetteln_x: 0,
       schuetteln_y: 0,
+      schuetteln_art: '',
+      schuetteln_ab: 0,
       pfeil: 0,
       blende_c: 0,
       schnitt_ausgefuehrt: false,
@@ -370,10 +394,22 @@ export function erzeugeWelt(stage: Stage, start: Pruefstart): Welt {
       nur_boss: start.welle7_nur_boss,
     },
     rechte: { l: null, r: null, ziel: null },
-    rahmen: { leben: LEBEN_START, punkte: 0, anzeige: null, phase: 'SPIEL', steuerung: 1, boss_t: 0, gameover_frame: 0 },
+    rahmen: {
+      leben: LEBEN_START,
+      punkte: 0,
+      anzeige: null,
+      anzeige_typ: '',
+      anzeige_lp: 0,
+      anzeige_lebt: false,
+      phase: 'SPIEL',
+      steuerung: 1,
+      boss_t: 0,
+      gameover_frame: 0,
+    },
     lebende: 0,
     treffer: [],
     ereignisse: [],
+    pruefangriffe_beendet: start.pruefangriffe.map(() => false),
     vorframe: { lebende: 0, kamera_x: kx, kamera_y: 0, kamera_modus: 'FREI', besiegt: [], figur_x: 0, figur_z: 0 },
     beendet: false,
   };
@@ -492,7 +528,7 @@ function trefferVerteilen(welt: Welt): void {
       if (g.typ === 'Ballast') bossGetroffen(welt, t);
       else gegnerGetroffen(welt, t);
     } else {
-      const o = entitaet(welt, t.ziel);
+      const o = objektVon(welt, t.ziel);
       if (o === null || !o.belegt) throw new Error(`KS7: Treffer auf freien Slot ${t.ziel}`);
       behaelterGetroffen(welt, t);
     }
@@ -536,7 +572,8 @@ export function logikSchritt(welt: Welt, tasten: Tasten): void {
   rangSchritt(welt);
   // W3 vorgemerkte Gegner, Weckreiz
   wellenAnlegen(welt);
-  // W4 Entscheidungen der Gegner und des Bosses
+  // W4 steuerung und Phase dieses Frames, Entscheidungen der Gegner und des Bosses
+  rahmenVorlauf(welt);
   rechteSchritt(welt);
   for (const g of welt.gegner) if (g.belegt) gegnerEntscheidung(welt, g);
 

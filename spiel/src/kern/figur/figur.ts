@@ -10,7 +10,8 @@
 //   figurGeschosseSchritt KS4 Raketen g0–g4, Instanzen WG, Haltelage
 //   figurHatGetroffen    KS7  Urheberseite (Trefferstopp, Kette, Kosten)
 //   griffPruefen         Ende KS7 (Griff am Ende eines LAUF-Frames)
-// Dateien: intern.ts (Zustand, Eingabe), basis.ts (Aktionswechsel, Bewegung),
+// Der Zustand der Figur steht vollständig in welt.figur (entitaeten.ts Figur).
+// Dateien: intern.ts (Eingabe), basis.ts (Aktionswechsel, Bewegung),
 // angriffe.ts (Instanzen, aktive Frames), zustaende.ts (Automat), griff.ts,
 // waffen.ts.
 
@@ -18,18 +19,17 @@ import type { Treffer } from '../entitaeten.ts';
 import type { Welt } from '../welt.ts';
 import { figurZustandSetzen } from '../schaden.ts';
 import { griffPruefenIntern, wurfGeschosseSchritt } from './griff.ts';
-import { internNeu, schwellenSetzen } from './intern.ts';
+import { schwellenSetzen } from './intern.ts';
 import { raketenSchritt } from './waffen.ts';
 import { figurKs1, figurKs2, figurUrheberTreffer } from './zustaende.ts';
 
 /**
  * Nach erzeugeWelt: Figur steht am Start (x, z, blick, lp, waffe, munition
- * sind gesetzt, aktion STAND, zustand 1, uhr 1). Interner Zustand neu,
+ * sind gesetzt, aktion STAND, zustand 1, uhr 1, übrige Felder aus figurNeu).
  * Drücke ab Frame 0, zustand nach Kampf 4.1.
  */
 export function figurInitialisieren(welt: Welt): void {
   const f = welt.figur;
-  internNeu(f);
   schwellenSetzen(f, 0, 0, 0);
   figurZustandSetzen(welt);
 }

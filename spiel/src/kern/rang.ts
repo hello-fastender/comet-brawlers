@@ -6,13 +6,21 @@
 //
 // Festlegung K3: rang.fest hält den Rang ganz fest, auch beim Tod der Figur
 // (Welt 11.3: „rang.fest hält ihn“).
+// Festlegung Q1: der Anstieg nutzt eine Division (rangAnstieg), die Kampf 2.4
+// noch nicht aufzählt (Lücke, Bericht).
 
 import type { Welt } from './welt.ts';
 import { divGanz } from './festkomma.ts';
 import { neueinstiegN } from './rahmen.ts';
 import { RANG_ERSTER_ANSTIEG, RANG_MAX, RANG_MIN, RANG_TAKT, RANG_TOD, RANGSTUFE_AB } from './werte.ts';
 
-/** Ist r ein Anstiegszeitpunkt r = 409 + 600·k mit k ≥ 0 (Welt 8)? */
+/**
+ * Ist r ein Anstiegszeitpunkt r = 409 + 600·k mit k ≥ 0 (Welt 8)? Die
+ * Division ⌊(r − 409)/600⌋ ist eine Lücke in der Liste von Kampf 2.4
+ * (Festlegung Q1): Der Eingriff rang.zaehler (Welt 11.3) setzt r beliebig,
+ * ein mitgeführter Zähler für den nächsten Anstieg wäre doppelter Zustand,
+ * der bei jedem Setzen von r wieder eine Division oder Schleife bräuchte.
+ */
 export function rangAnstieg(r: number): boolean {
   if (r < RANG_ERSTER_ANSTIEG) return false;
   const k = divGanz(r - RANG_ERSTER_ANSTIEG, RANG_TAKT);

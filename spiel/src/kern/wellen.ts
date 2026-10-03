@@ -33,6 +33,7 @@ import { EREIGNIS, ereignis } from './ereignisse.ts';
 import { gegnerUebergeben, gegnerZufallGeben, rolleVon } from './anlegen.ts';
 import { bosskistenZerbrechen } from './gegenstaende.ts';
 import { kameraBlende } from './kamera.ts';
+import { bossLpDauerhaft } from './gegner/boss.ts';
 import {
   AUFTRITT_BOSS,
   AUFTRITT_HOCKE_BOLZER,
@@ -40,7 +41,6 @@ import {
   AUFTRITT_LUKE,
   AUFTRITT_RAND,
   AUFTRITT_VERSTECK,
-  BOSS_SLOT,
   LP_BOLZER_O,
   LP_BOLZER_U,
   LP_RAMMBOCK_O,
@@ -83,11 +83,10 @@ export function lpNachRang(typ: GegnerTyp | '', rolle: Rolle, rang: number): num
   return divGanz(RANG_LP_TEILER * u + RANG_LP_FAKTOR * (o - u) * (r - RANG_MIN) + RANG_LP_RUNDUNG, RANG_LP_TEILER);
 }
 
-/** Setzt LP und Max-LP nach dem Rang dieses Frames plus Bonus (g.timer.bonus) und löscht lp_offen. */
+/** Setzt LP und Max-LP nach dem Rang dieses Frames plus Bonus der Welle (g.lp_bonus) und löscht lp_offen. */
 function lpNachRangSetzen(welt: Welt, g: Gegner): void {
-  const bonus = g.timer['bonus'] ?? 0;
   g.rang_beim_erscheinen = welt.rang.rang;
-  g.lp = lpNachRang(g.typ, g.rolle, welt.rang.rang) + bonus;
+  g.lp = lpNachRang(g.typ, g.rolle, welt.rang.rang) + g.lp_bonus;
   g.lp_max = g.lp;
   g.lp_vor = g.lp;
   g.lp_offen = false;
@@ -96,7 +95,7 @@ function lpNachRangSetzen(welt: Welt, g: Gegner): void {
 /**
  * Nach dem Anlegen eines Gegners mit Logik an außer dem Boss (erzeugeWelt,
  * Eingriff „erscheint“, Wellen): Ist g.lp_offen, LP und lp_max nach dem Rang
- * setzen (Welt 4.5, 8; Bonus der Welle in g.timer.bonus). Wartende (WARTEN)
+ * setzen (Welt 4.5, 8; Bonus der Welle in g.lp_bonus). Wartende (WARTEN)
  * bekommen ihre LP erst beim Weckreiz. Der Modus bleibt: WARTEN (aus der
  * Stage) bzw. FREI (Prüfszene, Rand; wach und kampffähig).
  */
@@ -128,6 +127,8 @@ export function auftrittDauer(auftritt: Auftritt, typ: GegnerTyp | ''): number {
  * Weckreiz im Frame w (Welt 4.2): AUFTRITT ab w, kampffähig ab w + Dauer
  * (g.kampffaehig_ab), bis dahin nicht treffbar und nicht greifbar (Zustand 2),
  * aber lebend. Ereignis WK:sn. Beim Boss zerbrechen alle Bosskisten (4.6).
+ * Der einzige Weg zum Weckreiz, auch für den Boss (gegner/boss.ts wartet
+ * in WARTEN nur und beendet den Auftritt in kampffaehig_ab).
  */
 function weckreiz(welt: Welt, g: Gegner): void {
   const w = welt.frame;
@@ -136,7 +137,7 @@ function weckreiz(welt: Welt, g: Gegner): void {
   g.zustand = ZUSTAND_BODEN;
   g.weckreiz_w = w;
   g.kampffaehig_ab = w + auftrittDauer(g.auftritt, g.typ);
-  g.timer['weckreiz_ab'] = 0;
+  g.weckreiz_ab = 0;
   if (g.lp_offen) lpNachRangSetzen(welt, g);
   ereignis(welt, EREIGNIS.WECKREIZ, g.schluessel);
   if (g.typ === 'Ballast') bosskistenZerbrechen(welt);
@@ -168,7 +169,7 @@ function eintragAnlegen(welt: Welt, v: Vormerkung): void {
   g.modus = 'FREI';
   g.modus_uhr = 1;
   g.aktion = 'STAND';
-  g.timer['bonus'] = v.bonus;
+  g.lp_bonus = v.bonus;
   gegnerZufallGeben(welt, g);
   gegnerUebergeben(welt, g);
 }
@@ -191,8 +192,7 @@ export function wellenAnlegen(welt: Welt): void {
   const kVor = welt.vorframe.kamera_x;
   for (const g of welt.gegner) {
     if (!g.belegt || g.modus !== 'WARTEN') continue;
-    const ab = g.timer['weckreiz_ab'] ?? 0;
-    if (ab > 0 && f >= ab) weckreiz(welt, g);
+    if (g.weckreiz_ab > 0 && f >= g.weckreiz_ab) weckreiz(welt, g);
     else if (g.auftritt === 'hocke' && ganz(g.x) - kVor <= WECKREIZ_HOCKE) weckreiz(welt, g);
   }
 }
@@ -233,13 +233,8 @@ export function welleAusloesen(welt: Welt, nr: number): void {
   }
   for (const g of welt.gegner) {
     if (!g.belegt || g.welle !== nr || g.modus !== 'WARTEN') continue;
-    if (g.auftritt === 'versteck' || g.auftritt === 'luke' || g.auftritt === 'boss') g.timer['weckreiz_ab'] = f + 1;
+    if (g.auftritt === 'versteck' || g.auftritt === 'luke' || g.auftritt === 'boss') g.weckreiz_ab = f + 1;
   }
-}
-
-/** LP des Bosses für den Auslöser boss_lp: während einer Folge lp_folge, sonst LP (Welt 4.4, 7.5). */
-export function bossLpDauerhaft(g: Gegner): number {
-  return g.folge === 1 ? g.lp_folge : g.lp;
 }
 
 function ausloeserErfuellt(welt: Welt, w: WelleZustand): boolean {
@@ -258,8 +253,9 @@ function ausloeserErfuellt(welt: Welt, w: WelleZustand): boolean {
     case 'arena':
       return welt.kamera.modus === 'ARENA' && !kameraBlende(welt);
     case 'boss_lp': {
-      const b = welt.gegner[BOSS_SLOT] as Gegner;
-      return b.belegt && b.typ === 'Ballast' && bossLpDauerhaft(b) <= s.wert;
+      // dauerhaft abgezogene LP (Welt 7.5), Regel der Super-Armor bei K4
+      const lp = bossLpDauerhaft(welt);
+      return lp !== null && lp <= s.wert;
     }
   }
 }

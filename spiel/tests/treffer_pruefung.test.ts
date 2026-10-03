@@ -23,7 +23,6 @@ import type { Welt } from '../src/kern/welt.ts';
 import { gegnerZufall, zufallNeu } from '../src/kern/zufall.ts';
 import { gegnerGetroffen, puppeEntscheidung, reaktionSchritt, umwerfenBeginnen } from '../src/kern/gegner/reaktion.ts';
 import {
-  TIMER_VORN_GESCHUETZT,
   behaelterTreffbar,
   ersterWirksamerTreffer,
   inFlaeche,
@@ -43,6 +42,7 @@ import {
   RX_SCHADEN,
   RX_TIEFE,
   RX_VORN,
+  SEED_KAMPF_TESTS,
   SPRINT_SPRUNGANGRIFF,
   TREFFERSTOPP,
   WG_HALBBREITE,
@@ -67,7 +67,7 @@ const BUEHNE = parseStage(readFileSync(new URL('../daten/stages/pruefbuehne.txt'
  * pruefstart fest.NAME=WERT.
  */
 function welt(zeilen: string): Welt {
-  const start = standardStart(1, 'pruefbuehne');
+  const start = standardStart(SEED_KAMPF_TESTS, 'pruefbuehne');
   start.rang = 9;
   start.rang_fest = true;
   const saetze = zeilen
@@ -99,15 +99,16 @@ function welt(zeilen: string): Welt {
     zufall: zufallNeu(start.seed),
     fest: { ...start.fest },
     rang: { rang: 9, zaehler: 0, fest: true },
-    kamera: { x: 0, y: 0, modus: 'FREI', fest: true, schuetteln_x: 0, schuetteln_y: 0, pfeil: 0, blende_c: 0, schnitt_ausgefuehrt: false, arena_ab: 0, freigabe_frame: 0, freigabe_x: 0 },
+    kamera: { x: 0, y: 0, modus: 'FREI', fest: true, schuetteln_x: 0, schuetteln_y: 0, schuetteln_art: '', schuetteln_ab: 0, pfeil: 0, blende_c: 0, schnitt_ausgefuehrt: false, arena_ab: 0, freigabe_frame: 0, freigabe_x: 0 },
     sperren: [],
     halte: [],
     wellen: { liste: [], ausgeloest: [], vorgemerkt: [], besiegt: [], nur_boss: false },
     rechte: { l: null, r: null, ziel: null },
-    rahmen: { leben: 3, punkte: 0, anzeige: null, phase: 'SPIEL', steuerung: 1, boss_t: 0, gameover_frame: 0 },
+    rahmen: { leben: 3, punkte: 0, anzeige: null, anzeige_typ: '', anzeige_lp: 0, anzeige_lebt: false, phase: 'SPIEL', steuerung: 1, boss_t: 0, gameover_frame: 0 },
     lebende: 0,
     treffer: [],
     ereignisse: [],
+    pruefangriffe_beendet: start.pruefangriffe.map(() => false),
     vorframe: { lebende: 0, kamera_x: 0, kamera_y: 0, kamera_modus: 'FREI', besiegt: [], figur_x: 100, figur_z: 100 },
     beendet: false,
   };
@@ -607,6 +608,31 @@ test('treffer: wirkungslos im Schutz zählt nicht, der Angriff trifft danach (P1
   assert.equal(gegner(w, 0).angriff, null); // nach bis beendet
 });
 
+test('treffer: ein beendeter Prüfangriff beginnt auch für einen neuen Gegner im selben Slot nicht neu (Kampf 11.2)', () => {
+  const w = welt('gegner slot=0 typ=Puppe x=146 z=100 lp=16\npruefangriff slot=0 von=5 bis=40 schaden=5 umwerfen=nein\n');
+  bis(w, 5, { vor: (u) => { u.figur.zustand = 3; } });
+  const g = gegner(w, 0);
+  assert.equal(g.angriff?.code, 'PA');
+  assert.equal(g.pruefangriff, 1);
+  // wirksamer Treffer auf den Gegner beendet den Prüfangriff (trefferFolgen)
+  const t: Treffer = {
+    angreifer: 'f', urheber: 'f', ziel: 's0', code: 'KT1', schaden: 1, umwerfen: false, bahn: '',
+    richtung: 1, von_vorn: true, wirkung: 'R', lp_vorher: 16, instanz: kette(w, 1),
+  };
+  w.treffer = [t];
+  trefferFolgen(w);
+  assert.deepEqual([g.angriff, g.pruefangriff, w.pruefangriffe_beendet], [null, 0, [true]]);
+  // Slot frei und neu belegt, noch innerhalb von von … bis: kein neuer Prüfangriff
+  gegnerBelegen(g, 'Puppe');
+  g.x = ausGanz(146);
+  g.z = ausGanz(100);
+  g.lp = 16;
+  g.logik = false;
+  g.modus = 'PUPPE';
+  bis(w, 10, { vor: (u) => { u.figur.zustand = 3; } });
+  assert.deepEqual([g.angriff, g.pruefangriff], [null, 0]);
+});
+
 test('treffer: Prüfangriff −4 bis 60 px vor dem Gegner, |dz| ≤ 10, Figur bis 48 px, Richtung vom Angreifer weg (Kampf 11.2, P14)', () => {
   const w = welt('gegner slot=0 typ=Puppe x=146 z=100 lp=16\npruefangriff slot=0 von=5 bis=5 schaden=5 umwerfen=ja\n');
   bis(w, 4);
@@ -712,7 +738,7 @@ test('treffer: Boss von vorn nicht treffbar, solange K4 es meldet; von hinten sc
   boss.typ = 'Ballast';
   boss.logik = true; // keine Puppe: Blick bleibt, wie gesetzt
   boss.blick = -1; // schaut zur Figur
-  boss.timer[TIMER_VORN_GESCHUETZT] = 1;
+  boss.vorn_geschuetzt = true;
   bis(w, 1, { vor: (u) => { u.figur.angriff = kette(u, 1); } });
   assert.equal(w.treffer.length, 0);
   boss.blick = 1; // Figur hinter ihm

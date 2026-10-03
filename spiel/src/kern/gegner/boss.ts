@@ -5,11 +5,12 @@
 //
 // welt.ts gibt den Boss (typ Ballast, Slot s0) immer an diese Funktionen,
 // auch in seinen Reaktionen:
-//   W4   bossEntscheidung  Weckreiz (Ersatz, siehe bossWecken), Auftritt,
-//                          Rückkehr nach Reaktionen, Gehbefehl, Wahl und
-//                          Beginn der Angriffe (boss_angriffe.ts)
+//   W4   bossEntscheidung  Ende des Auftritts, Rückkehr nach Reaktionen,
+//                          Gehbefehl, Wahl und Beginn der Angriffe
+//                          (boss_angriffe.ts)
 //   KS3  bossBewegung      Gehen, Angriffsabläufe, Stoß, eigene Reaktionen
-//                          (boss_bahn.ts); setzt instanz.aktiv
+//                          (boss_bahn.ts); setzt instanz.aktiv und den
+//                          Frontschutz des Armschwungs (vorn_geschuetzt)
 //   KS5  bossAbbruch       nichts: die Angriffe des Bosses brechen nicht ab
 //   KS7  bossGetroffen     Zielhandler: LP vorläufig (SA2) oder endgültig
 //                          (SA1), Folge, Reaktion nach SA3, Umwerfen, Taumeln, Tod
@@ -20,10 +21,13 @@
 //
 // Für andere Module:
 //   bossLpDauerhaft(welt)  LP ohne die vorläufigen Abzüge (7.5, Auslöser boss_lp)
-//   bossWecken(welt, g)    Weckreiz des Bosses (Welt 4.2, W3), falls K3 ihn nicht selbst setzt
-// Von anderen Modulen: reaktion.ts todEinleiten, vonFigurWeg (K2, Fall 7.6);
-// kamera.ts schuettelnStarten (K3, Landung der Presse, KA10); gegenstaende.ts
-// bosskistenZerbrechen (K3, Weckreiz 4.6, 9.2).
+// Den Weckreiz (Welt 4.2, 4.6: AUFTRITT, kampffähig ab w+60, Bosskisten
+// zerbrechen) führt allein wellen.ts in W3.
+// Von anderen Modulen: reaktion.ts todEinleiten, vonFigurWeg (K2, Fall 7.6),
+// in boss_bahn.ts bahnStarten, bahnSchritt, reaktionBeenden (Kampf 5.7, 7);
+// nah.ts rechteGesperrt (E-10, Welt 5.7, in boss_angriffe.ts); kamera.ts
+// schuettelnStarten (K3, Landung der Presse, KA10); gegenstaende.ts
+// behaelterHindernisse (Welt 9.2, in boss_zustand.ts).
 //
 // Abweichungen vom Auftragstext (die Spezifikation gilt): kein Schutz nach
 // dem Aufstehen (E4, Welt 7.1); kein kurzer Schlag in der Scheibe (Welt 7.3:
@@ -43,10 +47,8 @@ import {
 } from '../entitaeten.ts';
 import { EREIGNIS, ereignis, ereignisTreffer } from '../ereignisse.ts';
 import { ganz, mulGanz, neg, sub, minF } from '../festkomma.ts';
-import { bosskistenZerbrechen } from '../gegenstaende.ts';
 import { todEinleiten, vonFigurWeg } from './reaktion.ts';
 import {
-  AUFTRITT_BOSS,
   BOSS_ABSTAND,
   BOSS_ERSTER_ANGRIFF,
   BOSS_GEHEN_X,
@@ -58,31 +60,23 @@ import {
 import { angriffEntscheiden, angriffGetroffen, angriffSchritt, nachlaufVorbei } from './boss_angriffe.ts';
 import {
   bereitWerden,
+  bossGetroffenBeginnen,
+  bossGetroffenSchritt,
+  bossTodSchritt,
   bossTotBeginnen,
-  getroffenBeginnen,
-  getroffenSchritt,
+  bossUmwerfenBeginnen,
+  bossUmwerfenSchritt,
   nachStossUnverwundbar,
   stossBeginnen,
   stossSchritt,
   stossVorbei,
   taumelnBeginnen,
   taumelnSchritt,
-  todSchritt,
-  umwerfenBeginnen,
-  umwerfenSchritt,
 } from './boss_bahn.ts';
-import {
-  bossSchritt,
-  eigeneInstanz,
-  eigenenAngriffBeenden,
-  eigenerAngriff,
-  lies,
-  setze,
-  wegVonFigur,
-} from './boss_zustand.ts';
+import { bossSchritt, eigeneInstanz, eigenenAngriffBeenden, eigenerAngriff } from './boss_zustand.ts';
 
 // ===========================================================================
-// Anlegen, Weckreiz, Auftritt (Welt 4.2, 4.6, 11.3)
+// Anlegen, Auftritt (Welt 4.2, 4.6, 11.3)
 // ===========================================================================
 
 /**
@@ -112,32 +106,6 @@ export function bossAngelegt(welt: Welt, g: Gegner): void {
   g.modus = 'BEREIT';
   g.aktion = 'STAND';
   g.zustand = ZUSTAND_NORMAL;
-}
-
-/**
- * Weckreiz des Bosses im Frame w (Welt 4.2: Arena-Auslöser in f, Weckreiz in
- * W3 von f+1; 4.6): AUFTRITT ab w, 60 Frames nicht treffbar, kampffähig ab
- * w+60; alle Bosskisten zerbrechen in w (9.2); Ereignis WK:s0. K3 ruft das
- * in W3 auf; tut es das nicht, holt bossEntscheidung es in W4 desselben
- * Frames nach.
- */
-export function bossWecken(welt: Welt, g: Gegner): void {
-  if (g.modus !== 'WARTEN') return;
-  modusSetzen(g, 'AUFTRITT');
-  g.aktion = 'AUFTRITT';
-  g.zustand = ZUSTAND_BODEN;
-  g.weckreiz_w = welt.frame;
-  g.kampffaehig_ab = welt.frame + AUFTRITT_BOSS;
-  ereignis(welt, EREIGNIS.WECKREIZ, g.schluessel);
-  bosskistenZerbrechen(welt);
-}
-
-/** Ist die Welle des Bosses in einem früheren Frame ausgelöst (Welt 4.4)? */
-function welleAusgeloest(welt: Welt, g: Gegner): boolean {
-  for (const w of welt.wellen.liste) {
-    if (w.satz.nr === g.welle && w.ausgeloest && w.frame < welt.frame) return true;
-  }
-  return false;
 }
 
 /** Kampfbereit (Welt 4.2, 7.2): BEREIT, erster Angriff 60 Frames danach. */
@@ -175,23 +143,23 @@ function haltenUnberuehrt(g: Gegner): boolean {
  */
 function haltenAbgleich(welt: Welt, g: Gegner): boolean {
   if (haltenUnberuehrt(g)) {
-    setze(g, 'gehalten', 0);
+    g.boss.gehalten = false;
     return false;
   }
   if (g.gehalten_von !== null) {
     if (g.modus !== 'GEHALTEN') {
       eigenenAngriffBeenden(g);
-      setze(g, 'wahl', 0);
+      g.boss.wahl = '';
       modusSetzen(g, 'GEHALTEN');
     }
     g.aktion = 'GEHALTEN';
     g.zustand = ZUSTAND_BODEN;
-    setze(g, 'gehalten', 1);
+    g.boss.gehalten = true;
     return true;
   }
-  if (lies(g, 'gehalten') === 1) {
-    setze(g, 'gehalten', 0);
-    if (g.folge === 1) setze(g, 'sa_faellig', welt.frame + 1);
+  if (g.boss.gehalten) {
+    g.boss.gehalten = false;
+    if (g.folge === 1) g.boss.sa_faellig = welt.frame + 1;
     if (g.modus === 'GEHALTEN') {
       modusSetzen(g, 'FREI');
       g.aktion = 'STAND';
@@ -205,22 +173,18 @@ function haltenAbgleich(welt: Welt, g: Gegner): boolean {
 // W4
 // ===========================================================================
 
-/** W4: Weckreiz-Folgen, Auftritt, Fälligkeit und Wahl des Angriffs (g.zufall), Rückkehr nach Reaktionen. */
+/** W4: Ende des Auftritts, Fälligkeit und Wahl des Angriffs (g.zufall), Rückkehr nach Reaktionen. */
 export function bossEntscheidung(welt: Welt, g: Gegner): void {
   if (!g.belegt || g.modus === 'TOT') return;
   if (g.lp < 0) {
     // LP < 0 ohne Treffer (Eingriff): Tod in diesem Frame, Flug von der Figur weg
-    bossTotBeginnen(welt, g, wegVonFigur(welt, g));
+    bossTotBeginnen(welt, g, vonFigurWeg(welt, g));
     return;
   }
-  if (g.modus === 'WARTEN') {
-    if (welleAusgeloest(welt, g)) bossWecken(welt, g);
-    return;
-  }
+  // WARTEN: geweckt wird in W3 (wellen.ts, Welt 4.2)
+  if (g.modus === 'WARTEN') return;
   if (g.modus === 'AUFTRITT') {
-    // erster Frame des Auftritts: Kisten zerbrechen (falls K3 den Weckreiz in W3 gesetzt hat)
-    if (g.modus_uhr <= 1) bosskistenZerbrechen(welt);
-    if (g.kampffaehig_ab <= g.weckreiz_w) g.kampffaehig_ab = (g.weckreiz_w > 0 ? g.weckreiz_w : welt.frame) + AUFTRITT_BOSS;
+    // kampffähig ab w+60 (wellen.ts setzt kampffaehig_ab beim Weckreiz)
     if (welt.frame < g.kampffaehig_ab) return;
     kampfbereit(welt, g);
   } else {
@@ -261,38 +225,40 @@ export function bossEntscheidung(welt: Welt, g: Gegner): void {
  */
 function bereitEntscheidung(welt: Welt, g: Gegner): void {
   if (g.zustand === ZUSTAND_BODEN && !nachStossUnverwundbar(welt, g)) g.zustand = ZUSTAND_NORMAL;
-  setze(g, 'geh_x', 0);
-  setze(g, 'geh_z', 0);
+  g.boss.geh_x = 0;
+  g.boss.geh_z = 0;
   g.blick = blickZu(g, welt.figur);
   if (angriffEntscheiden(welt, g)) return;
   if (!g.logik || !g.bewegung_an) return;
   const dx = ganz(g.x) - ganz(welt.figur.x);
-  if (Math.abs(dx) > BOSS_ABSTAND) setze(g, 'geh_x', dx > 0 ? -1 : 1);
+  if (Math.abs(dx) > BOSS_ABSTAND) g.boss.geh_x = dx > 0 ? -1 : 1;
   const zDiff = sub(welt.figur.z, g.z);
-  if (zDiff > 0) setze(g, 'geh_z', minF(BOSS_GEHEN_Z, zDiff));
-  else if (zDiff < 0) setze(g, 'geh_z', neg(minF(BOSS_GEHEN_Z, neg(zDiff))));
+  if (zDiff > 0) g.boss.geh_z = minF(BOSS_GEHEN_Z, zDiff);
+  else if (zDiff < 0) g.boss.geh_z = neg(minF(BOSS_GEHEN_Z, neg(zDiff)));
 }
 
 // ===========================================================================
 // KS3, KS5
 // ===========================================================================
 
-/** KS3: Bewegung, Angriffsabläufe, Stoß RZ, eigene Reaktionen (Umwerfen, Liegen, Taumeln); g.angriff.aktiv setzen. */
+/** KS3: Bewegung, Angriffsabläufe, Stoß RZ, eigene Reaktionen (Umwerfen, Liegen, Taumeln); g.angriff.aktiv und g.vorn_geschuetzt setzen. */
 export function bossBewegung(welt: Welt, g: Gegner): void {
   if (!g.belegt) return;
   if (eigeneInstanz(g) && g.angriff !== null) g.angriff.aktiv = false;
+  // Frontschutz gilt nur im Frame, in dem der Armschwung ihn setzt (Welt 7.1)
+  g.vorn_geschuetzt = false;
   if (haltenAbgleich(welt, g)) return;
   switch (g.modus) {
     case 'TOT':
-      todSchritt(welt, g);
+      bossTodSchritt(welt, g);
       return;
     case 'UMGEWORFEN':
     case 'LIEGEN':
     case 'AUFSTEHEN':
-      umwerfenSchritt(welt, g);
+      bossUmwerfenSchritt(welt, g);
       return;
     case 'GETROFFEN':
-      getroffenSchritt(welt, g);
+      bossGetroffenSchritt(welt, g);
       return;
     case 'TAUMELN':
       taumelnSchritt(welt, g);
@@ -315,8 +281,8 @@ export function bossBewegung(welt: Welt, g: Gegner): void {
 
 /** KS3 in BEREIT: der Gehbefehl aus W4 (Band, Hindernisse, Arenarand). */
 function gehenSchritt(welt: Welt, g: Gegner): void {
-  const gx = lies(g, 'geh_x');
-  const gz = lies(g, 'geh_z');
+  const gx = g.boss.geh_x;
+  const gz = g.boss.geh_z;
   if (gx === 0 && gz === 0) {
     g.aktion = 'STAND';
     return;
@@ -358,7 +324,7 @@ function trefferArt(t: Treffer): TrefferArt {
 function folgeBeenden(g: Gegner): void {
   g.folge = 0;
   g.lp_folge = 0;
-  setze(g, 'sa_faellig', 0);
+  g.boss.sa_faellig = 0;
 }
 
 /**
@@ -371,7 +337,7 @@ function folgeBeenden(g: Gegner): void {
 function reaktionNachSA3(welt: Welt, g: Gegner, t: Treffer): void {
   if (g.modus === 'GEHALTEN') return;
   if (eigenerAngriff(g) && (t.von_vorn || g.h > 0)) return;
-  getroffenBeginnen(welt, g);
+  bossGetroffenBeginnen(welt, g);
 }
 
 /**
@@ -380,7 +346,8 @@ function reaktionNachSA3(welt: Welt, g: Gegner, t: Treffer): void {
  * Folge (lp_folge, folge, folge_h), Reaktion nach SA3, Umwerfen nach SA1.
  */
 export function bossGetroffen(welt: Welt, t: Treffer): void {
-  const g = gegnerVon(welt, t.ziel) as Gegner;
+  const g = gegnerVon(welt, t.ziel);
+  if (g === null) throw new Error(`bossGetroffen: ${t.ziel} ist kein Gegnerslot`);
   t.lp_vorher = g.lp;
   if (g.modus === 'TOT') {
     // nimmt keine Treffer an (Kampf 7); treffer.ts legt keine an, nur zur Sicherheit
@@ -405,7 +372,7 @@ export function bossGetroffen(welt: Welt, t: Treffer): void {
     case 'umwerfend':
       // SA1, SA4
       folgeBeenden(g);
-      umwerfenBeginnen(welt, g, t);
+      bossUmwerfenBeginnen(welt, g, t);
       return;
     case 'spezial':
       // SA1, SA2 letzter Satz: alle Abzüge bleiben, kein Stoß, Taumeln (7.1)
@@ -419,7 +386,7 @@ export function bossGetroffen(welt: Welt, t: Treffer): void {
         g.lp_folge = t.lp_vorher;
       }
       g.folge_h = welt.frame;
-      setze(g, 'sa_faellig', 0);
+      g.boss.sa_faellig = 0;
       reaktionNachSA3(welt, g, t);
       return;
     case 'endgueltig':
@@ -427,7 +394,7 @@ export function bossGetroffen(welt: Welt, t: Treffer): void {
       if (g.folge === 1) {
         g.lp_folge -= t.schaden;
         g.folge_h = welt.frame;
-        setze(g, 'sa_faellig', 0);
+        g.boss.sa_faellig = 0;
       }
       reaktionNachSA3(welt, g, t);
       return;
@@ -455,9 +422,10 @@ export function bossW5(welt: Welt): void {
   const g = welt.gegner[BOSS_SLOT] as Gegner;
   if (!g.belegt || g.typ !== 'Ballast') return;
   haltenAbgleich(welt, g);
-  if (g.lp < 0 && g.modus !== 'TOT') bossTotBeginnen(welt, g, wegVonFigur(welt, g));
+  if (g.lp < 0 && g.modus !== 'TOT') bossTotBeginnen(welt, g, vonFigurWeg(welt, g));
   superArmor(welt, g);
-  if (g.modus === 'TOT' && lies(g, 'fall') === 0) fall(welt, g);
+  // Fall genau einmal: in W5 von t, vor rahmenW5 (welt.rahmen.boss_t ist dann noch 0)
+  if (g.modus === 'TOT' && welt.rahmen.boss_t === 0) fall(welt, g);
   stossNachAngriff(welt, g);
 }
 
@@ -470,20 +438,20 @@ export function bossW5(welt: Welt): void {
 function superArmor(welt: Welt, g: Gegner): void {
   if (g.folge !== 1 || g.modus === 'TOT') return;
   if (g.gehalten_von !== null || g.modus === 'GEHALTEN') return;
-  const faellig = lies(g, 'sa_faellig') > 0 ? lies(g, 'sa_faellig') : g.folge_h + SA_FOLGEFRIST;
+  const faellig = g.boss.sa_faellig > 0 ? g.boss.sa_faellig : g.folge_h + SA_FOLGEFRIST;
   if (welt.frame < faellig) return;
   g.lp = g.lp_folge;
   g.folge = 0;
   g.lp_folge = 0;
-  setze(g, 'sa_faellig', 0);
+  g.boss.sa_faellig = 0;
   ereignis(welt, EREIGNIS.SUPER_ARMOR, g.schluessel, g.lp);
-  if (eigenerAngriff(g)) setze(g, 'stoss_offen', 1);
+  if (eigenerAngriff(g)) g.boss.stoss_offen = true;
   else if (g.modus !== 'STOSS') stossBeginnen(welt, g);
 }
 
 /** Aufgeschobener Stoß (SA5): beginnt in W5 des ersten Frames nach den aktiven Frames des Angriffs bzw. nach einer Reaktion. */
 function stossNachAngriff(welt: Welt, g: Gegner): void {
-  if (lies(g, 'stoss_offen') !== 1) return;
+  if (!g.boss.stoss_offen) return;
   if (g.modus === 'NACHLAUF' || g.modus === 'BEREIT' || g.modus === 'FREI') stossBeginnen(welt, g);
 }
 
@@ -494,7 +462,6 @@ function stossNachAngriff(welt: Welt, g: Gegner): void {
  * entfallen, Ereignis BF:s0; welt.rahmen.boss_t = t (Welt 10.5).
  */
 function fall(welt: Welt, g: Gegner): void {
-  setze(g, 'fall', 1);
   for (const o of welt.gegner) {
     if (o === g || !istLebend(o)) continue;
     o.lp = -1;
@@ -510,7 +477,7 @@ function fall(welt: Welt, g: Gegner): void {
   for (const w of welt.wellen.liste) if (!w.ausgeloest) w.aus = true;
   welt.wellen.vorgemerkt = [];
   ereignis(welt, EREIGNIS.BOSS_FALL, g.schluessel);
-  if (welt.rahmen.boss_t === 0) welt.rahmen.boss_t = welt.frame;
+  welt.rahmen.boss_t = welt.frame;
 }
 
 // ===========================================================================

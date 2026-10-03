@@ -1,11 +1,12 @@
 // Nahkämpfer Bolzer und Rammbock nach docs/spezifikation-welt.md, Abschnitt
 // 5 (K3, Stufe 2): Zustandsautomat 5.2, Bewegung 5.3 (nah_gehen.ts),
 // Angriff mit Zielabstand und Abbruch 5.4, Angriffsarten 5.5, Serie und
-// Angriffswahl 5.6, Angriffserlaubnis 5.7 (auch für den Zünder, fern.ts),
+// Angriffswahl 5.6, Angriffserlaubnis 5.7 (auch für den Zünder, fern.ts;
+// Abgabe der Rechte gemeinsam mit reaktion.ts in rechte.ts),
 // Abwarten, Seitenwechsel, Verfolgung 5.8, Rückkehr nach Reaktionen 5.9.
 //
 // Ablauf im Frame:
-//   W4  rechteSchritt   Rahmen-Vorlauf (rahmen.ts), Halter prüfen, E-10, E-5
+//   W4  rechteSchritt   Halter prüfen, E-10, E-5 (nach rahmenVorlauf, welt.ts)
 //       nahEntscheidung Zustand, Recht anfordern (E-3), Gehstufe ziehen,
 //                       Angriffsbeginn A (Zielabstand Z, Schaden, AS:sn:Code)
 //   KS3 nahBewegung     Schritt zum Ziel, Sprungtritt, aktive Frames setzen
@@ -35,17 +36,18 @@
 // - Vom Tod der Figur bis N+1 und in der Blende (E-10) verlassen Halter
 //   Kampfhaltung, Angriff und Nachlauf (ABWARTEN); ein Sprungtritt landet erst.
 
-import type { Blick, Flaeche, Gegner, GegnerModus, Reaktion, Treffer } from '../entitaeten.ts';
+import type { Blick, Flaeche, Gegner, GegnerModus, Treffer } from '../entitaeten.ts';
 import type { Welt } from '../welt.ts';
 import { ausGanz, divGanz, ganz, mulGanz, sub } from '../festkomma.ts';
 import { ZUSTAND_NORMAL, angriffsinstanz, blickZu, gegnerVon, imFenster, istReaktion, modusSetzen } from '../entitaeten.ts';
 import { EREIGNIS, ereignis } from '../ereignisse.ts';
 import { anteil, bereich, prozent, wahl, ziehenAus } from '../zufall.ts';
 import { rangstufe } from '../rang.ts';
-import { neueinstiegN, rahmenVorlauf } from '../rahmen.ts';
+import { neueinstiegN } from '../rahmen.ts';
 import { kameraBlende } from '../kamera.ts';
 import { bandGrenzen, schrittBegrenzt } from '../stage.ts';
 import { bandZ, fensterX, gegnerBegrenzung, gehen, gehTempo, nahAn } from './nah_gehen.ts';
+import { rechtAbgeben, serieZuruecksetzen, zielrechtAbgeben } from './rechte.ts';
 import {
   ABBRUCH_LINKS,
   ABBRUCH_RECHTS,
@@ -140,6 +142,30 @@ function istNahCode(c: string): c is NahCode {
   return Object.prototype.hasOwnProperty.call(NAH_ANGRIFFE, c);
 }
 
+/** Eintrag i einer Liste (Index geprüft: eine Ziehung außerhalb der Liste ist ein Fehler). */
+function eintrag<T>(liste: readonly T[], i: number): T {
+  const w = liste[i];
+  if (w === undefined) throw new RangeError(`Index ${i} außerhalb der Liste (Länge ${liste.length})`);
+  return w;
+}
+
+/**
+ * Codes der normalen Angriffe aus werte.ts als NahCode, beim Laden geprüft
+ * (Welt 5.5, 5.6): jeder Code muss in NAH_ANGRIFFE stehen und je Code ein
+ * Anteil; ein Tippfehler in werte.ts wirft sofort statt erst im Lauf.
+ */
+function nahCodes(codes: readonly string[], anteile: readonly number[]): readonly NahCode[] {
+  if (codes.length !== anteile.length) throw new RangeError(`Angriffscodes ${codes.join(' ')}: ${anteile.length} Anteile`);
+  return codes.map((c) => {
+    if (!istNahCode(c)) throw new RangeError(`Angriffscode „${c}“ fehlt in NAH_ANGRIFFE (werte.ts)`);
+    return c;
+  });
+}
+
+/** Normale Angriffe des Bolzers und des Rammbocks (Welt 5.6), geprüft. */
+const BOLZER_CODES = nahCodes(BOLZER_ANGRIFF_CODES, BOLZER_ANGRIFF_ANTEILE);
+const RAMMBOCK_CODES = nahCodes(RAMMBOCK_ANGRIFF_CODES, RAMMBOCK_ANGRIFF_ANTEILE);
+
 /** Modulinterner Zähler aus g.timer (fehlend = 0). */
 export function tm(g: Gegner, name: string): number {
   return g.timer[name] ?? 0;
@@ -224,16 +250,6 @@ function rechtSetzen(welt: Welt, seite: Blick, nr: number | null): void {
   else welt.rechte.l = nr;
 }
 
-/** Serie und Gruppe zurücksetzen (Welt 5.6), beim Verlust des Rechts. */
-function serieZuruecksetzen(g: Gegner): void {
-  g.serie = false;
-  g.gruppe_rest = 0;
-  g.gruppe_umwerf = '';
-  g.timer['gruppe_aktiv'] = 0;
-  g.timer['letzter_ba'] = 0;
-  g.timer['serie_ende'] = 0;
-}
-
 /**
  * Fordert das Nahkampfrecht der eigenen Seite an (E-3): ein freies Recht wird
  * sofort zugeteilt (RE:sn:L oder R). Nicht mit gegner.sN.erlaubnis=aus und
@@ -249,16 +265,6 @@ export function rechtAnfordern(welt: Welt, g: Gegner): boolean {
   return true;
 }
 
-/** Gibt das Nahkampfrecht ab (E-4, RA:sn) und beendet die Serie. Für K2 beim Umwerfen, Greifen, Werfen und Tod. */
-export function rechtAbgeben(welt: Welt, g: Gegner): void {
-  if (welt.rechte.r === g.nr) welt.rechte.r = null;
-  if (welt.rechte.l === g.nr) welt.rechte.l = null;
-  if (g.recht === '') return;
-  g.recht = '';
-  serieZuruecksetzen(g);
-  ereignis(welt, EREIGNIS.RECHT_ABGEGEBEN, g.schluessel);
-}
-
 /** Fordert das Zielrecht an (Welt 6: höchstens ein Fernkämpfer in ZIELEN oder SCHUSS); ZR:sn. */
 export function zielrechtAnfordern(welt: Welt, g: Gegner): boolean {
   if (g.zielrecht) return true;
@@ -267,23 +273,6 @@ export function zielrechtAnfordern(welt: Welt, g: Gegner): boolean {
   g.zielrecht = true;
   ereignis(welt, EREIGNIS.ZIELRECHT, g.schluessel);
   return true;
-}
-
-/** Gibt das Zielrecht ab (ohne Ereignis). */
-export function zielrechtAbgeben(welt: Welt, g: Gegner): void {
-  if (welt.rechte.ziel === g.nr) welt.rechte.ziel = null;
-  g.zielrecht = false;
-}
-
-/**
- * Rechte beim Beginn einer Reaktion (E-4; für K2): GETROFFEN behält das
- * Nahkampfrecht, alle anderen Reaktionen geben es ab; das Zielrecht endet mit
- * jeder Reaktion (Welt 6). Ohne diesen Aufruf räumt rechteSchritt im nächsten
- * W4 auf.
- */
-export function rechteBeiReaktion(welt: Welt, g: Gegner, reaktion: Reaktion): void {
-  zielrechtAbgeben(welt, g);
-  if (reaktion !== 'GETROFFEN') rechtAbgeben(welt, g);
 }
 
 /** Darf g in diesem Zustand das Nahkampfrecht halten (E-2, E-4)? */
@@ -306,14 +295,13 @@ function sprungtrittInDerLuft(welt: Welt, g: Gegner): boolean {
 }
 
 /**
- * W4, vor den Entscheidungen der einzelnen Gegner (Welt 5.7): Rahmen-Vorlauf
- * (steuerung und Phase dieses Frames, rahmen.ts), Halter prüfen (E-2, E-4),
- * E-10 (alle Rechte frei, keine Zuteilung), E-5 (Seitenwechsel der Halter).
+ * W4, nach rahmenVorlauf und vor den Entscheidungen der einzelnen Gegner
+ * (Welt 5.7): Halter prüfen (E-2, E-4), E-10 (alle Rechte frei, keine
+ * Zuteilung), E-5 (Seitenwechsel der Halter).
  * Die Anforderung je Gegner geschieht in nahEntscheidung bzw.
  * fernEntscheidung (Slots aufsteigend).
  */
 export function rechteSchritt(welt: Welt): void {
-  rahmenVorlauf(welt);
   // Halter prüfen
   for (const g of welt.gegner) {
     if (!g.belegt) continue;
@@ -528,16 +516,16 @@ function neueGruppe(welt: Welt, g: Gegner): void {
 /** Normaler Angriff (5.6): Bolzer BA 70 %, BB 25 %, BC 5 %; Rammbock RA, RB je 50 %. */
 function normalerAngriff(welt: Welt, g: Gegner): NahCode {
   const rammbock = g.typ === 'Rammbock';
-  const codes = (rammbock ? RAMMBOCK_ANGRIFF_CODES : BOLZER_ANGRIFF_CODES) as readonly NahCode[];
+  const codes = rammbock ? RAMMBOCK_CODES : BOLZER_CODES;
   const i = anteil(g.zufall, rammbock ? RAMMBOCK_ANGRIFF_ANTEILE : BOLZER_ANGRIFF_ANTEILE);
-  return festWahl(welt, FEST.angriff, codes, codes[i] as NahCode);
+  return festWahl(welt, FEST.angriff, codes, eintrag(codes, i));
 }
 
 /** Umwerf-Angriff (5.6): Bolzer nach BA BUB mit 60 %, sonst BUA (ohne Ziehung); Rammbock RU 70 %, RS 30 %. */
 function umwerfAngriff(welt: Welt, g: Gegner): NahCode {
   if (g.typ === 'Rammbock') {
-    const codes = ['RU', 'RS'] as const;
-    return festWahl(welt, FEST.umwerf, codes, codes[anteil(g.zufall, RAMMBOCK_UMWERF_ANTEILE)] as NahCode);
+    const codes = ['RU', 'RS'] as const satisfies readonly NahCode[];
+    return festWahl(welt, FEST.umwerf, codes, eintrag(codes, anteil(g.zufall, RAMMBOCK_UMWERF_ANTEILE)));
   }
   if (tm(g, 'letzter_ba') !== 1) return festWahl(welt, FEST.umwerf, ['BUA', 'BUB'] as const, 'BUA');
   const bub = prozent(g.zufall, BOLZER_BUB_ANTEIL);
@@ -586,11 +574,10 @@ function beginneAngriff(welt: Welt, g: Gegner, vorgegeben: NahCode | null): void
   g.schaden = nahSchaden(welt, g);
   g.angriff_code = code;
   g.angriff_a = f;
-  g.angriff_stopp = 0;
   g.angriff_abgebrochen = false;
   g.timer['ist_umwerf'] = umwerf ? 1 : 0;
-  g.timer['treffer'] = 0;
-  g.timer['aktiv_ende'] = f + w.aktiv_bis;
+  g.angriff_treffer = 0;
+  g.angriff_aktiv_ende = f + w.aktiv_bis;
   g.timer['nachlauf_null'] = 0;
   g.timer['rs_inaktiv'] = 0;
   g.timer['rs_a'] = code === 'RS' ? f : 0;
@@ -623,11 +610,10 @@ function nachlaufBeginnen(welt: Welt, g: Gegner): void {
   let n = 0;
   if (istNahCode(code) && tm(g, 'nachlauf_null') !== 1) {
     const w = NAH_ANGRIFFE[code];
-    const [a, b] = tm(g, 'treffer') > 0 ? w.nachlauf_mit : w.nachlauf_ohne;
+    const [a, b] = g.angriff_treffer > 0 ? w.nachlauf_mit : w.nachlauf_ohne;
     n = a === b ? a : festZahl(welt, FEST.nachlauf, bereich(g.zufall, a, b));
   }
-  g.nachlauf_rest = n;
-  g.timer['nachlauf_ende'] = welt.frame + n - 1;
+  g.nachlauf_ende = welt.frame + n - 1;
   if (n <= 0) {
     nachlaufEnde(welt, g);
     return;
@@ -768,7 +754,7 @@ function angriffEntscheidung(welt: Welt, g: Gegner): void {
     abwartenEntscheidung(welt, g);
     return;
   }
-  if (welt.frame > tm(g, 'aktiv_ende') && !sprungtrittInDerLuft(welt, g)) nachlaufBeginnen(welt, g);
+  if (welt.frame > g.angriff_aktiv_ende && !sprungtrittInDerLuft(welt, g)) nachlaufBeginnen(welt, g);
 }
 
 function nachlaufEntscheidung(welt: Welt, g: Gegner): void {
@@ -777,7 +763,7 @@ function nachlaufEntscheidung(welt: Welt, g: Gegner): void {
     abwartenEntscheidung(welt, g);
     return;
   }
-  if (welt.frame > tm(g, 'nachlauf_ende')) nachlaufEnde(welt, g);
+  if (welt.frame > g.nachlauf_ende) nachlaufEnde(welt, g);
 }
 
 /**
@@ -930,7 +916,7 @@ function angriffFrame(welt: Welt, g: Gegner): void {
   if (inst === null || !istNahCode(code)) return;
   const w = NAH_ANGRIFFE[code];
   const rel = welt.frame - g.angriff_a;
-  let aktiv = rel >= w.aktiv_von && rel <= w.aktiv_bis && tm(g, 'treffer') === 0 && !g.angriff_abgebrochen;
+  let aktiv = rel >= w.aktiv_von && rel <= w.aktiv_bis && g.angriff_treffer === 0 && !g.angriff_abgebrochen;
   if (code === 'RS') aktiv = aktiv && g.h > 0 && tm(g, 'rs_inaktiv') !== 1;
   inst.aktiv = aktiv;
 }
@@ -1006,7 +992,7 @@ export function nahAbbruch(welt: Welt, g: Gegner): void {
   const code = g.angriff_code;
   if (!istNahCode(code)) return;
   const w = NAH_ANGRIFFE[code];
-  if (!w.abbruch || tm(g, 'treffer') > 0) return;
+  if (!w.abbruch || g.angriff_treffer > 0) return;
   const rel = welt.frame - g.angriff_a;
   if (rel < 1 || rel > w.aktiv_bis) return;
   if (!ausserhalbAbbruchfenster(welt, g)) return;
@@ -1032,13 +1018,12 @@ export function nahHatGetroffen(welt: Welt, t: Treffer): void {
   if (!istNahCode(code)) return;
   const f = welt.frame;
   const umgeworfen = t.wirkung === 'U' || t.wirkung === 'X';
-  g.timer['treffer'] = f;
-  g.angriff_stopp = GEGNER_TREFFERSTOPP;
+  g.angriff_treffer = f;
   if (g.typ === 'Bolzer' && umgeworfen) {
-    g.timer['aktiv_ende'] = f + GEGNER_TREFFERSTOPP;
+    g.angriff_aktiv_ende = f + GEGNER_TREFFERSTOPP;
     g.timer['nachlauf_null'] = 1;
   } else {
-    g.timer['aktiv_ende'] = g.angriff_a + NAH_ANGRIFFE[code].aktiv_bis + GEGNER_TREFFERSTOPP;
+    g.angriff_aktiv_ende = g.angriff_a + NAH_ANGRIFFE[code].aktiv_bis + GEGNER_TREFFERSTOPP;
   }
   if (tm(g, 'ist_umwerf') === 1 && umgeworfen) g.timer['serie_ende'] = 1;
   if (g.angriff !== null) g.angriff.aktiv = false;

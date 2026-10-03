@@ -20,16 +20,18 @@
 //   TOT         Bahn F4 (nach KT2 F4b, nach Wurf F3), 2 ab t+1, Slot frei t+79 (t+111, t+101)
 //   GEHALTEN    führt K1 (Griff, Haltelage, Wurf); hier nur Logik ruht
 //
-// Die Bahnberechnung (BAHNEN, bahnStarten, bahnSchritt) ist exportiert, damit
-// K1 (Figur auf F1 und F4, P15) und K4 (Boss: F1 mit anderem Auslauf) sie
-// nutzen können.
+// Die Bahnberechnung (BAHNEN, bahnStarten, bahnSchritt, BahnDaten) steht in
+// ../bahn.ts und wird hier unter denselben Namen weiter exportiert; die Figur
+// (schaden.ts, F1 und F4, P15) und der Boss (F1 mit anderem Auslauf) nutzen
+// sie ebenso.
 //
-// Eigene Zähler stehen in g.timer unter den Schlüsseln T_BODEN und T_RUHE
-// (nie darüber iterieren, Vertrag entitaeten.ts).
+// Eigener Zustand am Gegner: bahn_boden (bahn.ts) und ruhe_frame (Beginn
+// des Liegens).
 
-import type { Bahn, Blick, EntitaetBasis, Gegner, SlotKey, Treffer } from '../entitaeten.ts';
+import type { Blick, Gegner, SlotKey, Treffer } from '../entitaeten.ts';
+import type { BahnArt } from '../bahn.ts';
 import type { Fest } from '../festkomma.ts';
-import type { Begrenzung, Hindernis } from '../stage.ts';
+import type { Begrenzung } from '../stage.ts';
 import type { Welt } from '../welt.ts';
 import {
   ZUSTAND_BODEN,
@@ -42,8 +44,10 @@ import {
   modusSetzen,
 } from '../entitaeten.ts';
 import { EREIGNIS, ereignis, ereignisTreffer } from '../ereignisse.ts';
-import { add, ausGanz, ganz, maxF, mulGanz, sub } from '../festkomma.ts';
-import { behaelterHindernis, schrittBegrenzt } from '../stage.ts';
+import { ausGanz, ganz } from '../festkomma.ts';
+import { bahnSchritt, bahnStarten, wurfLoslassen } from '../bahn.ts';
+import { rechteBeiReaktion } from './rechte.ts';
+import { behaelterHindernisse } from '../gegenstaende.ts';
 import { bereich } from '../zufall.ts';
 import {
   AUFSTEHEN_GEGNER,
@@ -51,28 +55,6 @@ import {
   BOSS_LIEGEN_BIS,
   BOSS_LIEGEN_VON,
   BOSS_ZUFALL_SCHRITT,
-  F1_AX,
-  F1_BODEN,
-  F1_GH,
-  F1_RUHE,
-  F1_STILLSTAND,
-  F1_VH,
-  F1_VX,
-  F2_BODEN,
-  F2_RUHE,
-  F2_START_HOEHE,
-  F3_AX,
-  F3_BODEN,
-  F3_ERSTER,
-  F3_GH,
-  F3_RUHE,
-  F3_VH,
-  F3_VX,
-  F4B_ROLLEN,
-  F4B_ROLLEN_BIS,
-  F4_BODEN,
-  F4_RUHE,
-  F4_STILLSTAND,
   LIEGEN_LEICHT,
   LIEGEN_LEICHT_WURF,
   LIEGEN_SCHWER_BIS,
@@ -84,126 +66,14 @@ import {
   SLOT_FREI_TOD,
   SLOT_FREI_WURF,
   WURF_AUSSERHALB_MAX,
-  WURF_LOSLASSEN,
-  WURF_LOSLASS_HOEHE,
-  WURF_LOSLASS_X,
-  WURF_TREFFER,
 } from '../werte.ts';
 
 // ===========================================================================
-// Flugbahnen (Kampf 5.7)
+// Flugbahnen (Kampf 5.7): gemeinsam in ../bahn.ts, hier weiter exportiert
 // ===========================================================================
 
-/** Bahn ohne die leere Kennung. */
-export type BahnArt = Exclude<Bahn, ''>;
-
-/**
- * Daten einer Flugbahn (Kampf 5.7). Je Bahnframe: x += vx · Richtung, danach
- * vx −= ax; h += vh, danach vh −= gh; wird h ≤ 0, ist h = 0 (Bodenkontakt).
- * Nach dem Bodenkontakt läuft x bis zur Ruhe weiter, die Höhe bleibt 0 (P13).
- */
-export interface BahnDaten {
-  /** Stillstandsframes W+1 bis W+stillstand; erster Bahnframe W+stillstand+1 */
-  stillstand: number;
-  vx: Fest;
-  ax: Fest;
-  vh: Fest;
-  gh: Fest;
-  /** Höhe ab W+1 (F2: 16 px); null = die aktuelle Höhe bleibt (Treffer in der Luft, P15) */
-  start_h: Fest | null;
-  /**
-   * Bahnframes vom Bodenkontakt bis zur Ruhe (F1: Boden W+46, Ruhe W+55 → 9).
-   * Relativ zum Bodenkontakt, damit eine Bahn aus der Luft (P15) erst nach
-   * dem Bodenkontakt zur Ruhe kommt; vom Boden aus gibt das genau die Tabelle.
-   */
-  nach_boden: number;
-  /** x-Geschwindigkeit nach dem Bodenkontakt (F4b: Rollen 2,0 ab t+41); null = vx läuft weiter */
-  boden_vx: Fest | null;
-}
-
-/** Die Bahnen aus Kampf 5.7, Frames relativ zum Treffer W (beim Wurf W = E+1). */
-export const BAHNEN: Readonly<Record<BahnArt, BahnDaten>> = {
-  /** F1 Umwerfen: Stillstand W+1 bis W+8, Boden W+46 bei 109,25, Ruhe W+55 bei 135,125 */
-  F1: { stillstand: F1_STILLSTAND, vx: F1_VX, ax: F1_AX, vh: F1_VH, gh: F1_GH, start_h: null, nach_boden: F1_RUHE - F1_BODEN, boden_vx: null },
-  /** F2 dritter Kniestoß: wie F1 aus 16 px Höhe, Boden W+49, Ruhe W+58 */
-  F2: { stillstand: F1_STILLSTAND, vx: F1_VX, ax: F1_AX, vh: F1_VH, gh: F1_GH, start_h: F2_START_HOEHE, nach_boden: F2_RUHE - F2_BODEN, boden_vx: null },
-  /** F3 Wurf: getragen bis E+21, losgelassen E+22, erster Bahnframe E+23, Boden E+59, Ruhe E+71 */
-  F3: { stillstand: F3_ERSTER - WURF_TREFFER - 1, vx: F3_VX, ax: F3_AX, vh: F3_VH, gh: F3_GH, start_h: null, nach_boden: F3_RUHE - F3_BODEN, boden_vx: null },
-  /** F4 Tod: Stillstand t+1, t+2, Boden t+40, Ruhe t+49 */
-  F4: { stillstand: F4_STILLSTAND, vx: F1_VX, ax: F1_AX, vh: F1_VH, gh: F1_GH, start_h: null, nach_boden: F4_RUHE - F4_BODEN, boden_vx: null },
-  /** F4b Tod durch Stufe 2: wie F4, ab t+41 Rollen 2,0 bis t+72 */
-  F4b: { stillstand: F4_STILLSTAND, vx: F1_VX, ax: F1_AX, vh: F1_VH, gh: F1_GH, start_h: null, nach_boden: F4B_ROLLEN_BIS - F4_BODEN, boden_vx: F4B_ROLLEN },
-};
-
-/** Lage nach einem Bahnschritt. */
-export type BahnLage = 'stillstand' | 'luft' | 'boden' | 'rutschen' | 'ruhe';
-
-/** timer-Schlüssel: Bahnframe des Bodenkontakts, 0 = noch keiner. */
-export const T_BODEN = 'bahn_boden';
-/** timer-Schlüssel: Frame, in dem die Ruhe erreicht wurde (Beginn von LIEGEN). */
-export const T_RUHE = 'reaktion_ruhe';
-
-/**
- * Beginnt eine Bahn am Trefferort (Kampf 5.7): setzt bahn, bahn_richtung,
- * bahn_start_x, vx, ax, vh, gh; bahn_frame 0. Die Höhe bleibt, wie sie ist
- * (am Boden 0; in der Luft beginnt die Bahn dort, P15).
- */
-export function bahnStarten(e: EntitaetBasis, bahn: BahnArt, richtung: Blick): void {
-  const d = BAHNEN[bahn];
-  e.bahn = bahn;
-  e.bahn_richtung = richtung;
-  e.bahn_frame = 0;
-  e.bahn_start_x = e.x;
-  e.vx = d.vx;
-  e.ax = d.ax;
-  e.vh = d.vh;
-  e.gh = d.gh;
-  e.vz = 0;
-  e.timer[T_BODEN] = 0;
-}
-
-/**
- * Ein Frame der laufenden Bahn (Kampf 5.7). k = Frames seit dem Treffer
- * (Frame W+k). Stillstand bis W+stillstand (F2 setzt dort 16 px Höhe), dann
- * je Bahnframe x, danach h; x wird durch b begrenzt (Welt 2.2: Band,
- * Hindernisse, Wände; null = unbegrenzt). Nach dem Bodenkontakt (vh und gh
- * werden 0) läuft x mit vx bzw. boden_vx weiter, bis nach_boden Frames später
- * die Ruhe erreicht ist; danach bewegt sich nichts mehr.
- *
- * Rückgabe: 'ruhe' im Frame, in dem die Ruhe erreicht ist, und danach.
- * Für K1 (Figur auf F1/F4, auch aus der Luft) und K4 (Boss mit eigenem
- * Auslauf über den Parameter d) gedacht.
- */
-export function bahnSchritt(e: EntitaetBasis, k: number, b: Begrenzung | null, d: BahnDaten | null = null): BahnLage {
-  if (d === null && e.bahn === '') return 'ruhe';
-  const daten = d ?? BAHNEN[e.bahn as BahnArt];
-  if (k < 1) return 'stillstand';
-  if (k <= daten.stillstand) {
-    if (k === 1 && daten.start_h !== null) e.h = daten.start_h;
-    return 'stillstand';
-  }
-  const n = k - daten.stillstand;
-  const boden = e.timer[T_BODEN] ?? 0;
-  if (boden > 0 && n > boden + daten.nach_boden) return 'ruhe';
-  e.bahn_frame = n;
-  // x
-  const v = boden > 0 && daten.boden_vx !== null ? daten.boden_vx : e.vx;
-  const dx = mulGanz(v, e.bahn_richtung);
-  e.x = b === null ? add(e.x, dx) : schrittBegrenzt(b, e.x, e.z, e.h, dx, 0).x;
-  e.vx = maxF(0, sub(e.vx, e.ax));
-  // Höhe
-  if (boden === 0) {
-    e.h = add(e.h, e.vh);
-    e.vh = sub(e.vh, e.gh);
-    if (e.h > 0) return 'luft';
-    e.h = 0;
-    e.vh = 0;
-    e.gh = 0;
-    e.timer[T_BODEN] = n;
-    return daten.nach_boden === 0 ? 'ruhe' : 'boden';
-  }
-  return n >= boden + daten.nach_boden ? 'ruhe' : 'rutschen';
-}
+export { BAHNEN, bahnSchritt, bahnStarten, wurfLoslassen } from '../bahn.ts';
+export type { BahnArt, BahnDaten, BahnLage } from '../bahn.ts';
 
 /**
  * Begrenzung einer Gegnerbahn (Welt 2.2 Punkt 5): Band, Hindernisse und
@@ -212,10 +82,7 @@ export function bahnSchritt(e: EntitaetBasis, k: number, b: Begrenzung | null, d
  * ohne Ränder (Prüfbühne, Kampf 11.2).
  */
 export function gegnerBegrenzung(welt: Welt, g: Gegner): Begrenzung {
-  const zusatz: Hindernis[] = [];
-  for (const o of welt.objekte) {
-    if (o.belegt && o.typ === 'Behälter' && !o.zerbrochen) zusatz.push(behaelterHindernis(o.id, ganz(o.x), ganz(o.z)));
-  }
+  const zusatz = behaelterHindernisse(welt);
   let xMin: Fest | null = null;
   let xMax: Fest | null = null;
   if (g.bahn === 'F3' && welt.stage.raender) {
@@ -223,20 +90,6 @@ export function gegnerBegrenzung(welt: Welt, g: Gegner): Begrenzung {
     xMax = ausGanz(welt.kamera.x + BILD_BREITE - 1 + WURF_AUSSERHALB_MAX);
   }
   return { stage: welt.stage, zusatz, x_min: xMin, x_max: xMax };
-}
-
-/** Frame des Loslassens beim Wurf relativ zu W = E+1 (E+22, Kampf 8.4). */
-const WURF_LOSLASSEN_K = WURF_LOSLASSEN - WURF_TREFFER;
-
-/**
- * Wurfbahn F3: Der Gegner bleibt E+1 bis E+21 in der Haltelage (die Figur ist
- * gebunden und steht) und wird in E+22 in 59 px Höhe 13 px vor bzw. hinter
- * der Figur losgelassen, in Flugrichtung (P19, Kampf 8.4).
- */
-function wurfLoslassen(welt: Welt, g: Gegner, k: number): void {
-  if (g.bahn !== 'F3' || k !== WURF_LOSLASSEN_K) return;
-  g.x = add(welt.figur.x, mulGanz(ausGanz(WURF_LOSLASS_X), g.bahn_richtung));
-  g.h = ausGanz(WURF_LOSLASS_HOEHE);
 }
 
 // ===========================================================================
@@ -272,28 +125,6 @@ function flugrichtung(welt: Welt, g: Gegner, t: Treffer): Blick {
 /** Bricht einen eigenen laufenden Angriff ab (Kampf 7); fremde Instanzen (WG der Figur) bleiben. */
 function eigenenAngriffAbbrechen(g: Gegner): void {
   if (g.angriff !== null && g.angriff.urheber === g.schluessel) g.angriff = null;
-}
-
-/** Zielrecht frei: eine Reaktion beendet das Zielen (Welt 6). */
-function zielrechtFrei(welt: Welt, g: Gegner): void {
-  if (welt.rechte.ziel === g.nr) welt.rechte.ziel = null;
-  g.zielrecht = false;
-}
-
-/** Nahkampfrecht und Zielrecht abgeben (Welt 5.7 E-4: beim Umwerfen, Greifen, Werfen und Tod), Ereignis RA:sn. */
-function rechteAbgeben(welt: Welt, g: Gegner): void {
-  let abgegeben = g.recht !== '';
-  if (welt.rechte.l === g.nr) {
-    welt.rechte.l = null;
-    abgegeben = true;
-  }
-  if (welt.rechte.r === g.nr) {
-    welt.rechte.r = null;
-    abgegeben = true;
-  }
-  g.recht = '';
-  if (abgegeben) ereignis(welt, EREIGNIS.RECHT_ABGEGEBEN, g.schluessel);
-  zielrechtFrei(welt, g);
 }
 
 /** Im Trefferframe Zustand 3, ab dem nächsten Frame 2 (siehe Kopf); ein schon gehaltener Gegner bleibt 2. */
@@ -334,7 +165,7 @@ export function getroffenBeginnen(welt: Welt, g: Gegner): void {
   g.phase = '';
   g.anim = { name: 'GETROFFEN', bild: 0, rest: 0 };
   eigenenAngriffAbbrechen(g);
-  zielrechtFrei(welt, g);
+  rechteBeiReaktion(welt, g, 'GETROFFEN');
 }
 
 /**
@@ -353,7 +184,7 @@ export function umwerfenBeginnen(welt: Welt, g: Gegner, bahn: BahnArt, richtung:
   g.anim = { name: 'UMGEWORFEN', bild: 0, rest: 0 };
   bahnStarten(g, bahn, richtung);
   eigenenAngriffAbbrechen(g);
-  rechteAbgeben(welt, g);
+  rechteBeiReaktion(welt, g, 'UMGEWORFEN');
 }
 
 /**
@@ -375,7 +206,7 @@ export function todEinleiten(welt: Welt, g: Gegner, bahn: BahnArt, richtung: Bli
   g.anim = { name: 'TOT', bild: 0, rest: 0 };
   bahnStarten(g, bahn, richtung);
   eigenenAngriffAbbrechen(g);
-  rechteAbgeben(welt, g);
+  rechteBeiReaktion(welt, g, 'TOT');
 }
 
 /**
@@ -435,7 +266,7 @@ export function gegnerGreifen(welt: Welt, g: Gegner, von: SlotKey): void {
   g.gehalten_von = von;
   g.phase = '';
   eigenenAngriffAbbrechen(g);
-  rechteAbgeben(welt, g);
+  rechteBeiReaktion(welt, g, 'GEHALTEN');
 }
 
 /** Losreißen (Kampf 7, 8.3), Hilfe für K1: frei, Zustand 1, Modus FREI (Logik nach Welt 5.9). Ereignis L schreibt K1. */
@@ -512,7 +343,7 @@ function bodenSchritt(welt: Welt, g: Gegner): boolean {
     const lage = bahnSchritt(g, k, gegnerBegrenzung(welt, g));
     if (lage === 'ruhe') {
       g.liegedauer = liegedauerZiehen(welt, g);
-      g.timer[T_RUHE] = welt.frame;
+      g.ruhe_frame = welt.frame;
       modusSetzen(g, 'LIEGEN');
       g.aktion = 'LIEGEN';
       g.phase = '';
@@ -520,7 +351,7 @@ function bodenSchritt(welt: Welt, g: Gegner): boolean {
     }
     return true;
   }
-  const r = welt.frame - (g.timer[T_RUHE] ?? welt.frame);
+  const r = welt.frame - (g.ruhe_frame > 0 ? g.ruhe_frame : welt.frame);
   if (g.modus === 'LIEGEN' && r >= g.liegedauer) {
     modusSetzen(g, 'AUFSTEHEN');
     g.aktion = 'AUFSTEHEN';

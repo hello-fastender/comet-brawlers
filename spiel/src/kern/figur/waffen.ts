@@ -32,7 +32,7 @@ import {
   RX_DAUER,
 } from '../werte.ts';
 import { tab, explosionInstanz } from './angriffe.ts';
-import { behaelterHindernisse } from './basis.ts';
+import { behaelterHindernisse } from '../gegenstaende.ts';
 
 /** Art der Waffe in der Hand als Gegenstand (Kampf 10.3: in der Scheibe nur der Raketenwerfer). */
 const WAFFE_ART: GegenstandArt = 'Raketenwerfer';

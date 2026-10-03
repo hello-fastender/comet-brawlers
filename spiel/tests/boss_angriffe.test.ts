@@ -4,11 +4,12 @@
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { bossWecken } from '../src/kern/gegner/boss.ts';
 import { presseHoehe } from '../src/kern/gegner/boss_angriffe.ts';
-import { ART_CODES, lies } from '../src/kern/gegner/boss_zustand.ts';
 import type { Gegner } from '../src/kern/entitaeten.ts';
-import { zuDezimalText } from '../src/kern/festkomma.ts';
+import { angriffsinstanz } from '../src/kern/entitaeten.ts';
+import { trefferPruefen } from '../src/kern/treffer.ts';
+import { ausGanz, zuDezimalText } from '../src/kern/festkomma.ts';
+import { welleAusloesen, wellenAnlegen } from '../src/kern/wellen.ts';
 import { bei, boss, bossLauf, bossWelt, frames } from './boss_hilfe.ts';
 
 const PS7 = 'tests/szenen/boss_ps7.txt';
@@ -31,9 +32,16 @@ test('Boss: erster Angriff 60 Frames nach der Kampfbereitschaft, nächster d Fra
   assert.equal(bei(v2, 60).modus, 'BEREIT');
 });
 
+test('Boss: kein Angriffsbeginn während der Blende c+1 bis c+134 (E-10, Welt 5.7, KA13)', () => {
+  const welt = bossWelt(PS7, mitAngriff('AS'));
+  welt.kamera.blende_c = 60; // Blende 61 bis 194: der fällige Angriff (61) wartet bis c+135
+  const v = bossLauf(welt, 200);
+  assert.deepEqual(frames(v, 1, 200, (s) => s.ereignisse.some((e) => e.startsWith('AS:'))), [195]);
+});
+
 test('Boss: Wahl nach Abstand über zufall.ts (nah AS oder KP, fern auch AN)', () => {
   // Wahl im Entscheidungsframe 61; der Armschwung beginnt erst in Reichweite (fern mit Bewegung aus: nie)
-  const gewaehlt = (g: Gegner): string => ART_CODES[lies(g, 'wahl')] || g.angriff_code.slice(0, 2);
+  const gewaehlt = (g: Gegner): string => g.boss.wahl || g.angriff_code.slice(0, 2);
   const nah = new Set<string>();
   const fern = new Set<string>();
   // große Seeds: Xorshift aus kleinen Startwerten liefert anfangs kleine Zahlen (Welt 11.1)
@@ -98,6 +106,45 @@ test('Boss: Armschwung nach Treffer weiter, höchstens drei Schwünge, der dritt
   assert.equal(bei(v, 160).modus, 'NACHLAUF');
   assert.equal(bei(v, 189).modus, 'NACHLAUF');
   assert.equal(bei(v, 190).modus, 'BEREIT');
+});
+
+test('Boss: im Armschwung von vorn nur im ersten aktiven Frame treffbar, von hinten immer (Welt 7.1, Kampf 5.4)', () => {
+  // Frontschutz je Frame (Stand am Ende des Frames, wie ihn KS6 liest)
+  const welt = bossWelt(PS7, mitAngriff('AS'));
+  const vorn: number[] = [];
+  bossLauf(welt, 200, {
+    bossTrifft: [78],
+    vorher: (w, f) => {
+      if (boss(w).vorn_geschuetzt) vorn.push(f - 1);
+    },
+  });
+  // Schwung 1 (A = 61) trifft: aktiv 78 bis 87, geschützt ab dem zweiten; Schwung 2 (97) ohne Treffer: aktiv 114 bis 116
+  const reihe = (von: number, bis: number): number[] => Array.from({ length: bis - von + 1 }, (_, i) => von + i);
+  assert.deepEqual(vorn, [...reihe(79, 87), 115, 116]);
+  // treffer.ts (KS6) ohne Setzen von Hand: Figur (2000) vor dem Boss (2060, Blick links) mit einem aktiven Schlag
+  const pruefen = (bis: number, vonHinten: boolean): string[] => {
+    const w = bossWelt(PS7, mitAngriff('AS'));
+    bossLauf(w, bis);
+    if (vonHinten) boss(w).blick = 1;
+    const inst = angriffsinstanz({
+      code: 'KT1',
+      angreifer: 'f',
+      flaeche: { art: 'abstand', vorn: 100, hinten: 0, hinten_weg: null, tiefe: 12, hoehe_angreifer_max: null, hoehe_ziel_max: null },
+      schaden: 3,
+      umwerfen: false,
+      trefferstopp: true,
+      gegen: 'gegner',
+      beginn: bis,
+    });
+    inst.aktiv = true;
+    w.figur.angriff = inst;
+    w.treffer = [];
+    trefferPruefen(w);
+    return w.treffer.map((t) => `${t.urheber}>${t.ziel}`);
+  };
+  assert.deepEqual(pruefen(78, false), ['f>s0'], 'erster aktiver Frame: Gleichstand, die Figur gewinnt');
+  assert.deepEqual(pruefen(79, false), ['s0>f'], 'zweiter aktiver Frame: sein Schlag trifft zuerst');
+  assert.deepEqual(pruefen(79, true), ['f>s0'], 'von hinten treffbar');
 });
 
 test('Boss: dritter Schwung trägt das Umwerfen in seiner Instanz', () => {
@@ -173,13 +220,24 @@ test('Boss: Körperpresse mit Hocke, Flugbahn zum Zielpunkt, aktiv A+51 bis A+62
   assert.equal(bei(v, 140).h, '0');
   assert.deepEqual(frames(v, 61, 200, (s) => s.aktiv), Array.from({ length: 12 }, (_, i) => 127 + i));
   // Bildschütteln ab der Landung (KA10, schuettelnStarten von K3)
-  assert.equal(lies(boss(welt), 'kp_landung'), 140);
+  assert.equal(boss(welt).boss.kp_landung, 140);
   // Nachlauf 40 nach dem letzten aktiven Frame 138: BEREIT ab 179
   assert.equal(bei(v, 141).modus, 'NACHLAUF');
   assert.equal(bei(v, 178).modus, 'NACHLAUF');
   assert.equal(bei(v, 179).modus, 'BEREIT');
   const inst = boss(welt);
   assert.equal(inst.schaden, 18);
+});
+
+test('Boss: Körperpresse folgt der Figur auch in der Tiefe, z(A) + dz·k/64 (Festlegung K4, KP_Z_ANTEIL)', () => {
+  const welt = bossWelt(PS7, mitAngriff('KP'));
+  boss(welt).z = ausGanz(80); // Figur in z 50: dz = −30 px, Absprung A = 76
+  const v = bossLauf(welt, 141);
+  assert.equal(bei(v, 76).z, '80');
+  assert.equal(bei(v, 77).z, zuDezimalText(ausGanz(80) + Math.floor((-30 * 65536 * 1) / 64)));
+  assert.equal(bei(v, 107).z, zuDezimalText(ausGanz(80) + Math.floor((-30 * 65536 * 31) / 64)));
+  assert.equal(bei(v, 140).z, '50');
+  assert.equal(bei(v, 141).z, '50');
 });
 
 test('Boss: Körperpresse mit Treffer stoppt 7 Frames, Landung A+71', () => {
@@ -243,20 +301,18 @@ test('Boss: Weckreiz, Auftritt 60 Frames nicht treffbar, Kisten zerbrechen, erst
   const welt = bossWelt('tests/szenen/boss_weckreiz.txt', 'pruefstart fest.boss_angriff=AS');
   const g = boss(welt);
   assert.deepEqual([g.modus, g.zustand, g.aktion], ['WARTEN', 2, 'WARTEN']);
-  // Arena-Auslöser (Welle 7) in W7 von Frame 4 (sonst K3, wellen.ts): Weckreiz in Frame 5
+  // Arena-Auslöser (Welle 7) in W7 von Frame 4 (K3, wellen.ts): Weckreiz in W3 von Frame 5, nur dort
   const v = bossLauf(welt, 130, {
     vorher: (w, f) => {
-      if (f === 5) {
-        const w7 = w.wellen.liste.find((x) => x.satz.nr === 7);
-        if (w7 === undefined) throw new Error('Welle 7 fehlt');
-        w7.ausgeloest = true;
-        w7.frame = 4;
-      }
+      if (f === 5) welleAusloesen(w, 7); // noch in Frame 4
     },
+    w3: (w) => wellenAnlegen(w),
   });
   assert.equal(bei(v, 4).modus, 'WARTEN');
   assert.equal(bei(v, 5).modus, 'AUFTRITT');
-  assert.ok(bei(v, 5).ereignisse.includes('WK:s0'));
+  assert.deepEqual(frames(v, 1, 130, (s) => s.ereignisse.includes('WK:s0')), [5]);
+  assert.equal(g.weckreiz_w, 5);
+  assert.equal(g.kampffaehig_ab, 65);
   const kisten = welt.objekte.filter((o) => o.belegt && o.art === 'Bosskiste');
   assert.equal(kisten.length, 3);
   for (const k of kisten) {
@@ -278,14 +334,7 @@ test('Boss: Weckreiz, Auftritt 60 Frames nicht treffbar, Kisten zerbrechen, erst
   assert.ok(g.naechster_angriff >= 125 + 170 && g.naechster_angriff <= 125 + 200);
 });
 
-test('Boss: bossWecken (für K3 in W3) und welle.7=nur_boss (sofort kampffähig)', () => {
-  const welt = bossWelt('tests/szenen/boss_weckreiz.txt');
-  welt.frame = 9;
-  welt.ereignisse = [];
-  bossWecken(welt, boss(welt));
-  assert.deepEqual([boss(welt).modus, boss(welt).kampffaehig_ab, welt.ereignisse.join(';')], ['AUFTRITT', 69, 'WK:s0']);
-  bossWecken(welt, boss(welt));
-  assert.equal(welt.ereignisse.length, 1, 'nur einmal');
+test('Boss: welle.7=nur_boss (sofort kampffähig)', () => {
   const w2 = bossWelt(PS7);
   assert.deepEqual([boss(w2).modus, boss(w2).zustand, boss(w2).naechster_angriff], ['BEREIT', 1, 61]);
 });

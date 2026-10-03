@@ -26,7 +26,7 @@ import {
   reaktionSchritt,
 } from '../src/kern/gegner/reaktion.ts';
 import { pruefangriffeSchritt, trefferFolgen, trefferPruefen } from '../src/kern/treffer.ts';
-import { KETTE_HINTEN, KETTE_HINTEN_WEG, KETTE_SCHADEN, KETTE_TIEFE, KETTE_VORN, KNIESTOSS_SCHADEN, WURF_SCHADEN } from '../src/kern/werte.ts';
+import { KETTE_HINTEN, KETTE_HINTEN_WEG, KETTE_SCHADEN, KETTE_TIEFE, KETTE_VORN, KNIESTOSS_SCHADEN, SEED_KAMPF_TESTS, WURF_SCHADEN } from '../src/kern/werte.ts';
 
 // ---------------------------------------------------------------------------
 // Hilfen (wie in treffer_pruefung.test.ts)
@@ -41,7 +41,7 @@ const BUEHNE = parseStage(readFileSync(new URL('../daten/stages/pruefbuehne.txt'
  * pruefstart fest.NAME=WERT.
  */
 function welt(zeilen: string): Welt {
-  const start = standardStart(1, 'pruefbuehne');
+  const start = standardStart(SEED_KAMPF_TESTS, 'pruefbuehne');
   start.rang = 9;
   start.rang_fest = true;
   const saetze = zeilen
@@ -73,15 +73,16 @@ function welt(zeilen: string): Welt {
     zufall: zufallNeu(start.seed),
     fest: { ...start.fest },
     rang: { rang: 9, zaehler: 0, fest: true },
-    kamera: { x: 0, y: 0, modus: 'FREI', fest: true, schuetteln_x: 0, schuetteln_y: 0, pfeil: 0, blende_c: 0, schnitt_ausgefuehrt: false, arena_ab: 0, freigabe_frame: 0, freigabe_x: 0 },
+    kamera: { x: 0, y: 0, modus: 'FREI', fest: true, schuetteln_x: 0, schuetteln_y: 0, schuetteln_art: '', schuetteln_ab: 0, pfeil: 0, blende_c: 0, schnitt_ausgefuehrt: false, arena_ab: 0, freigabe_frame: 0, freigabe_x: 0 },
     sperren: [],
     halte: [],
     wellen: { liste: [], ausgeloest: [], vorgemerkt: [], besiegt: [], nur_boss: false },
     rechte: { l: null, r: null, ziel: null },
-    rahmen: { leben: 3, punkte: 0, anzeige: null, phase: 'SPIEL', steuerung: 1, boss_t: 0, gameover_frame: 0 },
+    rahmen: { leben: 3, punkte: 0, anzeige: null, anzeige_typ: '', anzeige_lp: 0, anzeige_lebt: false, phase: 'SPIEL', steuerung: 1, boss_t: 0, gameover_frame: 0 },
     lebende: 0,
     treffer: [],
     ereignisse: [],
+    pruefangriffe_beendet: start.pruefangriffe.map(() => false),
     vorframe: { lebende: 0, kamera_x: 0, kamera_y: 0, kamera_modus: 'FREI', besiegt: [], figur_x: 100, figur_z: 100 },
     beendet: false,
   };

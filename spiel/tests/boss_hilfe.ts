@@ -124,6 +124,8 @@ export interface Plan {
   bossTrifft?: number[];
   /** wird zu Beginn jedes Frames (vor W1) mit der Nummer des kommenden Frames aufgerufen */
   vorher?: (welt: Welt, f: number) => void;
+  /** wird in W3 jedes Frames aufgerufen (nach dem Leeren der Ereignisse, vor W4), z. B. wellenAnlegen für den Weckreiz */
+  w3?: (welt: Welt) => void;
 }
 
 /** Lässt die bossbezogenen Schritte bis einschließlich Frame bis laufen; Ergebnis je Frame (Index = Frame). */
@@ -137,6 +139,7 @@ export function bossLauf(welt: Welt, bis: number, plan: Plan = {}): Schnappschus
     welt.treffer = [];
     vorframeKopieren(welt);
     for (const g of welt.gegner) if (g.belegt) g.modus_uhr += 1;
+    plan.w3?.(welt);
     const g = boss(welt);
     if (g.belegt) bossEntscheidung(welt, g);
     if (g.belegt) bossBewegung(welt, g);

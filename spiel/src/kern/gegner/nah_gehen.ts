@@ -2,7 +2,8 @@
 // Nahkämpfer (nah.ts) und Fernkämpfer (fern.ts):
 // - Gehrichtung als einer von 32 Sektoren zu 11,25°, aus Δx und Δz zum Ziel
 //   über die Tabelle der Tangensgrenzen (werte.ts GEH_TAN_GRENZEN), ohne
-//   Winkelfunktion; Schritt (v_x · cos α, v_z · sin α) aus GEH_COS (Ellipse).
+//   Winkelfunktion; Schritt (v_x · cos α, v_z · sin α) aus der Tabelle des
+//   Gehtempos (werte.ts GEH_SCHRITT_…, je Tempo einmal gerundet, Ellipse).
 // - In z höchstens bis zum Ziel.
 // - Band und Hindernisse begrenzen (stage.ts schrittBegrenzt, keine
 //   Bildränder, Welt 2.2 Punkt 5); blockiert ein Hindernis den Schritt in x,
@@ -17,67 +18,77 @@ import type { Gegner } from '../entitaeten.ts';
 import type { Fest } from '../festkomma.ts';
 import type { Begrenzung, Hindernis } from '../stage.ts';
 import type { Welt } from '../welt.ts';
-import { EINS, abs, add, ausGanz, ganz, mul, neg, sub } from '../festkomma.ts';
+import { EINS, abs, add, ausGanz, ganz, neg, produktGroesser, sub } from '../festkomma.ts';
 import { bandGrenzen, inHindernis, schrittBegrenzt } from '../stage.ts';
 import { behaelterHindernisse } from '../gegenstaende.ts';
 import {
-  BOLZER_GEHEN_X,
-  BOLZER_GEHEN_Z,
-  BOLZER_SCHNELL_X,
-  BOLZER_SCHNELL_Z,
-  GEH_COS,
+  GEH_SCHRITT_BOLZER,
+  GEH_SCHRITT_BOLZER_SCHNELL,
+  GEH_SCHRITT_RAMMBOCK,
+  GEH_SCHRITT_RAMMBOCK_SCHNELL,
+  GEH_SCHRITT_ZUENDER,
+  GEH_SCHRITT_ZUENDER_SCHNELL,
   GEH_TAN_GRENZEN,
   HALTEPUNKT_MAX,
   HALTEPUNKT_MIN,
-  RAMMBOCK_GEHEN_X,
-  RAMMBOCK_GEHEN_Z,
-  RAMMBOCK_SCHNELL_X,
-  RAMMBOCK_SCHNELL_Z,
-  ZUENDER_GEHEN_X,
-  ZUENDER_GEHEN_Z,
-  ZUENDER_SCHNELL_X,
-  ZUENDER_SCHNELL_Z,
 } from '../werte.ts';
 
-/** Gehgeschwindigkeit in x und z (Fest). */
+/**
+ * Gehtempo als Schritttabelle (Welt 5.3): x[k] = v_x · cos(k · 11,25°),
+ * z[k] = v_z · sin(k · 11,25°) für die Sektoren k = 0 … 8 im Viertel, je
+ * Tempo einmal auf 1/65536 gerundet (werte.ts GEH_SCHRITT_…).
+ */
 export interface Tempo {
-  x: Fest;
-  z: Fest;
+  readonly x: readonly Fest[];
+  readonly z: readonly Fest[];
 }
 
-/** Index des letzten Eintrags in GEH_COS (90°). */
-const VIERTEL = GEH_COS.length - 1;
+/** Sektor 90° (nur Tiefe): Zahl der Tangensgrenzen im Viertel. */
+const VIERTEL = GEH_TAN_GRENZEN.length;
 
-/** Gehgeschwindigkeit nach Typ und Gehstufe (Welt 5.1, 6). */
+/** Eintrag k einer Schritttabelle (Index geprüft). */
+function schritt(tabelle: readonly Fest[], k: number): Fest {
+  const w = tabelle[k];
+  if (w === undefined) throw new RangeError(`Gehsektor ${k} außerhalb der Tabelle`);
+  return w;
+}
+
+/** Gehtempo nach Typ und Gehstufe (Welt 5.1, 6). */
 export function gehTempo(g: Gegner): Tempo {
   const schnell = g.gehstufe === 'schnell';
   switch (g.typ) {
     case 'Rammbock':
-      return schnell ? { x: RAMMBOCK_SCHNELL_X, z: RAMMBOCK_SCHNELL_Z } : { x: RAMMBOCK_GEHEN_X, z: RAMMBOCK_GEHEN_Z };
+      return schnell ? GEH_SCHRITT_RAMMBOCK_SCHNELL : GEH_SCHRITT_RAMMBOCK;
     case 'Zünder':
-      return schnell ? { x: ZUENDER_SCHNELL_X, z: ZUENDER_SCHNELL_Z } : { x: ZUENDER_GEHEN_X, z: ZUENDER_GEHEN_Z };
+      return schnell ? GEH_SCHRITT_ZUENDER_SCHNELL : GEH_SCHRITT_ZUENDER;
     default:
-      return schnell ? { x: BOLZER_SCHNELL_X, z: BOLZER_SCHNELL_Z } : { x: BOLZER_GEHEN_X, z: BOLZER_GEHEN_Z };
+      return schnell ? GEH_SCHRITT_BOLZER_SCHNELL : GEH_SCHRITT_BOLZER;
   }
+}
+
+/** Volles Tempo in der Tiefe (Schritt nur in z, Sektor 90°). */
+export function tiefenTempo(t: Tempo): Fest {
+  return schritt(t.z, VIERTEL);
 }
 
 /**
  * Sektor im Viertel, 0 (waagrecht) bis 8 (nur Tiefe), aus |Δx| und |Δz| in
  * ganzen Pixeln: Zahl der Tangensgrenzen, die |Δz| / |Δx| überschreitet
- * (Vergleich |Δz| · 65536 > |Δx| · tan, ganzzahlig und exakt).
+ * (Vergleich |Δz| · 65536 > |Δx| · tan mit festkomma.ts produktGroesser,
+ * exakt auch über 32 Bit).
  */
 export function gehSektor(ax: number, az: number): number {
   let k = 0;
-  for (const t of GEH_TAN_GRENZEN) if (az * EINS > ax * t) k += 1;
+  for (const t of GEH_TAN_GRENZEN) if (produktGroesser(az, EINS, ax, t)) k += 1;
   return k;
 }
 
-/** Schritt (v_x · cos α, v_z · sin α) zum Ziel in Richtung (dx, dz) (ganze Pixel), ohne Begrenzung. */
+/** Schritt (v_x · cos α, v_z · sin α) zum Ziel in Richtung (dx, dz) (ganze Pixel), ohne Begrenzung: aus der Tabelle nachgeschlagen. */
 export function gehSchritt(t: Tempo, dx: number, dz: number): { sx: Fest; sz: Fest } {
   if (dx === 0 && dz === 0) return { sx: 0, sz: 0 };
   const k = gehSektor(Math.abs(dx), Math.abs(dz));
-  let sx = mul(t.x, GEH_COS[k] as Fest);
-  let sz = mul(t.z, GEH_COS[VIERTEL - k] as Fest);
+  let sx = schritt(t.x, k);
+  let sz = schritt(t.z, k);
   if (dx < 0) sx = neg(sx);
   if (dz < 0) sz = neg(sz);
   return { sx, sz };
@@ -133,7 +144,7 @@ export function gehen(welt: Welt, g: Gegner, zielX: number, zielZ: number, t: Te
       }
       const zg = ganz(g.z);
       const richtung = zg - zMin <= zMax - zg ? -1 : 1;
-      r = schrittBegrenzt(b, r.x, g.z, g.h, 0, richtung < 0 ? neg(t.z) : t.z);
+      r = schrittBegrenzt(b, r.x, g.z, g.h, 0, richtung < 0 ? neg(tiefenTempo(t)) : tiefenTempo(t));
     }
   }
   g.x = r.x;

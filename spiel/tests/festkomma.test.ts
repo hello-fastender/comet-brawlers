@@ -20,6 +20,7 @@ import {
   mulGanz,
   nachkomma,
   neg,
+  produktGroesser,
   sub,
   vergleich,
   vorzeichen,
@@ -126,4 +127,16 @@ test('festkomma: Sprungbahn exakt (Kampf 4.4: Scheitel 51,25, J+41 2,5)', () => 
   assert.equal(verlauf[0], '4.9375'); // J+2
   assert.equal(verlauf[19], '51.25'); // J+21
   assert.equal(verlauf[39], '2.5'); // J+41
+});
+
+test('festkomma: produktGroesser vergleicht a·b > c·d exakt, auch über 32 Bit', () => {
+  assert.equal(produktGroesser(3, 4, 2, 5), true);
+  assert.equal(produktGroesser(2, 5, 3, 4), false);
+  assert.equal(produktGroesser(2, 6, 3, 4), false);
+  // 32767 · 665398 übersteigt 2^31, 32767 · 65536 nicht: trotzdem exakt
+  assert.equal(produktGroesser(32767, EINS, 3227, 665398), true);
+  assert.equal(produktGroesser(32767, EINS, 3228, 665398), false);
+  assert.equal(produktGroesser(1, EINS, 32767, 665398), false);
+  assert.equal(produktGroesser(2 ** 31 - 1, 2 ** 31 - 1, 2 ** 31 - 1, 2 ** 31 - 2), true);
+  assert.throws(() => produktGroesser(1.5, 2, 1, 1), RangeError);
 });

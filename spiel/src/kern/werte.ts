@@ -833,7 +833,7 @@ export const AN_MAX_FRAMES = 45;
 export const AN_MAX_WEG = 176;
 /** AN: lenkt in der Tiefe 1 px/Frame nach (Welt 7.3). */
 export const AN_NACHLENKEN: Fest = ausDezimal(1);
-/** AN: Auslauf 24 bis 30 px (Welt 7.3). */
+/** AN: Auslauf 30 px in 15 Frames, im n-ten Frame 4 − 0,25·n px/Frame (Welt 7.3 mit L35; vorher 24 bis 30 px). */
 export const AN_AUSLAUF_VON = 24;
 export const AN_AUSLAUF_BIS = 30;
 /** AN: vorn 0 bis 40 px, ±12, Figur bis 90 px (Welt 7.3, Platzhalter). */
@@ -1002,8 +1002,8 @@ export const BOSS_WAHL_NAH: readonly string[] = ['AS', 'AS', 'KP'];
 export const BOSS_WAHL_FERN: readonly string[] = ['AN', 'AS', 'KP'];
 /**
  * Ansturm: Auslauf nach dem Lauf mit 4 px/Frame, je Frame 0,25 px/Frame
- * weniger: 15 Frames, 30 px (Welt 7.3: Auslauf 24 bis 30 px; Verlauf
- * Festlegung K4).
+ * weniger: 15 Frames, 30 px (Welt 7.3 mit L35: Auslauf 30 px in 15 Frames,
+ * im n-ten Frame 4 − 0,25·n px/Frame).
  */
 export const AN_AUSLAUF_ABNAHME: Fest = ausDezimal(0.25);
 /**
@@ -1022,3 +1022,66 @@ export const KP_FALL_FAKTOR: Fest = ausBruch(215, 2178);
  * frei für die Darstellung, Landung fest in N+53; Verlauf Festlegung K1).
  */
 export const NEUEINSTIEG_FALL_V: Fest = ausDezimal(5);
+
+// --- Ergänzung Q1: Qualitätsbefunde (Figur, Gegner, Prüfmittel) ---
+/**
+ * „Nie“ als Frame-Schwelle (Kampf 4.3: bis zum Ende der Aktion nimmt die
+ * Figur keine Drücke an; kein Losreißen, keine Pose bis STAND): größer als
+ * jeder Frame eines Laufs. Ganze Zahl statt Infinity, damit der Zustand der
+ * Figur ganzzahlig und kopierbar bleibt (Welt 11.6, Kampf 3).
+ */
+export const FRAME_NIE = 2147483647;
+/**
+ * Welle des Bosses in der Scheibe: Welle 7 (Welt 4.6, 4.7); nur für den
+ * Schlüssel welle.7=nur_boss des Prüfstarts (Welt 11.3).
+ */
+export const BOSS_WELLE_SCHEIBE = 7;
+/**
+ * Gehschritt der Gegner je Gehtempo (Welt 5.3 mit den Tempi aus 5.1 und 6):
+ * Sektor k = 0 … 8 im Viertel (Richtung k · 11,25°), x[k] = v_x · cos(k · 11,25°),
+ * z[k] = v_z · sin(k · 11,25°), je Tempo einmal auf 1/65536 gerundet (nächster
+ * Rohwert, mit Python aus den Dezimalwerten berechnet; Kampf 2.4 Punkt 1).
+ * x[0] und z[8] sind das volle Tempo (wie BOLZER_GEHEN_X usw.). Ersetzt die
+ * Rechnung mit GEH_COS, die zweimal rundete.
+ */
+export const GEH_SCHRITT_BOLZER: { readonly x: readonly Fest[]; readonly z: readonly Fest[] } = {
+  x: [114688, 112484, 105958, 95360, 81097, 63717, 43889, 22375, 0],
+  z: [0, 11187, 21945, 31859, 40548, 47680, 52979, 56242, 57344],
+};
+export const GEH_SCHRITT_BOLZER_SCHNELL: { readonly x: readonly Fest[]; readonly z: readonly Fest[] } = {
+  x: [147456, 144623, 136232, 122605, 104267, 81922, 56429, 28767, 0],
+  z: [0, 14384, 28214, 40961, 52134, 61303, 68116, 72311, 73728],
+};
+export const GEH_SCHRITT_RAMMBOCK: { readonly x: readonly Fest[]; readonly z: readonly Fest[] } = {
+  x: [104858, 102843, 96876, 87186, 74146, 58256, 40127, 20457, 0],
+  z: [0, 10228, 20064, 29128, 37073, 43593, 48438, 51421, 52429],
+};
+export const GEH_SCHRITT_RAMMBOCK_SCHNELL: { readonly x: readonly Fest[]; readonly z: readonly Fest[] } = {
+  x: [131072, 128553, 121095, 108982, 92682, 72820, 50159, 25571, 0],
+  z: [0, 12785, 25080, 36410, 46341, 54491, 60547, 64277, 65536],
+};
+export const GEH_SCHRITT_ZUENDER: { readonly x: readonly Fest[]; readonly z: readonly Fest[] } = {
+  x: [114688, 112484, 105958, 95360, 81097, 63717, 43889, 22375, 0],
+  z: [0, 11187, 21945, 31859, 40548, 47680, 52979, 56242, 57344],
+};
+export const GEH_SCHRITT_ZUENDER_SCHNELL: { readonly x: readonly Fest[]; readonly z: readonly Fest[] } = {
+  x: [147456, 144623, 136232, 122605, 104267, 81922, 56429, 28767, 0],
+  z: [0, 14384, 28214, 40961, 52134, 61303, 68116, 72311, 73728],
+};
+/**
+ * Rakete des Zünders: Höhe sinkt je Flugframe um 43/20 px, von 44 px in Q
+ * auf 1 px in Q+20 (Welt 6: „Höhe sinkt auf 1 px (nur Darstellung)“; linearer
+ * Verlauf Festlegung K3), einmal auf 1/65536 nach −∞ gerundet, ohne Division
+ * im Lauf (Kampf 2.4).
+ */
+export const ZR_RAKETE_SINKEN: Fest = ausBruch(43, 20);
+
+// --- Ergänzung Q2: Qualitätsbefunde (Boss, Wellen) ---
+/**
+ * Körperpresse, z nach k Bahnframes (Welt 7.3: Sprung zum Ort der Figur in A;
+ * z linear wie x, Festlegung K4): z(A) + dz · k/64 als Festkommaprodukt mit
+ * dem Anteil k · 1/64, also ohne Division (Kampf 2.4 nennt nur x) und mit
+ * exaktem Zwischenwert (kein Überlauf bei großem dz). Gleich ⌊dz·k/64⌋.
+ */
+export const KP_Z_ANTEIL: Fest = ausBruch(1, KP_X_TEILER);
+// --- Ende Ergänzung Q2 ---

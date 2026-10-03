@@ -2,7 +2,7 @@
 // docs/spezifikation-kampf.md, Abschnitt 6 (6.2 Schaden anwenden, 6.3 Schutz,
 // 6.4 Kosten des Spezialangriffs, 6.5 Tod und Neueinstieg) mit den Abläufen
 // aus 4.3 (GETROFFEN, UMGEWORFEN, LIEGEN, AUFSTEHEN, TOT, NEUEINSTIEG) und
-// den Bahnen F1 und F4 aus 5.7.
+// den Bahnen F1 und F4 aus 5.7 (gemeinsame Bahnrechnung in bahn.ts).
 //
 // Was ein Gegnertreffer an der Figur auslöst (Zielhandler figurGetroffen, KS7):
 // - Figur geschützt (zustand 2 oder 3): Wirkung W, sonst nichts (E2, P11, P17).
@@ -16,16 +16,13 @@
 
 import type { Blick, Treffer } from './entitaeten.ts';
 import type { Welt } from './welt.ts';
-import { add, ausGanz, ganz, mulGanz, sub } from './festkomma.ts';
+import { ausGanz, ganz, sub } from './festkomma.ts';
+import { bahnSchritt, bahnStarten } from './bahn.ts';
 import { entitaet, ZUSTAND_BODEN, ZUSTAND_NORMAL, ZUSTAND_REAKTION } from './entitaeten.ts';
 import { EREIGNIS, ereignis, ereignisTreffer } from './ereignisse.ts';
 import { TASTE_A, TASTE_S, hat } from './tasten.ts';
 import {
-  F1_AX,
-  F1_GH,
   F1_STILLSTAND,
-  F1_VH,
-  F1_VX,
   F4_RUHE,
   F4_STILLSTAND,
   FIGUR_AUFSTEHEN_DAUER,
@@ -51,9 +48,8 @@ import {
   WAFFE_FALLEN_NACH,
 } from './werte.ts';
 import { landungInstanz } from './figur/angriffe.ts';
-import { aktionSetzen, aufsetzen, bewegen, sprungBeginnen, standBeginnen } from './figur/basis.ts';
+import { aktionSetzen, aufsetzen, begrenzung, sprungBeginnen, standBeginnen } from './figur/basis.ts';
 import { griffLoesen } from './figur/griff.ts';
-import { intern } from './figur/intern.ts';
 
 /** Aktionen mit zustand 2 (Kampf 4.1). */
 const BODEN_AKTIONEN = ['UMGEWORFEN', 'LIEGEN', 'AUFSTEHEN', 'TOT'];
@@ -101,29 +97,17 @@ function flugrichtung(welt: Welt, t: Treffer): Blick {
   return a.blick;
 }
 
-/** Bahn F1 bzw. F4 der Figur beginnen (Kampf 5.7): in der aktuellen Höhe (P15). */
-function bahnBeginnen(welt: Welt, bahn: 'F1' | 'F4', richtung: Blick): void {
-  const f = welt.figur;
-  const i = intern(f);
-  f.bahn = bahn;
-  f.bahn_richtung = richtung;
-  f.bahn_frame = 0;
-  f.bahn_start_x = f.x;
-  f.vx = F1_VX;
-  f.ax = F1_AX;
-  f.vh = F1_VH;
-  f.gh = F1_GH;
-  i.gelandet = false;
-}
-
-/** UMGEWORFEN in H (Kampf 4.3): Stillstand H+1 bis H+8, Bahn F1 vom Angreifer weg, LIEGEN ab H+54. */
-export function umwerfenBeginnen(welt: Welt, richtung: Blick): void {
+/**
+ * UMGEWORFEN in H (Kampf 4.3): Stillstand H+1 bis H+8, Bahn F1 vom Angreifer
+ * weg in der aktuellen Höhe (Kampf 5.7, P15; bahn.ts), LIEGEN ab H+54.
+ */
+export function figurUmwerfenBeginnen(welt: Welt, richtung: Blick): void {
   const f = welt.figur;
   aktionSetzen(welt, 'UMGEWORFEN');
   f.getroffen_h = welt.frame;
   f.liege_druecke = 0;
-  intern(f).liege_ende = welt.frame + FIGUR_LIEGEN_ENDE;
-  bahnBeginnen(welt, 'F1', richtung);
+  f.liege_ende = welt.frame + FIGUR_LIEGEN_ENDE;
+  bahnStarten(f, 'F1', richtung);
 }
 
 /** TOT in t (Kampf 4.3, 6.5): Bahn F4, Neueinstieg N = t+120 bei jeder Todesart (E16). */
@@ -133,31 +117,21 @@ export function todBeginnen(welt: Welt, richtung: Blick): void {
   f.tod_t = welt.frame;
   f.neueinstieg_n = welt.frame + NEUEINSTIEG_NACH_TOD;
   f.landung_ln = 0;
-  intern(f).neueinstieg = false;
-  bahnBeginnen(welt, 'F4', richtung);
+  f.neueinstieg_bereit = false;
+  bahnStarten(f, 'F4', richtung);
 }
 
 /**
- * Ein Bahnframe (Kampf 5.7): x += vx · Richtung, vx −= ax; bis zum
- * Bodenkontakt h += vh, vh −= gh, bei h ≤ 0 ist h = 0; danach läuft nur x bis
- * zur Ruhe weiter (Rückprall nur Darstellung, P13). Unterphase F im Flug, B
- * ab dem Bodenkontakt.
+ * Ein Bahnframe der Figur k Frames nach dem Treffer (Kampf 5.7, bahn.ts
+ * bahnSchritt): erst x mit der Begrenzung der Figur (Welt 2.2), dann h bis
+ * zum Bodenkontakt; danach läuft nur x weiter (Rückprall nur Darstellung,
+ * P13). Unterphase F im Flug, B ab dem Bodenkontakt. Die Aufrufer begrenzen
+ * die Bahn auf H+9 bis H+55 bzw. t+3 bis t+49 (Kampf 4.3).
  */
-function bahnSchritt(welt: Welt): void {
+function figurBahnSchritt(welt: Welt, k: number): void {
   const f = welt.figur;
-  const i = intern(f);
-  f.bahn_frame += 1;
-  if (!i.gelandet) {
-    f.h = add(f.h, f.vh);
-    f.vh = sub(f.vh, f.gh);
-    if (f.h <= 0) {
-      f.h = 0;
-      i.gelandet = true;
-    }
-  }
-  bewegen(welt, mulGanz(f.vx, f.bahn_richtung), 0);
-  f.vx = sub(f.vx, f.ax);
-  f.phase = i.gelandet ? 'B' : 'F';
+  const lage = bahnSchritt(f, k, begrenzung(welt));
+  f.phase = lage === 'luft' ? 'F' : 'B';
 }
 
 /**
@@ -190,7 +164,7 @@ export function figurGetroffen(welt: Welt, t: Treffer): void {
   if (t.wirkung === 'X') {
     todBeginnen(welt, r);
   } else if (t.wirkung === 'U') {
-    umwerfenBeginnen(welt, r);
+    figurUmwerfenBeginnen(welt, r);
   } else {
     aktionSetzen(welt, 'GETROFFEN');
     f.schutz = SCHUTZ_TREFFER;
@@ -212,11 +186,10 @@ export function eingriffTodPruefen(welt: Welt): void {
  */
 export function bodenSchritt(welt: Welt): void {
   const f = welt.figur;
-  const i = intern(f);
   const h = f.getroffen_h;
   const d = welt.frame - h;
   f.uhr += 1;
-  if (d > F1_STILLSTAND && d <= FIGUR_UMGEWORFEN_RUHE) bahnSchritt(welt);
+  if (d > F1_STILLSTAND && d <= FIGUR_UMGEWORFEN_RUHE) figurBahnSchritt(welt, d);
   if (f.aktion === 'UMGEWORFEN' && d >= FIGUR_LIEGEN_AB) {
     const phase = f.phase;
     aktionSetzen(welt, 'LIEGEN');
@@ -229,12 +202,12 @@ export function bodenSchritt(welt: Welt): void {
     const neu = welt.rahmen.steuerung === 1 ? welt.eingabe.neu : 0;
     if (q >= h + FIGUR_LIEGEN_AB && hat(neu, TASTE_A | TASTE_S)) {
       f.liege_druecke += 1;
-      if (f.liege_druecke === LIEGE_DRUECKE && q + LIEGE_ENDE_NACH_DRUCK < i.liege_ende) i.liege_ende = q + LIEGE_ENDE_NACH_DRUCK;
+      if (f.liege_druecke === LIEGE_DRUECKE && q + LIEGE_ENDE_NACH_DRUCK < f.liege_ende) f.liege_ende = q + LIEGE_ENDE_NACH_DRUCK;
     }
-    if (welt.frame > i.liege_ende) aktionSetzen(welt, 'AUFSTEHEN');
+    if (welt.frame > f.liege_ende) aktionSetzen(welt, 'AUFSTEHEN');
     return;
   }
-  if (f.aktion === 'AUFSTEHEN' && welt.frame > i.liege_ende + FIGUR_AUFSTEHEN_DAUER) {
+  if (f.aktion === 'AUFSTEHEN' && welt.frame > f.liege_ende + FIGUR_AUFSTEHEN_DAUER) {
     standBeginnen(welt);
     f.bahn = '';
     f.schutz = SCHUTZ_AUFSTEHEN;
@@ -248,24 +221,22 @@ export function bodenSchritt(welt: Welt): void {
  */
 export function todSchritt(welt: Welt): void {
   const f = welt.figur;
-  const i = intern(f);
   const d = welt.frame - f.tod_t;
   f.uhr += 1;
-  if (d > F4_STILLSTAND && d <= F4_RUHE) bahnSchritt(welt);
+  if (d > F4_STILLSTAND && d <= F4_RUHE) figurBahnSchritt(welt, d);
   else if (d > F4_RUHE) f.phase = 'R';
   if (welt.frame === f.neueinstieg_n && welt.rahmen.leben > 1) {
     f.lp = FIGUR_LP;
-    i.neueinstieg = true;
+    f.neueinstieg_bereit = true;
   }
-  if (welt.frame === f.neueinstieg_n + 1 && i.neueinstieg && welt.rahmen.phase !== 'GAMEOVER') neueinstiegBeginnen(welt);
+  if (welt.frame === f.neueinstieg_n + 1 && f.neueinstieg_bereit && welt.rahmen.phase !== 'GAMEOVER') neueinstiegBeginnen(welt);
 }
 
 /** Erscheinen in N+1 (Kampf 6.5): x = Kamera-x + 64, Tiefe = Kamera-y + 48, Höhe 256, Blick rechts, schutz 200, zustand 3. */
 function neueinstiegBeginnen(welt: Welt): void {
   const f = welt.figur;
-  const i = intern(f);
   aktionSetzen(welt, 'NEUEINSTIEG');
-  i.neueinstieg = false;
+  f.neueinstieg_bereit = false;
   f.x = ausGanz(welt.kamera.x + NEUEINSTIEG_X);
   f.z = ausGanz(welt.kamera.y + NEUEINSTIEG_Z);
   f.h = NEUEINSTIEG_H;

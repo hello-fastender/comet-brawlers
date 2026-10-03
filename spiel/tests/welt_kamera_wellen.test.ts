@@ -11,7 +11,8 @@ import type { Gegner } from '../src/kern/entitaeten.ts';
 import { erzeugeWelt, logikSchritt } from '../src/kern/welt.ts';
 import { parseStage } from '../src/kern/stage.ts';
 import { ausDezimal, ausGanz, ganz, zuDezimalText } from '../src/kern/festkomma.ts';
-import { bossLpDauerhaft, lpNachRang, welleBesiegt } from '../src/kern/wellen.ts';
+import { lpNachRang, welleBesiegt } from '../src/kern/wellen.ts';
+import { bossLpDauerhaft } from '../src/kern/gegner/boss.ts';
 import { kameraBlende } from '../src/kern/kamera.ts';
 import { parseSzene } from '../src/pruef/szene.ts';
 import { stageText } from './hilfe.ts';
@@ -280,10 +281,10 @@ test('Welt 4.4, 4.5: LP nach Rang, Boss-LP mit Folge, besiegt erst nach dem Aufw
   const w = weltAus('szene name=welt_besiegt endframe=10 seed=12345 buehne=scheibe');
   const boss = w.gegner[0] as Gegner;
   boss.lp = 20;
-  assert.equal(bossLpDauerhaft(boss), 20);
+  assert.equal(bossLpDauerhaft(w), 20);
   boss.folge = 1;
   boss.lp_folge = 30;
-  assert.equal(bossLpDauerhaft(boss), 30);
+  assert.equal(bossLpDauerhaft(w), 30);
   // Welle 2: wartende Hockende sind nicht besiegt, auch nicht mit LP < 0
   const s2 = w.gegner[2] as Gegner;
   const s3 = w.gegner[3] as Gegner;

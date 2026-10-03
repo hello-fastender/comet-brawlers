@@ -12,6 +12,27 @@ import { erzeugeWelt, logikSchritt } from '../src/kern/welt.ts';
 import { parseStage } from '../src/kern/stage.ts';
 import { ausDezimal, ausGanz, ganz, zuDezimalText } from '../src/kern/festkomma.ts';
 import { pauseNachRang, rechteGesperrt, sprungtrittHoehe } from '../src/kern/gegner/nah.ts';
+import { gehSchritt, gehSektor } from '../src/kern/gegner/nah_gehen.ts';
+import {
+  BOLZER_GEHEN_X,
+  BOLZER_GEHEN_Z,
+  BOLZER_SCHNELL_X,
+  BOLZER_SCHNELL_Z,
+  GEH_SCHRITT_BOLZER,
+  GEH_SCHRITT_BOLZER_SCHNELL,
+  GEH_SCHRITT_RAMMBOCK,
+  GEH_SCHRITT_RAMMBOCK_SCHNELL,
+  GEH_SCHRITT_ZUENDER,
+  GEH_SCHRITT_ZUENDER_SCHNELL,
+  RAMMBOCK_GEHEN_X,
+  RAMMBOCK_GEHEN_Z,
+  RAMMBOCK_SCHNELL_X,
+  RAMMBOCK_SCHNELL_Z,
+  ZUENDER_GEHEN_X,
+  ZUENDER_GEHEN_Z,
+  ZUENDER_SCHNELL_X,
+  ZUENDER_SCHNELL_Z,
+} from '../src/kern/werte.ts';
 import { parseSzene } from '../src/pruef/szene.ts';
 import { stageText } from './hilfe.ts';
 
@@ -279,4 +300,35 @@ test('Welt 5.7 E-10: keine Rechte vom Tod der Figur (t+1) bis zum Erscheinen (N+
   assert.equal(rechteGesperrt(w), true);
   w.frame = 435;
   assert.equal(rechteGesperrt(w), false);
+});
+
+test('Welt 5.3: Gehschritt je Gehtempo aus einer Tabelle, einmal auf 1/65536 gerundet (Kampf 2.4 Punkt 1)', () => {
+  // [Tabelle, v_x, v_z als Dezimalwert aus Welt 5.1 und 6, Konstanten des vollen Tempos]
+  const faelle = [
+    [GEH_SCHRITT_BOLZER, 1.75, 0.875, BOLZER_GEHEN_X, BOLZER_GEHEN_Z],
+    [GEH_SCHRITT_BOLZER_SCHNELL, 2.25, 1.125, BOLZER_SCHNELL_X, BOLZER_SCHNELL_Z],
+    [GEH_SCHRITT_RAMMBOCK, 1.6, 0.8, RAMMBOCK_GEHEN_X, RAMMBOCK_GEHEN_Z],
+    [GEH_SCHRITT_RAMMBOCK_SCHNELL, 2.0, 1.0, RAMMBOCK_SCHNELL_X, RAMMBOCK_SCHNELL_Z],
+    [GEH_SCHRITT_ZUENDER, 1.75, 0.875, ZUENDER_GEHEN_X, ZUENDER_GEHEN_Z],
+    [GEH_SCHRITT_ZUENDER_SCHNELL, 2.25, 1.125, ZUENDER_SCHNELL_X, ZUENDER_SCHNELL_Z],
+  ] as const;
+  for (const [t, vx, vz, x0, z8] of faelle) {
+    assert.equal(t.x.length, 9);
+    assert.equal(t.z.length, 9);
+    for (let k = 0; k <= 8; k++) {
+      // Prüfung mit Gleitkomma nur im Test: nächster Rohwert von v · cos bzw. v · sin
+      const winkel = (k * Math.PI) / 16;
+      assert.equal(t.x[k], Math.round(vx * Math.cos(winkel) * 65536), `x[${k}] bei ${vx}`);
+      assert.equal(t.z[k], Math.round(vz * Math.sin(winkel) * 65536), `z[${k}] bei ${vz}`);
+    }
+    assert.deepEqual([t.x[0], t.z[8]], [x0, z8], 'volles Tempo wie in werte.ts');
+  }
+  // Schritt ist der Tabelleneintrag des Sektors (Vorzeichen nach der Richtung)
+  assert.equal(gehSektor(100, 0), 0);
+  assert.equal(gehSektor(0, 100), 8);
+  const k = gehSektor(30, 20);
+  assert.deepEqual(gehSchritt(GEH_SCHRITT_BOLZER, -30, 20), { sx: -(GEH_SCHRITT_BOLZER.x[k] as number), sz: GEH_SCHRITT_BOLZER.z[k] });
+  // Sektorgrenzen auch bei großen Abständen exakt (Produkt über 32 Bit)
+  assert.equal(gehSektor(32767, 1), 0);
+  assert.equal(gehSektor(1, 32767), 8);
 });

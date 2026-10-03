@@ -18,8 +18,8 @@
 // - Leere Waffe (Kampf 10.3): leereWaffeWerfen(welt, x, z), verschwindet nach
 //   61 Frames.
 // - Punkte für Essen bei 72 LP: rahmen.ts punkteAddieren.
-// - Hindernisse der unzerbrochenen Behälter für schrittBegrenzt:
-//   behaelterHindernisse(welt).
+// - Hindernisse der Behälter für schrittBegrenzt (bis einschließlich Frame h
+//   des Zerbrechens, Welt 9.2): behaelterHindernisse(welt).
 //
 // Festlegungen K3 (Lücken, Bericht):
 // - Ein zerbrochener Behälter verschwindet in W8 von h+1; sein Inhalt
@@ -42,7 +42,7 @@ import type { Blick, GegenstandArt, Objekt, Treffer } from './entitaeten.ts';
 import type { Hindernis } from './stage.ts';
 import type { Welt } from './welt.ts';
 import { add, ausGanz, divGanz, ganz, mulGanz } from './festkomma.ts';
-import { entitaet, freiesObjekt, freigeben, objektBelegen } from './entitaeten.ts';
+import { freiesObjekt, freigeben, objektBelegen, objektVon } from './entitaeten.ts';
 import { EREIGNIS, ereignis, ereignisTreffer } from './ereignisse.ts';
 import { behaelterHindernis, schrittBegrenzt } from './stage.ts';
 import {
@@ -64,19 +64,22 @@ import {
   ZUENDER_WAFFE_X,
 } from './werte.ts';
 
-/** Flugart eines Gegenstands in timer.flug: aus einem Behälter bzw. Waffe des Zünders. */
-const FLUG_BEHAELTER = 1;
-const FLUG_ZUENDER = 2;
-
 // ===========================================================================
 // Hilfen für andere Module
 // ===========================================================================
 
-/** Hindernisse der unzerbrochenen Behälter (Welt 2.2, Punkt 6) für stage.ts schrittBegrenzt. */
+/**
+ * Hindernisse der Behälter (Welt 2.2, Punkt 6) für stage.ts schrittBegrenzt
+ * und begehbar: ein Behälter ist Hindernis bis zum Zerbrechen, auch noch im
+ * Frame h des Zerbrechens, ab h+1 nicht mehr (Welt 9.2). Einzige Fassung für
+ * Figur, Raketen der Figur, Gegner, Reaktionsbahnen und Boss.
+ */
 export function behaelterHindernisse(welt: Welt): Hindernis[] {
   const liste: Hindernis[] = [];
   for (const o of welt.objekte) {
-    if (o.belegt && o.typ === 'Behälter' && !o.zerbrochen) liste.push(behaelterHindernis(o.id === '' ? o.schluessel : o.id, ganz(o.x), ganz(o.z)));
+    if (!o.belegt || o.typ !== 'Behälter') continue;
+    if (o.zerbrochen && o.zerbrochen_h < welt.frame) continue;
+    liste.push(behaelterHindernis(o.id === '' ? o.schluessel : o.id, ganz(o.x), ganz(o.z)));
   }
   return liste;
 }
@@ -167,7 +170,8 @@ export function bosskistenZerbrechen(welt: Welt): void {
  * h+1. Bosskisten und schon zerbrochene Behälter: Wirkung W (siehe Kopf).
  */
 export function behaelterGetroffen(welt: Welt, t: Treffer): void {
-  const o = entitaet(welt, t.ziel) as Objekt;
+  const o = objektVon(welt, t.ziel);
+  if (o === null || !o.belegt) throw new Error(`behaelterGetroffen: ${t.ziel} ist kein belegter Objektslot`);
   t.lp_vorher = o.lp;
   const zerbricht = o.typ === 'Behälter' && o.art === 'Fass' && !o.zerbrochen;
   t.wirkung = zerbricht ? 'B' : 'W';
@@ -222,7 +226,7 @@ function behaelterOeffnen(welt: Welt): void {
     if (neu === null) continue;
     neu.flugphase = 'FLUG';
     neu.flug_n = 0;
-    neu.timer['flug'] = FLUG_BEHAELTER;
+    neu.flugart = 'behaelter';
     ereignis(welt, EREIGNIS.ERSCHEINT, neu.schluessel, inhalt);
   }
 }
@@ -231,8 +235,8 @@ function behaelterOeffnen(welt: Welt): void {
 function zuenderWaffen(welt: Welt): void {
   const fig = welt.figur;
   for (const g of welt.gegner) {
-    if (!g.belegt || g.typ !== 'Zünder' || g.lp >= 0 || g.ohne_punkte || g.timer['waffe_fallen'] === 1) continue;
-    g.timer['waffe_fallen'] = 1;
+    if (!g.belegt || g.typ !== 'Zünder' || g.lp >= 0 || g.ohne_punkte || g.waffe_gefallen) continue;
+    g.waffe_gefallen = true;
     const neu = gegenstandNeu(welt, 'Raketenwerfer', ganz(g.x), ganz(g.z));
     if (neu === null) continue;
     const dx = ganz(g.x) - ganz(fig.x);
@@ -241,9 +245,9 @@ function zuenderWaffen(welt: Welt): void {
     neu.flugphase = 'FLUG';
     neu.flug_n = 0;
     neu.bahn_richtung = richtung;
-    neu.timer['flug'] = FLUG_ZUENDER;
-    neu.timer['h0'] = g.h;
-    neu.timer['liegt_ab'] = welt.frame + ZUENDER_WAFFE_LIEGT_AB;
+    neu.flugart = 'zuender';
+    neu.flug_h0 = g.h;
+    neu.liegt_ab = welt.frame + ZUENDER_WAFFE_LIEGT_AB;
     ereignis(welt, EREIGNIS.ERSCHEINT, neu.schluessel, 'Raketenwerfer');
   }
 }
@@ -274,16 +278,20 @@ function flugZuender(welt: Welt, o: Objekt): void {
     const n = o.flug_n;
     const schritt = schrittBegrenzt({ stage: welt.stage, zusatz: [], x_min: null, x_max: null }, o.x, o.z, o.h, mulGanz(ZUENDER_WAFFE_X, o.bahn_richtung), 0);
     o.x = schritt.x;
-    o.h = add(o.timer['h0'] ?? 0, ausGanz(flughoeheZuenderwaffe(n)));
+    o.h = add(o.flug_h0, ausGanz(flughoeheZuenderwaffe(n)));
     if (n >= ZUENDER_WAFFE_FLUG) {
       o.h = 0;
       o.flugphase = '';
     }
   }
-  if (welt.frame === o.timer['liegt_ab']) landen(welt, o);
+  if (welt.frame === o.liegt_ab) landen(welt, o);
 }
 
-/** Liegezeit und Blinken (Welt 9.3): Waffen sichtbar bis 699, Blinken 700 bis 791, entfernt bei 792; Essen unbegrenzt. */
+/**
+ * Liegezeit und Blinken (Welt 9.3): Waffen sichtbar bis 699, Blinken 700 bis
+ * 791 (BLINKEN_TAKT Frames sichtbar, ebenso viele unsichtbar; Zweierpotenz,
+ * daher als Bitmaske ohne Division, Kampf 2.4), entfernt bei 792; Essen unbegrenzt.
+ */
 function liegen(welt: Welt, o: Objekt): void {
   o.liegezeit = welt.frame - o.landung_l;
   if (o.art !== 'Raketenwerfer') return;
@@ -292,7 +300,7 @@ function liegen(welt: Welt, o: Objekt): void {
     freigeben(o);
     return;
   }
-  o.sichtbar = o.liegezeit < LIEGEZEIT_WAFFE || (divGanz(o.liegezeit - LIEGEZEIT_WAFFE, BLINKEN_TAKT) & 1) === 0;
+  o.sichtbar = o.liegezeit < LIEGEZEIT_WAFFE || ((o.liegezeit - LIEGEZEIT_WAFFE) & BLINKEN_TAKT) === 0;
 }
 
 /**
@@ -315,11 +323,10 @@ export function gegenstaendeSchritt(welt: Welt): void {
       continue;
     }
     if (o.typ !== 'Gegenstand') continue;
-    const flug = o.timer['flug'] ?? 0;
-    if (o.landung_l === 0 && flug === 0 && o.aufnehmbar) o.landung_l = f;
+    if (o.landung_l === 0 && o.flugart === '' && o.aufnehmbar) o.landung_l = f;
     if (o.landung_l === 0 && o.abschuss < f) {
-      if (flug === FLUG_BEHAELTER) flugBehaelter(welt, o);
-      else if (flug === FLUG_ZUENDER) flugZuender(welt, o);
+      if (o.flugart === 'behaelter') flugBehaelter(welt, o);
+      else if (o.flugart === 'zuender') flugZuender(welt, o);
       continue;
     }
     if (o.landung_l > 0) liegen(welt, o);

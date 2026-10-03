@@ -25,6 +25,7 @@ import {
   FENSTER_LINKS,
   FENSTER_RECHTS,
   FIGUR_LP,
+  FRAME_NIE,
   GEGNER_SLOTS,
   GESCHOSS_SLOTS,
   OBJEKT_SLOT_ERSTER,
@@ -445,6 +446,8 @@ export interface EntitaetBasis {
   bahn_frame: number;
   /** Ausgangspunkt der Bahn (Trefferort) */
   bahn_start_x: Fest;
+  /** Bahnframe des Bodenkontakts der laufenden Bahn (Kampf 5.7, bahn.ts), 0 = noch keiner */
+  bahn_boden: number;
   /** benannte modulinterne Zähler (Kampf 3, timer); nie darüber iterieren */
   timer: Record<string, number>;
 }
@@ -460,6 +463,23 @@ export interface Tipp {
   /** Richtungsmenge und Dauer des vorigen Tipps */
   voriger: Tasten;
   voriger_dauer: number;
+  /** Frame, in dem KS1 einen Doppeltipp erkannt hat (Kampf 9.1), 0 = keiner */
+  erkannt: number;
+}
+
+/** Variante des Sprungangriffs der Figur (Kampf 5.2): neutral, Richtung, hoch, runter; '' = keiner. */
+export type SprungVariante = '' | 'N' | 'R' | 'H' | 'T';
+
+/** Geworfener Gegner als Geschoss WG (Kampf 8.5), E+1 bis E+58; die Figur führt die Liste. */
+export interface Wurfgeschoss {
+  /** Slot des Geworfenen */
+  ziel: SlotKey;
+  /** Druckframe E der Wurfeingabe */
+  e: number;
+  /** Flugrichtung des Geworfenen (vorwärts Blick der Figur, rückwärts entgegen) */
+  richtung: Blick;
+  /** Angriffsinstanz WG am Geworfenen (urheber 'f'); hält die Menge der Getroffenen über alle Frames */
+  inst: Angriffsinstanz;
 }
 
 /** Spielfigur (Kampf 3, Zusatzfelder; Kampf 4 bis 10). */
@@ -530,6 +550,28 @@ export interface Figur extends EntitaetBasis {
   rutsch_v: Fest;
   /** Gegenstand, der in P+1 aufgenommen wird (Kampf 10.1) */
   aufnehmen_ziel: SlotKey | null;
+  /** Drücke ab X nur für eine Richtung allein in der Tiefe (Kampf 4.3, SCHLAG mit Treffer, P31) */
+  tiefe_ab: number;
+  /** Frame, ab dem die Kettenpose mit Treffer in STAND übergeht (h+28 bzw. h+27, Kampf 4.3); FRAME_NIE = keiner */
+  stand_ab: number;
+  /** Schlag ohne Treffer erkannt (Leerschlag bzw. Nachlauf der Stufe, Kampf 4.3) */
+  leerschlag: boolean;
+  /** x-Richtung des Sprungs aus T(J) bzw. Sprintrichtung (Kampf 4.4, 9.3) */
+  sprung_dx: -1 | 0 | 1;
+  /** Angriff in diesem Sprung schon ausgelöst (Kampf 4.3: keine weiteren bis zur Landung) */
+  sprung_angriff: boolean;
+  /** Variante des laufenden Sprungangriffs (Kampf 5.2) */
+  sprung_variante: SprungVariante;
+  /** Frames seit A ohne Stoppframes für den Sprint-Sprungangriff (Kampf 9.3), 0 = keiner */
+  ss_n: number;
+  /** Losreißen in diesem Frame ohne Eingabe (g+61 bzw. K+61, Kampf 8.3); FRAME_NIE = keins */
+  los_frame: number;
+  /** L_end: letzter Frame des Liegens (Kampf 4.3) */
+  liege_ende: number;
+  /** im Frame N aufgefüllt: Erscheinen in N+1 (Kampf 6.5) */
+  neueinstieg_bereit: boolean;
+  /** laufende Wurfgeschosse WG (Kampf 8.5), in Reihenfolge der Würfe */
+  wuerfe: Wurfgeschoss[];
 }
 
 /** Gegner in s0 bis s19 (Kampf 3; Welt 4 bis 8). */
@@ -559,6 +601,10 @@ export interface Gegner extends EntitaetBasis {
   liegedauer: number;
   /** Frame des letzten Treffers h (Kampf 3) */
   reaktion_h: number;
+  /** Frame, in dem die Bahn einer Reaktion zur Ruhe kam (Beginn von LIEGEN, Kampf 7; reaktion.ts), 0 = keiner */
+  ruhe_frame: number;
+  /** Nummer + 1 des Prüfangriffs, dessen Instanz PA er führt (Kampf 11.2, treffer.ts), 0 = keiner */
+  pruefangriff: number;
   /** eigener Zufallsgenerator (Welt 11.1), Zähler = sn_zufall */
   zufall: Zufall;
   /** Seite zur Figur für die Rechte (Welt 5.7, E-1), +1 rechts der Figur */
@@ -577,10 +623,12 @@ export interface Gegner extends EntitaetBasis {
   schaden: number;
   /** Frame A des laufenden Angriffs (Welt 5.3, 5.4) */
   angriff_a: number;
-  /** Verlängerung der aktiven Frames durch den Trefferstopp (Welt 5.4 Punkt 5) */
-  angriff_stopp: number;
+  /** letzter aktiver Frame des laufenden Nah- bzw. Kolbenangriffs: A + Ende, nach einem wirksamen Treffer 7 mehr (Welt 5.4 Punkt 5, 5.5, 6) */
+  angriff_aktiv_ende: number;
   /** Angriff abgebrochen (Welt 5.4 Punkt 3) */
   angriff_abgebrochen: boolean;
+  /** Frame des wirksamen Treffers des laufenden Nah- bzw. Kolbenangriffs (Welt 5.4 Punkt 4, 5; 6), 0 = keiner */
+  angriff_treffer: number;
   /** Pause in Kampfhaltung (Welt 5.1, 8) und Frame s ihres Beginns */
   pause: number;
   kampfhaltung_s: number;
@@ -596,15 +644,22 @@ export interface Gegner extends EntitaetBasis {
   /** Abwartezeit, Verfolgungsbudget, Nachlauf (Welt 5.1, 5.5, 5.8) */
   abwarten_rest: number;
   verfolgung_rest: number;
-  nachlauf_rest: number;
+  /** letzter Frame des Nachlaufs nach einem Nah- bzw. Kolbenangriff (Welt 5.5, 6) */
+  nachlauf_ende: number;
   /** Weckreiz w und kampffähig ab (Welt 4.2) */
   weckreiz_w: number;
   kampffaehig_ab: number;
+  /** Weckreiz fällig ab diesem Frame (Versteck, Luke, Boss: W3 von f+1 nach der Auslösung, Welt 4.2, 4.4), 0 = keiner */
+  weckreiz_ab: number;
+  /** LP-Bonus der Welle beim Erscheinen (Welt 4.5) */
+  lp_bonus: number;
   /** keine Punkte beim Tod (Fall des Bosses, Welt 7.6) */
   ohne_punkte: boolean;
   /** Zielpunkt des Zünders (Welt 6) */
   zielpunkt_x: number;
   zielpunkt_z: number;
+  /** Waffe des toten Zünders ist erschienen (Welt 6, gegenstaende.ts) */
+  waffe_gefallen: boolean;
   /** Super-Armor des Bosses (Welt 7.4): lp_folge, Folge offen (0/1), letzter Treffer der Folge */
   lp_folge: number;
   folge: 0 | 1;
@@ -619,6 +674,69 @@ export interface Gegner extends EntitaetBasis {
   frei_frame: number;
   /** im Frame von einer Handlung der Figur getroffen (Gegneranzeige, Welt 10.1) */
   getroffen_frame: number;
+  /**
+   * in diesem Frame von vorn nicht treffbar (Boss im Armschwung ab dem zweiten
+   * aktiven Frame, Welt 7.1; mechanik „Boss“, Trefferbar in seinem Angriff);
+   * von hinten bleibt er treffbar. Setzt der Boss in KS3, liest treffer.ts.
+   */
+  vorn_geschuetzt: boolean;
+  /** eigene Zustände des Bosses (Welt 7.1 bis 7.4); bei allen anderen Gegnern unbenutzt */
+  boss: BossFelder;
+}
+
+/** Angriffe des Bosses in der Scheibe (Welt 7.3); '' = keiner. */
+export type BossAngriff = '' | 'AS' | 'AN' | 'KP';
+
+/** Bahnen des Bosses (Welt 7.1; Kampf 5.7); '' = keine. */
+export type BossBahn = '' | 'umwerfen' | 'knie' | 'wurf' | 'explosion' | 'tod';
+
+/**
+ * Eigene Zustände des Bosses Ballast (Welt 7.1 bis 7.4), geführt von
+ * gegner/boss*.ts (K4). Frames: 0 heißt „nicht gesetzt“ (Frame 1 ist der
+ * erste Logikschritt).
+ */
+export interface BossFelder {
+  /** laufender Angriff (Welt 7.3) */
+  art: BossAngriff;
+  /** gewählter, noch nicht begonnener Angriff (Armschwung: Annäherung läuft, Welt 7.2) */
+  wahl: BossAngriff;
+  /** Frame A_k des laufenden Schwungs (Armschwung, Welt 7.3) */
+  schwung_a: number;
+  /** die laufende Instanz hat wirksam getroffen (Welt 5.4 Punkt 5, E18) */
+  treffer: boolean;
+  /** erster Frame nach dem Nachlauf (BEREIT ab) */
+  bereit_ab: number;
+  /** Gehbefehl aus W4 (Welt 7.1): Richtung in x, Schritt in z mit Vorzeichen */
+  geh_x: -1 | 0 | 1;
+  geh_z: Fest;
+  /** Ansturm (Welt 7.3): Lauf-Frames, Weg, Lauf endet, Auslauf-Frames */
+  lauf_n: number;
+  lauf_weg: Fest;
+  lauf_ende: boolean;
+  auslauf_n: number;
+  /** Körperpresse (Welt 7.3): Lage in A, Weg zum Ziel, Bahnframe k, Stoppframes, Frame des letzten aktiven Frames, Frame der Landung */
+  kp_x0: Fest;
+  kp_z0: Fest;
+  kp_dx: Fest;
+  kp_dz: Fest;
+  kp_k: number;
+  kp_stopp: number;
+  kp_letzt: number;
+  kp_landung: number;
+  /** Stoß RZ (Welt 7.4, SA5): Beginn S, Richtung, Weg, wartet auf das Ende eines Angriffs */
+  stoss_beginn: number;
+  stoss_richtung: Blick;
+  stoss_weg: Fest;
+  stoss_offen: boolean;
+  /** Bahn der laufenden Reaktion (Welt 7.1) */
+  bahn: BossBahn;
+  /** frei ab G nach Umwerfen, Wurf oder Explosion (Welt 7.1), 0 = noch nicht gezogen */
+  frei_ab: number;
+  /** Taumeln (Welt 7.1): zurückgelegter Weg */
+  taumeln_weg: Fest;
+  /** Super-Armor (Welt 7.4, SA5): Fälligkeit nach dem Losreißen, 0 = keine; im Vorframe gehalten */
+  sa_faellig: number;
+  gehalten: boolean;
 }
 
 /** Objekt in o20 bis o59 oder Geschoss der Figur in g0 bis g4 (Kampf 3; Welt 9). */
@@ -644,6 +762,12 @@ export interface Objekt extends EntitaetBasis {
   flugphase: Flugphase;
   /** Flugframe n des Gegenstands (Welt 9.3) oder des Geschosses */
   flug_n: number;
+  /** Flug eines Gegenstands: aus einem Behälter (Welt 9.3) bzw. Waffe des toten Zünders (Welt 6); '' = keiner */
+  flugart: '' | 'behaelter' | 'zuender';
+  /** Ausgangshöhe des Bogens der Zünderwaffe (Höhe des Zünders in t, Welt 6) */
+  flug_h0: Fest;
+  /** Frame, in dem die Zünderwaffe liegt und aufnehmbar wird (L = t+44, Welt 6), 0 = keiner */
+  liegt_ab: number;
   /** verbleibende Lebensdauer (leere Waffe, Explosion) */
   lebensdauer: number;
   einschlag_x: number;
@@ -700,6 +824,7 @@ function basisLeer(schluessel: SlotKey, nr: number): EntitaetBasis {
     bahn_richtung: 1,
     bahn_frame: 0,
     bahn_start_x: 0,
+    bahn_boden: 0,
     timer: {},
   };
 }
@@ -728,7 +853,7 @@ export function figurNeu(): Figur {
     sprint_n: 0,
     sprint_tempo: 0,
     sprint_richtung: 0,
-    tipp: { lauf: 0, lauf_dauer: 0, pause_dauer: 0, voriger: 0, voriger_dauer: 0 },
+    tipp: { lauf: 0, lauf_dauer: 0, pause_dauer: 0, voriger: 0, voriger_dauer: 0, erkannt: 0 },
     liege_druecke: 0,
     p: 0,
     p_tasten: 0,
@@ -753,6 +878,17 @@ export function figurNeu(): Figur {
     wurf_richtung: '',
     rutsch_v: 0,
     aufnehmen_ziel: null,
+    tiefe_ab: 0,
+    stand_ab: FRAME_NIE,
+    leerschlag: false,
+    sprung_dx: 0,
+    sprung_angriff: false,
+    sprung_variante: '',
+    ss_n: 0,
+    los_frame: FRAME_NIE,
+    liege_ende: 0,
+    neueinstieg_bereit: false,
+    wuerfe: [],
   };
 }
 
@@ -776,6 +912,8 @@ export function gegnerLeer(nr: number): Gegner {
     gehalten_von: null,
     liegedauer: 0,
     reaktion_h: 0,
+    ruhe_frame: 0,
+    pruefangriff: 0,
     zufall: { zustand: 1, ziehungen: 0 },
     seite: 1,
     recht: '',
@@ -785,8 +923,9 @@ export function gegnerLeer(nr: number): Gegner {
     ziel_x: 0,
     schaden: 0,
     angriff_a: 0,
-    angriff_stopp: 0,
+    angriff_aktiv_ende: 0,
     angriff_abgebrochen: false,
+    angriff_treffer: 0,
     pause: 0,
     kampfhaltung_s: 0,
     gehstufe: 'normal',
@@ -797,12 +936,15 @@ export function gegnerLeer(nr: number): Gegner {
     gruppe_umwerf: '',
     abwarten_rest: 0,
     verfolgung_rest: 0,
-    nachlauf_rest: 0,
+    nachlauf_ende: 0,
     weckreiz_w: 0,
     kampffaehig_ab: 0,
+    weckreiz_ab: 0,
+    lp_bonus: 0,
     ohne_punkte: false,
     zielpunkt_x: 0,
     zielpunkt_z: 0,
+    waffe_gefallen: false,
     lp_folge: 0,
     folge: 0,
     folge_h: 0,
@@ -813,6 +955,42 @@ export function gegnerLeer(nr: number): Gegner {
     tod_t: 0,
     frei_frame: 0,
     getroffen_frame: 0,
+    vorn_geschuetzt: false,
+    boss: bossFelderLeer(),
+  };
+}
+
+/** Bosszustände im Grundzustand (kein Angriff, keine Bahn). */
+export function bossFelderLeer(): BossFelder {
+  return {
+    art: '',
+    wahl: '',
+    schwung_a: 0,
+    treffer: false,
+    bereit_ab: 0,
+    geh_x: 0,
+    geh_z: 0,
+    lauf_n: 0,
+    lauf_weg: 0,
+    lauf_ende: false,
+    auslauf_n: 0,
+    kp_x0: 0,
+    kp_z0: 0,
+    kp_dx: 0,
+    kp_dz: 0,
+    kp_k: 0,
+    kp_stopp: 0,
+    kp_letzt: 0,
+    kp_landung: 0,
+    stoss_beginn: 0,
+    stoss_richtung: 1,
+    stoss_weg: 0,
+    stoss_offen: false,
+    bahn: '',
+    frei_ab: 0,
+    taumeln_weg: 0,
+    sa_faellig: 0,
+    gehalten: false,
   };
 }
 
@@ -834,6 +1012,9 @@ export function objektLeer(schluessel: `o${number}` | `g${number}`, nr: number):
     zerbrochen_h: 0,
     flugphase: '',
     flug_n: 0,
+    flugart: '',
+    flug_h0: 0,
+    liegt_ab: 0,
     lebensdauer: 0,
     einschlag_x: 0,
     einschlag_z: 0,
@@ -929,6 +1110,16 @@ export function entitaet(t: SlotTabelle, key: SlotKey): Figur | Gegner | Objekt 
 export function gegnerVon(t: SlotTabelle, key: SlotKey | null): Gegner | null {
   if (key === null || !key.startsWith('s')) return null;
   return t.gegner[Number(key.slice(1))] ?? null;
+}
+
+/** Objekt (o20 bis o59) oder Geschoss der Figur (g0 bis g4) zu einem Slot, sonst null (auch für f und sN). */
+export function objektVon(t: SlotTabelle, key: SlotKey | null): Objekt | null {
+  if (key === null) return null;
+  const nr = Number(key.slice(1));
+  if (!Number.isInteger(nr)) return null;
+  if (key.startsWith('o')) return t.objekte[nr - OBJEKT_SLOT_ERSTER] ?? null;
+  if (key.startsWith('g')) return t.geschosse[nr] ?? null;
+  return null;
 }
 
 /** Name eines Beteiligten im Ereignis (Kampf 11.4): F, sn, on, gn. */

@@ -21,12 +21,12 @@
 //   welt.kamera.schnitt_ausgefuehrt nur einen kennt.
 // - Bildschütteln (KA10) beginnt mit schuettelnStarten im Frame des Anlasses
 //   (Einschlag der Rakete, Landung der Körperpresse); der erste Wert gilt in
-//   diesem Frame. VORSCHLAG (welt.ts): Felder schuetteln_art, schuetteln_ab in
-//   KameraZustand; bis dahin eine WeakMap in diesem Modul.
+//   diesem Frame. Anlass und Beginn stehen in welt.kamera (schuetteln_art,
+//   schuetteln_ab).
 
-import type { KameraZustand, Welt } from './welt.ts';
+import type { Welt } from './welt.ts';
 import type { SchnittSatz } from './stage.ts';
-import { ausGanz, divGanz, ganz } from './festkomma.ts';
+import { ausGanz, ganz } from './festkomma.ts';
 import { kameraY } from './stage.ts';
 import { EREIGNIS, ereignis } from './ereignisse.ts';
 import {
@@ -53,31 +53,31 @@ const BLENDE_LETZTER = BLENDE_ZU + BLENDE_SCHWARZ + BLENDE_AUF;
 /** Anlass des Bildschüttelns (KA10). */
 export type SchuettelnArt = 'presse' | 'explosion';
 
-const schuetteln = new WeakMap<KameraZustand, { art: SchuettelnArt; ab: number }>();
-
 /**
  * Beginnt das Bildschütteln im laufenden Frame (KA10): Körperpresse 11 Frames
  * waagrecht, Explosion einer Rakete 4 Frames senkrecht. Wirkt nie auf K, Ky
  * oder Logik. Für K4 (Landung der Körperpresse) und die Raketen.
  */
 export function schuettelnStarten(welt: Welt, art: SchuettelnArt): void {
-  schuetteln.set(welt.kamera, { art, ab: welt.frame });
+  welt.kamera.schuetteln_art = art;
+  welt.kamera.schuetteln_ab = welt.frame;
 }
 
 function schuettelnSchritt(welt: Welt): void {
   const k = welt.kamera;
   k.schuetteln_x = 0;
   k.schuetteln_y = 0;
-  const s = schuetteln.get(k);
-  if (s === undefined) return;
-  const werte = s.art === 'presse' ? SCHUETTELN_PRESSE : SCHUETTELN_EXPLOSION;
-  const i = welt.frame - s.ab;
+  const art = k.schuetteln_art;
+  if (art === '') return;
+  const werte = art === 'presse' ? SCHUETTELN_PRESSE : SCHUETTELN_EXPLOSION;
+  const i = welt.frame - k.schuetteln_ab;
   if (i < 0) return;
   if (i >= werte.length) {
-    schuetteln.delete(k);
+    k.schuetteln_art = '';
+    k.schuetteln_ab = 0;
     return;
   }
-  if (s.art === 'presse') k.schuetteln_x = werte[i] as number;
+  if (art === 'presse') k.schuetteln_x = werte[i] as number;
   else k.schuetteln_y = werte[i] as number;
 }
 
@@ -144,12 +144,16 @@ function arenaSchritt(welt: Welt): void {
   k.y = kameraY(welt.stage, k.x);
 }
 
-/** Pfeil „weiter“ (KA5): ab dem Frame der Freigabe, bis K > Sperren-x + 64; 16 Frames an, 16 aus. */
+/**
+ * Pfeil „weiter“ (KA5): ab dem Frame der Freigabe, bis K > Sperren-x + 64;
+ * 16 Frames an, 16 aus. PFEIL_TAKT ist eine Zweierpotenz: das Bit PFEIL_TAKT
+ * der Frames seit der Freigabe (nie negativ) ist die Hälfte des Takts, ohne
+ * Division (Kampf 2.4).
+ */
 function pfeilSchritt(welt: Welt): void {
   const k = welt.kamera;
   if (k.freigabe_frame > 0 && k.x <= k.freigabe_x + PFEIL_BIS) {
-    const takt = divGanz(welt.frame - k.freigabe_frame, PFEIL_TAKT);
-    k.pfeil = (takt & 1) === 0 ? 1 : 0;
+    k.pfeil = ((welt.frame - k.freigabe_frame) & PFEIL_TAKT) === 0 ? 1 : 0;
   } else {
     k.pfeil = 0;
     k.freigabe_frame = 0;

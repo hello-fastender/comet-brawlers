@@ -6,10 +6,10 @@
 // Zeitregel (Kampf 2.1, 4.3): Der Schritt f wertet T(f−1) aus (Druckframe
 // q = f − 1). Eine Aktion, die in f beginnt, hat uhr 1 in f. „Drücke ab X“
 // heißt q ≥ X; die Schwellen stehen in figur.druecke_ab, figur.richtung_ab
-// und (nur Tiefe) intern.tiefe_ab. Endet eine Aktion in X mit STAND, nimmt
+// und (nur Tiefe) figur.tiefe_ab. Endet eine Aktion in X mit STAND, nimmt
 // die Figur Drücke ab X an (T(X) wirkt in X+1).
 
-import type { FigurPhase, Objekt, Tipp, Treffer } from '../entitaeten.ts';
+import type { FigurPhase, Objekt, SprungVariante, Tipp, Treffer } from '../entitaeten.ts';
 import type { Fest } from '../festkomma.ts';
 import type { Tasten } from '../tasten.ts';
 import type { Welt } from '../welt.ts';
@@ -18,6 +18,7 @@ import { EREIGNIS, ereignis, pfeil } from '../ereignisse.ts';
 import { TASTE_A, TASTE_L, TASTE_R, TASTE_S, hat, richtungX, richtungZ, richtungsteil } from '../tasten.ts';
 import {
   AUSFALLSCHRITT,
+  FRAME_NIE,
   GETROFFEN_DAUER,
   GRIFFSPERRE,
   HALTEFRIST,
@@ -99,8 +100,8 @@ import {
 } from './angriffe.ts';
 import { aktionSetzen, aufsetzen, bewegen, sprungBeginnen, standBeginnen } from './basis.ts';
 import { gehaltener, griffBeenden, griffLoesen } from './griff.ts';
-import type { Angenommen, Eingang, Variante } from './intern.ts';
-import { NIE, angenommen, eingang, hatRichtung, intern, schwellenSetzen } from './intern.ts';
+import type { Angenommen, Eingang } from './intern.ts';
+import { angenommen, eingang, hatRichtung, schwellenSetzen } from './intern.ts';
 import { aufnehmenWirkung, gegenstandSuchen, raketeAbschiessen, waffeFallen, waffeWegwerfen } from './waffen.ts';
 
 /** Unterphase der Kettenstufe bzw. des Kniestoßes 1 bis 4 (Kampf 11.3). */
@@ -169,7 +170,7 @@ export function tippFortschreiben(tipp: Tipp, d: Tasten): boolean {
 export function figurKs1(welt: Welt): void {
   const f = welt.figur;
   const e = eingang(welt);
-  if (tippFortschreiben(f.tipp, richtungsteil(e.t))) intern(f).doppeltipp = welt.frame;
+  if (tippFortschreiben(f.tipp, richtungsteil(e.t))) f.tipp.erkannt = welt.frame;
 }
 
 // ===========================================================================
@@ -202,7 +203,7 @@ function vorrang(welt: Welt, ein: Angenommen, frei: boolean): Wahl | null {
   if (ein.a && f.waffe !== '') return { ziel: 'WAFFE', gegenstand: null };
   if (ein.a) return { ziel: 'SCHLAG', gegenstand: null };
   if (ein.s) return { ziel: imSprint ? 'SPRINTSPRUNG' : 'SPRUNG', gegenstand: null };
-  if (frei && amBoden && intern(f).doppeltipp === welt.frame && hatRichtung(ein.richtung)) return { ziel: 'SPRINT', gegenstand: null };
+  if (frei && amBoden && f.tipp.erkannt === welt.frame && hatRichtung(ein.richtung)) return { ziel: 'SPRINT', gegenstand: null };
   if (hatRichtung(ein.richtung)) return { ziel: 'LAUF', gegenstand: null };
   return null;
 }
@@ -350,10 +351,9 @@ function freiSchritt(welt: Welt, ein: Angenommen): void {
  */
 function sprungBahn(welt: Welt, t: Tasten): void {
   const f = welt.figur;
-  const i = intern(f);
   const hNeu = add(f.h, f.vh);
   f.vh = sub(f.vh, SPRUNG_SCHWERKRAFT);
-  const dx = mulGanz(SPRUNG_X, i.sprung_dx);
+  const dx = mulGanz(SPRUNG_X, f.sprung_dx);
   if (hNeu <= 0) {
     f.h = 0;
     bewegen(welt, dx, 0);
@@ -372,14 +372,13 @@ function sprungBahn(welt: Welt, t: Tasten): void {
  */
 function sprungangriffBeginnen(welt: Welt, ein: Angenommen): void {
   const f = welt.figur;
-  const i = intern(f);
-  let v: Variante = 'N';
+  let v: SprungVariante = 'N';
   if (richtungZ(ein.t) === -1) v = 'T';
   else if (richtungX(f.sprung_tasten) !== 0) v = 'R';
   else if (richtungZ(f.sprung_tasten) === 1) v = 'H';
   aktionSetzen(welt, 'SPRUNGANGRIFF', v);
-  i.sprung_angriff = true;
-  i.variante = v;
+  f.sprung_angriff = true;
+  f.sprung_variante = v;
   f.p = ein.q;
   f.angriff_a = ein.q;
   f.angriff = sprungangriffInstanz(v, ein.q);
@@ -388,27 +387,25 @@ function sprungangriffBeginnen(welt: Welt, ein: Angenommen): void {
 /** Sprint-Sprungangriff ab A+1 (Kampf 9.3, E15): Figur bleibt in SPRINTSPRUNG (f_ph SS), keine Höhenpause. */
 function ssBeginnen(welt: Welt, ein: Angenommen): void {
   const f = welt.figur;
-  const i = intern(f);
   f.phase = 'SS';
   f.angriff = ssInstanz(ein.q);
   f.angriff_a = ein.q;
-  i.ss_n = 1;
-  i.sprung_angriff = true;
+  f.ss_n = 1;
+  f.sprung_angriff = true;
 }
 
 /** SPRUNG, SPRINTSPRUNG, SPRUNGANGRIFF: A ab J+1 gibt den Angriff (einmal je Sprung), sonst Bahn. */
 function luftSchritt(welt: Welt, ein: Angenommen): void {
   const f = welt.figur;
-  const i = intern(f);
   f.uhr += 1;
-  if (!i.sprung_angriff && ein.a) {
+  if (!f.sprung_angriff && ein.a) {
     if (f.aktion === 'SPRUNG') {
       sprungangriffBeginnen(welt, ein);
       return;
     }
     if (f.aktion === 'SPRINTSPRUNG') ssBeginnen(welt, ein);
   }
-  if (f.aktion === 'SPRUNGANGRIFF' && i.variante === 'H' && f.uhr > SPRUNGANGRIFF_HOCH_AKTION_BIS) aktionSetzen(welt, 'SPRUNG');
+  if (f.aktion === 'SPRUNGANGRIFF' && f.sprung_variante === 'H' && f.uhr > SPRUNGANGRIFF_HOCH_AKTION_BIS) aktionSetzen(welt, 'SPRUNG');
   sprungBahn(welt, ein.t);
 }
 
@@ -447,8 +444,8 @@ function kettenStufe(welt: Welt, q: number): number {
 
 /** Nachlauf ohne Treffer je Stufe 1 bis 4 (Kampf 4.3, K1, K2, K3): Dauer der Aktion, A und S ab, Richtung ab (Abstand zu P bzw. D). */
 const LEER_DAUER: readonly number[] = [LEERSCHLAG_DAUER, KETTE2_LEER_DAUER, KETTE3_LEER_DAUER, KETTE4_DAUER];
-const LEER_DRUECKE_AB: readonly number[] = [LEERSCHLAG_DRUECKE_AB, KETTE2_LEER_DRUECKE_AB, KETTE3_LEER_DRUECKE_AB, NIE];
-const LEER_RICHTUNG_AB: readonly number[] = [LEERSCHLAG_RICHTUNG_AB, KETTE2_LEER_RICHTUNG_AB, KETTE3_LEER_RICHTUNG_AB, NIE];
+const LEER_DRUECKE_AB: readonly number[] = [LEERSCHLAG_DRUECKE_AB, KETTE2_LEER_DRUECKE_AB, KETTE3_LEER_DRUECKE_AB, FRAME_NIE];
+const LEER_RICHTUNG_AB: readonly number[] = [LEERSCHLAG_RICHTUNG_AB, KETTE2_LEER_RICHTUNG_AB, KETTE3_LEER_RICHTUNG_AB, FRAME_NIE];
 
 /**
  * Nachlauf ohne Treffer (Kampf 4.3, K1, K2; P29): Stufe 1 wird LEERSCHLAG;
@@ -457,8 +454,7 @@ const LEER_RICHTUNG_AB: readonly number[] = [LEERSCHLAG_RICHTUNG_AB, KETTE2_LEER
  */
 function leerSetzen(welt: Welt): void {
   const f = welt.figur;
-  const i = intern(f);
-  i.leer = true;
+  f.leerschlag = true;
   const k = f.kombo - 1;
   if (k === 0) f.aktion = 'LEERSCHLAG';
   const druecke = Math.max(f.p + tab(LEER_DRUECKE_AB, k), welt.frame);
@@ -485,7 +481,6 @@ function ausfallBewegen(welt: Welt): void {
  */
 function schlagBeginnen(welt: Welt, stufe: number, ein: Angenommen): void {
   const f = welt.figur;
-  const i = intern(f);
   aktionSetzen(welt, 'SCHLAG', stufenPhase(stufe));
   f.kombo = stufe;
   f.p = ein.q;
@@ -500,8 +495,8 @@ function schlagBeginnen(welt: Welt, stufe: number, ein: Angenommen): void {
     }
   }
   f.ausfallschritt = ausfall;
-  i.leer = false;
-  i.stand_ab = NIE;
+  f.leerschlag = false;
+  f.stand_ab = FRAME_NIE;
   f.angriff = ausfall < 0 ? null : ketteInstanz(stufe, ein.q);
   ereignis(welt, EREIGNIS.KETTE, 'F', stufe);
   if (ausfall < 0) leerSetzen(welt);
@@ -511,7 +506,6 @@ function schlagBeginnen(welt: Welt, stufe: number, ein: Angenommen): void {
 /** SCHLAG und LEERSCHLAG: Drücke nach den Schwellen der Stufe, Ende nach Treffer oder Leerschlag (Kampf 4.3). */
 function schlagSchritt(welt: Welt, ein: Angenommen): void {
   const f = welt.figur;
-  const i = intern(f);
   f.uhr += 1;
   const w = vorrang(welt, ein, false);
   if (w !== null) {
@@ -520,16 +514,16 @@ function schlagSchritt(welt: Welt, ein: Angenommen): void {
   }
   ausfallBewegen(welt);
   const letzter = f.kombo === KOMBO_MAX ? KETTE4_ZWEITES_FENSTER_BIS : ketteFenster(f.kombo, f.ausfallschritt).bis;
-  if (f.treffer_h === 0 && !i.leer && f.uhr > letzter) leerSetzen(welt);
+  if (f.treffer_h === 0 && !f.leerschlag && f.uhr > letzter) leerSetzen(welt);
   if (f.kombo === KOMBO_MAX) {
     if (f.uhr > KETTE4_DAUER) standBeginnen(welt);
     return;
   }
   if (f.treffer_h > 0) {
-    if (welt.frame >= i.stand_ab) standBeginnen(welt);
+    if (welt.frame >= f.stand_ab) standBeginnen(welt);
     return;
   }
-  if (i.leer && f.uhr > leerDauer(f.kombo)) standBeginnen(welt);
+  if (f.leerschlag && f.uhr > leerDauer(f.kombo)) standBeginnen(welt);
 }
 
 // ===========================================================================
@@ -539,7 +533,6 @@ function schlagSchritt(welt: Welt, ein: Angenommen): void {
 /** KNIESTOSS ab K+1 (Kampf 8.3): Treffer K+5, Haltefrist neu bis K+60 (P21), Drücke ab K+18; der dritte wirft um. */
 function knieBeginnen(welt: Welt, ein: Angenommen): void {
   const f = welt.figur;
-  const i = intern(f);
   const ziel = f.griff_ziel;
   if (ziel === null) return;
   const nr = f.knie_zahl + 1;
@@ -548,7 +541,7 @@ function knieBeginnen(welt: Welt, ein: Angenommen): void {
   f.p = ein.q;
   const ab = ein.q + KNIESTOSS_DRUECKE_AB;
   schwellenSetzen(f, ab, ab, ab);
-  i.los_frame = ein.q + HALTEFRIST + 1;
+  f.los_frame = ein.q + HALTEFRIST + 1;
   f.haltefrist = HALTEFRIST;
   f.angriff = knieInstanz(ziel, nr === KNIESTOSS_UMWERFEN_NR, ein.q);
 }
@@ -560,7 +553,6 @@ function knieBeginnen(welt: Welt, ein: Angenommen): void {
  */
 function wurfBeginnen(welt: Welt, ein: Angenommen, r: 'V' | 'R'): void {
   const f = welt.figur;
-  const i = intern(f);
   const ziel = f.griff_ziel;
   if (ziel === null) return;
   aktionSetzen(welt, 'WURF', r);
@@ -571,7 +563,7 @@ function wurfBeginnen(welt: Welt, ein: Angenommen, r: 'V' | 'R'): void {
   f.wurf_richtung = r;
   f.bahn_richtung = richtung;
   f.angriff = wurfInstanz(ziel, ein.q);
-  i.wuerfe.push({ ziel, e: ein.q, richtung, inst: wgInstanz(ziel, ein.q) });
+  f.wuerfe.push({ ziel, e: ein.q, richtung, inst: wgInstanz(ziel, ein.q) });
   ereignis(welt, EREIGNIS.WURF, pfeil('f', ziel), r);
 }
 
@@ -605,7 +597,6 @@ function griffEingabe(welt: Welt, ein: Angenommen): boolean {
 /** GRIFF (Kampf 4.3, 8.3): Drücke ab g+1 bzw. K+18; ohne Eingabe Losreißen in g+61 bzw. K+61, Griffsperre 30. */
 function griffSchritt(welt: Welt, ein: Angenommen): void {
   const f = welt.figur;
-  const i = intern(f);
   f.uhr += 1;
   if (gehaltener(welt) === null) {
     griffBeenden(welt);
@@ -613,13 +604,13 @@ function griffSchritt(welt: Welt, ein: Angenommen): void {
     return;
   }
   if (griffEingabe(welt, ein)) return;
-  if (welt.frame >= i.los_frame) {
+  if (welt.frame >= f.los_frame) {
     griffLoesen(welt);
     standBeginnen(welt);
     f.griffsperre = GRIFFSPERRE;
     return;
   }
-  f.haltefrist = Math.max(i.los_frame - 1 - welt.frame, 0);
+  f.haltefrist = Math.max(f.los_frame - 1 - welt.frame, 0);
 }
 
 /** KNIESTOSS (Kampf 4.3): gehalten ab K+23 (GRIFF); nach dem dritten bzw. ohne Gehaltenen STAND ab K+23, Drücke ab K+18 (P21). */
@@ -825,7 +816,6 @@ function aktionSchritt(welt: Welt): void {
  */
 export function figurKs2(welt: Welt): void {
   const f = welt.figur;
-  const i = intern(f);
   schutzZaehlen(welt);
   if (f.griffsperre > 0) f.griffsperre -= 1;
   kostenSchritt(welt);
@@ -837,11 +827,11 @@ export function figurKs2(welt: Welt): void {
     f.stopp -= 1;
     stoppframe = true;
   } else {
-    if (f.angriff !== null && f.angriff.code === 'SS') i.ss_n += 1;
+    if (f.angriff !== null && f.angriff.code === 'SS') f.ss_n += 1;
     aktionSchritt(welt);
-    if (f.angriff !== null && f.angriff.code === 'SS' && i.ss_n > SS_ZWEITER_AKTIV_BIS) {
+    if (f.angriff !== null && f.angriff.code === 'SS' && f.ss_n > SS_ZWEITER_AKTIV_BIS) {
       f.angriff = null;
-      i.ss_n = 0;
+      f.ss_n = 0;
     }
   }
   angriffAktivSetzen(welt, stoppframe);
@@ -862,16 +852,14 @@ export function figurKs2(welt: Welt): void {
  */
 export function figurUrheberTreffer(welt: Welt, t: Treffer): void {
   const f = welt.figur;
-  const i = intern(f);
   const jetzt = welt.frame;
   if (f.griff_ziel !== null && t.ziel === f.griff_ziel) {
     if (t.code === 'WU' || t.code === 'SP' || t.wirkung === 'X' || t.wirkung === 'U') griffBeenden(welt);
   }
   if (t.instanz !== f.angriff) return;
-  if (i.trefferframe !== jetzt) {
-    i.trefferframe = jetzt;
-    f.treffer_frames += 1;
-  }
+  // treffer_h ist bis hierhin nur in diesem Handler gesetzt worden: ungleich
+  // jetzt heißt erster wirksamer Treffer dieser Aktion in diesem Frame
+  if (f.treffer_h !== jetzt) f.treffer_frames += 1;
   f.treffer_h = jetzt;
   switch (t.code) {
     case 'KT1':
@@ -881,10 +869,10 @@ export function figurUrheberTreffer(welt: Welt, t: Treffer): void {
       f.kombo_h = jetzt;
       if (f.kombo === 1) {
         schwellenSetzen(f, jetzt + KETTE1_DRUECKE_AB, jetzt + KETTE1_RICHTUNG_AB, jetzt + KETTE1_TIEFE_BEWEGUNG_AB - 1);
-        i.stand_ab = jetzt + KETTE1_STAND_AB;
+        f.stand_ab = jetzt + KETTE1_STAND_AB;
       } else if (f.kombo < KOMBO_MAX) {
         schwellenSetzen(f, jetzt + KETTE23_DRUECKE_AB, jetzt + KETTE23_RICHTUNG_AB, jetzt + KETTE23_TIEFE_BEWEGUNG_AB - 1);
-        i.stand_ab = jetzt + KETTE23_STAND_AB;
+        f.stand_ab = jetzt + KETTE23_STAND_AB;
       }
       f.stopp = TREFFERSTOPP;
       return;
@@ -897,7 +885,7 @@ export function figurUrheberTreffer(welt: Welt, t: Treffer): void {
       f.stopp = TREFFERSTOPP;
       return;
     case 'SS':
-      if (i.ss_n === SS_ERSTER_AKTIV) f.stopp = TREFFERSTOPP;
+      if (f.ss_n === SS_ERSTER_AKTIV) f.stopp = TREFFERSTOPP;
       return;
     case 'SP': {
       const k = spezialStufe(f.uhr);

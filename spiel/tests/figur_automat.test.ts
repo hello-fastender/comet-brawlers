@@ -76,7 +76,7 @@ test('figur: SPRINT (T11; Sprintframe 1 = D2+1, 267,875 px in 90 Frames, danach 
 
 test('figur: Doppeltipp-Erkennung (Kampf 9.1, P22)', () => {
   const folge = (liste: number[]): boolean[] => {
-    const tipp: Tipp = { lauf: 0, lauf_dauer: 0, pause_dauer: 0, voriger: 0, voriger_dauer: 0 };
+    const tipp: Tipp = { lauf: 0, lauf_dauer: 0, pause_dauer: 0, voriger: 0, voriger_dauer: 0, erkannt: 0 };
     return liste.map((d) => tippFortschreiben(tipp, d));
   };
   const R = TASTE_R;

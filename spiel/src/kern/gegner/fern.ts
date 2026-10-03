@@ -18,34 +18,34 @@
 // - Kolbenhieb: Nachlauf wie BA (12–36, mit Treffer 16–36 Frames), danach gibt
 //   er das Nahkampfrecht ab. „Bildrand“ hinter ihm: K bzw. K + 383.
 // - Der Bildrand hält die Rakete nicht auf (Welt 6: offen); eine Wand ist das
-//   Ende des Tiefenbands bzw. ein Hindernis über ihrer Höhe. Einschlag: EX:on,
-//   Bildschütteln (KA10).
+//   Ende des Tiefenbands bzw. ein Hindernis jeder Höhe (Festlegung Q1: die
+//   Flughöhe ist nur Darstellung, Welt 6; wie bei der Rakete der Figur, L83).
+//   Behälter halten sie nicht auf. Einschlag: EX:on, Bildschütteln (KA10).
 // - fest.zielpunkt: 128, 120h (24 px nach hinten) oder 120v (24 px nach vorn).
 
 import type { Blick, Gegner, Objekt, SlotKey, Treffer } from '../entitaeten.ts';
 import type { Welt } from '../welt.ts';
-import { add, ausGanz, divGanz, ganz, mulGanz, sub } from '../festkomma.ts';
+import { add, ausGanz, ganz, maxF, mulGanz, neg, sub } from '../festkomma.ts';
 import { ZUSTAND_NORMAL, angriffsinstanz, blickZu, freiesObjekt, freigeben, gegnerVon, imFenster, modusSetzen, objektBelegen } from '../entitaeten.ts';
 import { EREIGNIS, ereignis } from '../ereignisse.ts';
 import { bereich, ziehenAus } from '../zufall.ts';
 import { rangstufe } from '../rang.ts';
 import { begehbar, schrittBegrenzt } from '../stage.ts';
 import { schuettelnStarten } from '../kamera.ts';
-import { bandZ, fensterX, gegnerBegrenzung, gehen, gehTempo } from './nah_gehen.ts';
+import { bandZ, fensterX, gegnerBegrenzung, gehen, gehTempo, tiefenTempo } from './nah_gehen.ts';
 import {
   ausserhalbAbbruchfenster,
   festZahl,
   gehstufeZiehen,
   nahFenster,
-  rechtAbgeben,
   rechtAnfordern,
   rechteGesperrt,
   tm,
   weltAbstand,
   zielabstandSetzen,
-  zielrechtAbgeben,
   zielrechtAnfordern,
 } from './nah.ts';
+import { rechtAbgeben, zielrechtAbgeben } from './rechte.ts';
 import {
   GEGNER_TREFFERSTOPP,
   IM_BILD_MAX,
@@ -75,6 +75,7 @@ import {
   ZR_RAKETE_AB,
   ZR_RAKETE_H,
   ZR_RAKETE_H_MIN,
+  ZR_RAKETE_SINKEN,
   ZR_RAKETE_V,
   ZR_RAKETE_X,
   ZURUECKWEICHEN_ABSTAND,
@@ -85,8 +86,6 @@ const KOLBEN = NAH_ANGRIFFE.BA;
 /** Explosion d = 1 … 9 Frames nach dem Einschlag (Q+21 bis Q+29 bei Einschlag in Q+20, Welt 6). */
 const EXPLOSION_VON = ZR_EXPLOSION_VON - ZR_EINSCHLAG;
 const EXPLOSION_BIS = ZR_EXPLOSION_BIS - ZR_EINSCHLAG;
-/** Höhenverlust der Rakete bis zum Einschlag in px (44 → 1, nur Darstellung). */
-const RAKETE_SINKT = ganz(sub(ZR_RAKETE_H, ZR_RAKETE_H_MIN));
 
 /** Werte von fest.zielpunkt in der Reihenfolge der Ziehung (Welt 6, 11.2). */
 export const ZIELPUNKTE = ['128', '120h', '120v'] as const;
@@ -177,8 +176,8 @@ function beginneKolbenhieb(welt: Welt, g: Gegner): void {
   g.angriff_code = 'ZK';
   g.angriff_a = f;
   g.angriff_abgebrochen = false;
-  g.timer['treffer'] = 0;
-  g.timer['aktiv_ende'] = f + KOLBEN.aktiv_bis;
+  g.angriff_treffer = 0;
+  g.angriff_aktiv_ende = f + KOLBEN.aktiv_bis;
   g.timer['kolben_nachlauf'] = 0;
   g.angriff = angriffsinstanz({
     code: 'ZK',
@@ -205,16 +204,16 @@ function kolbenEntscheidung(welt: Welt, g: Gegner): void {
     return;
   }
   if (tm(g, 'kolben_nachlauf') === 0) {
-    if (f <= tm(g, 'aktiv_ende')) return;
+    if (f <= g.angriff_aktiv_ende) return;
     g.angriff = null;
-    const [a, b] = tm(g, 'treffer') > 0 ? KOLBEN.nachlauf_mit : KOLBEN.nachlauf_ohne;
+    const [a, b] = g.angriff_treffer > 0 ? KOLBEN.nachlauf_mit : KOLBEN.nachlauf_ohne;
     const n = festZahl(welt, 'nachlauf', bereich(g.zufall, a, b));
     g.timer['kolben_nachlauf'] = 1;
-    g.timer['nachlauf_ende'] = f + n - 1;
+    g.nachlauf_ende = f + n - 1;
     g.aktion = 'NACHLAUF';
     if (n > 0) return;
   }
-  if (f > tm(g, 'nachlauf_ende')) {
+  if (f > g.nachlauf_ende) {
     rechtAbgeben(welt, g);
     beginneAnnaehern(welt, g);
   }
@@ -349,8 +348,8 @@ function gehenZumZielpunkt(welt: Welt, g: Gegner): void {
 function zielenTiefe(welt: Welt, g: Gegner): void {
   const dz = g.z_vor - welt.figur.z_vor;
   if (dz >= ZIELEN_DZ_MIN && dz <= ZIELEN_DZ_MAX) return;
-  const t = gehTempo(g);
-  const r = schrittBegrenzt(gegnerBegrenzung(welt), g.x, g.z, g.h, 0, dz > 0 ? -t.z : t.z);
+  const v = tiefenTempo(gehTempo(g));
+  const r = schrittBegrenzt(gegnerBegrenzung(welt), g.x, g.z, g.h, 0, dz > 0 ? neg(v) : v);
   g.z = r.z;
 }
 
@@ -386,7 +385,7 @@ export function fernBewegung(welt: Welt, g: Gegner): void {
       const inst = g.angriff;
       if (inst !== null) {
         const rel = f - g.angriff_a;
-        inst.aktiv = rel >= KOLBEN.aktiv_von && rel <= KOLBEN.aktiv_bis && tm(g, 'treffer') === 0 && !g.angriff_abgebrochen;
+        inst.aktiv = rel >= KOLBEN.aktiv_von && rel <= KOLBEN.aktiv_bis && g.angriff_treffer === 0 && !g.angriff_abgebrochen;
       }
       break;
     }
@@ -411,7 +410,7 @@ export function fernAbbruch(welt: Welt, g: Gegner): void {
     }
     return;
   }
-  if (g.modus !== 'KOLBENHIEB' || g.angriff === null || tm(g, 'treffer') > 0) return;
+  if (g.modus !== 'KOLBENHIEB' || g.angriff === null || g.angriff_treffer > 0) return;
   const rel = welt.frame - g.angriff_a;
   if (rel < 1 || rel > KOLBEN.aktiv_bis) return;
   if (!ausserhalbAbbruchfenster(welt, g)) return;
@@ -427,9 +426,8 @@ export function fernAbbruch(welt: Welt, g: Gegner): void {
 export function fernHatGetroffen(welt: Welt, t: Treffer): void {
   const g = gegnerVon(welt, t.urheber);
   if (g === null || t.code !== 'ZK' || g.modus !== 'KOLBENHIEB') return;
-  g.timer['treffer'] = welt.frame;
-  g.timer['aktiv_ende'] = g.angriff_a + KOLBEN.aktiv_bis + GEGNER_TREFFERSTOPP;
-  g.angriff_stopp = GEGNER_TREFFERSTOPP;
+  g.angriff_treffer = welt.frame;
+  g.angriff_aktiv_ende = g.angriff_a + KOLBEN.aktiv_bis + GEGNER_TREFFERSTOPP;
   if (g.angriff !== null) g.angriff.aktiv = false;
 }
 
@@ -483,7 +481,8 @@ function istZuenderRakete(o: Objekt): boolean {
 
 /**
  * KS4 (Kampf 2.2): Geschosse der Gegner in o20 bis o59, Slots aufsteigend:
- * Flug der Rakete (5 px/Frame ab Q+1, Höhe 44 → 1 nur Darstellung),
+ * Flug der Rakete (5 px/Frame ab Q+1, Höhe 44 → 1 je Frame um 43/20 px,
+ * nur Darstellung),
  * Einschlag in Q+20 bzw. an einer Wand, Explosion Q+21 bis Q+29 als
  * Angriffsinstanz des Objektslots (urheber = Zünder, gegen 'figur'), danach frei.
  */
@@ -495,11 +494,12 @@ export function fernGeschosseSchritt(welt: Welt): void {
       if (f <= o.abschuss) continue;
       const n = f - o.abschuss;
       const nx = add(o.x, mulGanz(ZR_RAKETE_V, o.bahn_richtung));
-      const wand = !begehbar(welt.stage, ganz(nx), ganz(o.z), ganz(o.h));
+      // Wand ohne die Flughöhe: die Höhe ist nur Darstellung (Welt 6)
+      const wand = !begehbar(welt.stage, ganz(nx), ganz(o.z), 0);
       if (!wand) {
         o.x = nx;
         o.flug_n = n;
-        o.h = sub(ZR_RAKETE_H, ausGanz(divGanz(RAKETE_SINKT * n, ZR_EINSCHLAG)));
+        o.h = maxF(sub(o.h, ZR_RAKETE_SINKEN), ZR_RAKETE_H_MIN);
       }
       if (wand || n >= ZR_EINSCHLAG) einschlag(welt, o);
       continue;

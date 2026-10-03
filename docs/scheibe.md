@@ -201,7 +201,7 @@ Geprüft in Phase 0 (2026-10-03):
 ## Tests
 
 `npm test` führt alle Dateien `tests/*.test.ts` mit `node:test` aus (Stand
-2026-10-03: 204 Tests, etwa 25 s). Gruppen:
+2026-10-03: 214 Tests, etwa 25 s). Gruppen:
 
 | Dateien in `spiel/tests/` | Inhalt |
 |---|---|
@@ -224,8 +224,11 @@ npm run lauf -- --szene tests/szenen/vorfuehrung.txt --eingabe tests/eingaben/vo
 ## Abnahme
 
 Stand 2026-10-03 (Stufe 3): alle 31 Abnahmetests der Spezifikationen grün,
-dazu der Determinismus- und der Referenztest (`npm test`: 204 Tests grün,
-mit den zwei Darstellungstests).
+dazu der Determinismus- und der Referenztest (`npm test`: 214 Tests grün,
+mit den zwei Darstellungstests; Stand nach den Befunden der
+Qualitätsprüfung). Das Referenzprotokoll `tests/referenz/W-T8_a.objekte.csv`
+ist danach neu geschrieben, weil die Höhe der Zünderrakete jetzt ohne
+Division sinkt (L116); das Protokoll von W-T8 a ist unverändert.
 
 | Datei in `spiel/tests/` | Inhalt |
 |---|---|
@@ -541,3 +544,11 @@ Festlegung, Grund, ob die Spezifikation anzupassen ist.
 | L112 | Kampf 11.1, Aufzeichnung (F2) | die Datei enthält immer alle Frames ab 1 und den Seed als Kommentar `# seed=N`, den das Laden liest | nur so ist sie abspielbar; Kampf 11.1 kennt keinen Seed in der Eingabedatei | ja |
 | L113 | Welt 10.6, Bedienung | Einzelschritt auf Taste N; nach dem Ende der Scheibe Neustart wie nach Game Over mit Seed + 1; F3 kehrt aus einer geladenen Eingabedatei zur Tastatur zurück | Welt 10.6 nennt keine Taste für den Einzelschritt und kein Verhalten nach dem Ende | Klarstellung |
 | L114 | Welt 3 (KA13), Darstellung | die Blende deckt nur die Szene, nicht die Anzeigeleiste; eine weggeworfene leere Waffe steht in der Zeichenreihenfolge wie die Gegenstände | nicht geregelt | Klarstellung |
+| L115 | Kampf 2.4, Welt 8 (Rang-Uhr) | Anstieg über k = ⌊(r − 409)/600⌋; die Division bleibt und steht jetzt in der Liste von Kampf 2.4 | der Eingriff `rang.zaehler` setzt r beliebig; ein mitgeführter Zähler für den nächsten Anstieg wäre doppelter Zustand | ja |
+| L116 | Welt 6, Rakete des Zünders | Höhe sinkt je Frame um 43/20 px (`ZR_RAKETE_SINKEN`, einmal nach −∞ gerundet) bis höchstens 1 px; die Wandprüfung rechnet mit Höhe 0, Wand ist das Bandende oder ein Hindernis, Behälter halten sie nicht auf | „nur Darstellung“, keine Division; wie die Rakete der Figur (L83). Ändert nur die Spalte h der Rakete im Objektprotokoll (W-T8 a, Frames 188 bis 216; Referenz neu geschrieben) | ja |
+| L117 | Welt 10.1, Gegneranzeige | Name und LP werden in W5 gemerkt; die LP folgen dem Gegner bis zu seinem Tod oder bis sein Slot frei wird; ein neuer Gegner im selben Slot ändert die Anzeige nicht | „bleibt, bis ein anderer getroffen wird“; vorher las die Anzeige den aktuellen Slotinhalt (Fehler aus Stufe 3) | Klarstellung |
+| L118 | Kampf 11.2, Prüfangriff (zu L27) | „beendet“ gehört zum Prüfangriff, nicht zum Gegner; er beginnt auch für einen neuen Gegner im selben Slot nicht neu | „beginnt danach nicht neu“ | Klarstellung |
+| L119 | Kampf 4.3, „Drücke ab nie“ | ganze Zahl `FRAME_NIE` = 2147483647 statt Infinity | die Welt bleibt ganzzahlig und kopierbar | nein |
+| L120 | Kampf 2.4, Welt 7.3 (Körperpresse, z) | z(A) + ⌊dz·k/64⌋ als Festkommaprodukt mit `KP_Z_ANTEIL` = 1/64 (bitgleich, ohne Laufzeitdivision); dz ohne Grenze | Kampf 2.4 nennt die 200 px nur für x | Klarstellung |
+| L121 | Welt 7.1, Frontschutz im Armschwung | von vorn geschützt vom zweiten bis zum letzten aktiven Frame, auch in den 7 Frames Trefferstopp; im Ausholen nicht (Feld `vorn_geschuetzt`) | Welt 7.1 und mechanik.md sprechen nur von aktiven Frames; vorher setzte der Boss den Schutz nie (Fehler aus Stufe 2) | Klarstellung |
+| L122 | Kampf 8.4, P19 (Wurf, auch des Bosses) | beim Loslassen ändern sich x und h, die Tiefe bleibt die der Haltelage, für alle Gegner einschließlich des Bosses | eine gemeinsame Bahn für alle Gegner | Klarstellung |

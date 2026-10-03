@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import type { Welt } from '../src/kern/welt.ts';
 import type { SlotKey, Treffer } from '../src/kern/entitaeten.ts';
 import { erzeugeWelt, logikSchritt } from '../src/kern/welt.ts';
-import { angriffsinstanz } from '../src/kern/entitaeten.ts';
+import { angriffsinstanz, freigeben, gegnerBelegen } from '../src/kern/entitaeten.ts';
 import { parseStage } from '../src/kern/stage.ts';
 import { rangAnstieg, rangNachTod } from '../src/kern/rang.ts';
 import { anzeige, balken, rahmenW5 } from '../src/kern/rahmen.ts';
@@ -182,11 +182,50 @@ test('Welt 10.1: Anzeige-Daten – 8 Ziffern, LP-Balken in Lagen zu 72 px, Gegne
   assert.deepEqual(balken(-3), { lage: 0, breite: 0, unterlage: 0 });
   const w = weltAus('szene name=welt_anzeige endframe=10 seed=1\ngegner slot=3 typ=Puppe x=150 z=100 lp=16');
   logikSchritt(w, 0);
+  w.treffer = [treffer('s3', 4, 'R')];
+  rahmenW5(w);
   w.rahmen.punkte = 5030;
-  w.rahmen.anzeige = 3;
   const a = anzeige(w);
   assert.deepEqual(
     [a.name, a.punkte, a.leben, a.figur.breite, a.gegner?.name, a.gegner?.balken.breite, a.pfeil, a.blende],
     ['VELA', '00005030', 3, 72, 'PUPPE', 16, false, 0],
   );
+});
+
+test('Welt 10.1: Gegneranzeige bleibt beim zuletzt getroffenen Gegner, nach dem Tod mit leerem Balken, auch wenn ein neuer Gegner den Slot belegt', () => {
+  const w = weltAus(`szene name=welt_anzeige_bleibt endframe=10 seed=1
+gegner slot=3 typ=Puppe x=150 z=100 lp=16
+gegner slot=4 typ=Puppe x=170 z=100 lp=10`);
+  logikSchritt(w, 0);
+  const s3 = w.gegner[3];
+  assert.ok(s3 !== undefined);
+  const gezeigt = () => {
+    const g = anzeige(w).gegner;
+    return g === null ? null : [g.slot, g.name, g.balken.breite];
+  };
+  w.treffer = [treffer('s3', 4, 'R')];
+  rahmenW5(w);
+  assert.deepEqual(gezeigt(), [3, 'PUPPE', 16]);
+  // die LP folgen dem Gegner im Frame der Änderung (auch ohne neuen Treffer)
+  s3.lp = 5;
+  w.treffer = [];
+  rahmenW5(w);
+  assert.deepEqual(gezeigt(), [3, 'PUPPE', 5]);
+  // Tod: leerer Balken, Name bleibt
+  s3.lp = -2;
+  rahmenW5(w);
+  assert.deepEqual(gezeigt(), [3, 'PUPPE', 0]);
+  // Slot frei (FR) und von einem neuen Gegner belegt: die Anzeige zeigt ihn nicht
+  freigeben(s3);
+  rahmenW5(w);
+  assert.deepEqual(gezeigt(), [3, 'PUPPE', 0]);
+  const neu = gegnerBelegen(s3, 'Bolzer');
+  neu.lp = 30;
+  rahmenW5(w);
+  assert.deepEqual(gezeigt(), [3, 'PUPPE', 0]);
+  assert.equal(w.rahmen.anzeige, 3);
+  // erst ein Treffer auf einen anderen Gegner wechselt die Anzeige
+  w.treffer = [treffer('s4', 2, 'R')];
+  rahmenW5(w);
+  assert.deepEqual(gezeigt(), [4, 'PUPPE', 10]);
 });

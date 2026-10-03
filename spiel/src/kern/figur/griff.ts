@@ -7,7 +7,7 @@
 // FREI, Zustand, Rechte). Die Bahn F3 des Geworfenen führt K2 (Loslassen in
 // E+22, erster Bahnframe E+23); K1 führt die Instanz WG am Geworfenen.
 
-import type { Gegner } from '../entitaeten.ts';
+import type { Gegner, Wurfgeschoss } from '../entitaeten.ts';
 import type { Welt } from '../welt.ts';
 import { add, ausGanz, ganz, mulGanz } from '../festkomma.ts';
 import { abstand, gegnerVon, schautZu, ZUSTAND_NORMAL } from '../entitaeten.ts';
@@ -15,8 +15,6 @@ import { EREIGNIS, ereignis, pfeil } from '../ereignisse.ts';
 import { gegnerGreifen, gegnerLosreissen } from '../gegner/reaktion.ts';
 import { GRIFF_HINTEN, GRIFF_TIEFE, GRIFF_VORN_ANSCHAUEN, GRIFF_VORN_WEG, HALTEFRIST, HALTELAGE, WG_BIS } from '../werte.ts';
 import { aktionSetzen } from './basis.ts';
-import type { Wurfgeschoss } from './intern.ts';
-import { intern } from './intern.ts';
 
 /** Gehaltener Gegner, solange der Griff besteht (gehalten_von = Figur), sonst null. */
 export function gehaltener(welt: Welt): Gegner | null {
@@ -90,13 +88,12 @@ export function griffPruefenIntern(welt: Welt): void {
     }
   }
   if (ziel === null) return;
-  const i = intern(f);
   aktionSetzen(welt, 'GRIFF');
   f.druecke_ab = welt.frame + 1;
   f.griff_ziel = ziel.schluessel;
   f.knie_zahl = 0;
   f.haltefrist = HALTEFRIST;
-  i.los_frame = welt.frame + HALTEFRIST + 1;
+  f.los_frame = welt.frame + HALTEFRIST + 1;
   gegnerGreifen(welt, ziel, 'f');
   haltelageSetzen(welt, ziel);
   ereignis(welt, EREIGNIS.GRIFF, pfeil('f', ziel.schluessel));
@@ -111,9 +108,8 @@ export function griffPruefenIntern(welt: Welt): void {
  */
 export function wurfGeschosseSchritt(welt: Welt): void {
   const f = welt.figur;
-  const i = intern(f);
   const bleiben: Wurfgeschoss[] = [];
-  for (const w of i.wuerfe) {
+  for (const w of f.wuerfe) {
     const g = gegnerVon(welt, w.ziel);
     const d = welt.frame - w.e;
     if (g === null || !g.belegt || d > WG_BIS) {
@@ -125,7 +121,7 @@ export function wurfGeschosseSchritt(welt: Welt): void {
     w.inst.aktiv = d >= 1;
     bleiben.push(w);
   }
-  i.wuerfe = bleiben;
+  f.wuerfe = bleiben;
   const g = gehaltener(welt);
   if (g !== null) haltelageSetzen(welt, g);
 }

@@ -188,8 +188,10 @@ Spezifikation oder Welt sie vorschreibt (hier: Tempostufe des Sprints
 2.1 und 2.4, Pause nach Rang 29 − 4·⌊Rang/4⌋ in 5.1 und 8, Sprungtritt
 5.5, Bogen der Waffe 6, x der Körperpresse 7.3 nach k Bahnframes
 x(A) + ⌊d·k/64⌋ mit d = Ort der Figur in A minus x(A) in 1/65536,
-höchstens 200 px weit, ihr z ebenso mit ⌊dz·k/64⌋ (Festlegung beim
-Codieren, 2026-10-03, L38), LP nach Rang 8, Flug der Gegenstände 9.3, Zufall
+höchstens 200 px weit, ihr z ebenso mit ⌊dz·k/64⌋ ohne Grenze für dz
+(Festlegung beim Codieren, 2026-10-03, L38, L120), LP nach Rang 8, Anstieg
+der Rang-Uhr k = ⌊(r − 409)/600⌋ in Welt 8 (Festlegung beim Codieren,
+2026-10-03, L115), Flug der Gegenstände 9.3, Zufall
 11.1): ganzzahlig durch eine positive ganze Zahl, das Ergebnis rundet in
 Richtung −∞ (⌊a/b⌋) auf ganze Einheiten des Zielwerts (Pixel, LP, Frames,
 Stufe, Index der Ziehung; beim Sprungtritt und bei der Körperpresse
@@ -707,7 +709,8 @@ Schaden 14 LP in E+1, unabhängig von Zeitpunkt und vorherigen
 Kniestößen. Die Figur ist E+1 bis E+37 gebunden und bewegt sich nicht.
 Der Gegner bleibt E+1 bis E+21 in der Haltelage und wird in E+22 in
 59 px Höhe 13 px vor (vorwärts) bzw. hinter (rückwärts) der Figur
-losgelassen (P19; notes.md, „Wurf der Figur“), dann Bahn F3:
+losgelassen (P19; notes.md, „Wurf der Figur“), in der Tiefe der Haltelage,
+auch der Boss (Festlegung beim Codieren, 2026-10-03, L122), dann Bahn F3:
 Bodenkontakt E+59, Ruhe E+71, 184,5 px von der Figur (gemessen 184 bis
 185, „Griff und Wurf“). Liegen und Aufstehen nach Abschnitt 7.
 
@@ -942,7 +945,7 @@ Prüfszene (Festlegung beim Codieren, 2026-10-03, L1).
 |---|---|
 | Prüfbühne | Welt-x 0 bis 4000, Tiefenband 10 bis 197 ohne Stufen, keine Wände, Kamera fest bei Kamera-x 0 und Kamera-y 0, Bildränder begrenzen nichts, keine Wellen; in den Stage-Daten ein Satz `band` für x 0 bis 4000 und der Satz `stage` mit den Zusatzfeldern `kamera=fest` und `raender=aus` (Welt 2.1; Welt 2.2, Punkt 4, gilt nicht) (Festlegung beim Codieren, 2026-10-03, L2) |
 | Puppe | Gegner mit Logik aus (Welt 5 ruht), Rolle leicht oder schwer (Liegedauer, vorplatzierter Schaden); steht, schaut in jedem Frame mit Zustand 1 zur Figur, reagiert nach Abschnitt 7, ist greifbar |
-| Prüfangriff | `pruefangriff, slot, von, bis, schaden, umwerfen`: Angriffsinstanz PA des Gegners in den Frames von bis; Figur −4 bis 60 px vor ihm, \|dz\| ≤ 10, Figurhöhe ≤ 48; ohne Trefferstopp; endet, wenn der Gegner getroffen wird oder Zustand 1 verlässt; beginnt nicht, wenn der Gegner im Frame von nicht in Zustand 1 ist, und beginnt danach nicht neu; ein eigener Angriff eines Gegners mit Logik geht vor (Festlegung beim Codieren, 2026-10-03, L27) |
+| Prüfangriff | `pruefangriff, slot, von, bis, schaden, umwerfen`: Angriffsinstanz PA des Gegners in den Frames von bis; Figur −4 bis 60 px vor ihm, \|dz\| ≤ 10, Figurhöhe ≤ 48; ohne Trefferstopp; endet, wenn der Gegner getroffen wird oder Zustand 1 verlässt; beginnt nicht, wenn der Gegner im Frame von nicht in Zustand 1 ist, und beginnt danach nicht neu, auch nicht für einen neuen Gegner im selben Slot (Festlegung beim Codieren, 2026-10-03, L118); ein eigener Angriff eines Gegners mit Logik geht vor (Festlegung beim Codieren, 2026-10-03, L27) |
 | Eingriff | setzt Werte in W1 des Frames (Welt 11.3), Nachkommaanteil 0; steht im Protokollkopf als `# EINGRIFF …` (wie in der Messmethode des Vorbilds) |
 | Erscheinen | Satz `gegner … erscheint=f` (f > 1): der Gegner wird in W1 von Frame f angelegt, vor den übrigen Eingriffen, mit einer Ziehung des Hauptgenerators (Welt 11.1); Kopfzeile `# EINGRIFF erscheint frame=f slot=n typ=… x=… z=…`, Ereignis `EI:sn.erscheint=Typ` (Festlegung beim Codieren, 2026-10-03, L9) |
 

@@ -55,14 +55,6 @@ const NICHT_TREFFBAR: readonly GegnerModus[] = ['UMGEWORFEN', 'LIEGEN', 'AUFSTEH
 const GEHALTEN_TREFFBAR_DURCH: readonly string[] = ['KN', 'WU', 'SP'];
 
 /**
- * timer-Schlüssel für K4 (VORSCHLAG: eigenes Feld am Gegner): steht er beim
- * Boss auf 1, ist der Boss in diesem Frame von vorn nicht treffbar (Armschwung
- * ab dem zweiten aktiven Frame, Welt 7.1; mechanik „Boss“, Trefferbar in
- * seinem Angriff); von hinten bleibt er treffbar.
- */
-export const TIMER_VORN_GESCHUETZT = 'vorn_geschuetzt';
-
-/**
  * Ist der Gegner für Angriffe der Figur treffbar (Kampf 5.5, Welt 4.1)?
  * Belegt, Zustand 1 oder 3, nicht umgeworfen, liegend, aufstehend, tot,
  * gehalten, wartend oder im Auftritt, LP ≥ 0 und im aktiven Fenster
@@ -93,7 +85,8 @@ function gegnerOffen(welt: Welt, inst: Angriffsinstanz, angreifer: EntitaetBasis
     return g.lp >= 0 && g.gehalten_von === inst.urheber && GEHALTEN_TREFFBAR_DURCH.includes(inst.code) && imFenster(g, welt.kamera.x);
   }
   if (!treffbar(welt, g)) return false;
-  if (g.typ === 'Ballast' && g.timer[TIMER_VORN_GESCHUETZT] === 1 && vonVorn(angreifer, g)) return false;
+  // Boss im Armschwung ab dem zweiten aktiven Frame (Welt 7.1), gesetzt von K4 in KS3
+  if (g.vorn_geschuetzt && vonVorn(angreifer, g)) return false;
   return true;
 }
 
@@ -310,11 +303,6 @@ export function trefferPruefen(welt: Welt): void {
 // Prüfangriffe (Kampf 11.2)
 // ===========================================================================
 
-/** timer-Schlüssel am Gegner: Nummer + 1 des Prüfangriffs, dem die laufende Instanz PA gehört. */
-const T_PA_NR = 'pa_nr';
-/** timer-Schlüssel am Gegner: Präfix für „Prüfangriff i beendet“ (pa_ende_i = 1). */
-const T_PA_ENDE = 'pa_ende_';
-
 /** Instanz PA nach Kampf 11.2: Figur −4 bis 60 px vor dem Gegner, |dz| ≤ 10, Figurhöhe ≤ 48, ohne Trefferstopp. */
 function pruefangriffInstanz(g: Gegner, p: PruefangriffDaten): Angriffsinstanz {
   return angriffsinstanz({
@@ -341,11 +329,15 @@ function pruefangriffInstanz(g: Gegner, p: PruefangriffDaten): Angriffsinstanz {
   });
 }
 
-/** Beendet den laufenden Prüfangriff eines Gegners für immer (getroffen, Kampf 11.2). */
-function pruefangriffBeenden(g: Gegner): void {
-  const nr = g.timer[T_PA_NR] ?? 0;
-  if (nr > 0) g.timer[T_PA_ENDE + String(nr - 1)] = 1;
-  g.timer[T_PA_NR] = 0;
+/**
+ * Beendet den laufenden Prüfangriff eines Gegners für immer (getroffen,
+ * Kampf 11.2). „Beendet“ gehört zum Prüfangriff (welt.pruefangriffe_beendet),
+ * nicht zum Gegner: Er beginnt auch für einen neuen Gegner im selben Slot
+ * nicht neu.
+ */
+function pruefangriffBeenden(welt: Welt, g: Gegner): void {
+  if (g.pruefangriff > 0) welt.pruefangriffe_beendet[g.pruefangriff - 1] = true;
+  g.pruefangriff = 0;
   if (g.angriff !== null && g.angriff.code === 'PA') g.angriff = null;
 }
 
@@ -363,22 +355,23 @@ export function pruefangriffeSchritt(welt: Welt): void {
     const p = liste[i] as PruefangriffDaten;
     const g = welt.gegner[p.slot];
     if (g === undefined || !g.belegt || f < p.von) continue;
-    const ende = T_PA_ENDE + String(i);
-    const meine = g.angriff !== null && g.angriff.code === 'PA' && g.timer[T_PA_NR] === i + 1;
-    if (f > p.bis || g.timer[ende] === 1 || g.zustand !== ZUSTAND_NORMAL) {
-      if (f <= p.bis) g.timer[ende] = 1;
+    const meine = g.angriff !== null && g.angriff.code === 'PA' && g.pruefangriff === i + 1;
+    if (f > p.bis || welt.pruefangriffe_beendet[i] === true || g.zustand !== ZUSTAND_NORMAL) {
+      if (f <= p.bis) welt.pruefangriffe_beendet[i] = true;
       if (meine) {
         g.angriff = null;
-        g.timer[T_PA_NR] = 0;
+        g.pruefangriff = 0;
       }
       continue;
     }
-    if (!meine) {
-      if (g.angriff !== null && g.angriff.code !== 'PA') continue;
-      g.angriff = pruefangriffInstanz(g, p);
-      g.timer[T_PA_NR] = i + 1;
+    let inst = g.angriff;
+    if (!meine || inst === null) {
+      if (inst !== null && inst.code !== 'PA') continue;
+      inst = pruefangriffInstanz(g, p);
+      g.angriff = inst;
+      g.pruefangriff = i + 1;
     }
-    (g.angriff as Angriffsinstanz).aktiv = true;
+    inst.aktiv = true;
   }
 }
 
@@ -401,7 +394,7 @@ export function trefferFolgen(welt: Welt): void {
       continue;
     }
     const g = gegnerVon(welt, t.ziel);
-    if (g !== null && g.belegt) pruefangriffBeenden(g);
+    if (g !== null && g.belegt) pruefangriffBeenden(welt, g);
   }
 }
 
