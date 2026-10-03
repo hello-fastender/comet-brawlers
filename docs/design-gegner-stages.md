@@ -358,7 +358,8 @@ den Arm bis zu dreimal und springt mit ganzem Gewicht auf die Figur. Wie im
 Vorbild folgt ein weiterer Schwung nur, wenn der vorige getroffen hat,
 beschlossen (E18). Kommt er nah heran, packt und wirft er sie; diesen
 Griff hat er im Vollspiel, nicht in der vertikalen Scheibe, beschlossen
-(E21). In Stage 8 kehrt er mit 110 LP zurück.
+(E21). In Stage 8 kehrt er mit 110 LP zurück. Umriss in der Scheibe
+70 × 100 px (Festlegung beim Codieren, 2026-10-03, L109).
 
 **Bohrmeisterin Halde** (Stage 2, Eisbergwerk, 100 LP). Sie führt die
 Sprengtrupps. Ihre Bohrkanone verschießt Eissplitter. Sie hält Abstand,

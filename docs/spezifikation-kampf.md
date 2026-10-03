@@ -1,6 +1,7 @@
 # Comet Brawlers: Spezifikation Kampfsystem (vertikale Scheibe)
 
-Stand 2026-10-03, Entscheidungen E10 bis E22 eingearbeitet. Technische
+Stand 2026-10-03, Entscheidungen E10 bis E22 und die Festlegungen beim
+Codieren (`docs/scheibe.md`, L1 bis L114) eingearbeitet. Technische
 Spezifikation ohne Code; Sprache und Technik legt E22 fest (Abschnitt 1,
 „Technik“). Sie beschreibt, was für das Kampfsystem der
 vertikalen Scheibe (`docs/design.md`, Abschnitt 8) gebaut werden muss.
@@ -21,6 +22,7 @@ stehen in `docs/spezifikation-welt.md`.
 | beschlossen (E10) | bisher Arbeitsregel: Klarstellung der Projektleitung vom 2026-10-02, vom Nutzer bestätigt (E10; Fragen und Antworten in Abschnitt 13.3) |
 | Kn | Stelle, die Messpaket 2 (M6 bis M8) gemessen hat; Ergebnis und verbleibende offene Teile in Abschnitt 13.1 |
 | Platzhalter (Pn) | Wert ohne Messgrundlage und ohne Messauftrag, von dieser Spezifikation gesetzt, damit gebaut und geprüft werden kann; vom Nutzer bestätigt (E10); Liste in Abschnitt 13.2 |
+| Festlegung beim Codieren, 2026-10-03, Ln | beim Codieren der Scheibe festgelegt, wo diese Spezifikation schwieg oder sich widersprach (Auftrag 3, Abschnitt 2.6); Nummer, Grund und Stand in `docs/scheibe.md`, „Abweichungen und Lücken“ |
 
 Bezugsframes (wie in `mechanik.md`, ergänzt):
 
@@ -92,7 +94,9 @@ Schrittweite. Gespielt wird in Echtzeit mit 60 Logikschritten je Sekunde
 läuft nicht langsamer. Je dargestelltem Bild laufen höchstens 4
 Logikschritte; wären es mehr, laufen 4, und die übrige Zeit verfällt, das
 Spiel bleibt für diesen Rest stehen (kein Aufholen über mehr als 4
-Schritte). T(f) wird je Logikschritt bestimmt und aufgezeichnet, auch wenn
+Schritte). Ein Bild, das bis zu 1/8 Logikschritt zu früh kommt, zählt schon
+als Schritt; der Rest der Zeit wird weitergetragen (Festlegung beim
+Codieren, 2026-10-03, L111). T(f) wird je Logikschritt bestimmt und aufgezeichnet, auch wenn
 mehrere Schritte zu einem Bild laufen. Der Prüflauf läuft ohne Fenster so
 schnell wie möglich (11.2). Alle Dauern sind Frames, die Frame-Zahlen aus
 `mechanik.md` gelten unverändert („Konventionen“). Frame 1 ist der erste
@@ -101,7 +105,9 @@ Logikschritt nach dem Laden einer Stage oder Prüfszene.
 Tasten: L (links), R (rechts), O (hoch, in der Tiefe nach hinten), U
 (runter, nach vorn), A (Angriff), S (Sprung); dazu P (Pause, außerhalb der
 Logik nach Welt 10.4, nicht Teil von T). T(f) wird
-zu Beginn von Frame f einmal abgefragt und aufgezeichnet. Der Logikschritt
+zu Beginn von Frame f einmal abgefragt und aufgezeichnet; ein Druck, der
+zwischen zwei Abfragen beginnt und endet, zählt in der nächsten Abfrage als
+gedrückt (Festlegung beim Codieren, 2026-10-03, L110). Der Logikschritt
 f wertet T(f−1) aus; eine Taste, die in Frame f gedrückt ist, wirkt also in
 f+1 („Konventionen“, Eingabelatenz). Weitere Verzögerung darf es zwischen
 Abfrage und Logik nicht geben (`design.md`, Abschnitt 3). Ein **neuer
@@ -182,7 +188,8 @@ Spezifikation oder Welt sie vorschreibt (hier: Tempostufe des Sprints
 2.1 und 2.4, Pause nach Rang 29 − 4·⌊Rang/4⌋ in 5.1 und 8, Sprungtritt
 5.5, Bogen der Waffe 6, x der Körperpresse 7.3 nach k Bahnframes
 x(A) + ⌊d·k/64⌋ mit d = Ort der Figur in A minus x(A) in 1/65536,
-höchstens 200 px weit, LP nach Rang 8, Flug der Gegenstände 9.3, Zufall
+höchstens 200 px weit, ihr z ebenso mit ⌊dz·k/64⌋ (Festlegung beim
+Codieren, 2026-10-03, L38), LP nach Rang 8, Flug der Gegenstände 9.3, Zufall
 11.1): ganzzahlig durch eine positive ganze Zahl, das Ergebnis rundet in
 Richtung −∞ (⌊a/b⌋) auf ganze Einheiten des Zielwerts (Pixel, LP, Frames,
 Stufe, Index der Ziehung; beim Sprungtritt und bei der Körperpresse
@@ -202,7 +209,7 @@ gelten hier ab 0.
 | Bildschirm-x | ⌊x⌋ − Kamera-x |
 | Bildschirm-y des Schattens | 234 − (⌊z⌋ − Kamera-y) |
 | Bildschirm-y des Fußpunkts | 234 − (⌊z⌋ − Kamera-y) − ⌊h⌋ |
-| Zeichenreihenfolge | Hintergrund; alle Schatten; dann Objekte nach ⌊z⌋ absteigend (hinten zuerst); bei gleicher Tiefe Behälter, Gegenstände, Gegner, Figur, Geschosse und Effekte, dann aufsteigende Slotnummer; danach Vordergrundebene (Welt 2), zuletzt Anzeige |
+| Zeichenreihenfolge | Hintergrund; alle Schatten; dann Objekte nach ⌊z⌋ absteigend (hinten zuerst); bei gleicher Tiefe Behälter, Gegenstände, Gegner, Figur, Geschosse und Effekte, dann aufsteigende Slotnummer; danach Vordergrundebene (Welt 2), zuletzt Anzeige; eine weggeworfene leere Waffe steht wie die Gegenstände (Festlegung beim Codieren, 2026-10-03, L114) |
 
 Die Konstante 234 stammt aus der Bildauswertung des Vorbilds
 (`scripts/grafik/streifen.py`): Tiefe Kamera-y + 10 liegt am unteren
@@ -238,7 +245,7 @@ Gemeinsame Felder:
 | anim | Animationszeiger: Animation, Bild, Restdauer; läuft mit der Aktionsuhr |
 | blick | +1 oder −1 |
 | angriff | laufende Angriffsinstanz: Kennung, Trefferfläche, Schaden (beim Angriffsbeginn festgelegt), Umwerfen, Menge der schon getroffenen Ziele |
-| letzter_angreifer | Slot des Angreifers beim letzten Treffer (für Flugrichtung, Anzeige, Punkte) |
+| letzter_angreifer | Slot des Angreifers beim letzten Treffer (für Flugrichtung, Anzeige, Punkte); er enthält den Urheber, beim geworfenen Gegner (WG) die Figur, und Anzeige und Punkte zählen den Urheber (Festlegung beim Codieren, 2026-10-03, L29) |
 | timer | je Entität benannte Zähler (siehe unten) |
 
 Zusätzliche Felder je Entität:
@@ -287,6 +294,12 @@ Der Griff entsteht am Ende eines LAUF-Frames (8.1). Kommt die zweite
 Taste einen Frame später, gilt die erste: erst A gibt den Schlag, erst S
 einen Sprung mit Sprungangriff („Spezialangriff“, Auslösung).
 
+Im Nachlauf eines Schlags (Kettenpose, Leerschlag, Kniestoß nach dem
+dritten) gibt es keinen Spezialangriff, kein Aufnehmen und keinen Sprint; A
+und S geben dort den Schlag bzw. die nächste Stufe. Im Griff geben A und S
+bei 0 LP den Kniestoß bzw. mit Richtung den Wurf (Festlegung beim Codieren,
+2026-10-03, L74).
+
 ### 4.3 Zustände
 
 „Drücke ab X“ heißt: Tasten aus T(f) mit f ≥ X wirken, also frühestens in
@@ -303,11 +316,11 @@ Protokollspalte f_akt zeigt den Folgezustand schon ab X.
 | SPRUNG | S neu in J | Aktion ab J+1, Absprung J+2, Luft J+2 bis J+41, Aufsetzen J+42 | SPRUNGANGRIFF (A neu in J+1 bis J+41), LANDUNG, UMGEWORFEN | A ab J+1; O, U jederzeit | 4.4 | „Sprung“ |
 | LANDUNG | Aufsetzen (J+42; mit Sprungangriff 1 Frame später, je Frame mit Treffer 7 Frames später; im Sprintsprung mit Sprint-Sprungangriff ohne den Frame Pause und 7 Frames später nur nach einem Treffer in A+13, Treffer ab A+20 verschieben nichts, 9.3) | 6 Frames (J+42 bis J+47) | STAND ab J+48; A und S neu in Landeframe 1 bis 5: neuer SPRUNG ab Druck+1, A verfällt; Druck in Landeframe 6 verfällt; S allein ebenso (P2); alle anderen Drücke verfallen | J+48 | x im Aufsetzframe noch 2,25 (Teil der 41 Frames), sonst keine | „Sprung“, „Spezialangriff“ (Einschränkungen) |
 | SCHLAG Stufe 1 | A neu in P (4.2 Rang 5), keine laufende Kette (5.6) | Aktion ab P+1; aktiv P+2 bis P+5 (uhr 2 bis 5) | mit Treffer h: Stufe 2 bei A neu in h+12 bis h+27; Pose ohne Druck bis h+27, STAND ab h+28. Ohne Treffer: LEERSCHLAG | mit Treffer: A und S ab h+12, Richtung mit L oder R ab h+13 (Bewegung ab h+14); Richtung nur in der Tiefe bricht die Pose nicht ab (Bewegung ab h+29, P31) | keine | „Angriff (Standardschlag, Kette)“; Tiefe: notes.md, „Nachtrag: Rest der Spielfigur“ (nur Messagent, unsicher; `mechanik.md`, „Nicht übernommen“) |
-| LEERSCHLAG | Stufe 1 ohne Treffer in uhr 2 bis 5 | Aktion P+1 bis P+16 | STAND ab P+17; Drücke nach 4.2 (A beginnt eine neue Kette) | A und S ab P+7 (wirken P+8), Richtung ab P+8 (Bewegung ab P+9) | keine | „Angriff“, Recovery Leerschlag; notes.md, „Nachtrag: Rest der Spielfigur“ |
+| LEERSCHLAG | Stufe 1 ohne Treffer in uhr 2 bis 5; Wechsel in P+6, dem ersten Frame nach den aktiven Frames; uhr läuft weiter, f_ph 1 und kombo 1 bis zum Ende (Festlegung beim Codieren, 2026-10-03, L70) | Aktion P+1 bis P+16 | STAND ab P+17; Drücke nach 4.2 (A beginnt eine neue Kette) | A und S ab P+7 (wirken P+8), Richtung ab P+8 (Bewegung ab P+9) | keine | „Angriff“, Recovery Leerschlag; notes.md, „Nachtrag: Rest der Spielfigur“ |
 | SCHLAG Stufe 2 | A neu in D = h₁+12 bis h₁+27 | Aktion ab D+1; aktiv D+3 bis D+6 | mit Treffer h₂: Stufe 3 bei A neu in h₂+11 bis h₂+26; Pose ohne Druck bis h₂+26, STAND ab h₂+27. Ohne Treffer: Aktion D+1 bis D+16, STAND ab D+17 (K1) | mit Treffer: A und S ab h₂+11, Richtung mit L oder R ab h₂+12 (Bewegung ab h₂+13), nur Tiefe Bewegung ab h₂+28; ohne Treffer: A und S ab D+7 (A beginnt eine neue Kette), Richtung ab D+8 | keine | „Angriff“, Kettenstufen; notes.md, „Nachtrag: Rest der Spielfigur“ |
 | SCHLAG Stufe 3 | A neu in D = h₂+11 bis h₂+26 | Aktion ab D+1; aktiv D+4 bis D+7 | mit Treffer h₃: Stufe 4 bei A neu in h₃+11 bis h₃+26; Pose bis h₃+26, STAND ab h₃+27. Ohne Treffer: Aktion D+1 bis D+17, STAND ab D+18 (K2) | mit Treffer wie Stufe 2; ohne Treffer: A und S ab D+8, Richtung ab D+9 (Bewegung ab D+10) | keine | wie oben |
 | SCHLAG Stufe 4 | A neu in D = h₃+11 bis h₃+26 | Aktion ab D+1; aktiv D+3 bis D+6, ohne Treffer dort erneut D+17 bis D+20 | nicht abbrechbar: Aktion uhr 1 bis 25 (je Frame mit Treffer 7 Stoppframes: mit einem Treffer D+1 bis D+32), dann STAND (K3) | ab dem Frame nach der Aktion (mit einem Treffer D+33, ohne D+26) | keine | wie oben |
-| SPRUNGANGRIFF (N, R, H, T) | A neu in A = J+1 bis J+41 im SPRUNG; Variante nach 5.2 | Aktion ab A+1 bis zur Landung, Variante H nur bis A+29 (mit Treffer A+36), danach SPRUNG (Fallpose); Höhe steht in A+1 einen Frame still (notes.md, „Nachtrag: Rest der Spielfigur“) | LANDUNG, UMGEWORFEN | keine bis zur Landung | Sprungbahn läuft weiter, steht in A+1 und in Stoppframes | „Sprungangriff“ |
+| SPRUNGANGRIFF (N, R, H, T) | A neu in A = J+1 bis J+41 im SPRUNG; Variante nach 5.2 | Aktion ab A+1 bis zur Landung, Variante H nur bis A+29 (mit Treffer A+36), danach SPRUNG (Fallpose); Höhe steht in A+1 einen Frame still (notes.md, „Nachtrag: Rest der Spielfigur“); in der Fallpose nach A+29 beginnt uhr neu, bis zur Landung kein weiterer Angriff (Festlegung beim Codieren, 2026-10-03, L92) | LANDUNG, UMGEWORFEN | keine bis zur Landung | Sprungbahn läuft weiter, steht in A+1 und in Stoppframes | „Sprungangriff“ |
 | GRIFF | Bedingung 8.1 am Ende eines LAUF-Frames g | Halten bis zum Losreißen in g+61 (nach Kniestoß 8.3) | KNIESTOSS, WURF, SPRUNG (lässt los), SPEZIAL, GETROFFEN, STAND nach Losreißen | g+1 bis g+60; Druck in g verfällt | keine | „Griff und Wurf“ |
 | KNIESTOSS | A neu ohne Richtung (oder mit L und R) im GRIFF, Druck K | Treffer K+5; gehalten ab K+23 | GRIFF; nach dem dritten STAND | K+18; K+2 bis K+17 verfallen | keine | „Griff und Wurf“ |
 | WURF | A neu mit Richtung im GRIFF, Druck E | Figur gebunden E+1 bis E+37 | STAND ab E+38 | E+38 | keine | „Griff und Wurf“ |
@@ -406,7 +419,12 @@ Sprint-Sprungangriff nur bei einem Treffer in A+13 (9.3); Kniestoß,
 Wurf, geworfener Gegner und Explosion stoppen nicht (feste gemessene
 Abläufe). Der Getroffene hat keine Stoppframes, die seine Reaktion
 verlängern; sein Stillstand h+1 bis h+8 liegt innerhalb der 23 Frames
-(Abschnitt 7, E3).
+(Abschnitt 7, E3). Trifft eine Instanz in verschiedenen Frames, gibt jeder
+Frame mit Treffern 7 Stoppframes; Pose und Kombofenster zählen ab dem
+letzten Treffer (Festlegung beim Codieren, 2026-10-03, L73). In
+Stoppframes wirkt keine Eingabe; Schutz, Griffsperre und die Frist der
+Kosten des Spezialangriffs (6.4) zählen weiter (Festlegung beim Codieren,
+2026-10-03, L75).
 
 ### 5.4 Reihenfolge der Prüfung im Frame
 
@@ -414,7 +432,8 @@ verlängern; sein Stillstand h+1 bis h+8 liegt innerhalb der 23 Frames
    Gegner in aufsteigender Slotnummer.
 2. Geworfener Gegner gegen andere Gegner und Behälter.
 3. Angriffe der Gegner und ihrer Geschosse gegen die Figur, in
-   aufsteigender Slotnummer. Ein Gegner, der in Punkt 1 oder 2 desselben
+   aufsteigender Slotnummer; jede Gegnerinstanz prüft nach der Figur auch
+   Behälter (Festlegung beim Codieren, 2026-10-03, L25). Ein Gegner, der in Punkt 1 oder 2 desselben
    Frames wirksam getroffen wurde oder stirbt, prüft nicht mehr: Sein
    Angriff ist abgebrochen. Ausnahme Boss (Welt 7.4, SA3): Ein Treffer von
    vorn bricht seinen Angriff nicht ab; er prüft nur in diesem Frame nicht
@@ -437,9 +456,15 @@ vollem Schaden („Trefferreaktion der Gegner“, Mehrere Gegner). Nicht treffba
 2 (umgeworfen, liegend, aufstehend, tot, wartend, im Auftritt; gehaltene nur für
 Kniestoß, Wurf und Spezialangriff der haltenden Figur). Gegner in Zustand 3
 (Trefferreaktion) sind treffbar. Ein nicht treffbares Ziel bleibt für
-spätere aktive Frames derselben Instanz offen. Behälter zerbrechen beim
+spätere aktive Frames derselben Instanz offen. Ein Gegner, der in diesem
+Frame umgeworfen oder getötet wurde, und ein zerbrochener Behälter sind für
+spätere Instanzen desselben Frames nicht mehr treffbar; für deren spätere
+Frames bleibt das Ziel offen (Festlegung beim Codieren, 2026-10-03, L24).
+Behälter zerbrechen beim
 ersten Treffer jeder Angriffsinstanz, auch eines Gegners (Welt 9); für den
-Spezialangriff zählt das als Treffer (6.4). Treffer im Schutz der Figur
+Spezialangriff zählt das als Treffer (6.4). Prüfangriff (11.2) und Landung
+beim Neueinstieg (6.5) zerbrechen keine Behälter (Festlegung beim
+Codieren, 2026-10-03, L25). Treffer im Schutz der Figur
 zählen für den Angreifer nicht (P11).
 
 ### 5.6 Kette und Kombofenster
@@ -467,7 +492,10 @@ D+1 bis D+4 um 8, 6, 4 und 2 px in Blickrichtung vor (20 px), die aktiven
 Frames sind D+9 bis D+12 (Stufe 3: D+8 bis D+11), Schaden und Kette
 bleiben. Enthält T(D) die Gegenrichtung, dreht sich die Figur in D+1 um und
 macht denselben Schritt 20 px in die neue Blickrichtung, ohne aktive
-Frames; die Kette ist abgebrochen, ein Folgedruck beginnt mit Stufe 1. O
+Frames; die Kette ist abgebrochen, ein Folgedruck beginnt mit Stufe 1.
+Auch beim Schritt weg steht KE:F:k im Protokoll, f_ph und kombo zeigen
+Stufe k; ein Kombofenster gibt es nicht (Festlegung beim Codieren,
+2026-10-03, L72). O
 und U ändern nichts. Reichweite und Nachlauf nach P29.
 
 ### 5.7 Umwerfen und Flugbahnen
@@ -491,6 +519,9 @@ weg“ beim Spezialangriff, sonst nach P9). Die Figur selbst fliegt auf F1
 vom Angreifer weg (Vorzeichen von x_Figur − x_Angreifer, bei Gleichheit in
 dessen Blickrichtung, P14). Wird die Figur in der Luft getroffen, beginnt
 F1 in der aktuellen Höhe, und die 8 Stillstandsframes gelten dort (P15).
+Ebenso beginnt die Bahn eines Gegners, der in der Luft umgeworfen wird oder
+stirbt, in seiner aktuellen Höhe; Ruhe 9 Frames nach dem Bodenkontakt
+(Festlegung beim Codieren, 2026-10-03, L22).
 Geworfene Gegner bleiben höchstens 96 px außerhalb des Bildes; Wände
 stoppen sie („Griff und Wurf“, Grenzen; Wände nach Welt 2).
 
@@ -572,13 +603,13 @@ und Anzeige regelt Welt 8 und 10. Ablauf für die Figur (K7; notes.md,
 
 | Größe | Wert |
 |---|---|
-| Tod (t) | Bahn F4 vom Angreifer weg, Bodenkontakt t+40; Neueinstieg N = t+120 bei jeder Todesart (E16) |
+| Tod (t) | Bahn F4 vom Angreifer weg, Bodenkontakt t+40; Neueinstieg N = t+120 bei jeder Todesart (E16); beim Tod durch einen Eingriff (ohne Angreifer) F4 entgegen dem Blick (Festlegung beim Codieren, 2026-10-03, L77) |
 | Sonderfall Wand | nicht in der Scheibe (E16): Eine Begrenzung hält den Flug nur in x auf (Welt 2.2), Bodenkontakt t+40 und N = t+120 bleiben. Vorbild: endet der Flug vor t+40 an einer Begrenzung der Stage oder einer Sperre (Bildränder zählen nicht), senkrechter Fall, N = t+108 |
 | Sonderfall Rollen | nicht in der Scheibe (E16): kein Rollen nach dem Bodenkontakt, N = t+120. Vorbild: nach einem tödlichen Treffer von vorn mit Rollmerkmal (Attribut-Bit 0x0400) 32 Frames Rollen mit 2,0 px/Frame, N = t+151 |
-| Neueinstieg N | LP 72 |
-| Erscheinen in N+1 | x = Kamera-x + 64, Tiefe = Kamera-y + 48, Höhe 256, Blick rechts; schutz = 200, zustand 3 |
+| Neueinstieg N | LP 72, nur wenn noch ein Leben bleibt; sonst GAME OVER (Welt 10.3) (Festlegung beim Codieren, 2026-10-03, L90) |
+| Erscheinen in N+1 | x = Kamera-x + 64, Tiefe = Kamera-y + 48, Höhe 256, Blick rechts; schutz = 200, zustand 3; nur wenn noch ein Leben bleibt, nicht bei GAMEOVER (Festlegung beim Codieren, 2026-10-03, L90) |
 | Fall | keine Eingabe wirkt; Landung LN = N+53 (= t+173) auf dem Boden, N+50 auf einem tragenden Behälter (Vorbild: Ölfass, Oberkante 48 px; welche tragen, legt Welt 9 fest); Höhenverlauf P28 |
-| Landung LN | trifft jeden wachen Gegner im Bild (0 ≤ x − Kamera-x ≤ 383) mit 5 LP, den Boss mit 10 LP (endgültig, Welt 7.4, E11), und wirft ihn um (F1 von der Figur weg, P30); wartende und auftretende Gegner nicht (Welt 4.2); beschlossen (E10) |
+| Landung LN | trifft jeden wachen Gegner im Bild (0 ≤ x − Kamera-x ≤ 383) mit 5 LP, den Boss mit 10 LP (endgültig, Welt 7.4, E11), und wirft ihn um (F1 von der Figur weg, P30); wartende und auftretende Gegner nicht (Welt 4.2); beschlossen (E10); Angriffscode LN im Treffereintrag (11.4) (Festlegung beim Codieren, 2026-10-03, L7) |
 | Steuerung | nach Zeile NEUEINSTIEG in 4.3 |
 | Schutz | N+1 bis LN+199, verwundbar ab LN+200 (6.3) |
 | Gegner | beginnen von t+1 bis N+1 keinen Angriff, danach greifen sie an, ohne Wirkung (Welt 5) |
@@ -605,11 +636,11 @@ abgebrochen.
 | GETROFFEN (Treffer ohne Umwerfen, LP ≥ 0) | h+1 bis h+8 Stillstand, h+9 bis h+14 Zittern nur als Darstellung (+3, −3, +2, −2, +1, −1 px, erster Ausschlag in Blickrichtung der Figur), Welt-x bleibt (E3); Animationswechsel h+1, h+10, h+22; frei ab h+23 | 3 von h bis h+22, 1 ab h+23 | „Trefferreaktion der Gegner“; Klarstellung der Projektleitung zum Stillstand |
 | Neustart | ein wirksamer Treffer in der Reaktion startet sie neu: Zustand 3 bis h₂+22, Stillstand und Zittern von vorn; kein Schutz in der Reaktion | 3 | wie oben |
 | nach der Reaktion | ab h+23 übernimmt Welt 5 (im Vorbild Ausholen frühestens h+45), beim Boss Welt 7.4 (SA5) | 1 | wie oben |
-| UMGEWORFEN (W) | Bahn F1, F2 oder F3 nach Angriff; unverwundbar und nicht greifbar | 2 von W+1 bis G−1 (das Vorbild führt den Geworfenen in Zustand 3; hier 2, damit er nicht treffbar ist) | wie oben |
-| LIEGEN | ab der Ruhe: leichter Nahkämpfer 32 Frames (nach einem Wurf 16), schwerer 16 bis 44 Frames in Vielfachen von 4, gezogen beim Erreichen der Ruhe (P18); Zufall nach Welt 11 | 2 | wie oben, Liegen |
+| UMGEWORFEN (W) | Bahn F1, F2 oder F3 nach Angriff; unverwundbar und nicht greifbar | 3 im Frame W, 2 von W+1 bis G−1 (das Vorbild führt den Geworfenen in Zustand 3; hier 2, damit er nicht treffbar ist); ein gehaltener Gegner bleibt 2 (Festlegung beim Codieren, 2026-10-03, L21) | wie oben |
+| LIEGEN | ab der Ruhe: leichter Nahkämpfer 32 Frames (nach einem Wurf 16), schwerer 16 bis 44 Frames in Vielfachen von 4, gezogen beim Erreichen der Ruhe (P18); Zufall nach Welt 11; Fernkämpfer wie der leichte Nahkämpfer, 32 Frames, nach einem Wurf 16 (Festlegung beim Codieren, 2026-10-03, L23) | 2 | wie oben, Liegen |
 | AUFSTEHEN | 18 Frames; G = Ruhe + Liegen + 18; leichter Nahkämpfer G = W+105 nach Tritt und Sprungangriff, W+108 nach dem Kniestoß, W+104 nach dem Wurf | 2 | wie oben, Aufstehen |
 | frei nach dem Aufstehen | ab G verwundbar und greifbar, auch nach einem Wurf (E4; im Vorbild nach einem Wurf greifbar erst ab G+1); Bewegung nach Welt 5 ab G+1 | 1 | „Trefferreaktion der Gegner“, Verwundbarkeit |
-| TOT (t: LP < 0) | jeder Treffer mit LP < 0 wirft um, auch Stufe 1 und 3; Bahn F4 (nach Stufe 2 F4b, nach Wurf F3); nimmt keine Treffer an, trifft nicht | 2 ab t+1 | wie oben, Tod |
+| TOT (t: LP < 0) | jeder Treffer mit LP < 0 wirft um, auch Stufe 1 und 3; Bahn F4 (nach Stufe 2 F4b, nach Wurf F3); nimmt keine Treffer an, trifft nicht | 3 im Frame t, 2 ab t+1 (Festlegung beim Codieren, 2026-10-03, L21) | wie oben, Tod |
 | Slot frei | t+79; nach Stufe 2 t+111; nach Wurf t+101 | 0 | wie oben |
 | genau 0 LP | stirbt nicht: normale Reaktion, lebt mit 0 LP weiter und greift an; der nächste Treffer tötet (K6) | – | notes.md, „Nachtrag: Rest der Spielfigur“ |
 | GEHALTEN | von g bis Losreißen, Wurf oder drittem Kniestoß; nimmt nur Treffer der haltenden Figur an (Kniestoß, Wurf, Spezialangriff); Haltelage nach P19 | 2 | „Griff und Wurf“ |
@@ -637,7 +668,12 @@ Angriffsframes, am Boden), |dz| ≤ 10 und
 | hinter der Figur, schaut weg | kein Griff | wie oben |
 
 Kein Griff: ohne Richtung, in SPRUNG und LANDUNG, im SPRINT, in GETROFFEN
-und 30 Frames nach einem Losreißen (griffsperre). Mehrere Kandidaten:
+und 30 Frames nach einem Losreißen (griffsperre). Die Griffsperre gilt nach
+einem Losreißen und nach dem Ende eines Griffs durch einen Treffer (P16),
+nicht nach dem Loslassen durch einen Sprung (Festlegung beim Codieren,
+2026-10-03, L80). Sie zählt wie der Schutz: 30 im Frame r des Losreißens,
+ein neuer Griff ist ab r+30 möglich (Festlegung beim Codieren, 2026-10-03,
+L81). Mehrere Kandidaten:
 kleinstes |dx|, dann kleinste Slotnummer (P20). Ein A-Druck in g−1 gibt
 den Schlag (4.2 geht vor), ein A-Druck in g verfällt. Im Griff-Frame wird
 der Gegner auf die Haltelage gesetzt (P19).
@@ -661,7 +697,9 @@ Ohne Eingabe reißt sich der Gegner in g+61 los; Würfe gehen in g+1 bis
 g+60. Jeder Kniestoß startet die Haltefrist neu (Losreißen in K+61, P21):
 Treffer K+5 mit 4 LP, gehalten ab K+23, nächster Druck ab K+18. Der dritte
 wirft um (F2 in Blickrichtung, Ruhe 143,75 px vom Ort des Gegners, etwa
-165 px von der Figur) und beendet den Griff („Griff und Wurf“).
+165 px von der Figur) und beendet den Griff („Griff und Wurf“). Ein
+Kniestoß, der den Gehaltenen tötet, endet wie der dritte: STAND ab K+23,
+Drücke ab K+18 (Festlegung beim Codieren, 2026-10-03, L91).
 
 ### 8.4 Wurf
 
@@ -698,6 +736,10 @@ wenn
 3. zwischen beiden 1 bis 10 Frames ohne jede Richtung lagen,
 4. die Figur in D2+1 in STAND oder LAUF ist.
 
+Eine Richtung nur in der Tiefe unterbricht die Pause und macht den vorigen
+Tipp ungültig; ein direkter Wechsel der Richtungsmenge ohne Frame dazwischen
+gilt als Pause 0 (Festlegung beim Codieren, 2026-10-03, L87).
+
 11 Frames Druck oder Pause geben Gehen („Sprint“, Auslösen). Ein neuer
 Sprint braucht einen neuen Doppeltipp, auch direkt nach dem Ende; eine
 über das Ende gehaltene Richtung gibt nur Gehen.
@@ -717,6 +759,9 @@ die Bewegung, der Sprint läuft weiter. Blick = Sprintrichtung.
 | 1 | 1,75 | 1,0 | 1,25 | 0,75 |
 | ab 2 | v(n) = 3,875 − 0,125 · ⌊(n − 1)/6⌋ (3,875 in 2 bis 6, 2,125 in 85 bis 90) | 0,625 · v(n) | 0,75 · v(n) | 29/64 · v(n) (1,755859375 in 2 bis 6) |
 
+Die Spalte „Tiefe gerade“ bleibt ungenutzt: Einen Sprint nur in der Tiefe
+gibt es nach P22 nicht (Festlegung beim Codieren, 2026-10-03, L89).
+
 Weg in 90 Sprintframes: 267,875 px („Sprint“, Tempo x). Der Fehler des
 Vorbilds (diagonal nach rechts in Sprintframe 7 bis 12 x 4,8125 statt
 2,8125) wird nicht übernommen (P23, E10; `design.md`, Abschnitt 4.5:
@@ -729,7 +774,9 @@ diagonal das 0,75-fache).
 Aktion ab A+1, in A+1 steht die Figur. Lag die Richtung auch in T(A),
 rutscht sie ab A+2 mit dem Tempo des Sprintframes A, jeden Frame 0,15625
 weniger, solange es über 0 liegt (50 px ab 3,875, 43,875 ab 3,625), nur in
-x und nicht in Stoppframes (P24). Er trifft alle Gegner auf dem Weg, jeden
+x und nicht in Stoppframes (P24). Maßgeblich ist das tatsächliche x-Tempo
+des Sprintframes A, diagonal also 0,75 · v(n) (Festlegung beim Codieren,
+2026-10-03, L88). Er trifft alle Gegner auf dem Weg, jeden
 einmal, und schiebt keinen mit („Sprint“).
 
 **Sprintsprung.** S neu im SPRINT: wie der Vorwärtssprung in
@@ -818,8 +865,10 @@ Raketenwerfer bei Blick links vorn 36, hinten 29).
 ### 10.2 Essen
 
 Essen heilt sofort in P+1, nie über 72 LP: Kometenbraten voll, Eisnudelschale
-+55 oder +40, Sternbeeren +16 oder +12 (E9; `design-gegner-stages.md`,
-Abschnitt 8; „Gegenstände und Waffen“, Heilwerte). Bei 72 LP gibt Essen
++55, Sternbeeren +16 (E9; `design-gegner-stages.md`,
+Abschnitt 8; „Gegenstände und Waffen“, Heilwerte; dort „+55 oder +40“ bzw.
+„+16 oder +12“, es gilt jeweils der erste Wert, beide nicht in der Scheibe)
+(Festlegung beim Codieren, 2026-10-03, L85). Bei 72 LP gibt Essen
 Punkte statt LP (Welt 10). Mit Waffe in der Hand wird Essen gegessen, die
 Waffe bleibt. Essen läuft nicht ab.
 
@@ -830,10 +879,10 @@ Waffe bleibt. Essen läuft nicht ab.
 | Munition | 3 Schuss beim Aufnehmen (übernommen aus dem Gegenstand) | „Gegenstände und Waffen“, Raketenwerfer |
 | Einsatz | jeder A-Druck mit Waffe ist ein Einsatz, keine Kette, Kombostufe unverändert; Aktion P+1 bis P+17 | wie oben, Waffen allgemein |
 | Abschuss | in P+7: Munition −1, Rakete im ersten freien Slot g0 bis g4, 58 px vor der Figur, 50 px hoch, in ihrer Tiefe, Blickrichtung der Figur | wie oben |
-| Flug | 5,0 px/Frame in x; Höhe sinkt (Verlauf P9); im Flug kein Treffer | wie oben |
-| Einschlag | frei fliegend in P+28 bei 163 px vor der Figur; früher an Wänden, Behältern und am Bildrand (Welt 2, 3) | wie oben |
+| Flug | 5,0 px/Frame in x; Höhe sinkt (Verlauf P9); im Flug kein Treffer; im Abschussframe steht die Rakete, die Höhe sinkt höchstens bis 0 (Festlegung beim Codieren, 2026-10-03, L83) | wie oben |
+| Einschlag | frei fliegend in P+28 bei 163 px vor der Figur; früher an Wänden, Behältern und am Bildrand (Welt 2, 3): an der letzten freien Lage, wenn der nächste Schritt das Band verlässt, in einen unzerbrochenen Behälter führt (unabhängig von der Flughöhe) oder, wo Bildränder gelten, außerhalb 0 ≤ x − Kamera-x ≤ 383 läge (Festlegung beim Codieren, 2026-10-03, L83) | wie oben |
 | Explosion | Angriffsinstanz RX nach 5.2, aktiv P+28 bis P+42 (15 Frames), Bereich Einschlag −66 bis +90 in Flugrichtung, also 97 bis 253 px vor der Figur, in beiden Blickrichtungen (E14; im Vorbild bei Blick links −67, also ab 96 px); trifft keine Gegner ab Kamera-x + 448; zerbricht Behälter | wie oben, Explosion; Waffen allgemein |
-| Munition leer | nach dem dritten Schuss in P+18 weggeworfen, nicht aufnehmbar, nach 61 Frames verschwunden; weitere A-Drücke geben Schläge | wie oben, Lebensdauer |
+| Munition leer | nach dem dritten Schuss in P+18 weggeworfen, nicht aufnehmbar, nach 61 Frames verschwunden; weitere A-Drücke geben Schläge; die leere Waffe ist ein Objekt vom Typ `Waffe` mit Lebensdauer 61, Ereignis WA:F:Raketenwerfer:0 (Festlegung beim Codieren, 2026-10-03, L84) | wie oben, Lebensdauer |
 | Sprung, Griff, Wurf mit Waffe | wie ohne Waffe; Sprungangriff ohne Munition; Waffe bleibt | wie oben, Waffen allgemein |
 
 ### 10.4 Verlieren, Tausch, Liegezeit
@@ -842,7 +891,9 @@ Ein wirksamer Gegnertreffer gegen die Figur mit Waffe lässt sie im Frame
 H+1 fallen: Gegenstand im kleinsten freien Objektslot, am Ort der Figur auf
 Höhe 0 (P27), mit Restmunition, Liegezeit 700 ab L = H+1, wieder
 aufnehmbar. Eine zweite Waffe ersetzt die erste: Die alte fällt in P+1 mit
-Restmunition und Liegezeit 700. Liegezeit von Waffen: 700 Frames ab L, dann
+Restmunition und Liegezeit 700. Dabei wird erst der Slot der aufgenommenen
+Waffe frei, dann fällt die alte; AU steht vor WA (Festlegung beim Codieren,
+2026-10-03, L84). Liegezeit von Waffen: 700 Frames ab L, dann
 Blinken, verschwunden in L+792 (Welt 9; „Gegenstände und Waffen“,
 Lebensdauer).
 
@@ -859,7 +910,10 @@ Frames und erscheinen weder in der Eingabedatei noch im Protokoll (Welt
 Frames haben keine Taste. Die Aufzeichnung beim Spielen schreibt dieselbe
 Form: je Lauf gleicher Tastenmengen eine Zeile, aufsteigend nach von.
 Abspielen ersetzt die Abfrage der Geräte vollständig; die Datei bestimmt
-T(f).
+T(f). Die Aufzeichnung beim Spielen enthält immer alle Frames ab Frame 1
+und den Seed als Kommentarzeile `# seed=N`, die das Laden liest; Einzelheiten
+in `docs/scheibe.md`, „Formate“, Eingabedatei (Festlegung beim Codieren,
+2026-10-03, L112).
 
 ### 11.2 Prüfszene und Prüfbühne
 
@@ -868,7 +922,11 @@ Fenster so schnell wie möglich bis zu einem Endframe und schreibt
 Protokoll und Objektprotokoll. Die Prüfszene erweitert den Prüfstart aus
 Welt 11.3 um Prüfbühne, Puppen und Prüfangriffe; Puppen und Prüfangriffe
 gibt es auch auf der Bühne `scheibe` (Welt 12: PS8b, T9), sonst gilt dort
-der Prüfstart unverändert.
+der Prüfstart unverändert. Die Prüfszene ist eine Textdatei im Satzformat
+der Stage-Daten (Welt 2.1) mit den Satzarten `szene`, `pruefstart`,
+`figur`, `gegner`, `objekt`, `eingriff` und `pruefangriff`; Felder,
+Standardwerte und Schlüssel stehen in `docs/scheibe.md`, „Formate“,
+Prüfszene (Festlegung beim Codieren, 2026-10-03, L1).
 
 | Feld | Inhalt |
 |---|---|
@@ -876,16 +934,17 @@ der Prüfstart unverändert.
 | buehne | `pruefbuehne` oder `scheibe` (Stage nach Welt 2) |
 | rang, rang.fest | Startrang (Standard 9); rang.fest hält ihn fest (Welt 11.3) |
 | figur | x, z, blick, lp, waffe, munition |
-| gegner | je Slot: typ, x, z, blick, lp, lp_max, vorplatziert, logik an oder aus |
-| objekte | je Slot: typ, art, x, z, munition |
+| gegner | je Slot: typ, x, z, blick, lp, lp_max, vorplatziert, logik an oder aus; ohne lp mit vorplatziert=ja die Startwerte (leicht 16 LP und 5 Schaden, schwer 30 und 6, Boss 100), sonst LP nach Rang (Welt 8); Standard vorplatziert=nein, Blick zur Figur (Festlegung beim Codieren, 2026-10-03, L18) |
+| objekte | je Slot: typ, art, x, z, munition; ein Gegenstand liegt von Beginn an: gelandet, aufnehmbar, L = 1, also Liegezeit 0 in Frame 1 (Festlegung beim Codieren, 2026-10-03, L19, L67) |
 | eingriffe | Liste `frame, ziel, feld, wert` sowie `pruefangriff` (unten) |
 
 | Prüfmittel | Festlegung |
 |---|---|
-| Prüfbühne | Welt-x 0 bis 4000, Tiefenband 10 bis 197 ohne Stufen, keine Wände, Kamera fest bei Kamera-x 0 und Kamera-y 0, Bildränder begrenzen nichts, keine Wellen |
+| Prüfbühne | Welt-x 0 bis 4000, Tiefenband 10 bis 197 ohne Stufen, keine Wände, Kamera fest bei Kamera-x 0 und Kamera-y 0, Bildränder begrenzen nichts, keine Wellen; in den Stage-Daten ein Satz `band` für x 0 bis 4000 und der Satz `stage` mit den Zusatzfeldern `kamera=fest` und `raender=aus` (Welt 2.1; Welt 2.2, Punkt 4, gilt nicht) (Festlegung beim Codieren, 2026-10-03, L2) |
 | Puppe | Gegner mit Logik aus (Welt 5 ruht), Rolle leicht oder schwer (Liegedauer, vorplatzierter Schaden); steht, schaut in jedem Frame mit Zustand 1 zur Figur, reagiert nach Abschnitt 7, ist greifbar |
-| Prüfangriff | `pruefangriff, slot, von, bis, schaden, umwerfen`: Angriffsinstanz PA des Gegners in den Frames von bis; Figur −4 bis 60 px vor ihm, \|dz\| ≤ 10, Figurhöhe ≤ 48; ohne Trefferstopp; endet, wenn der Gegner getroffen wird oder Zustand 1 verlässt |
+| Prüfangriff | `pruefangriff, slot, von, bis, schaden, umwerfen`: Angriffsinstanz PA des Gegners in den Frames von bis; Figur −4 bis 60 px vor ihm, \|dz\| ≤ 10, Figurhöhe ≤ 48; ohne Trefferstopp; endet, wenn der Gegner getroffen wird oder Zustand 1 verlässt; beginnt nicht, wenn der Gegner im Frame von nicht in Zustand 1 ist, und beginnt danach nicht neu; ein eigener Angriff eines Gegners mit Logik geht vor (Festlegung beim Codieren, 2026-10-03, L27) |
 | Eingriff | setzt Werte in W1 des Frames (Welt 11.3), Nachkommaanteil 0; steht im Protokollkopf als `# EINGRIFF …` (wie in der Messmethode des Vorbilds) |
+| Erscheinen | Satz `gegner … erscheint=f` (f > 1): der Gegner wird in W1 von Frame f angelegt, vor den übrigen Eingriffen, mit einer Ziehung des Hauptgenerators (Welt 11.1); Kopfzeile `# EINGRIFF erscheint frame=f slot=n typ=… x=… z=…`, Ereignis `EI:sn.erscheint=Typ` (Festlegung beim Codieren, 2026-10-03, L9) |
 
 ### 11.3 Protokoll
 
@@ -893,7 +952,9 @@ Datei `protokoll.csv`: Kopf aus Kommentarzeilen (`# version=`, `# szene=`,
 `# seed=`, `# eingabe_md5=`, `# EINGRIFF …`), dann eine Kopfzeile, dann eine
 Zeile je Frame. Trennzeichen Komma, Dezimalpunkt Punkt. Positionen als
 exakte Dezimalzahl des 16.16-Werts ohne überflüssige Nullen (135.125,
-51.25, 100); „-0“ gibt es nicht. Leere Felder bei freien Slots.
+51.25, 100); „-0“ gibt es nicht. Leere Felder bei freien Slots. Zu den
+Zeilen `# EINGRIFF` gehören auch die Prüfangriffe (`# EINGRIFF pruefangriff
+…`, 11.2) (Festlegung beim Codieren, 2026-10-03, L10).
 
 | Spalte | Inhalt |
 |---|---|
@@ -901,23 +962,28 @@ exakte Dezimalzahl des 16.16-Werts ohne überflüssige Nullen (135.125,
 | tasten | T(f), Buchstaben in der Reihenfolge L R O U A S |
 | f_x, f_z, f_h | Position der Figur am Frame-Ende |
 | f_lp, f_zst | LP, Zustand 0 bis 3 |
-| f_akt, f_ph | Aktion (Code aus 4.3), Unterphase (Stufe 1 bis 4, Variante N/R/H/T, Sprint-Sprungangriff SS, Wurf V/R, Bahn F/B/R) |
+| f_akt, f_ph | Aktion (Code aus 4.3), Unterphase (Stufe 1 bis 4, Variante N/R/H/T, Sprint-Sprungangriff SS, Wurf V/R, Bahn F/B/R): SCHLAG und LEERSCHLAG die Stufe, KNIESTOSS die Nummer 1 bis 3, UMGEWORFEN F im Flug und B ab dem Bodenkontakt, TOT F, B und ab der Ruhe R; sonst leer (Festlegung beim Codieren, 2026-10-03, L86) |
 | f_uhr, f_stopp, f_schutz | Aktionsuhr, verbleibende Stoppframes, Schutz-Timer |
 | f_blick | R oder L |
 | kombo | 0 bis 4 |
-| f_waffe, f_mun | Waffe (leer oder RW), Munition |
+| f_waffe, f_mun | Waffe (leer oder RW), Munition (0 ohne Waffe) (Festlegung beim Codieren, 2026-10-03, L13) |
 | f_sprint | Sprintframe n, sonst 0 |
 | rang, rang_zaehler | nach Welt 8 |
 | kamera_x, kamera_y | nach Welt 3 |
 | zufall_haupt | Zahl der Ziehungen des Hauptgenerators (Welt 11) |
-| s0_typ bis s19_blick | je Gegnerslot n: sn_typ, sn_x, sn_z, sn_h, sn_lp, sn_zst, sn_akt, sn_modus (Zustände aus spezifikation-welt.md 5.2, 6 und 7.1), sn_ph, sn_blick |
+| s0_typ bis s19_blick | je Gegnerslot n: sn_typ, sn_x, sn_z, sn_h, sn_lp, sn_zst, sn_akt, sn_modus (Zustände aus spezifikation-welt.md 5.2, 6 und 7.1), sn_ph, sn_blick; sn_akt in Reaktionen nach Abschnitt 7 der Reaktionsname, sonst die Körperaktion (STAND, GEHEN, ANGRIFF, NACHLAUF, WARTEN, AUFTRITT, SPOTT, ZIELEN, SCHUSS, SPRUNG, TAUMELN, STOSS, ANKUENDIGUNG); sn_ph in UMGEWORFEN und TOT die Bahn (F1, F2, F3, F4, F4b), sonst leer (Festlegung beim Codieren, 2026-10-03, L5, L30) |
 | ereignis | Liste nach 11.4 |
 
 Dazu kommen die übrigen Zusatzspalten aus Welt 11.4 (Kamera-Modus, lebende
 Gegner, Wellen, Rechte, Leben, Punkte, Phase, Steuerung, je Gegner
 Recht, Angriff, Zielabstand, Schaden, Timer), vor `ereignis`, je Gegner mit
 dem Präfix sn_. Die dort vorgeschlagenen Spalten der Objektslots stehen
-stattdessen im Objektprotokoll (11.5).
+stattdessen im Objektprotokoll (11.5). Reihenfolge der 358 Spalten: `frame`
+bis `zufall_haupt`, `s0_typ` bis `s19_blick` (erst alle Spalten von s0,
+dann s1 …), die Weltspalten `kamera_modus` bis `steuerung`, je Gegner
+`sn_recht` bis `sn_zufall`, dann `s0_lpfolge`, `s0_folge` und zuletzt
+`ereignis`; Formate im Einzelnen in `docs/scheibe.md`, „Formate“,
+Protokoll (Festlegung beim Codieren, 2026-10-03, L12).
 
 ### 11.4 Ereignisse
 
@@ -927,12 +993,12 @@ Eintretens im Logikschritt; die Einträge der Welt (Welt 11.4, etwa
 
 | Eintrag | Bedeutung |
 |---|---|
-| T:Angreifer>Ziel:Angriff:Schaden:Wirkung | Treffer; Angriff nach 5.2 bzw. Welt 5 bis 7, PA; Wirkung R (Reaktion), U (umgeworfen), X (Tod), B (Behälter zerbrochen), W (wirkungslos im Schutz) |
-| K:F:Betrag | Kosten des Spezialangriffs |
-| G:F>sn, L:sn, WU:F>sn:V oder R | Griff, Losreißen, Wurf |
+| T:Angreifer>Ziel:Angriff:Schaden:Wirkung | Treffer; Angriff nach 5.2 bzw. Welt 5 bis 7, PA; Wirkung R (Reaktion), U (umgeworfen), X (Tod), B (Behälter zerbrochen), W (wirkungslos im Schutz); Angriff LN für die Landung beim Neueinstieg (6.5) (Festlegung beim Codieren, 2026-10-03, L7) |
+| K:F:Betrag | Kosten des Spezialangriffs: der tatsächlich abgezogene Betrag, unter 9 LP also weniger als 9 (Festlegung beim Codieren, 2026-10-03, L78) |
+| G:F>sn, L:sn, WU:F>sn:V oder R | Griff, Losreißen, Wurf; L:sn auch beim Loslassen durch einen Sprung und beim Ende des Griffs durch einen Treffer (P16) (Festlegung beim Codieren, 2026-10-03, L80) |
 | AU:F>on:Art, WA:F:Art:Munition, AB:gn | Aufnehmen, Waffe fallen gelassen, Abschuss |
-| EX:gn | Einschlag einer Rakete |
-| SP:F:n, KE:F:k | Sprintbeginn bzw. Kettenstufe k beginnt |
+| EX:gn, EX:on | Einschlag einer Rakete der Figur bzw. des Fernkämpfers (Welt 6) (Festlegung beim Codieren, 2026-10-03, L65) |
+| SP:F:n, KE:F:k | Sprintbeginn bzw. Kettenstufe k beginnt; n ist der Sprintframe beim Beginn, also immer 1 (Festlegung beim Codieren, 2026-10-03, L79) |
 | FR:sn | Slot frei |
 | EI:Beschreibung | Eingriff ausgeführt |
 
@@ -941,7 +1007,11 @@ Eintretens im Logikschritt; die Einträge der Welt (Welt 11.4, etwa
 Datei `objekte.csv`, eine Zeile je Frame und belegtem Slot o20 bis o59
 und g0 bis g4: `frame, slot, typ, art, x, z, h, zst, lp, munition,
 liegezeit, inhalt, flugphase` (Felder der Gegenstände und Behälter nach
-Welt 9).
+Welt 9). Kopf wie bei `protokoll.csv` ohne die Zeilen `# EINGRIFF`
+(version, szene, seed, eingabe_md5), dann die Kopfzeile, dann je Frame die
+belegten Slots, erst o20 bis o59, dann g0 bis g4; Einzelheiten in
+`docs/scheibe.md`, „Formate“, Objektprotokoll (Festlegung beim Codieren,
+2026-10-03, L11).
 
 ### 11.6 Determinismus
 
@@ -973,18 +1043,18 @@ keine. Werte, die von einem Platzhalter abhängen, nennen ihn.
 | T6 | Kriterium 6, Griff und Wurf | Puppe leicht s0 x 160, Puppe leicht s1 x 240, je 16 LP; Lauf b: Figur x 300, Blick links (E14), Puppe leicht s0 x 240, Puppe leicht s1 x 160, je 16 LP | R 10–21, A und R 27 (Lauf b: L 10–21, A und L 27) | – |
 | T7 | Kriterium 7, Schutzfenster | Figur x 300; Puppe leicht s0 x 346, s1 x 118 (dort liegt die Figur später) | Lauf b: A 154, 156, 158, 160, 162, 164 | s0: 5 in 19; s0: 5 in 20–46; s0: 5 mit Umwerfen in 100; s1: 5 in 101–260 |
 | T8 | Kriterium 8, 0 LP und gleichzeitiger Treffer | Puppe leicht s0 x 146, 16 LP | je Lauf | je Lauf |
-| T9 | Kriterium 9, Rang | Rang nicht fest; Lauf b: Puppe leicht s0 x 146 | keine | Lauf b: in 500 Prüfangriff 80; Lauf c: in 100 erscheint ein leichter Nahkämpfer (nicht vorplatziert, Logik an) bei x 300 |
-| T10 | Kriterium 10, Sperre und Boss | Bühne `scheibe` (Welt 2) | Eingabedatei nach Welt 12 | – |
+| T9 | Kriterium 9, Rang | Rang nicht fest; Lauf b: Puppe leicht s0 x 146 | keine | Lauf b: in 500 Prüfangriff 80; Lauf c: in 100 erscheint ein leichter Nahkämpfer (nicht vorplatziert, Logik an) bei x 300, in s1, z 100 (Satz `gegner … erscheint=100`, 11.2) (Festlegung beim Codieren, 2026-10-03, L9, L101) |
+| T10 | Kriterium 10, Sperre und Boss | Bühne `scheibe` (Welt 2), Seed 12345; Lauf a Prüfstart PS2, Lauf b PS7, Lauf c PS8b (Welt 12) (Festlegung beim Codieren, 2026-10-03, L102) | Lauf a wie Welt-T2, Lauf b wie Welt-T7 a, Lauf c wie Welt-T8 b (Festlegung beim Codieren, 2026-10-03, L102) | Lauf a wie Welt-T2: in 360 s2_lp := −1, s3_lp := −1 (Festlegung beim Codieren, 2026-10-03, L102) |
 | T11 | Sprint (9.1, 9.2) | – | R 10–12, R 16–140 (Lauf b: R 10–20, R 24–40; Lauf c: R 10–12, R 24–40) | – |
-| T12 | Sprintangriff (9.3) | Lauf b: Puppe leicht s0 x 230 | R 10–12, R 16–40, A 30 | – |
+| T12 | Sprintangriff (9.3) | Lauf b: Puppe leicht s0 x 230, 16 LP (Festlegung beim Codieren, 2026-10-03, L103) | R 10–12, R 16–40, A 30 | – |
 | T13 | Spezialangriff ohne Treffer (6.3, 9.4) | Puppe leicht s0 x 600 (Lauf b, c ohne Puppe) | A und S 10 (Lauf b: dazu A 60; Lauf c: dazu A 61) | in 54: s0_x := 146; s0: 5 in 54–81 |
-| T14 | Spezialangriff mit Treffern (6.4, 9.4) | Figur x 300; Puppe leicht s0 x 346; Puppe leicht s1 x 200, z 120 | A und S 10 | – |
+| T14 | Spezialangriff mit Treffern (6.4, 9.4) | Figur x 300; Puppe leicht s0 x 346, 16 LP; Puppe leicht s1 x 200, z 120, 16 LP (Festlegung beim Codieren, 2026-10-03, L103) | A und S 10 | – |
 | T15 | Sprungangriff (4.4, 5.2, 5.3) | Puppe schwer s0 x 160, 30 LP | Lauf a: S 10, A 14; Lauf b: S 10, A 30 | – |
-| T16 | Kniestoß, Haltedauer (8.2, 8.3) | Puppe leicht s0 x 160, 30 LP | Lauf a: R 10–21, A 23, 40, 41, 59; Lauf b: R 10–21, R 90–95, R 120 | – |
+| T16 | Kniestoß, Haltedauer (8.2, 8.3) | Puppe leicht s0 x 160, 30 LP | Lauf a: R 10–21, A 23, 39, 41, 59; Lauf b: R 10–21, R 90–95, R 120 (Festlegung beim Codieren, 2026-10-03, L69) | – |
 | T17 | Neustart der Reaktion, E3 (7) | Puppe schwer s0 x 146, 30 LP | A 10, 24 | – |
 | T18 | Umwerfen, Aufstehen, E4 (7) | Puppe leicht s0 x 146, 30 LP | A 10, 24, 38, 53, 158 | in 150: f_x := 231 |
 | T19 | Raketenwerfer (10.3) | Figur mit RW, 3 Schuss; Puppe leicht s0, 30 LP, x je Lauf | A 10 | – |
-| T20 | Verlieren, Aufnehmen, Essen (10) | Lauf a: Figur mit RW, 2 Schuss, Puppe leicht s0 x 146; Lauf b: Figur 40 LP, Kometenbraten o20 x 120 | Lauf a: A 50; Lauf b: A 10 | Lauf a: s0: 5 in 20 |
+| T20 | Verlieren, Aufnehmen, Essen (10) | Lauf a: Figur mit RW, 2 Schuss, Puppe leicht s0 x 146; Lauf b: Figur 40 LP, Kometenbraten o20 x 120, z 100 (Festlegung beim Codieren, 2026-10-03, L106) | Lauf a: A 50; Lauf b: A 10 | Lauf a: s0: 5 in 20 |
 
 **T1**
 
@@ -1030,7 +1100,7 @@ keine. Werte, die von einem Platzhalter abhängen, nennen ihn.
 | 59 | s0_x 148.875 |
 | 96 | s0_x 255.25, s0_h 0 (Bodenkontakt) |
 | 105 | s0_x 281.125 |
-| 135 | s0_zst 0 (Slot frei), Ereignis FR:s0 |
+| 135 | Spalten von s0 leer (Slot frei), Ereignis FR:s0 (Festlegung beim Codieren, 2026-10-03, L100) |
 
 **T4** (jeweils Treffer in 12, s0_lp 27)
 
@@ -1113,7 +1183,15 @@ Treffer des erscheinenden Nahkämpfers hat Schaden 8 (Rang 9 oder 10,
 Sperrwelle lebt, und läuft im Frame nach dem Tod des letzten weiter. Eine
 Kette der Stufen 1 bis 3 gegen den Boss ohne Umwerfen endet mit seinem
 Abbruchstoß, seine LP stehen danach auf dem Wert nach Welt 7.4 (E11; Welt-Test T7). Im Frame, in dem die LP des Bosses unter
-0 fallen, haben alle übrigen Gegner s_akt TOT.
+0 fallen, haben alle übrigen Gegner s_akt TOT. Drei Läufe mit Prüfstart,
+Eingabe und Eingriffen aus Welt 12, geprüft wird: Lauf a (wie Welt-T2,
+Endframe 375) kamera_x 400 von der Ankunft an der Sperre (308) bis zum
+Frame, in dem der letzte Gegner der Welle 2 stirbt (360), im Frame danach
+größer (361: 404); Lauf b (wie Welt-T7 a, Endframe 140) drei Kettentreffer
+KT1 bis KT3 (12, 27, 44) ohne Umwerfen, danach STOSS (67) mit s0_lp 100
+(lp_folge) und SA:s0:100, s0_lp 100 bis zum Endframe; Lauf c (wie Welt-T8
+b, Endframe 30) im Frame, in dem s0_lp unter 0 fällt (12), alle übrigen
+belegten Slots mit sn_akt TOT (Festlegung beim Codieren, 2026-10-03, L102).
 
 **T11**
 
@@ -1151,7 +1229,7 @@ Abbruchstoß, seine LP stehen danach auf dem Wert nach Welt 7.4 (E11; Welt-Test 
 | 54 bis 80 | Ereignisse T:s0>F:PA:5:W |
 | 61 | f_akt STAND, f_schutz 20, f_zst 3 |
 | 80 | f_schutz 1, f_lp 72 |
-| 81 | f_schutz 0, f_zst 1, f_lp 67 |
+| 81 | f_schutz 27, f_zst 3, f_lp 67, Ereignis T:s0>F:PA:5:R (Treffer in H = 81 wirksam: schutz zählt in KS2 auf 0, der Treffer setzt schutz = 27) (Festlegung beim Codieren, 2026-10-03, L104) |
 | Lauf b | f_akt STAND in 61 und 62 (Druck in P+50 verfällt) |
 | Lauf c | f_akt SCHLAG in 62 |
 
@@ -1186,7 +1264,7 @@ Abbruchstoß, seine LP stehen danach auf dem Wert nach Welt 7.4 (E11; Welt-Test 
 | Lauf | Frame | erwartet |
 |---|---|---|
 | a | 28 | s0_lp 26 (Kniestoß 1) |
-| a | 40 bis 45 | s0_lp 26 (Druck in 40 verfällt) |
+| a | 40 bis 45 | s0_lp 26 (Druck in 39 verfällt; 41 ist ein neuer Druck in K+18) (Festlegung beim Codieren, 2026-10-03, L69) |
 | a | 46 | s0_lp 22 |
 | a | 64 | s0_lp 18, s0_akt UMGEWORFEN (dritter Kniestoß) |
 | a | 122 | s0_x 283.75 (Bahn F2 ab x 140, P19) |
@@ -1213,7 +1291,7 @@ Abbruchstoß, seine LP stehen danach auf dem Wert nach Welt 7.4 (E11; Welt-Test 
 | 111 | s0_x 281.125, s0_akt LIEGEN |
 | 143 | s0_akt AUFSTEHEN |
 | 160 | s0_zst 2, s0_lp 8 (Schlag aktiv, kein Treffer) |
-| 161 | s0_zst 1, s0_lp 5 (G = W+105, sofort verwundbar) |
+| 161 | s0_zst 3, s0_lp 5, Ereignis T:F>s0:KT1:3:R (G = W+105, sofort verwundbar: der Treffer in G wirkt, im Trefferframe gilt Zustand 3 wie in T3, Frame 12) (Festlegung beim Codieren, 2026-10-03, L105) |
 
 **T19**
 
@@ -1238,7 +1316,10 @@ Abbruchstoß, seine LP stehen danach auf dem Wert nach Welt 7.4 (E11; Welt-Test 
 **D1 Determinismus (11.6).** T1 bis T20 zweimal und auf einem zweiten
 Rechner: MD5 von `protokoll.csv` und `objekte.csv` je Test gleich. Mit
 anderem Seed dürfen Tests mit Zufall abweichen (T9 Lauf c, T10), mit
-demselben nicht.
+demselben nicht. Hinweis: Der automatische Test läuft zweimal auf demselben
+Rechner; den zweiten Rechner ersetzt der Vergleich mit einem abgelegten
+Referenzprotokoll (`docs/scheibe.md`, „Abnahme“) (Festlegung beim
+Codieren, 2026-10-03, L107).
 
 ## 13. Offen bis Messpaket 2
 
@@ -1298,7 +1379,7 @@ Blickrichtungen.
 | P16 | 6.2 | wirksamer Treffer beendet den Griff: Gegner frei, Griffsperre 30 Frames; ein wirkungsloser Treffer im Schutz nicht (E2) |
 | P17 | 6.3 | Schutz wirkt gegen alle Gegnertreffer, auch Geschosse (`design.md`, Abschnitt 4.7, E2); im Vorbild treffen Geschosse im Schutz nach einem Treffer (notes.md, „Nachtrag: Fernangriffe der Gegner“) |
 | P18 | 7 | Liegedauer des schweren Nahkämpfers gleichverteilt aus 16, 20, …, 44, gezogen bei der Ruhe |
-| P19 | 8.1, 8.4 | Haltelage 19 px vor der Figur in ihrer Tiefe (Vorbild 17 bis 21 px); beim Tragen E+1 bis E+21 bleibt sie; in E+22 ±13 px, 59 px hoch |
+| P19 | 8.1, 8.4 | Haltelage 19 px vor der Figur in ihrer Tiefe (Vorbild 17 bis 21 px); beim Tragen E+1 bis E+21 bleibt sie; in E+22 ±13 px, 59 px hoch; Haltelage mit dem genauen Festkommawert x + 19 · Blick, nicht ⌊x⌋ + 19 (Festlegung beim Codieren, 2026-10-03, L82) |
 | P20 | 8.1, 10.1 | mehrere Kandidaten: kleinstes \|dx\|, dann kleinste Slotnummer |
 | P21 | 8.3 | Haltefrist nach Kniestoß ab K (Losreißen K+61); nach dem dritten Kniestoß Drücke ab K+18 |
 | P22 | 9.1 | Tipps nur mit L oder R; Pause heißt keine Richtung |
@@ -1308,7 +1389,7 @@ Blickrichtungen.
 | P26 | 10.1 | Aufnahmebereich von Essen: hinten wie vorn; Raketenwerfer vorn 35 (gemessen bei Blick rechts unsicher 35 oder 37); alle Bereiche in beiden Blickrichtungen (E14) |
 | P27 | 10.4 | fallen gelassene Waffe liegt in H+1 am Ort der Figur, L = H+1 |
 | P28 | 6.5 | Höhenverlauf im Fall nach dem Neueinstieg: frei für die Darstellung, die Landung liegt fest in N+53 bzw. N+50 |
-| P29 | 5.6 | Ausfallschritt: Reichweite wie in 5.2, Nachlauf ab h wie ohne Schritt; Schritt weg wie Leerschlag der Stufe; diagonale Richtung zählt wie gerade |
+| P29 | 5.6 | Ausfallschritt: Reichweite wie in 5.2, Nachlauf ab h wie ohne Schritt; Schritt weg wie Leerschlag der Stufe; diagonale Richtung zählt wie gerade; Ausfallschritt ohne Treffer: Nachlauf wie Leerschlag der Stufe ab D, Drücke frühestens nach dem letzten aktiven Frame, Stufe 4 behält das zweite Fenster D+17 bis D+20 (Festlegung beim Codieren, 2026-10-03, L71) |
 | P30 | 6.5 | Landung beim Neueinstieg: „im Bild“ heißt 0 ≤ x − Kamera-x ≤ 383; Getroffene fliegen von der Figur weg |
 | P31 | 4.3 SCHLAG Stufe 1 | Nach einem Treffer der Stufe 1 bricht eine Richtung nur in der Tiefe die Pose nicht ab; Bewegung ab h+29, ein Frame nach STAND (h+28), wie bei Stufe 2 und 3. Vorbild nur vom Messagenten gemessen (unsicher); `mechanik.md` nennt „handlungsfähig ab h+13 (Laufen oder nächster Schlag)“, gemessen nur für Laufen zur Seite |
 
