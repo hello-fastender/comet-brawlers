@@ -1,6 +1,7 @@
 // Debug-Anzeige (Taste F1) nach docs/spezifikation-welt.md, 10.6 und
 // Auftrag 3, 2.5. Sie liest nur die Welt, wird nicht aufgezeichnet und
-// ändert weder Logik noch Protokoll.
+// ändert weder Logik noch Protokoll. Sie zeichnet in Spielpixeln (Linien
+// und Schrift 3 × 5 je Spielpixel, über die Zeichenklasse; Auftrag 5).
 //
 // Inhalt:
 //   Text: Frame, T(f), Rang und Rang-Uhr, Seed und Ziehungen, K, Ky,
@@ -33,9 +34,10 @@ import {
   KAMERA_FOLGEPUNKT,
 } from '../kern/werte.ts';
 import type { Kamera, Koerper } from './zeichnen.ts';
-import { PIXELMITTE, bildX, bildY, figurRechteck, gegnerRechteck, gegnerSichtbar, lageVon, objektSichtbar, zeichneHindernis } from './zeichnen.ts';
+import type { Zeichner } from './zeichner.ts';
+import { bildX, bildY, figurRechteck, gegnerRechteck, gegnerSichtbar, lageVon, objektSichtbar, zeichneHindernis } from './zeichnen.ts';
 import { DEBUG_MARKE, DEBUG_TEXT, FARBE, STRICH, ZIELKREUZ } from './masse.ts';
-import { SCHRIFT_3X5, text, textBreite } from './schrift.ts';
+import { SCHRIFT_3X5, textBreite } from './schrift.ts';
 
 /** Angaben außerhalb der Welt für die Debug-Anzeige. */
 export interface DebugInfo {
@@ -50,47 +52,31 @@ export interface DebugInfo {
 // Hilfen
 // ===========================================================================
 
-function kasten(ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, farbe: string, gestrichelt: boolean): void {
-  const links = Math.min(x0, x1);
-  const oben = Math.min(y0, y1);
-  const b = Math.abs(x1 - x0);
-  const h = Math.abs(y1 - y0);
-  ctx.strokeStyle = farbe;
-  ctx.lineWidth = 1;
-  ctx.setLineDash(gestrichelt ? [...STRICH] : []);
-  ctx.strokeRect(links + PIXELMITTE, oben + PIXELMITTE, b, h);
-  ctx.setLineDash([]);
+function kasten(zn: Zeichner, x0: number, y0: number, x1: number, y1: number, farbe: string, gestrichelt: boolean): void {
+  zn.umriss(Math.min(x0, x1), Math.min(y0, y1), Math.abs(x1 - x0), Math.abs(y1 - y0), farbe, gestrichelt ? STRICH : null);
 }
 
-function strich(ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, farbe: string, gestrichelt: boolean = false): void {
-  ctx.strokeStyle = farbe;
-  ctx.lineWidth = 1;
-  ctx.setLineDash(gestrichelt ? [...STRICH] : []);
-  ctx.beginPath();
-  ctx.moveTo(x0 + PIXELMITTE, y0 + PIXELMITTE);
-  ctx.lineTo(x1 + PIXELMITTE, y1 + PIXELMITTE);
-  ctx.stroke();
-  ctx.setLineDash([]);
+function strich(zn: Zeichner, x0: number, y0: number, x1: number, y1: number, farbe: string, gestrichelt: boolean = false): void {
+  zn.linie(x0, y0, x1, y1, farbe, gestrichelt ? STRICH : null);
 }
 
-function kreuz(ctx: CanvasRenderingContext2D, x: number, y: number, farbe: string): void {
-  strich(ctx, x - ZIELKREUZ, y - ZIELKREUZ, x + ZIELKREUZ, y + ZIELKREUZ, farbe);
-  strich(ctx, x - ZIELKREUZ, y + ZIELKREUZ, x + ZIELKREUZ, y - ZIELKREUZ, farbe);
+function kreuz(zn: Zeichner, x: number, y: number, farbe: string): void {
+  strich(zn, x - ZIELKREUZ, y - ZIELKREUZ, x + ZIELKREUZ, y + ZIELKREUZ, farbe);
+  strich(zn, x - ZIELKREUZ, y + ZIELKREUZ, x + ZIELKREUZ, y - ZIELKREUZ, farbe);
 }
 
 /** Text mit dunklem Grund, damit er auf jeder Fläche lesbar ist. */
-function marke(ctx: CanvasRenderingContext2D, inhalt: string, x: number, y: number, farbe: string): void {
+function marke(zn: Zeichner, inhalt: string, x: number, y: number, farbe: string): void {
   const b = textBreite(SCHRIFT_3X5, inhalt);
-  ctx.fillStyle = FARBE.debug_grund;
-  ctx.fillRect(Math.round(x) - 1, Math.round(y) - 1, b + 2, SCHRIFT_3X5.hoehe + 2);
-  text(ctx, SCHRIFT_3X5, inhalt, x, y, farbe);
+  zn.rechteck(Math.round(x) - 1, Math.round(y) - 1, b + 2, SCHRIFT_3X5.hoehe + 2, FARBE.debug_grund);
+  zn.text(SCHRIFT_3X5, inhalt, x, y, farbe);
 }
 
 /** Marken über einem Körper; die letzte Zeile steht direkt über dem Umriss. */
-function markenUeber(ctx: CanvasRenderingContext2D, r: Koerper, zeilen: readonly string[], farbe: string): void {
+function markenUeber(zn: Zeichner, r: Koerper, zeilen: readonly string[], farbe: string): void {
   let y = r.oben - DEBUG_MARKE.ueber - zeilen.length * DEBUG_MARKE.abstand;
   for (const z of zeilen) {
-    marke(ctx, z, r.links, y, farbe);
+    marke(zn, z, r.links, y, farbe);
     y += DEBUG_MARKE.abstand;
   }
 }
@@ -150,7 +136,7 @@ export function flaechenBereich(welt: Welt, inst: Angriffsinstanz, a: EntitaetBa
   }
 }
 
-function zeichneFlaeche(ctx: CanvasRenderingContext2D, welt: Welt, k: Kamera, inst: Angriffsinstanz): void {
+function zeichneFlaeche(zn: Zeichner, welt: Welt, k: Kamera, inst: Angriffsinstanz): void {
   const a = entitaet(welt, inst.angreifer);
   if (a === null || !a.belegt) return;
   const farbe = !inst.aktiv ? FARBE.flaeche_inaktiv : inst.gegen === 'gegner' ? FARBE.flaeche_gegner : FARBE.flaeche_figur;
@@ -160,15 +146,15 @@ function zeichneFlaeche(ctx: CanvasRenderingContext2D, welt: Welt, k: Kamera, in
     if (ziel === null) return;
     const la = lageVon(k, a);
     const lz = lageVon(k, ziel);
-    strich(ctx, la.x, la.schatten, lz.x, lz.schatten, farbe, gestrichelt);
-    marke(ctx, inst.code, lz.x, lz.schatten + DEBUG_MARKE.ueber, farbe);
+    strich(zn, la.x, la.schatten, lz.x, lz.schatten, farbe, gestrichelt);
+    marke(zn, inst.code, lz.x, lz.schatten + DEBUG_MARKE.ueber, farbe);
     return;
   }
   const b = flaechenBereich(welt, inst, a);
   if (b === null) return;
   if (inst.flaeche.art === 'bild') {
-    kasten(ctx, 0, 0, BILD_BREITE - 1, BILD_HOEHE - 1, farbe, gestrichelt);
-    marke(ctx, `${inst.code} BILD`, DEBUG_TEXT.x, BILD_HOEHE - DEBUG_TEXT.abstand, farbe);
+    kasten(zn, 0, 0, BILD_BREITE - 1, BILD_HOEHE - 1, farbe, gestrichelt);
+    marke(zn, `${inst.code} BILD`, DEBUG_TEXT.x, BILD_HOEHE - DEBUG_TEXT.abstand, farbe);
     return;
   }
   // Fußpunkte x0 … x1 und z0 … z1 eingeschlossen: Kasten bis zur Außenkante des letzten Pixels
@@ -176,15 +162,15 @@ function zeichneFlaeche(ctx: CanvasRenderingContext2D, welt: Welt, k: Kamera, in
   const sx1 = bildX(k, b.x1) + 1;
   const syVorn = bildY(k, b.z0) + 1;
   const syHinten = bildY(k, b.z1);
-  kasten(ctx, sx0, syHinten, sx1, syVorn, farbe, gestrichelt);
+  kasten(zn, sx0, syHinten, sx1, syVorn, farbe, gestrichelt);
   if (b.hoehe !== null && b.hoehe > 0) {
     // Höhengrenze des Ziels als zweiter Kasten darüber, verbunden an den vorderen Ecken
-    kasten(ctx, sx0, syHinten - b.hoehe, sx1, syVorn - b.hoehe, farbe, true);
-    strich(ctx, sx0, syVorn, sx0, syVorn - b.hoehe, farbe, true);
-    strich(ctx, sx1, syVorn, sx1, syVorn - b.hoehe, farbe, true);
+    kasten(zn, sx0, syHinten - b.hoehe, sx1, syVorn - b.hoehe, farbe, true);
+    strich(zn, sx0, syVorn, sx0, syVorn - b.hoehe, farbe, true);
+    strich(zn, sx1, syVorn, sx1, syVorn - b.hoehe, farbe, true);
   }
   // Kennung innen an der hinteren linken Ecke
-  marke(ctx, inst.code, sx0 + 1, syHinten + 1, farbe);
+  marke(zn, inst.code, sx0 + 1, syHinten + 1, farbe);
 }
 
 function alleInstanzen(welt: Welt): Angriffsinstanz[] {
@@ -206,23 +192,23 @@ function gegnerMarken(g: Gegner): string[] {
   return zeilen;
 }
 
-function zeichneZielpunkt(ctx: CanvasRenderingContext2D, k: Kamera, g: Gegner): void {
+function zeichneZielpunkt(zn: Zeichner, k: Kamera, g: Gegner): void {
   if (g.typ === 'Zünder') {
     if (g.zielpunkt_x === 0 && g.zielpunkt_z === 0) return;
-    kreuz(ctx, bildX(k, g.zielpunkt_x), bildY(k, g.zielpunkt_z), FARBE.zielpunkt);
+    kreuz(zn, bildX(k, g.zielpunkt_x), bildY(k, g.zielpunkt_z), FARBE.zielpunkt);
     return;
   }
   if (g.ziel_x === 0) return;
   const y = bildY(k, ganz(g.z));
   const x = bildX(k, g.ziel_x);
-  kreuz(ctx, x, y, FARBE.zielpunkt);
+  kreuz(zn, x, y, FARBE.zielpunkt);
   if (g.typ === 'Bolzer' || g.typ === 'Rammbock') {
     // Abbruchfenster nach Welt 5.4: x_Z − 32 bis x_Z + 31
-    strich(ctx, x - ABBRUCH_LINKS, y, x + ABBRUCH_RECHTS, y, FARBE.zielpunkt, true);
+    strich(zn, x - ABBRUCH_LINKS, y, x + ABBRUCH_RECHTS, y, FARBE.zielpunkt, true);
   }
 }
 
-function zeichneAufnahme(ctx: CanvasRenderingContext2D, welt: Welt, k: Kamera, o: Objekt): void {
+function zeichneAufnahme(zn: Zeichner, welt: Welt, k: Kamera, o: Objekt): void {
   if (o.typ !== 'Gegenstand' || !o.aufnehmbar || o.art === '' || o.art === 'Fass' || o.art === 'Bosskiste') return;
   const bereich = AUFNEHMEN_BEREICH[o.art];
   // Fußpunkte der Figur, von denen aus sie aufnimmt: d_vorn = (x_o − x_f) · Blick in −hinten … vorn
@@ -231,14 +217,14 @@ function zeichneAufnahme(ctx: CanvasRenderingContext2D, welt: Welt, k: Kamera, o
   const blick = welt.figur.blick;
   const x0 = blick === 1 ? ox - bereich.vorn : ox - bereich.hinten;
   const x1 = blick === 1 ? ox + bereich.hinten : ox + bereich.vorn;
-  kasten(ctx, bildX(k, x0), bildY(k, oz + AUFNEHMEN_TIEFE), bildX(k, x1) + 1, bildY(k, oz - AUFNEHMEN_TIEFE) + 1, FARBE.aufnahme, true);
+  kasten(zn, bildX(k, x0), bildY(k, oz + AUFNEHMEN_TIEFE), bildX(k, x1) + 1, bildY(k, oz - AUFNEHMEN_TIEFE) + 1, FARBE.aufnahme, true);
 }
 
-function zeichneBehaelterFlaeche(ctx: CanvasRenderingContext2D, k: Kamera, o: Objekt): void {
+function zeichneBehaelterFlaeche(zn: Zeichner, k: Kamera, o: Objekt): void {
   if (o.typ !== 'Behälter' || o.zerbrochen) return;
   const x = ganz(o.x);
   const z = ganz(o.z);
-  kasten(ctx, bildX(k, x - BEHAELTER_HALB_X), bildY(k, z + BEHAELTER_HALB_Z), bildX(k, x + BEHAELTER_HALB_X) + 1, bildY(k, z - BEHAELTER_HALB_Z) + 1, FARBE.hindernis, true);
+  kasten(zn, bildX(k, x - BEHAELTER_HALB_X), bildY(k, z + BEHAELTER_HALB_Z), bildX(k, x + BEHAELTER_HALB_X) + 1, bildY(k, z - BEHAELTER_HALB_Z) + 1, FARBE.hindernis, true);
 }
 
 // ===========================================================================
@@ -246,45 +232,45 @@ function zeichneBehaelterFlaeche(ctx: CanvasRenderingContext2D, k: Kamera, o: Ob
 // ===========================================================================
 
 /** Debug-Inhalte in Weltlage (mit Bildschütteln wie die Szene). */
-export function zeichneDebugWelt(ctx: CanvasRenderingContext2D, welt: Welt): void {
+export function zeichneDebugWelt(zn: Zeichner, welt: Welt): void {
   const k: Kamera = { x: welt.kamera.x, y: welt.kamera.y };
-  ctx.save();
-  ctx.translate(welt.kamera.schuetteln_x, welt.kamera.schuetteln_y);
+  zn.sichern();
+  zn.verschieben(welt.kamera.schuetteln_x, welt.kamera.schuetteln_y);
   // Hindernisse und Grundflächen der Behälter
-  for (const h of welt.stage.hindernisse) zeichneHindernis(ctx, k, h, FARBE.hindernis_flaeche);
-  for (const o of welt.objekte) if (o.belegt) zeichneBehaelterFlaeche(ctx, k, o);
+  for (const h of welt.stage.hindernisse) zeichneHindernis(zn, k, h, FARBE.hindernis_flaeche);
+  for (const o of welt.objekte) if (o.belegt) zeichneBehaelterFlaeche(zn, k, o);
   // Folgepunkt (KA1) und Totzone der Arena (KA8)
-  strich(ctx, KAMERA_FOLGEPUNKT, 0, KAMERA_FOLGEPUNKT, BILD_HOEHE - 1, FARBE.folgepunkt, true);
+  strich(zn, KAMERA_FOLGEPUNKT, 0, KAMERA_FOLGEPUNKT, BILD_HOEHE - 1, FARBE.folgepunkt, true);
   const arena = welt.stage.arena;
   if (arena !== null && welt.kamera.modus === 'ARENA') {
-    strich(ctx, arena.totzone_links, 0, arena.totzone_links, BILD_HOEHE - 1, FARBE.totzone, true);
-    strich(ctx, arena.totzone_rechts, 0, arena.totzone_rechts, BILD_HOEHE - 1, FARBE.totzone, true);
+    strich(zn, arena.totzone_links, 0, arena.totzone_links, BILD_HOEHE - 1, FARBE.totzone, true);
+    strich(zn, arena.totzone_rechts, 0, arena.totzone_rechts, BILD_HOEHE - 1, FARBE.totzone, true);
   }
   // Aufnahmebereiche, Zielpunkte
-  for (const o of welt.objekte) if (o.belegt) zeichneAufnahme(ctx, welt, k, o);
-  for (const g of welt.gegner) if (gegnerSichtbar(welt, g)) zeichneZielpunkt(ctx, k, g);
+  for (const o of welt.objekte) if (o.belegt) zeichneAufnahme(zn, welt, k, o);
+  for (const g of welt.gegner) if (gegnerSichtbar(welt, g)) zeichneZielpunkt(zn, k, g);
   // Trefferflächen aller Angriffsinstanzen
-  for (const inst of alleInstanzen(welt)) zeichneFlaeche(ctx, welt, k, inst);
+  for (const inst of alleInstanzen(welt)) zeichneFlaeche(zn, welt, k, inst);
   // Treffer dieses Frames: Ziel weiß umrahmt
   for (const t of welt.treffer) {
     const ziel = entitaet(welt, t.ziel);
     if (ziel === null || !ziel.belegt) continue;
     const l = lageVon(k, ziel);
-    kasten(ctx, l.x - ZIELKREUZ * 2, l.fuss - ZIELKREUZ * 2, l.x + ZIELKREUZ * 2, l.fuss, FARBE.treffer, false);
+    kasten(zn, l.x - ZIELKREUZ * 2, l.fuss - ZIELKREUZ * 2, l.x + ZIELKREUZ * 2, l.fuss, FARBE.treffer, false);
   }
   // Zustandsnamen
-  for (const g of welt.gegner) if (gegnerSichtbar(welt, g)) markenUeber(ctx, gegnerRechteck(k, g), gegnerMarken(g), FARBE.debug_text);
+  for (const g of welt.gegner) if (gegnerSichtbar(welt, g)) markenUeber(zn, gegnerRechteck(k, g), gegnerMarken(g), FARBE.debug_text);
   for (const o of [...welt.objekte, ...welt.geschosse]) {
     if (!objektSichtbar(o)) continue;
     const l = lageVon(k, o);
-    marke(ctx, `${o.schluessel.toUpperCase()} ${o.art !== '' ? o.art : o.typ}${o.flugphase !== '' ? ` ${o.flugphase}` : ''}`, l.x, l.schatten + DEBUG_MARKE.ueber, FARBE.debug_text);
+    marke(zn, `${o.schluessel.toUpperCase()} ${o.art !== '' ? o.art : o.typ}${o.flugphase !== '' ? ` ${o.flugphase}` : ''}`, l.x, l.schatten + DEBUG_MARKE.ueber, FARBE.debug_text);
   }
   // Figur: Marke unter dem Schatten, damit sie nicht mit den Marken der Gegner kollidiert
   const f = welt.figur;
   const lf = lageVon(k, f);
   const rf = figurRechteck(k, f);
-  marke(ctx, `F ${f.aktion}${f.phase !== '' ? ` ${f.phase}` : ''} UHR ${f.uhr}`, rf.links, lf.schatten + DEBUG_MARKE.ueber + DEBUG_MARKE.abstand, FARBE.debug_text);
-  ctx.restore();
+  marke(zn, `F ${f.aktion}${f.phase !== '' ? ` ${f.phase}` : ''} UHR ${f.uhr}`, rf.links, lf.schatten + DEBUG_MARKE.ueber + DEBUG_MARKE.abstand, FARBE.debug_text);
+  zn.zurueck();
 }
 
 /** Bricht einen langen Text in Zeilen, die in die Bildbreite passen. */
@@ -296,7 +282,7 @@ function umbrechen(inhalt: string): string[] {
 }
 
 /** Debug-Text oben links unter der Anzeigeleiste (ohne Bildschütteln). */
-export function zeichneDebugText(ctx: CanvasRenderingContext2D, welt: Welt, info: DebugInfo): void {
+export function zeichneDebugText(zn: Zeichner, welt: Welt, info: DebugInfo): void {
   const f = welt.figur;
   const k = welt.kamera;
   const r = welt.rechte;
@@ -311,7 +297,7 @@ export function zeichneDebugText(ctx: CanvasRenderingContext2D, welt: Welt, info
   if (welt.ereignisse.length > 0) zeilen.push(...umbrechen(`EREIGNIS ${welt.ereignisse.join(' ')}`));
   let y = DEBUG_TEXT.zeile;
   for (const z of zeilen) {
-    marke(ctx, z, DEBUG_TEXT.x, y, FARBE.debug_text);
+    marke(zn, z, DEBUG_TEXT.x, y, FARBE.debug_text);
     y += DEBUG_TEXT.abstand;
   }
 }

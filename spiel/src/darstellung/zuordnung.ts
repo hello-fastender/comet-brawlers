@@ -82,10 +82,16 @@ export interface AtlasAnimation {
 /** Atlas eines Sprite-Blatts (Figuren, Objekte). */
 export interface SpriteAtlas {
   blatt: string;
+  /** Auftrag 5: 2 = Bilder, Maße und Anker in Bildpixeln; 1 oder fehlend = Spielpixel (blaetter.ts massstabVon) */
+  massstab?: number;
   animationen: Record<string, AtlasAnimation>;
 }
 
-/** Sprite-Blätter der Darstellung (rammbock_fremd wird nicht geladen, E24). */
+/**
+ * Sprite-Blätter der Darstellung (rammbock_fremd wird nicht geladen, E24).
+ * Die Namen sind die Blätter der Zuordnung; welche Datei je Blatt geladen
+ * wird (<name> oder <name>_grok), entscheidet die Blattwahl (blaetter.ts).
+ */
 export const SPRITE_BLAETTER = ['vela', 'bolzer', 'puppe', 'rammbock', 'zuender', 'ballast', 'objekte'] as const;
 export type SpriteBlatt = (typeof SPRITE_BLAETTER)[number];
 /** Alle Sprite-Atlanten nach Blattname. */

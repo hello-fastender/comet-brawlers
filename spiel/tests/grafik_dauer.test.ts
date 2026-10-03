@@ -59,7 +59,7 @@ import {
   ZR_EXPLOSION_BIS,
 } from '../src/kern/werte.ts';
 import { SPRITE_BLAETTER, summe } from '../src/darstellung/zuordnung.ts';
-import { atlantenLesen } from './grafik_einbau_hilfe.ts';
+import { atlantenLesen, blaetterText } from './grafik_einbau_hilfe.ts';
 
 // Auftrag 4, Phase 3 (G7): Die Summe der Bilddauern einer Animation ist nicht
 // länger als die Aktion der Logik, die sie zeigt (werte.ts). Die Darstellung
@@ -68,6 +68,8 @@ import { atlantenLesen } from './grafik_einbau_hilfe.ts';
 // mit Dauer braucht hier eine Logikdauer, sonst schlägt der Test fehl.
 // Ausnahmen sind Effekte, die die Darstellung bewusst länger führt, als der
 // Kern sie kennt (G4-5, G4-8); für sie gilt ihre eigene Regel (zweiter Test).
+// Geprüft werden die Blätter der Blattwahl (Grok-Fassung, wenn gebaut;
+// Auftrag 5); die Grok-Blätter tragen dieselben Animationsnamen.
 
 const A: Atlanten = atlantenLesen();
 
@@ -197,6 +199,7 @@ const DARSTELLUNG: Readonly<Record<string, { min: number; max: number; regel: st
 };
 
 test('Bilddauern: Summe je Animation nicht länger als die Aktion der Logik (werte.ts)', (t) => {
+  t.diagnostic(`Blätter: ${blaetterText()}`);
   const fehlt: string[] = [];
   const zulang: string[] = [];
   let geprueft = 0;

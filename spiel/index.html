@@ -12,10 +12,11 @@
 </style>
 </head>
 <body>
-<canvas id="bild" width="384" height="224" tabindex="0" aria-label="Comet Brawlers, vertikale Scheibe"></canvas>
+<canvas id="bild" width="768" height="448" tabindex="0" aria-label="Comet Brawlers, vertikale Scheibe"></canvas>
 <div id="meldung"></div>
 <!-- Bau: npm run bauen (tsc -p tsconfig.browser.json nach dist/); Start: npm start, dann http://localhost:8080/ -->
-<!-- Grafik: main.js lädt vor dem ersten Bild die Blätter aus grafik/ausgabe/ (docs/grafik.md 9); ?platzhalter=1 zeichnet die Rechtecke, ebenso wenn ein Blatt nicht lädt (Meldung in der Konsole). -->
+<!-- Grafik: main.js lädt vor dem ersten Bild die Blätter aus grafik/ausgabe/ (docs/grafik.md 9), nach blaetter.json die Grok-Fassung, wenn gebaut (9.10); ?platzhalter=1 zeichnet die Rechtecke, ebenso wenn ein Blatt nicht lädt (Meldung in der Konsole). -->
+<!-- Bild: 768 × 448 Bildpixel (zwei je Spielpixel, E25); main.js skaliert das Canvas ganzzahlig auf das Fenster, in einem Fenster unter 768 × 448 Gerätepixeln weich verkleinert. -->
 <script type="module" src="dist/darstellung/main.js" onerror="document.getElementById('meldung').textContent = 'dist/darstellung/main.js fehlt: zuerst im Ordner spiel/ npm run bauen ausführen.'"></script>
 </body>
 </html>

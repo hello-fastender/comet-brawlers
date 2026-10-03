@@ -9,6 +9,18 @@
 import type { GegenstandArt, GegnerTyp } from '../kern/entitaeten.ts';
 
 // ===========================================================================
+// Darstellung bei doppelter Auflösung (E25; Auftrag 5, Phase 1, U1;
+// docs/grafik.md 9.10)
+// ===========================================================================
+
+/**
+ * Bildpixel je Spielpixel: Das Canvas hat DARSTELLUNG · 384 × DARSTELLUNG · 224
+ * Bildpixel (768 × 448), die Logik und alle Lagen der Darstellung rechnen in
+ * Spielpixeln. Nur die Zeichenklasse (zeichner.ts) multipliziert damit.
+ */
+export const DARSTELLUNG = 2;
+
+// ===========================================================================
 // Zeit (Spielschleife nach E13, Kampf 2.1)
 // ===========================================================================
 
@@ -214,7 +226,11 @@ export const FARBE = {
 
 /** Ordner der Blätter relativ zu index.html (Auftrag 4, 2.2: der Browser lädt grafik/ausgabe/ direkt). */
 export const GRAFIK_ORDNER = 'grafik/ausgabe/';
-/** Konturviolett RGB (palette.ts KONTUR, docs/grafik.md 1.2): nur diese Pixel zeigt das Schutzblinken (G4-15). */
+/**
+ * Konturviolett RGB (palette.ts KONTUR, docs/grafik.md 1.2): nur diese Pixel
+ * zeigt das Schutzblinken (G4-15). Blätter ohne ein Pixel in dieser Farbe
+ * (Grok-Blätter, Auftrag 5) blinken mit ihrem Rand (blaetter.ts konturMaske).
+ */
 export const KONTUR_RGB: readonly [number, number, number] = [0x14, 0x0e, 0x22];
 /** Schatten der Sprites: SCHATTEN_BLAU (palette.ts) mit der Deckkraft von FARBE.schatten (Auftrag 4, 1.5: „wie heute“), Ellipse pixelgenau. */
 export const SCHATTEN_SPRITE = { farbe: '#0a1230', deckkraft: 0.45 } as const;

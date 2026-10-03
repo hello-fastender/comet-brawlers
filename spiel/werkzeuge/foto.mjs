@@ -15,16 +15,17 @@
 // docs/bilder/szene_<frame>.png (Frame vierstellig mit führenden Nullen),
 // dazu ein Bild mit Debug-Anzeige nach docs/bilder/szene_debug.png
 // (Frame --debug-frame, Standard 718: Spezialangriff mit Trefferfläche, ein
-// Bolzer im Angriff, der Rammbock im Anmarsch). Das Bild ist 768 × 448
-// (Raster 384 × 224, zweifach skaliert).
+// Bolzer im Angriff, der Rammbock im Anmarsch). Das Bild ist 768 × 448, die
+// Größe, in der das Spiel zeichnet (Raster 384 × 224 mit zwei Bildpixeln je
+// Spielpixel, E25, Auftrag 5), ohne weitere Vergrößerung.
 //
 // Dazu (Auftrag 4, Phase 3, G7; außer mit --nur-reihe oder --szene):
 // szene_arena.png aus der Prüfszene tests/szenen/grafik_arena.txt (Welle 7
 // mit dem Ballast, Frame 138: Vela schlägt Kette 2 gegen einen Bolzer, der
 // Ballast holt zum Armschwung aus) und szene_nah.png, ein Ausschnitt
-// 152 × 88 um Vela und den nächsten Bolzer in dreifacher Größe (456 × 264)
-// aus der Vorführung (Frame 182: Kette 2 im Trefferstopp mit Magnetstoß und
-// Funke). Am Ende beendet es Browser und Server. Meldungen der Seite
+// 152 × 88 Spielpixel (304 × 176 Bildpixel) um Vela und den nächsten Bolzer,
+// das Canvas zweifach vergrößert (608 × 352), aus der Vorführung (Frame 182:
+// Kette 2 im Trefferstopp mit Magnetstoß und Funke). Am Ende beendet es Browser und Server. Meldungen der Seite
 // (console.warn, console.error, etwa eine Ersatzwahl der Grafik) gibt es aus.
 //
 // Mit --szene spielt es statt des Spielstarts eine Prüfszene (Kampf 11.2)
@@ -51,10 +52,13 @@ const EINGABE_STANDARD = 'tests/eingaben/vorfuehrung.txt';
 const ABSTAND_STANDARD = 300;
 /** Frame des Bildes mit Debug-Anzeige (siehe Kopf). */
 const DEBUG_FRAME_STANDARD = 718;
-/** Logisches Raster (Kampf 2.3) und Vergrößerung der Bilder. */
+/** Logisches Raster in Spielpixeln (Kampf 2.3) und Bildpixel je Spielpixel (masse.ts DARSTELLUNG, E25). */
 const BILD_BREITE = 384;
 const BILD_HOEHE = 224;
-const SKALA = 2;
+const DARSTELLUNG = 2;
+/** Canvas in Bildpixeln (768 × 448): Fenster der Szenenbilder, das Canvas erscheint 1:1. */
+const CANVAS_BREITE = BILD_BREITE * DARSTELLUNG;
+const CANVAS_HOEHE = BILD_HOEHE * DARSTELLUNG;
 /** Stellen der Frame-Nummer im Dateinamen. */
 const STELLEN = 4;
 /** Browser der Umgebung (Auftrag 3, 2.1). */
@@ -65,8 +69,8 @@ const NODE_MODULE = '/opt/node22/lib/node_modules';
 const WARTEN_MS = 30000;
 /** Szenenbild der Arena: Prüfszene, Eingabe, Frame (siehe Kopf). */
 const ARENA = { szene: 'tests/szenen/grafik_arena.txt', eingabe: 'tests/eingaben/grafik_arena.txt', frame: 138 };
-/** Nahbild: Frame der Vorführung, Ausschnitt im Raster, Vergrößerung, Rand unter dem tieferen Fußpunkt (siehe Kopf). */
-const NAH = { frame: 182, breite: 152, hoehe: 88, skala: 3, unten: 10 };
+/** Nahbild: Frame der Vorführung, Ausschnitt in Spielpixeln, Vergrößerung des Canvas, Rand unter dem tieferen Fußpunkt (siehe Kopf). */
+const NAH = { frame: 182, breite: 152, hoehe: 88, skala: 2, unten: 10 };
 /** Bildschirm-y des Fußpunkts zur Tiefe 0 (Kampf 2.5: 234 − (⌊z⌋ − Ky)). */
 const BILDSCHIRM_Y_BASIS = 234;
 
@@ -185,7 +189,7 @@ async function haupt() {
   const server = await starteServer(SPIEL);
   const browser = await chromium.launch();
   try {
-    const seite = await browser.newPage({ viewport: { width: BILD_BREITE * SKALA, height: BILD_HOEHE * SKALA }, deviceScaleFactor: 1 });
+    const seite = await browser.newPage({ viewport: { width: CANVAS_BREITE, height: CANVAS_HOEHE }, deviceScaleFactor: 1 });
     const fehler = [];
     seite.on('pageerror', (e) => fehler.push(e.message));
     seite.on('console', (m) => {
@@ -219,8 +223,8 @@ async function haupt() {
       await seite.evaluate(([s, t]) => window.comet.ladeSzene(s, t), [arenaSzene, arenaEingabe]);
       await seite.evaluate((n) => window.comet.schritt(n), ARENA.frame);
       await bild(`${a.praefix}_arena.png`);
-      // Nahbild: Ausschnitt um Vela und den nächsten Bolzer, dreifach
-      await seite.setViewportSize({ width: BILD_BREITE * NAH.skala, height: BILD_HOEHE * NAH.skala });
+      // Nahbild: Ausschnitt um Vela und den nächsten Bolzer, Canvas zweifach
+      await seite.setViewportSize({ width: CANVAS_BREITE * NAH.skala, height: CANVAS_HOEHE * NAH.skala });
       await seite.evaluate((t) => window.comet.ladeEingabe(t), text);
       const z = await seite.evaluate((n) => window.comet.schritt(n), NAH.frame);
       const bolzer = z.gegner.filter((g) => g.typ === 'Bolzer').sort((p, q) => Math.abs(p.x - z.figur.x) - Math.abs(q.x - z.figur.x))[0];
@@ -232,7 +236,8 @@ async function haupt() {
       const box = await seite.locator('#bild').boundingBox();
       if (box === null) throw new Error('Canvas #bild nicht sichtbar');
       const pfad = join(a.aus, `${a.praefix}_nah.png`);
-      await seite.screenshot({ path: pfad, clip: { x: box.x + x0 * NAH.skala, y: box.y + y0 * NAH.skala, width: NAH.breite * NAH.skala, height: NAH.hoehe * NAH.skala } });
+      const f = DARSTELLUNG * NAH.skala;
+      await seite.screenshot({ path: pfad, clip: { x: box.x + x0 * f, y: box.y + y0 * f, width: NAH.breite * f, height: NAH.hoehe * f } });
       process.stdout.write(`${pfad}  frame ${z.frame}  Ausschnitt x ${x0} y ${y0}  figur ${z.figur.aktion}  bolzer ${bolzer === undefined ? '-' : bolzer.modus}\n`);
     }
     if (fehler.length > 0) throw new Error(`Fehler in der Seite: ${fehler.join('; ')}`);

@@ -27,13 +27,14 @@ import {
 } from '../src/kern/werte.ts';
 import { figurTeile, figurWahl, gegnerWahl } from '../src/darstellung/zuordnung.ts';
 import { Verlauf } from '../src/darstellung/verlauf.ts';
-import { atlantenLesen, scheibenWelt } from './grafik_einbau_hilfe.ts';
+import { atlantenLesen, blaetterText, scheibenWelt } from './grafik_einbau_hilfe.ts';
 
 // Auftrag 4, 1.4 und Phase 3 (G7): Für jede Angriffsanimation zeigt die
 // Zuordnung bei der Aktionsuhr des ersten aktiven Frames (werte.ts) ein Bild
 // aus dem Atlas-Feld „aktiv“. Die Zustände werden von Hand gesetzt wie in der
 // Logik zum ersten aktiven Frame (Figur: aktion, phase, uhr; Gegner: modus,
-// angriff_code, angriff_a bzw. die Felder des Bosses).
+// angriff_code, angriff_a bzw. die Felder des Bosses). Geprüft werden die
+// Blätter der Blattwahl (Grok-Fassung, wenn gebaut; Auftrag 5).
 
 const A: Atlanten = atlantenLesen();
 const BEGINN = 1000;
@@ -60,7 +61,8 @@ function figur(welt: Welt, aktion: FigurAktion, phase: FigurPhase, uhr: number, 
   return f;
 }
 
-test('Trefferbild im aktiven Frame: Vela (Kette mit und ohne Ausfallschritt, Sprungangriffe, Kniestoß, Wurf, Spezial, Sprintangriffe, Waffe)', () => {
+test('Trefferbild im aktiven Frame: Vela (Kette mit und ohne Ausfallschritt, Sprungangriffe, Kniestoß, Wurf, Spezial, Sprintangriffe, Waffe)', (t) => {
+  t.diagnostic(`Blätter: ${blaetterText()}`);
   const welt = scheibenWelt();
   welt.frame = BEGINN;
   let geprueft = 0;

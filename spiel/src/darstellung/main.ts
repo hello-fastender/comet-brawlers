@@ -1,7 +1,9 @@
-// Browserfassung der Scheibe (Auftrag 3, 2.5): Canvas 2D im Raster
-// 384 × 224, ganzzahlig skaliert, Tastatur, Debug-Anzeige, Pause,
-// Eingabeaufzeichnung, Neustart, Spielschleife nach E13 und die
-// Debug-Schnittstelle window.comet für Playwright.
+// Browserfassung der Scheibe (Auftrag 3, 2.5): Canvas 2D mit 768 × 448
+// Bildpixeln für das Raster 384 × 224 (E25, Auftrag 5: zwei Bildpixel je
+// Spielpixel, Zeichenklasse zeichner.ts), ganzzahlig auf das Fenster
+// skaliert, Tastatur, Debug-Anzeige, Pause, Eingabeaufzeichnung, Neustart,
+// Spielschleife nach E13 und die Debug-Schnittstelle window.comet für
+// Playwright.
 //
 // Die Darstellung liest nur den Kern (Welt, anzeige(welt)) und ruft ihn nur
 // über die Sitzung auf (erzeugeWelt, logikSchritt); sie hat keine eigene
@@ -25,7 +27,6 @@ import { EINS } from '../kern/festkomma.ts';
 import { blickText } from '../kern/entitaeten.ts';
 import { anzeige } from '../kern/rahmen.ts';
 import { tastenZuText } from '../kern/tasten.ts';
-import { BILD_BREITE, BILD_HOEHE } from '../kern/werte.ts';
 import { protokollSpalten, protokollZeile } from '../pruef/protokoll.ts';
 import { parseSzene } from '../pruef/szene.ts';
 import { zeichneDebugText, zeichneDebugWelt } from './debug.ts';
@@ -35,6 +36,7 @@ import { Tastatur } from './tastatur.ts';
 import { ladeGrafik } from './sprites.ts';
 import { Verlauf } from './verlauf.ts';
 import { zeichneBild, zeichneObersteEbene } from './zeichnen.ts';
+import { BILDPIXEL, Zeichner, canvasEinrichten } from './zeichner.ts';
 
 /** Stage-Datei einer Bühne relativ zu index.html (Welt 2.3). */
 function stagePfad(buehne: string): string {
@@ -139,7 +141,8 @@ function zahl(f: number): number {
 class Spiel {
   readonly sitzung: Sitzung;
   private readonly canvas: HTMLCanvasElement;
-  private readonly ctx: CanvasRenderingContext2D;
+  /** Zeichenklasse: Spielkoordinaten auf das Canvas mit 768 × 448 Bildpixeln */
+  private readonly zn: Zeichner;
   private readonly tastatur: Tastatur;
   private readonly takt = new Takt();
   /** Sprites (Grafik und Verlauf); null = Rechtecke (?platzhalter=1 oder Rückfall) */
@@ -150,11 +153,11 @@ class Spiel {
   aufzeichnungAb: number | null = null;
 
   constructor(canvas: HTMLCanvasElement, stageText: string, seed: number, debug: boolean, grafik: Grafik | null) {
+    canvasEinrichten(canvas);
     const ctx = canvas.getContext('2d');
     if (ctx === null) throw new Error('Canvas 2D nicht verfügbar');
     this.canvas = canvas;
-    this.ctx = ctx;
-    this.ctx.imageSmoothingEnabled = false;
+    this.zn = new Zeichner(ctx);
     this.debugAn = debug;
     this.sitzung = new Sitzung(stageText, seed);
     this.sprites = grafik === null ? null : { grafik, verlauf: new Verlauf(grafik.atlanten) };
@@ -166,12 +169,21 @@ class Spiel {
     requestAnimationFrame((zeit) => this.bild(zeit));
   }
 
-  /** Ganzzahlige Skalierung auf die Fenstergröße in Gerätepixeln, schwarzer Rand (Auftrag 3, 2.5). */
+  /**
+   * Skalierung des Canvas (768 × 448 Bildpixel) auf die Fenstergröße in
+   * Gerätepixeln, schwarzer Rand (Auftrag 3, 2.5; Auftrag 5): ganzzahlig
+   * (1×, 2× …) mit image-rendering pixelated, solange das Fenster mindestens
+   * 768 × 448 Gerätepixel hat; in einem kleineren Fenster so groß wie es passt
+   * und weich verkleinert (image-rendering auto), damit das Spiel sichtbar
+   * bleibt (U1-4).
+   */
   skalieren(): void {
     const dpr = window.devicePixelRatio > 0 ? window.devicePixelRatio : 1;
-    const skala = Math.max(1, Math.floor(Math.min((window.innerWidth * dpr) / BILD_BREITE, (window.innerHeight * dpr) / BILD_HOEHE)));
-    this.canvas.style.width = `${(BILD_BREITE * skala) / dpr}px`;
-    this.canvas.style.height = `${(BILD_HOEHE * skala) / dpr}px`;
+    const passt = Math.min((window.innerWidth * dpr) / BILDPIXEL.breite, (window.innerHeight * dpr) / BILDPIXEL.hoehe);
+    const skala = passt >= 1 ? Math.floor(passt) : passt;
+    this.canvas.style.width = `${(BILDPIXEL.breite * skala) / dpr}px`;
+    this.canvas.style.height = `${(BILDPIXEL.hoehe * skala) / dpr}px`;
+    this.canvas.style.imageRendering = passt >= 1 ? '' : 'auto';
   }
 
   /** Ein Bild der Schleife (E13): Logikschritte nach dem Takt, dann zeichnen. */
@@ -257,16 +269,16 @@ class Spiel {
   }
 
   zeichnen(): void {
-    const ctx = this.ctx;
+    const zn = this.zn;
     const welt = this.sitzung.welt;
     // neue Welt (Neustart, Eingabedatei, Prüfszene): der Verlauf beginnt mit ihr neu
     this.beobachten();
-    const a = zeichneBild(ctx, welt, this.sprites);
+    const a = zeichneBild(zn, welt, this.sprites);
     if (this.debugAn) {
-      zeichneDebugWelt(ctx, welt);
-      zeichneDebugText(ctx, welt, { seed: this.sitzung.seed, tasten: this.tastatur.stand(), quelle: this.sitzung.quelle, pause: this.pauseAn });
+      zeichneDebugWelt(zn, welt);
+      zeichneDebugText(zn, welt, { seed: this.sitzung.seed, tasten: this.tastatur.stand(), quelle: this.sitzung.quelle, pause: this.pauseAn });
     }
-    zeichneObersteEbene(ctx, a, { pause: this.pauseAn, aufzeichnung: this.aufzeichnungAb !== null }, this.sprites === null ? null : this.sprites.grafik);
+    zeichneObersteEbene(zn, a, { pause: this.pauseAn, aufzeichnung: this.aufzeichnungAb !== null }, this.sprites === null ? null : this.sprites.grafik);
   }
 
   zustand(): CometZustand {

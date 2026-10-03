@@ -3,6 +3,7 @@
 // im Raster 384 × 224 scharf und auf jedem Rechner gleich sind (auch in den
 // Bildschirmfotos). Großbuchstaben, Ziffern, Umlaute und einige Zeichen;
 // Kleinbuchstaben werden groß geschrieben, Unbekanntes als „?“. Keine Logik.
+// Gezeichnet wird mit Zeichner.text (zeichner.ts) in Spielpixeln.
 
 /** Eine Schrift: Glyphen als Zeilen aus „#“ (gesetzt) und „.“ (frei). */
 export interface Schrift {
@@ -143,7 +144,8 @@ export const SCHRIFT_3X5: Schrift = { breite: 3, hoehe: 5, vorschub: 4, glyphen:
 /** Ersatzzeichen für unbekannte Zeichen. */
 const ERSATZ = '?';
 
-function glyphe(s: Schrift, zeichen: string): readonly string[] {
+/** Glyphe eines Zeichens: wie geschrieben, sonst groß geschrieben, sonst das Ersatzzeichen. */
+export function glyphe(s: Schrift, zeichen: string): readonly string[] {
   return s.glyphen[zeichen] ?? s.glyphen[zeichen.toUpperCase()] ?? (s.glyphen[ERSATZ] as readonly string[]);
 }
 
@@ -152,31 +154,4 @@ export function textBreite(s: Schrift, text: string, faktor: number = 1): number
   const n = [...text].length;
   if (n === 0) return 0;
   return (n * s.vorschub - (s.vorschub - s.breite)) * faktor;
-}
-
-/**
- * Zeichnet einen Text mit der linken oberen Ecke bei (x, y) im logischen
- * Raster; faktor vergrößert jedes Pixel. Gibt die Breite zurück.
- */
-export function text(ctx: CanvasRenderingContext2D, s: Schrift, inhalt: string, x: number, y: number, farbe: string, faktor: number = 1): number {
-  ctx.fillStyle = farbe;
-  let px = Math.round(x);
-  const py = Math.round(y);
-  for (const zeichen of inhalt) {
-    const g = glyphe(s, zeichen);
-    for (let zeile = 0; zeile < g.length; zeile++) {
-      const reihe = g[zeile] as string;
-      let anfang = -1;
-      for (let spalte = 0; spalte <= reihe.length; spalte++) {
-        const gesetzt = spalte < reihe.length && reihe[spalte] === '#';
-        if (gesetzt && anfang < 0) anfang = spalte;
-        if (!gesetzt && anfang >= 0) {
-          ctx.fillRect(px + anfang * faktor, py + zeile * faktor, (spalte - anfang) * faktor, faktor);
-          anfang = -1;
-        }
-      }
-    }
-    px += s.vorschub * faktor;
-  }
-  return textBreite(s, inhalt, faktor);
 }

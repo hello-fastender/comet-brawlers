@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readdirSync } from 'node:fs';
+import { existsSync, readdirSync } from 'node:fs';
 import type { Bahn, Figur, FigurAktion, FigurPhase, Gegner, GegnerAktion, GegnerModus, GegnerTyp, Auftritt } from '../src/kern/entitaeten.ts';
 import type { Welt } from '../src/kern/welt.ts';
 import type { Atlanten, Wahl } from '../src/darstellung/zuordnung.ts';
@@ -13,15 +13,19 @@ import { MAGNETSTOSS_ANSATZ, MAGNETSTOSS_ANSATZ_4B, WERFER_GRIFF, WERFER_MUENDUN
 import { werferPunkte } from '../grafik/quelle/figuren/vela_kampf.ts';
 import { WERFER } from '../grafik/quelle/gegenstaende.ts';
 import { MAGNETSTOSS_ANSATZ as G4_ANSATZ, MAGNETSTOSS_ANSATZ_4B as G4_ANSATZ_4B } from '../grafik/quelle/effekte.ts';
+import { GROK_ENDUNG, massstabVon } from '../src/darstellung/blaetter.ts';
+import { SPRITE_BLAETTER } from '../src/darstellung/zuordnung.ts';
 import { SPIEL } from './hilfe.ts';
-import { atlantenLesen, scheibenWelt, szeneAblaufen } from './grafik_einbau_hilfe.ts';
+import { AUSGABE, atlantenLesen, blaetterListeLesen, blaetterText, gewaehlteBlaetter, scheibenWelt, szeneAblaufen } from './grafik_einbau_hilfe.ts';
 
 // Auftrag 4, 3 und Phase 3 (G7): Jede Kombination aus Aktion und Unterphase
 // der Figur und jeder Modus je Gegnertyp hat eine Animation im Atlas; fehlt
 // eine, wählt die Zuordnung stand mit Grund (ersatz), und dieser Test schlägt
 // fehl. Geprüft je Kombination über einen Bereich der Uhr (1 bis 130) und
 // beide Blickrichtungen; dazu alle Prüfszenen und die Vorführung Frame für
-// Frame mit der Zuordnung, wie die Darstellung sie aufruft.
+// Frame mit der Zuordnung, wie die Darstellung sie aufruft. Geprüft werden
+// die Blätter, die die Darstellung lädt: nach blaetter.json die Grok-Fassung
+// <name>_grok, wenn gebaut, sonst <name> (Blattwahl, Auftrag 5; letzter Test).
 
 const A: Atlanten = atlantenLesen();
 /** Uhren, über die jede Kombination läuft (länger als jede Aktion der Tabellen). */
@@ -111,6 +115,7 @@ const FIGUR_VARIANTEN: Readonly<Record<FigurAktion, readonly FigurVariante[]>> =
 };
 
 test('Zuordnung Figur: jede Aktion aus FIGUR_AKTIONEN mit jeder Unterphase und Variante hat ihre Animation im Atlas', (t) => {
+  t.diagnostic(`Blätter: ${blaetterText()}`);
   assert.deepEqual(Object.keys(FIGUR_VARIANTEN).sort(), [...FIGUR_AKTIONEN].sort(), 'Variantentabelle deckt FIGUR_AKTIONEN nicht genau');
   const fehler = new Set<string>();
   let kombinationen = 0;
@@ -372,4 +377,23 @@ test('Zuordnung: Werferpunkte, Griffpunkt, Mündung und Magnetstoß-Ansätze in 
   assert.deepEqual({ x: WERFER_MUENDUNG.x, y: WERFER_MUENDUNG.y }, { x: WERFER.muendungspunkt.x, y: WERFER.muendungspunkt.y });
   assert.deepEqual(MAGNETSTOSS_ANSATZ.map(([x, y]) => ({ x, y })), G4_ANSATZ.map((p) => ({ x: p.x, y: p.y })));
   assert.deepEqual({ x: MAGNETSTOSS_ANSATZ_4B[0], y: MAGNETSTOSS_ANSATZ_4B[1] }, { x: G4_ANSATZ_4B.x, y: G4_ANSATZ_4B.y });
+});
+
+// ===========================================================================
+// Blattwahl (Auftrag 5): die Tests prüfen die Blätter, die die Darstellung lädt
+// ===========================================================================
+
+test('Zuordnung: die Einbautests lesen genau die Blätter der Blattwahl (blaetter.json, <name>_grok vor <name>, nie rammbock_fremd)', (t) => {
+  const liste = blaetterListeLesen();
+  const wahl = gewaehlteBlaetter();
+  t.diagnostic(`blaetter.json ${liste === null ? 'fehlt (bisherige Blätter)' : `nennt ${liste.length} Blätter`}; gewählt: ${blaetterText()}`);
+  for (const name of SPRITE_BLAETTER) {
+    const datei = wahl[name];
+    const grok = name + GROK_ENDUNG;
+    assert.equal(datei, liste !== null && liste.includes(grok) ? grok : name, `${name}: Blattwahl`);
+    assert.notEqual(datei, 'rammbock_fremd');
+    assert.ok(existsSync(`${AUSGABE}${datei}.json`), `${datei}.json fehlt`);
+    assert.equal(A[name].blatt, `${datei}.png`, `${name}: geprüft wird ${A[name].blatt}, die Darstellung lädt ${datei}.png`);
+    assert.doesNotThrow(() => massstabVon(A[name], `${datei}.json`));
+  }
 });
