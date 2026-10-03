@@ -86,6 +86,7 @@ Kometenbruchstücks und ein Zirkusschiff zwischen den Planeten.
 | Trefferstopp | 7 Frames je Treffer: Die Animation des Angreifers steht still. Beim Sprungangriff verlängert jeder Treffer die aktiven Frames um 7 | „Angriff (Standardschlag, Kette)“, „Sprungangriff“ |
 | Trefferstopp des Getroffenen | Beschlossen (E3): Der getroffene Gegner steht von h+1 bis h+8 in der Trefferpose still, zittert in h+9 bis h+14 um ±3, ±2, ±1 px und ist ab h+23 frei. Der Stillstand liegt innerhalb der 23 Frames, die Reaktion wird dadurch nicht länger. Das Zittern ist nur Animation: Die Position für Trefferprüfung und Reichweite bleibt, kein Rückstoß. Ob das Vorbild intern einen eigenen Stillstand hat, ist offen, weil die Messung Pose und Position ausgewertet hat, keinen getrennten Trefferstopp | notes.md, „Nachtrag: Trefferreaktion der Gegner“; Abschnitt 9 |
 | Rendering | skaliert nur die Ausgabe, bevorzugt ganzzahlig mit Rand; Logik und Kollision bleiben im Raster von 384 × 224 | beschlossen (E9) |
+| Grafikstil | Arcade-Pixel: Farbtreppen aus fünf Tönen je Material mit Farbverschiebung, Rasterübergänge (Bayer 4 × 4), Licht von links oben, dunkle farbige Konturen, Hintergründe gedämpfter als die Figuren; Referenz `docs/bilder/stil_1_arcade_szene.png` | beschlossen (E23) |
 
 Warum nur so: Alle Werte in `mechanik.md` sind in Pixeln und Frames des
 Originalbilds gemessen, und nur in denselben Einheiten lassen sie sich ohne
@@ -564,11 +565,13 @@ Abschnitt 1). Die Begründungen stehen in `docs/erkenntnisse.md`,
 | E20 | Welle 9 der vollen ersten Stage | wie gemessen: Pistolen-Zünder nach dem Tod des ersten Arena-Bolzers, Raketen-Zünder bei einem Viertel der Boss-LP, ein zweiter nur ab Rang 16 und bei höchstens drei anderen lebenden Gegnern; in der Scheibe gilt der Zuschnitt (E10) | `design-gegner-stages.md`, Abschnitt 7 |
 | E21 | Griff des Bosses | im Vollspiel ja (Griff mit Wurf nach `mechanik.md`, „Boss“), in der Scheibe nein | Abschnitt 8; `design-gegner-stages.md`, Abschnitte 4 und 7 |
 | E22 | Technik | TypeScript, reiner Logikkern ohne Browser, Canvas 2D in einer HTML-Seite, Prüfläufe und Abnahmetests in Node, Bildschirmfotos über Playwright, keine npm-Abhängigkeiten | Abschnitt 8; `docs/scheibe.md` |
+| E23 | Grafikstil | Arcade-Pixel, gewählt aus drei Stilproben derselben Szene (Arcade-Pixel, Comic-Pixel, gezeichnet); Einzelheiten in `docs/erkenntnisse.md`, „Entscheidungen“ | Abschnitt 3; Stilproben `docs/bilder/stil_*.png`, Werkzeug `spiel/werkzeuge/stilproben.html` |
 
 ### Offen
 
 1. Namen der Helden endgültig (E7 lässt sie wechseln).
-2. Grafikstil und Sound: Palette, Pixelstil, Musikrichtung.
+2. Sound: Musikrichtung und Geräusche. Der Grafikstil ist entschieden
+   (E23, Arcade-Pixel).
 3. Zahl der Continues: E9 nimmt den Continue-Ablauf an; eine Zahl war
    nicht vorgeschlagen.
 4. Extraleben: E9 nimmt das Punkteschema an; Extraleben waren nicht

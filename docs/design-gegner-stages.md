@@ -911,8 +911,8 @@ Zünders (E17), Armschwung des Ballast (E18), Trefferreaktion der Bosse
 
 Die übrigen Entscheidungen zu Figur, Helden, Rahmen und Schaden (zwei
 Spieler, Ausnahmen über 13 LP, Spezialangriff aus dem Griff,
-Blickrichtung) und die dort noch offenen Punkte (Heldennamen, Grafikstil
-und Sound, Continues, Extraleben) stehen in `docs/design.md`,
+Blickrichtung) und die dort noch offenen Punkte (Heldennamen, Sound,
+Continues, Extraleben; der Grafikstil ist mit E23 entschieden) stehen in `docs/design.md`,
 Abschnitt 9.
 
 ### Quellen

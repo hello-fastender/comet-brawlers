@@ -1,0 +1,754 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Stilproben (E23): dieselbe Szene in drei Grafikstilen, mit Code gezeichnet.
+     Stil 1 (Arcade-Pixel) ist gewählt; Farbtreppen, Raster und Konturen hier sind
+     die Grundlage für die Sprites. Öffnen: Datei im Browser laden. -->
+</head>
+<body>
+<title>Comet Brawlers Stilproben</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Chakra+Petch:wght@600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  /* Layout: eine Spalte; je Stil eine Tafel mit Szene in Spielgröße (doppelt), darunter Nahansicht und Einschätzung nebeneinander, schmal gestapelt. Ein Look: Eisblau-Nacht des Frachthafens. */
+  :root {
+    --nacht: #0a1222;
+    --tafel: #111c31;
+    --kante: #23324f;
+    --text: #e4ecf6;
+    --leise: #93a3bc;
+    --eis: #6fd6ff;
+    --signal: #ffa23a;
+    --display: "Chakra Petch", "Bahnschrift", "Arial Narrow", sans-serif;
+    --lauf: "Barlow", "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+    color-scheme: dark;
+  }
+  body {
+    margin: 0;
+    background: var(--nacht);
+    color: var(--text);
+    font: 16px/1.55 var(--lauf);
+  }
+  .rahmen { max-width: 1040px; margin: 0 auto; padding-inline: 16px; padding-block: 40px 64px; display: grid; gap: 40px; }
+  header { display: grid; gap: 12px; max-width: 46rem; }
+  .ort { font: 600 12px/1 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--eis); }
+  h1 { margin: 0; font: 700 clamp(30px, 5vw, 46px)/1.05 var(--display); letter-spacing: 0.01em; text-wrap: balance; }
+  header p { margin: 0; color: var(--leise); max-width: 62ch; }
+  header p strong { color: var(--text); font-weight: 600; }
+  .stil { background: var(--tafel); border: 1px solid var(--kante); border-radius: 4px; padding: 20px; display: grid; gap: 18px; }
+  .kopf { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 14px; }
+  .nr { font: 700 15px/1 var(--mono); color: var(--leise); }
+  h2 { margin: 0; font: 700 26px/1.1 var(--display); text-wrap: balance; }
+  .empf { font: 600 12px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--nacht); background: var(--signal); padding: 5px 8px; border-radius: 3px; }
+  .kurz { margin: 0; color: var(--leise); flex-basis: 100%; max-width: 64ch; }
+  .szene { width: 100%; max-width: 768px; aspect-ratio: 384 / 224; display: block; background: #000; image-rendering: pixelated; border-radius: 2px; }
+  .szene.glatt { image-rendering: auto; }
+  .unten { display: grid; grid-template-columns: minmax(0, 456px) minmax(0, 1fr); gap: 20px; align-items: start; }
+  .nah { display: grid; gap: 6px; min-width: 0; }
+  .nah canvas { width: 100%; max-width: 456px; aspect-ratio: 152 / 88; display: block; image-rendering: pixelated; border-radius: 2px; }
+  .nah canvas.glatt { image-rendering: auto; }
+  .bild-text { font: 12px/1.4 var(--mono); color: var(--leise); }
+  dl { margin: 0; display: grid; gap: 12px; min-width: 0; }
+  dt { font: 600 12px/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--eis); margin-bottom: 4px; }
+  dd { margin: 0; max-width: 62ch; }
+  footer { display: grid; gap: 10px; max-width: 46rem; color: var(--leise); }
+  footer strong { color: var(--text); }
+  @media (max-width: 760px) { .unten { grid-template-columns: minmax(0, 1fr); } .stil { padding: 16px; } }
+</style>
+
+<div class="rahmen">
+  <header>
+    <span class="ort">Comet Brawlers · Frachtkai von Perihel</span>
+    <h1>Drei Stile für dieselbe Szene</h1>
+    <p><strong>Vela</strong>, Lotsin des Hafens, mit ihren Magnethandschuhen gegen einen <strong>Bolzer</strong>, Hafenschläger des Syndikats im grau-orangen Overall mit Atemmaske. Das Spielbild hat 384 × 224 Pixel und ist hier doppelt so groß gezeigt; die Figuren haben ihre Spielgröße (Vela 76 px, Bolzer 72 px hoch).</p>
+    <p>Alle Proben sind mit Code gezeichnet. Sie zeigen die Richtung, nicht die fertige Qualität: Ein Grafiker würde jeden Stil besser ausführen.</p>
+  </header>
+
+  <section class="stil" aria-labelledby="t1">
+    <div class="kopf">
+      <span class="nr">1</span><h2 id="t1">Arcade-Pixel</h2>
+      <p class="kurz">Viele Farbstufen, Übergänge aus Rasterpunkten, dunkle farbige Konturen. So sahen Spielautomaten um 1991 aus.</p>
+    </div>
+    <canvas class="szene" id="szene1" width="384" height="224" role="img" aria-label="Szene im Stil Arcade-Pixel"></canvas>
+    <div class="unten">
+      <div class="nah"><canvas id="nah1" width="152" height="88" role="img" aria-label="Vela und Bolzer im Stil Arcade-Pixel, dreifach vergrößert"></canvas><span class="bild-text">Nahansicht, dreifach vergrößert</span></div>
+      <dl>
+        <div><dt>Stärken</dt><dd>Am nächsten am Vorbild, viel Tiefe und Material in jeder Fläche.</dd></div>
+        <div><dt>Aufwand</dt><dd>Hoch. Jede Figur braucht etwa 50 Einzelbilder, und jedes muss von Hand schattiert werden.</dd></div>
+        <div><dt>Risiko</dt><dd>Mit fünf Figuren im Bild wird es unruhig; Figuren und Hintergrund verschwimmen leichter. Ohne erfahrenen Pixelzeichner wirkt es schnell matschig.</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="stil" aria-labelledby="t2">
+    <div class="kopf">
+      <span class="nr">2</span><h2 id="t2">Comic-Pixel</h2><span class="empf">Empfehlung</span>
+      <p class="kurz">Pixelgrafik mit dicken schwarzen Umrissen, zwei Tönen je Fläche und Neonkanten vom Licht der Läden. Passt zu „kernig und comichaft: Neonlicht auf blauem Eis“ aus dem Design.</p>
+    </div>
+    <canvas class="szene" id="szene2" width="384" height="224" role="img" aria-label="Szene im Stil Comic-Pixel"></canvas>
+    <div class="unten">
+      <div class="nah"><canvas id="nah2" width="152" height="88" role="img" aria-label="Vela und Bolzer im Stil Comic-Pixel, dreifach vergrößert"></canvas><span class="bild-text">Nahansicht, dreifach vergrößert</span></div>
+      <dl>
+        <div><dt>Stärken</dt><dd>Figuren heben sich klar vom Hintergrund ab, Posen und Treffer sind auch im Getümmel sofort lesbar. Gegnervarianten entstehen über Farbtausch.</dd></div>
+        <div><dt>Aufwand</dt><dd>Mittel. Wenige Farben und klare Formen; das kann ich selbst erzeugen, ein Zeichner kommt mit einfachen Werkzeugen wie Aseprite schnell voran.</dd></div>
+        <div><dt>Risiko</dt><dd>Weniger Tiefe als Stil 1. Der Stil lebt von guten Silhouetten, die müssen sitzen.</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="stil" aria-labelledby="t3">
+    <div class="kopf">
+      <span class="nr">3</span><h2 id="t3">Gezeichnet</h2>
+      <p class="kurz">Glatte Linien und weiche Verläufe in hoher Auflösung, wie ein Zeichentrickfilm. Die Spiellogik rechnet weiter in 384 × 224, nur das Bild wird feiner.</p>
+    </div>
+    <canvas class="szene glatt" id="szene3" width="1536" height="896" role="img" aria-label="Szene im Stil Gezeichnet"></canvas>
+    <div class="unten">
+      <div class="nah"><canvas class="glatt" id="nah3" width="912" height="528" role="img" aria-label="Vela und Bolzer im Stil Gezeichnet, vergrößert"></canvas><span class="bild-text">Nahansicht, dreifach vergrößert</span></div>
+      <dl>
+        <div><dt>Stärken</dt><dd>Modern und ausdrucksstark, flüssige Animation möglich, bleibt auf großen Bildschirmen scharf.</dd></div>
+        <div><dt>Aufwand</dt><dd>Am höchsten. Braucht einen Zeichner oder Animator und eine andere Art Animation (große Einzelbilder oder Skelett-Animation).</dd></div>
+        <div><dt>Risiko</dt><dd>Diese Probe deutet den Stil nur an; das Ergebnis hängt fast ganz vom Zeichner ab. Am weitesten weg vom Pixel-Vorbild.</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <footer>
+    <p><strong>Entscheidung:</strong> Sag mir 1, 2 oder 3, gern auch eine Mischung, etwa Stil 2 mit mehr Farbstufen aus Stil 1.</p>
+  </footer>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ---------- Farben ----------
+  function hex(h) { return [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]; }
+  function rgbZuHsl(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    var mx = Math.max(r, g, b), mn = Math.min(r, g, b), h = 0, s = 0, l = (mx + mn) / 2;
+    if (mx !== mn) {
+      var d = mx - mn;
+      s = l > 0.5 ? d / (2 - mx - mn) : d / (mx + mn);
+      if (mx === r) h = (g - b) / d + (g < b ? 6 : 0); else if (mx === g) h = (b - r) / d + 2; else h = (r - g) / d + 4;
+      h *= 60;
+    }
+    return [h, s, l];
+  }
+  function hslZuRgb(h, s, l) {
+    h = ((h % 360) + 360) % 360; s = Math.max(0, Math.min(1, s)); l = Math.max(0, Math.min(1, l));
+    var c = (1 - Math.abs(2 * l - 1)) * s, x = c * (1 - Math.abs((h / 60) % 2 - 1)), m = l - c / 2, r = 0, g = 0, b = 0;
+    if (h < 60) { r = c; g = x; } else if (h < 120) { r = x; g = c; } else if (h < 180) { g = c; b = x; } else if (h < 240) { g = x; b = c; } else if (h < 300) { r = x; b = c; } else { r = c; b = x; }
+    return [Math.round((r + m) * 255), Math.round((g + m) * 255), Math.round((b + m) * 255)];
+  }
+  function zuHue(h, ziel, um) { var d = ((ziel - h + 540) % 360) - 180; return h + Math.sign(d) * Math.min(Math.abs(d), um); }
+  // Farbtreppe mit Farbverschiebung: Schatten Richtung Blau, Lichter Richtung Gelb.
+  function treppe(basis) {
+    var c = hex(basis), hsl = rgbZuHsl(c[0], c[1], c[2]), h = hsl[0], s = hsl[1], l = hsl[2];
+    return [
+      hslZuRgb(zuHue(h, 235, 18), s + 0.06, l - 0.27),
+      hslZuRgb(zuHue(h, 235, 9), s + 0.03, l - 0.14),
+      c,
+      hslZuRgb(zuHue(h, 50, 6), s - 0.02, l + 0.11),
+      hslZuRgb(zuHue(h, 50, 12), s - 0.08, l + 0.22)
+    ];
+  }
+  function u32(c) { return ((255 << 24) | (c[2] << 16) | (c[1] << 8) | c[0]) >>> 0; }
+  function css(c) { return 'rgb(' + c[0] + ',' + c[1] + ',' + c[2] + ')'; }
+  function misch(a, b, t) { return [Math.round(a[0] + (b[0] - a[0]) * t), Math.round(a[1] + (b[1] - a[1]) * t), Math.round(a[2] + (b[2] - a[2]) * t)]; }
+
+  var MAT = {
+    haut: '#e8b189', haar: '#c2502b', jacke: '#2d4f86', streifen: '#ffb444', hose: '#394259', stiefel: '#262a35',
+    handschuh: '#3f73dc', guertel: '#4a3a2e',
+    overall: '#8b909b', orange: '#e0782c', bhaut: '#cf9670', maske: '#3d424e', filter: '#5a606e', bstiefel: '#4b505d', muetze: '#b4512a'
+  };
+  var TREPPE = {};
+  Object.keys(MAT).forEach(function (k) { TREPPE[k] = treppe(MAT[k]); });
+  var LEUCHT = { spule: [126, 246, 255], brille: [255, 184, 40], auge: [26, 20, 34] };
+  var GLANZ = { handschuh: 1, haar: 1, brille: 1, maske: 1 };
+
+  // ---------- Figuren (Fußpunkt 0/0, x nach rechts, y nach unten, Blick nach rechts) ----------
+  var VELA = [
+    { k: 'kap', a: [-4, -34], b: [-9, -20], r: 5, m: 'hose' },
+    { k: 'kap', a: [-9, -20], b: [-12, -6], r: 4, m: 'hose' },
+    { k: 'poly', p: [[-17, -8], [-8, -8], [-6, -4], [-4, 0], [-18, 0]], m: 'stiefel' },
+    { k: 'kap', a: [-5, -55], b: [-1, -45], r: 3.5, m: 'jacke' },
+    { k: 'kap', a: [-1, -45], b: [7, -49], r: 3, m: 'jacke' },
+    { k: 'ell', c: [9, -50], rx: 5, ry: 4.5, m: 'handschuh' },
+    { k: 'poly', p: [[-5, -71], [-2, -66], [-7, -58], [-13, -51], [-15, -55], [-11, -63]], m: 'haar' },
+    { k: 'poly', p: [[-9, -58], [8, -58], [10, -52], [8, -41], [7, -34], [-8, -34], [-9, -42], [-11, -52]], m: 'jacke' },
+    { k: 'poly', p: [[-10, -48], [10, -48], [9, -45], [-10, -45]], m: 'streifen', eckig: 1 },
+    { k: 'poly', p: [[-9, -37], [8, -37], [8, -33], [-9, -33]], m: 'guertel', eckig: 1 },
+    { k: 'kap', a: [3, -34], b: [10, -20], r: 5.5, m: 'hose' },
+    { k: 'kap', a: [10, -20], b: [12, -6], r: 4.5, m: 'hose' },
+    { k: 'poly', p: [[7, -9], [15, -9], [19, -5], [21, 0], [7, 0]], m: 'stiefel' },
+    { k: 'kap', a: [1, -61], b: [2, -57], r: 2.6, m: 'haut' },
+    { k: 'ell', c: [2, -66], rx: 6, ry: 7, m: 'haut' },
+    { k: 'poly', p: [[-6, -67], [-5, -71], [0, -74], [6, -73.5], [8.5, -70.5], [7.5, -69], [3, -70], [-1, -68.5], [-3, -62], [-6, -62]], m: 'haar' },
+    { k: 'ell', c: [5.5, -65.5], rx: 0.8, ry: 1.3, m: 'auge', leucht: 1 },
+    { k: 'kap', a: [5, -55], b: [13, -47], r: 4, m: 'jacke' },
+    { k: 'kap', a: [13, -47], b: [20, -53], r: 3.5, m: 'jacke' },
+    { k: 'ell', c: [23, -54], rx: 6, ry: 5.5, m: 'handschuh' },
+    { k: 'kap', a: [20.5, -56], b: [25.5, -56], r: 0.6, m: 'spule', leucht: 1 },
+    { k: 'kap', a: [20.5, -52.5], b: [25, -52.5], r: 0.6, m: 'spule', leucht: 1 },
+    { k: 'kap', a: [7.5, -51.5], b: [10.5, -51.5], r: 0.6, m: 'spule', leucht: 1 }
+  ];
+  var BOLZER = [
+    { k: 'kap', a: [-5, -32], b: [-11, -18], r: 6, m: 'overall' },
+    { k: 'kap', a: [-11, -18], b: [-13, -8], r: 5, m: 'overall' },
+    { k: 'poly', p: [[-20, -11], [-6, -11], [-5, -5], [-4, 0], [-21, 0]], m: 'bstiefel' },
+    { k: 'poly', p: [[-21, -3], [-4, -3], [-4, 0], [-21, 0]], m: 'orange', eckig: 1 },
+    { k: 'kap', a: [-7, -52], b: [-4, -41], r: 4.5, m: 'overall' },
+    { k: 'kap', a: [-4, -41], b: [5, -44], r: 4, m: 'bhaut' },
+    { k: 'ell', c: [8, -45], rx: 4.5, ry: 4.5, m: 'bhaut' },
+    { k: 'poly', p: [[-12, -56], [8, -58], [13, -50], [12, -38], [9, -30], [-10, -30], [-13, -40], [-14, -50]], m: 'overall' },
+    { k: 'poly', p: [[-7, -57], [-3, -57.5], [-2, -37], [-6, -37]], m: 'orange', eckig: 1 },
+    { k: 'poly', p: [[3, -58], [7, -58], [6, -37], [2, -37]], m: 'orange', eckig: 1 },
+    { k: 'poly', p: [[-10, -34], [10, -34], [10, -30], [-10, -30]], m: 'guertel', eckig: 1 },
+    { k: 'kap', a: [4, -32], b: [11, -18], r: 6.5, m: 'overall' },
+    { k: 'kap', a: [11, -18], b: [12, -8], r: 5.5, m: 'overall' },
+    { k: 'ell', c: [11, -19], rx: 4, ry: 3.5, m: 'orange' },
+    { k: 'poly', p: [[5, -12], [19, -12], [22, -6], [23, 0], [5, 0]], m: 'bstiefel' },
+    { k: 'poly', p: [[5, -3], [23, -3], [23, 0], [5, 0]], m: 'orange', eckig: 1 },
+    { k: 'ell', c: [4, -62], rx: 7, ry: 7, m: 'bhaut' },
+    { k: 'poly', p: [[-3.5, -65], [-1, -71], [6, -72], [11, -68], [11.5, -64.5], [-3.5, -63]], m: 'muetze' },
+    { k: 'poly', p: [[3, -62], [11, -62], [12.5, -57], [8, -54.5], [3, -56]], m: 'maske' },
+    { k: 'ell', c: [11.5, -57], rx: 2.6, ry: 2.6, m: 'filter' },
+    { k: 'ell', c: [8.5, -64], rx: 2.8, ry: 1.2, m: 'brille', leucht: 1 },
+    { k: 'kap', a: [6, -52], b: [13, -43], r: 5, m: 'overall' },
+    { k: 'kap', a: [13, -43], b: [19, -49], r: 4.5, m: 'bhaut' },
+    { k: 'ell', c: [21.5, -50], rx: 5, ry: 5, m: 'bhaut' }
+  ];
+
+  var LICHT = (function () { var v = [-0.55, -0.66, 0.5], n = Math.hypot(v[0], v[1], v[2]); return [v[0] / n, v[1] / n, v[2] / n]; })();
+  var BAYER = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]];
+  function bayer(x, y) { return (BAYER[y & 3][x & 3] + 0.5) / 16; }
+
+  function polyMitte(p) {
+    var x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+    p.forEach(function (q) { x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); y0 = Math.min(y0, q[1]); y1 = Math.max(y1, q[1]); });
+    return { cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, hx: Math.max(1, (x1 - x0) / 2), hy: Math.max(1, (y1 - y0) / 2) };
+  }
+  function imPoly(p, x, y) {
+    var drin = false;
+    for (var i = 0, j = p.length - 1; i < p.length; j = i++) {
+      var xi = p[i][0], yi = p[i][1], xj = p[j][0], yj = p[j][1];
+      if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) drin = !drin;
+    }
+    return drin;
+  }
+  // Liefert die Flächennormale (2D) oder null, wenn der Punkt außerhalb liegt.
+  function treffe(f, x, y) {
+    if (f.k === 'kap') {
+      var ax = f.a[0], ay = f.a[1], bx = f.b[0] - ax, by = f.b[1] - ay, l2 = bx * bx + by * by;
+      var t = l2 > 0 ? Math.max(0, Math.min(1, ((x - ax) * bx + (y - ay) * by) / l2)) : 0;
+      var dx = x - (ax + t * bx), dy = y - (ay + t * by);
+      if (dx * dx + dy * dy > f.r * f.r) return null;
+      return [dx / f.r, dy / f.r];
+    }
+    if (f.k === 'ell') {
+      var ex = (x - f.c[0]) / f.rx, ey = (y - f.c[1]) / f.ry;
+      if (ex * ex + ey * ey > 1) return null;
+      return [ex, ey];
+    }
+    if (!imPoly(f.p, x, y)) return null;
+    if (!f._m) f._m = polyMitte(f.p);
+    var nx = (x - f._m.cx) / f._m.hx, ny = (y - f._m.cy) / f._m.hy, l = Math.hypot(nx, ny);
+    if (l > 1) { nx /= l; ny /= l; }
+    return [nx * 0.85, ny * 0.85];
+  }
+
+  // Rastert eine Figur in ein Feld: Material, Helligkeit, Teil (Reihenfolge).
+  function rastern(figur, spiegel) {
+    var B = 72, H = 84, ox = 36, oy = 80, n = B * H;
+    var feld = { b: B, h: H, ox: ox, oy: oy, mat: new Array(n), lum: new Float32Array(n), teil: new Int16Array(n).fill(-1), leucht: new Uint8Array(n) };
+    for (var py = 0; py < H; py++) {
+      for (var px = 0; px < B; px++) {
+        var x = px + 0.5 - ox, y = py + 0.5 - oy, sx = spiegel ? -x : x;
+        for (var i = figur.length - 1; i >= 0; i--) {
+          var f = figur[i], nn = treffe(f, sx, y);
+          if (!nn) continue;
+          var nx = spiegel ? -nn[0] : nn[0], ny = nn[1], nz = Math.sqrt(Math.max(0, 1 - nx * nx - ny * ny));
+          var k = py * B + px;
+          feld.mat[k] = f.m; feld.teil[k] = i; feld.leucht[k] = f.leucht ? 1 : 0;
+          feld.lum[k] = nx * LICHT[0] + ny * LICHT[1] + nz * LICHT[2];
+          break;
+        }
+      }
+    }
+    return feld;
+  }
+
+  // ---------- Pixelpuffer ----------
+  function Puffer(b, h) { this.b = b; this.h = h; this.d = new Uint32Array(b * h); this.c = new Array(b * h); }
+  Puffer.prototype.setze = function (x, y, c) { x |= 0; y |= 0; if (x < 0 || y < 0 || x >= this.b || y >= this.h) return; var k = y * this.b + x; this.c[k] = c; this.d[k] = u32(c); };
+  Puffer.prototype.hole = function (x, y) { x |= 0; y |= 0; if (x < 0 || y < 0 || x >= this.b || y >= this.h) return [0, 0, 0]; return this.c[y * this.b + x] || [0, 0, 0]; };
+  Puffer.prototype.rechteck = function (x, y, w, h, c) { for (var yy = y; yy < y + h; yy++) for (var xx = x; xx < x + w; xx++) this.setze(xx, yy, c); };
+  Puffer.prototype.zeigen = function (cv) {
+    var ctx = cv.getContext('2d'), id = ctx.createImageData(this.b, this.h);
+    new Uint32Array(id.data.buffer).set(this.d);
+    ctx.putImageData(id, 0, 0);
+  };
+  function verlaufV(P, x, y, w, h, farben, raster) {
+    var n = farben.length - 1;
+    for (var yy = 0; yy < h; yy++) for (var xx = 0; xx < w; xx++) {
+      var t = (yy / Math.max(1, h - 1)) * n, i = Math.floor(t), f = t - i;
+      if (raster) i += f > bayer(x + xx, y + yy) ? 1 : 0; else i = Math.round(t);
+      P.setze(x + xx, y + yy, farben[Math.min(n, i)]);
+    }
+  }
+  function abdunkeln(P, x, y, t, ziel) { P.setze(x, y, misch(P.hole(x, y), ziel || [8, 10, 22], t)); }
+
+  // 5×7-Pixelschrift für Schilder
+  var GLYPH = {
+    F: ['11111', '10000', '10000', '11110', '10000', '10000', '10000'],
+    U: ['10001', '10001', '10001', '10001', '10001', '10001', '01110'],
+    N: ['10001', '11001', '10101', '10011', '10001', '10001', '10001'],
+    K: ['10001', '10010', '10100', '11000', '10100', '10010', '10001'],
+    L: ['10000', '10000', '10000', '10000', '10000', '10000', '11111'],
+    A: ['01110', '10001', '10001', '11111', '10001', '10001', '10001'],
+    D: ['11110', '10001', '10001', '10001', '10001', '10001', '11110'],
+    E: ['11111', '10000', '10000', '11110', '10000', '10000', '11111'],
+    P: ['11110', '10001', '10001', '11110', '10000', '10000', '10000'],
+    R: ['11110', '10001', '10001', '11110', '10100', '10010', '10001'],
+    I: ['01110', '00100', '00100', '00100', '00100', '00100', '01110'],
+    H: ['10001', '10001', '10001', '11111', '10001', '10001', '10001'],
+    C: ['01110', '10001', '10000', '10000', '10000', '10001', '01110'],
+    T: ['11111', '00100', '00100', '00100', '00100', '00100', '00100'],
+    ' ': ['00000', '00000', '00000', '00000', '00000', '00000', '00000']
+  };
+  function schrift(P, text, x, y, s, c) {
+    for (var i = 0; i < text.length; i++) {
+      var g = GLYPH[text[i]] || GLYPH[' '];
+      for (var r = 0; r < 7; r++) for (var q = 0; q < 5; q++) if (g[r][q] === '1') P.rechteck(x + (i * 6 + q) * s, y + r * s, s, s, c);
+    }
+  }
+  function schriftMaske(text, s) {
+    var b = text.length * 6 * s, h = 7 * s, m = new Uint8Array(b * h);
+    for (var i = 0; i < text.length; i++) {
+      var g = GLYPH[text[i]] || GLYPH[' '];
+      for (var r = 0; r < 7; r++) for (var q = 0; q < 5; q++) if (g[r][q] === '1')
+        for (var yy = 0; yy < s; yy++) for (var xx = 0; xx < s; xx++) m[(r * s + yy) * b + (i * 6 + q) * s + xx] = 1;
+    }
+    return { b: b, h: h, m: m };
+  }
+  function zufall(seed) { return function () { seed |= 0; seed = (seed + 0x6d2b79f5) | 0; var t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+
+  // ---------- Hintergrund (Pixel, Stil 1 und 2) ----------
+  var SCHWARZ = [12, 12, 22];
+  var BODEN_Y = 122;
+  var FLUCHT = [192, -170];
+  function bodenX(x0, y) { return FLUCHT[0] + (x0 - FLUCHT[0]) * (y - FLUCHT[1]) / (BODEN_Y - FLUCHT[1]); }
+
+  function hintergrundPixel(P, stil) {
+    var z = zufall(7), comic = stil === 2;
+    // Eiswand
+    var eis = comic ? [hex('#16306a'), hex('#1f4a90'), hex('#2c64b0')] : [hex('#0b1838'), hex('#11244f'), hex('#183466'), hex('#21467f'), hex('#2d5c9b'), hex('#3d76b6'), hex('#5490cc')];
+    if (comic) { P.rechteck(0, 0, 384, 40, eis[0]); P.rechteck(0, 40, 384, 44, eis[1]); P.rechteck(0, 84, 384, 34, eis[2]); }
+    else verlaufV(P, 0, 0, 384, 118, eis, true);
+    // Risse und Glanz im Eis
+    for (var r = 0; r < 14; r++) {
+      var x = Math.floor(z() * 384), y = Math.floor(z() * 100), len = 6 + Math.floor(z() * 16), dir = z() < 0.5 ? -1 : 1;
+      for (var s = 0; s < len; s++) {
+        x += dir * (z() < 0.6 ? 1 : 0); y += 1;
+        if (comic) { P.setze(x, y, SCHWARZ); }
+        else { P.setze(x, y, hex('#7cc0ee')); P.setze(x + 1, y, misch(P.hole(x + 1, y), [6, 14, 40], 0.45)); }
+      }
+    }
+    if (comic) for (var g = 0; g < 18; g++) { var gx = Math.floor(z() * 384), gy = Math.floor(z() * 110); P.setze(gx, gy, hex('#bfe9ff')); P.setze(gx + 1, gy, hex('#bfe9ff')); }
+    // Eiszapfen
+    for (var e = 0; e < 26; e++) {
+      var ex = Math.floor(z() * 380), el = 4 + Math.floor(z() * 12);
+      for (var ey = 0; ey < el; ey++) {
+        var w = Math.max(1, Math.round(3 * (1 - ey / el)));
+        for (var q = 0; q < w; q++) P.setze(ex + q - (w >> 1), ey, comic ? hex('#9fdcff') : misch(hex('#a9e2ff'), hex('#3d76b6'), ey / el));
+        if (comic) { P.setze(ex - (w >> 1) - 1, ey, SCHWARZ); P.setze(ex + w - (w >> 1), ey, SCHWARZ); }
+      }
+      if (comic) P.setze(ex, el, SCHWARZ);
+    }
+    // Container links
+    var rost = comic ? [hex('#8a3a1f'), hex('#c45a28')] : treppe('#b0502a').map(function (c) { return c; });
+    for (var cy = 44; cy < 118; cy++) for (var cx = 6; cx < 120; cx++) {
+      var rib = (cx - 6) % 7, c;
+      if (comic) c = rib === 0 ? SCHWARZ : (rib < 3 ? rost[1] : rost[0]);
+      else {
+        var ton = rib === 0 ? 0 : rib === 1 ? 3 : rib === 2 ? 4 : rib < 5 ? 2 : 1;
+        if (cy - 44 < 3) ton = Math.min(4, ton + 1);
+        if ((cx * 7 + cy * 13) % 29 === 0) ton = Math.max(0, ton - 1);
+        c = rost[ton];
+      }
+      P.setze(cx, cy, c);
+    }
+    if (comic) { P.rechteck(6, 43, 114, 1, SCHWARZ); P.rechteck(5, 43, 1, 75, SCHWARZ); P.rechteck(120, 43, 1, 75, SCHWARZ); P.rechteck(6, 44, 114, 2, hex('#e07a3a')); }
+    var schildFarbe = comic ? hex('#f3e6cc') : hex('#ead8bb');
+    P.rechteck(16, 56, 92, 22, comic ? SCHWARZ : rost[0]);
+    P.rechteck(17, 57, 90, 20, comic ? hex('#26324a') : hex('#2c3448'));
+    schrift(P, 'PERIHEL', 21, 60, 2, schildFarbe);
+    schrift(P, 'FRACHT', 21, 92, 1, comic ? hex('#ffd9a8') : rost[4]);
+    // Rohr mit Dampf
+    var metall = comic ? [hex('#4d5872'), hex('#8c9ab8')] : treppe('#6f7c99');
+    for (var ry = 0; ry < 118; ry++) for (var rx = 196; rx < 208; rx++) {
+      var t = rx - 196, mc;
+      if (comic) mc = (t === 0 || t === 11) ? SCHWARZ : (t < 5 ? metall[1] : metall[0]);
+      else mc = metall[[0, 1, 3, 4, 3, 2, 2, 2, 1, 1, 0, 0][t]];
+      if (ry % 34 < 3) mc = comic ? (ry % 34 === 1 ? metall[1] : SCHWARZ) : metall[ry % 34 === 1 ? 4 : 1];
+      P.setze(rx, ry, mc);
+    }
+    P.rechteck(190, 70, 6, 6, comic ? SCHWARZ : metall[0]); P.rechteck(191, 71, 5, 4, comic ? metall[1] : metall[2]);
+    var dampf = [[184, 66, 7, 5], [176, 60, 9, 6], [167, 52, 10, 7], [160, 42, 9, 6]];
+    dampf.forEach(function (d, i) {
+      for (var yy = -d[3]; yy <= d[3]; yy++) for (var xx = -d[2]; xx <= d[2]; xx++) {
+        var v = (xx * xx) / (d[2] * d[2]) + (yy * yy) / (d[3] * d[3]);
+        if (v > 1) continue;
+        if (comic) { if (v > 0.72) P.setze(d[0] + xx, d[1] + yy, SCHWARZ); else P.setze(d[0] + xx, d[1] + yy, i % 2 ? hex('#e6f4ff') : hex('#cfe5f7')); }
+        else if (bayer(d[0] + xx, d[1] + yy) < 0.75 - v * 0.5 - i * 0.08) P.setze(d[0] + xx, d[1] + yy, misch(P.hole(d[0] + xx, d[1] + yy), hex('#dceefe'), 0.7));
+      }
+    });
+    // Funkladen rechts
+    var wand = comic ? hex('#2e2448') : null;
+    if (comic) P.rechteck(232, 26, 152, 92, wand);
+    else verlaufV(P, 232, 26, 152, 92, [hex('#1c1630'), hex('#251d3e'), hex('#2f2650'), hex('#2a2248')], true);
+    if (comic) { P.rechteck(231, 26, 1, 92, SCHWARZ); P.rechteck(231, 25, 153, 1, SCHWARZ); }
+    // Leuchtschild mit Schein
+    var mag = hex('#ff4fd8'), magHell = hex('#ffb3f0'), maske = schriftMaske('FUNKLADEN', 1), sx0 = 280, sy0 = 36;
+    for (var yy2 = -4; yy2 < maske.h + 4; yy2++) for (var xx2 = -4; xx2 < maske.b + 4; xx2++) {
+      var nah = 9;
+      for (var dy = -3; dy <= 3; dy++) for (var dx = -3; dx <= 3; dx++) {
+        var qx = xx2 + dx, qy = yy2 + dy;
+        if (qx >= 0 && qy >= 0 && qx < maske.b && qy < maske.h && maske.m[qy * maske.b + qx]) nah = Math.min(nah, Math.max(Math.abs(dx), Math.abs(dy)));
+      }
+      var X = sx0 + xx2, Y = sy0 + yy2;
+      if (nah === 0) P.setze(X, Y, magHell);
+      else if (comic) { if (nah === 1) P.setze(X, Y, mag); else if (nah === 2) P.setze(X, Y, misch(wand, mag, 0.35)); }
+      else if (nah <= 3 && bayer(X, Y) < (4 - nah) / 3.4) P.setze(X, Y, misch(P.hole(X, Y), mag, 0.75 - nah * 0.15));
+    }
+    if (comic) { P.rechteck(274, 31, 66, 1, SCHWARZ); P.rechteck(274, 50, 66, 1, SCHWARZ); }
+    // Schaufenster
+    var cyan = hex('#59f3ff');
+    if (comic) { P.rechteck(245, 57, 86, 56, SCHWARZ); P.rechteck(247, 59, 82, 52, hex('#123e52')); }
+    else verlaufV(P, 246, 58, 84, 54, [hex('#0d2c3c'), hex('#13465c'), hex('#1b5d76')], true);
+    for (var fy = 0; fy < 3; fy++) {
+      var regalY = 70 + fy * 15;
+      P.rechteck(248, regalY + 8, 80, 1, comic ? SCHWARZ : hex('#0a1e2a'));
+      for (var fx = 0; fx < 6; fx++) {
+        var gx2 = 252 + fx * 13, gw = 9, gh = 7;
+        P.rechteck(gx2, regalY, gw, gh, comic ? hex('#1f6f86') : hex('#24718a'));
+        P.rechteck(gx2 + 1, regalY + 1, 3, 2, (fx + fy) % 2 ? cyan : hex('#ffd86b'));
+        P.rechteck(gx2 + 5, regalY + 2, 3, 3, comic ? SCHWARZ : hex('#0f3442'));
+        if (comic) { P.rechteck(gx2 - 1, regalY - 1, gw + 2, 1, SCHWARZ); P.rechteck(gx2 - 1, regalY + gh, gw + 2, 1, SCHWARZ); P.rechteck(gx2 - 1, regalY, 1, gh, SCHWARZ); P.rechteck(gx2 + gw, regalY, 1, gh, SCHWARZ); }
+      }
+    }
+    // Tür
+    P.rechteck(342, 56, 32, 62, comic ? SCHWARZ : hex('#120e1e'));
+    P.rechteck(344, 58, 28, 60, comic ? hex('#3c3060') : hex('#2a2244'));
+    P.rechteck(366, 86, 3, 2, cyan);
+    // Warnstreifen an der Kante
+    for (var wy = 118; wy < 122; wy++) for (var wx = 0; wx < 384; wx++) {
+      var gelb = ((wx + wy) >> 2) & 1;
+      var c2 = gelb ? (comic ? hex('#ffcf3a') : (wy === 118 ? hex('#ffe27a') : hex('#e8b42c'))) : (comic ? SCHWARZ : hex('#1a1a24'));
+      P.setze(wx, wy, c2);
+    }
+    if (comic) P.rechteck(0, 122, 384, 1, SCHWARZ);
+    // Deck
+    var deck = comic ? [hex('#3b4a68'), hex('#4d5f84')] : [hex('#2a344b'), hex('#323e58'), hex('#3b4966'), hex('#455574'), hex('#506283')];
+    if (comic) { P.rechteck(0, 123, 384, 101, deck[0]); for (var by = 123; by < 224; by++) if (by > 170) P.rechteck(0, by, 384, 1, deck[1]); }
+    else verlaufV(P, 0, 122, 384, 102, deck, true);
+    var naehte = [122, 134, 150, 172, 200];
+    naehte.forEach(function (ny) {
+      if (ny === 122) return;
+      P.rechteck(0, ny, 384, 1, comic ? SCHWARZ : hex('#1c2335'));
+      if (!comic) P.rechteck(0, ny + 1, 384, 1, hex('#5f7194'));
+    });
+    [-120, -20, 80, 180, 280, 380, 480].forEach(function (x0) {
+      for (var yy3 = BODEN_Y + 1; yy3 < 224; yy3++) {
+        var xx3 = Math.round(bodenX(x0, yy3));
+        P.setze(xx3, yy3, comic ? SCHWARZ : hex('#1c2335'));
+        if (!comic) P.setze(xx3 + 1, yy3, hex('#5a6b8c'));
+      }
+      naehte.forEach(function (ny) {
+        if (ny === 122) return;
+        var nx = Math.round(bodenX(x0, ny));
+        [[-3, 3], [3, 3]].forEach(function (o) { P.setze(nx + o[0], ny + o[1], comic ? hex('#a9b8d6') : hex('#8fa2c4')); });
+      });
+    });
+    // Reif auf dem Deck
+    for (var fr = 0; fr < 7; fr++) {
+      var fxm = Math.floor(z() * 384), fym = 140 + Math.floor(z() * 80), frx = 8 + Math.floor(z() * 14), fry = 2 + Math.floor(z() * 3);
+      for (var yy4 = -fry; yy4 <= fry; yy4++) for (var xx4 = -frx; xx4 <= frx; xx4++) {
+        var v2 = (xx4 * xx4) / (frx * frx) + (yy4 * yy4) / (fry * fry);
+        if (v2 > 1) continue;
+        if (comic) { if (v2 < 0.5) P.setze(fxm + xx4, fym + yy4, hex('#8fb2d8')); }
+        else if (bayer(fxm + xx4, fym + yy4) < 0.6 - v2 * 0.5) P.setze(fxm + xx4, fym + yy4, misch(P.hole(fxm + xx4, fym + yy4), hex('#b9d6f2'), 0.5));
+      }
+    }
+    // Spiegelung von Schild und Fenster auf dem Deck
+    for (var sy = 124; sy < 186; sy++) for (var sx = 245; sx < 346; sx++) {
+      var tief = (sy - 124) / 62, breite = Math.abs(sx - 295) / 50;
+      var staerke = Math.pow(1 - tief, 1.6) * Math.max(0, 1 - breite * breite);
+      if (staerke <= 0) continue;
+      var farbe = sx < 292 ? cyan : mag;
+      if (comic) { if (sy % 3 === 0 && staerke > 0.35) P.setze(sx, sy, misch(P.hole(sx, sy), farbe, 0.55)); }
+      else if (bayer(sx, sy) < staerke * 0.45) P.setze(sx, sy, misch(P.hole(sx, sy), farbe, 0.4));
+    }
+  }
+
+  // ---------- Figuren zeichnen (Pixel) ----------
+  var RAND1 = [20, 14, 34];
+  var RIM = [111, 247, 255];
+  function figurPixel(P, feld, wx, wy, stil) {
+    var B = feld.b, H = feld.h, comic = stil === 2;
+    function drin(px, py) { return px >= 0 && py >= 0 && px < B && py < H && feld.teil[py * B + px] >= 0; }
+    // Außenkontur
+    var dicke = comic ? 2 : 1;
+    for (var py = 0; py < H; py++) for (var px = 0; px < B; px++) {
+      if (drin(px, py)) continue;
+      var nahe = false;
+      for (var dy = -dicke; dy <= dicke && !nahe; dy++) for (var dx = -dicke; dx <= dicke && !nahe; dx++) {
+        if (!comic && Math.abs(dx) + Math.abs(dy) > 1) continue;
+        if (comic && Math.abs(dx) === 2 && Math.abs(dy) === 2) continue;
+        if (drin(px + dx, py + dy)) nahe = true;
+      }
+      if (nahe) P.setze(wx + px - feld.ox, wy + py - feld.oy, comic ? SCHWARZ : RAND1);
+    }
+    for (var y = 0; y < H; y++) for (var x = 0; x < B; x++) {
+      var k = y * B + x, t = feld.teil[k];
+      if (t < 0) continue;
+      var m = feld.mat[k], X = wx + x - feld.ox, Y = wy + y - feld.oy;
+      if (feld.leucht[k]) { P.setze(X, Y, LEUCHT[m]); continue; }
+      var tr = TREPPE[m], lum = feld.lum[k];
+      // Teilgrenze zu einem weiter vorn liegenden Teil anderen Materials
+      var grenze = false;
+      [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(function (o) {
+        var qx = x + o[0], qy = y + o[1];
+        if (qx < 0 || qy < 0 || qx >= B || qy >= H) return;
+        var q = qy * B + qx;
+        if (feld.teil[q] > t && feld.mat[q] !== m && !feld.leucht[q]) grenze = true;
+      });
+      var aussenRechts = !drin(x + 1, y), aussenLinks = !drin(x - 1, y), aussenOben = !drin(x, y - 1), aussenUnten = !drin(x, y + 1);
+      var c;
+      if (comic) {
+        if (grenze) c = SCHWARZ;
+        else {
+          c = lum > 0.12 ? tr[2] : tr[1];
+          if (GLANZ[m] && lum > 0.86) c = tr[4];
+          if (aussenRechts && lum < 0.55) c = RIM;
+        }
+      } else {
+        var v = lum + (bayer(X, Y) - 0.5) * 0.2, ton = v > 0.8 ? 4 : v > 0.52 ? 3 : v > 0.12 ? 2 : v > -0.22 ? 1 : 0;
+        if (!GLANZ[m] && ton === 4) ton = 3;
+        if ((aussenRechts || aussenUnten) && ton > 1) ton = 1;
+        if ((aussenLinks || aussenOben) && ton < 2) ton = 2;
+        if (grenze) ton = 0;
+        c = tr[ton];
+      }
+      P.setze(X, Y, c);
+    }
+  }
+  function schattenPixel(P, wx, wy, rx, ry, stil) {
+    for (var yy = -ry; yy <= ry; yy++) for (var xx = -rx; xx <= rx; xx++) {
+      var v = (xx * xx) / (rx * rx) + (yy * yy) / (ry * ry);
+      if (v > 1) continue;
+      var X = wx + xx, Y = wy + yy;
+      if (stil === 2) abdunkeln(P, X, Y, 0.62);
+      else abdunkeln(P, X, Y, v < 0.45 ? 0.6 : (bayer(X, Y) < 0.6 ? 0.5 : 0.25));
+    }
+  }
+
+  var FELD_VELA = rastern(VELA, false), FELD_BOLZER = rastern(BOLZER, true);
+
+  function szenePixel(cv, stil) {
+    var P = new Puffer(384, 224);
+    hintergrundPixel(P, stil);
+    schattenPixel(P, 160, 178, 19, 4, stil);
+    schattenPixel(P, 238, 174, 21, 4, stil);
+    figurPixel(P, FELD_BOLZER, 238, 174, stil);
+    figurPixel(P, FELD_VELA, 160, 178, stil);
+    P.zeigen(cv);
+  }
+  function nahPixel(cv, stil) {
+    var P = new Puffer(152, 88);
+    var grund = stil === 2 ? [hex('#1b2a48'), hex('#24375c')] : [hex('#121d36'), hex('#18264a'), hex('#1f3158'), hex('#263b66')];
+    if (stil === 2) { P.rechteck(0, 0, 152, 70, grund[0]); P.rechteck(0, 70, 152, 18, grund[1]); P.rechteck(0, 70, 152, 1, SCHWARZ); }
+    else verlaufV(P, 0, 0, 152, 88, grund, true);
+    schattenPixel(P, 44, 84, 18, 3, stil);
+    schattenPixel(P, 112, 84, 20, 3, stil);
+    figurPixel(P, FELD_VELA, 44, 84, stil);
+    figurPixel(P, FELD_BOLZER, 112, 84, stil);
+    P.zeigen(cv);
+  }
+
+  // ---------- Stil 3: gezeichnet ----------
+  var LINIE = '#11131f';
+  function figurPfad(ctx, f, X, Y, S, sp) {
+    function tx(x) { return X + (sp ? -x : x) * S; }
+    function ty(y) { return Y + y * S; }
+    ctx.beginPath();
+    if (f.k === 'ell') { ctx.ellipse(tx(f.c[0]), ty(f.c[1]), f.rx * S, f.ry * S, 0, 0, Math.PI * 2); return; }
+    if (f.k === 'kap') {
+      var ax = tx(f.a[0]), ay = ty(f.a[1]), bx = tx(f.b[0]), by = ty(f.b[1]), r = f.r * S, w = Math.atan2(by - ay, bx - ax);
+      ctx.arc(ax, ay, r, w + Math.PI / 2, w + Math.PI * 1.5);
+      ctx.arc(bx, by, r, w - Math.PI / 2, w + Math.PI / 2);
+      ctx.closePath();
+      return;
+    }
+    var p = f.p.map(function (q) { return [tx(q[0]), ty(q[1])]; });
+    if (f.eckig) { ctx.moveTo(p[0][0], p[0][1]); for (var i = 1; i < p.length; i++) ctx.lineTo(p[i][0], p[i][1]); ctx.closePath(); return; }
+    var n = p.length;
+    function mitte(a, b) { return [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]; }
+    var start = mitte(p[n - 1], p[0]);
+    ctx.moveTo(start[0], start[1]);
+    for (var j = 0; j < n; j++) { var m = mitte(p[j], p[(j + 1) % n]); ctx.quadraticCurveTo(p[j][0], p[j][1], m[0], m[1]); }
+    ctx.closePath();
+  }
+  function figurBox(f) {
+    if (f.k === 'ell') return [f.c[0] - f.rx, f.c[1] - f.ry, f.c[0] + f.rx, f.c[1] + f.ry];
+    if (f.k === 'kap') return [Math.min(f.a[0], f.b[0]) - f.r, Math.min(f.a[1], f.b[1]) - f.r, Math.max(f.a[0], f.b[0]) + f.r, Math.max(f.a[1], f.b[1]) + f.r];
+    var x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+    f.p.forEach(function (q) { x0 = Math.min(x0, q[0]); y0 = Math.min(y0, q[1]); x1 = Math.max(x1, q[0]); y1 = Math.max(y1, q[1]); });
+    return [x0, y0, x1, y1];
+  }
+  function figurGlatt(ctx, figur, X, Y, S, sp) {
+    // gemeinsame Außenkontur
+    ctx.save();
+    ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    ctx.strokeStyle = LINIE; ctx.lineWidth = S * 2.0;
+    figur.forEach(function (f) { if (f.r && f.r < 1) return; figurPfad(ctx, f, X, Y, S, sp); ctx.stroke(); });
+    figur.forEach(function (f) {
+      figurPfad(ctx, f, X, Y, S, sp);
+      if (f.leucht) {
+        ctx.save(); ctx.shadowColor = css(LEUCHT[f.m]); ctx.shadowBlur = S * 2.5; ctx.fillStyle = css(LEUCHT[f.m]); ctx.fill(); ctx.restore();
+        return;
+      }
+      var tr = TREPPE[f.m], b = figurBox(f);
+      var x0 = X + (sp ? -b[2] : b[0]) * S, x1 = X + (sp ? -b[0] : b[2]) * S, y0 = Y + b[1] * S, y1 = Y + b[3] * S;
+      var g = ctx.createLinearGradient(x0, y0, x0 + (x1 - x0) * 0.9, y1);
+      g.addColorStop(0, css(tr[4])); g.addColorStop(0.35, css(tr[3])); g.addColorStop(0.7, css(tr[2])); g.addColorStop(1, css(tr[1]));
+      ctx.fillStyle = g; ctx.fill();
+      ctx.lineWidth = S * 0.7; ctx.strokeStyle = LINIE; ctx.stroke();
+      if (GLANZ[f.m] && f.k === 'ell' && f.rx > 3) {
+        ctx.save(); ctx.globalAlpha = 0.55; ctx.fillStyle = '#ffffff';
+        ctx.beginPath(); ctx.ellipse(X + (sp ? -(f.c[0] - f.rx * 0.35) : (f.c[0] - f.rx * 0.35)) * S, Y + (f.c[1] - f.ry * 0.4) * S, f.rx * 0.32 * S, f.ry * 0.2 * S, -0.5, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+      }
+    });
+    ctx.restore();
+  }
+  function schattenGlatt(ctx, x, y, rx, ry) {
+    ctx.save(); ctx.translate(x, y); ctx.scale(1, ry / rx);
+    var g = ctx.createRadialGradient(0, 0, 0, 0, 0, rx);
+    g.addColorStop(0, 'rgba(4,6,16,0.6)'); g.addColorStop(0.7, 'rgba(4,6,16,0.35)'); g.addColorStop(1, 'rgba(4,6,16,0)');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, rx, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+  }
+  function rundRechteck(ctx, x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+
+  function szeneGlatt(cv) {
+    var ctx = cv.getContext('2d'), S = cv.width / 384, z = zufall(7);
+    ctx.save(); ctx.scale(S, S);
+    // Eiswand
+    var g = ctx.createLinearGradient(0, 0, 0, 118);
+    g.addColorStop(0, '#08142f'); g.addColorStop(0.55, '#1a3b74'); g.addColorStop(1, '#4a86c4');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, 384, 118);
+    ctx.lineCap = 'round';
+    for (var r = 0; r < 14; r++) {
+      var x = z() * 384, y = z() * 100, len = 8 + z() * 18;
+      ctx.strokeStyle = 'rgba(150,215,255,0.5)'; ctx.lineWidth = 0.6;
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.quadraticCurveTo(x + (z() - 0.5) * 10, y + len / 2, x + (z() - 0.5) * 14, y + len); ctx.stroke();
+    }
+    for (var e = 0; e < 26; e++) {
+      var ex = z() * 380, el = 4 + z() * 12, eg = ctx.createLinearGradient(0, 0, 0, el);
+      eg.addColorStop(0, 'rgba(200,240,255,0.95)'); eg.addColorStop(1, 'rgba(120,190,240,0.2)');
+      ctx.fillStyle = eg; ctx.beginPath(); ctx.moveTo(ex - 1.6, 0); ctx.lineTo(ex + 1.6, 0); ctx.lineTo(ex, el); ctx.closePath(); ctx.fill();
+    }
+    // Container
+    var cg = ctx.createLinearGradient(6, 44, 120, 118);
+    cg.addColorStop(0, '#d87a44'); cg.addColorStop(0.5, '#a9482a'); cg.addColorStop(1, '#6e2a18');
+    rundRechteck(ctx, 6, 44, 114, 74, 2); ctx.fillStyle = cg; ctx.fill();
+    for (var rb = 9; rb < 120; rb += 7) {
+      ctx.fillStyle = 'rgba(255,200,150,0.22)'; ctx.fillRect(rb, 45, 1.4, 73);
+      ctx.fillStyle = 'rgba(40,10,0,0.35)'; ctx.fillRect(rb + 1.4, 45, 1.6, 73);
+    }
+    ctx.lineWidth = 1; ctx.strokeStyle = LINIE; rundRechteck(ctx, 6, 44, 114, 74, 2); ctx.stroke();
+    rundRechteck(ctx, 16, 56, 92, 22, 2); ctx.fillStyle = '#28324a'; ctx.fill();
+    ctx.fillStyle = '#efdcbc'; ctx.font = '700 15px "Chakra Petch", sans-serif'; ctx.textBaseline = 'middle'; ctx.fillText('PERIHEL', 22, 67.5);
+    ctx.fillStyle = '#ffcf9a'; ctx.font = '600 8px "Chakra Petch", sans-serif'; ctx.fillText('FRACHT', 21, 96);
+    // Rohr und Dampf
+    var rg = ctx.createLinearGradient(196, 0, 208, 0);
+    rg.addColorStop(0, '#3a445c'); rg.addColorStop(0.3, '#c3d0e6'); rg.addColorStop(0.6, '#7a88a6'); rg.addColorStop(1, '#2c3448');
+    ctx.fillStyle = rg; ctx.fillRect(196, 0, 12, 118);
+    for (var fl = 0; fl < 118; fl += 34) { ctx.fillStyle = 'rgba(20,24,40,0.55)'; ctx.fillRect(195, fl, 14, 2.5); }
+    ctx.fillStyle = '#5a6684'; ctx.fillRect(190, 70, 6, 6);
+    [[184, 66, 8], [175, 59, 10], [166, 50, 11], [158, 40, 10], [152, 30, 9]].forEach(function (d, i) {
+      var dg = ctx.createRadialGradient(d[0], d[1], 0, d[0], d[1], d[2]);
+      dg.addColorStop(0, 'rgba(235,245,255,' + (0.7 - i * 0.11) + ')'); dg.addColorStop(1, 'rgba(235,245,255,0)');
+      ctx.fillStyle = dg; ctx.beginPath(); ctx.arc(d[0], d[1], d[2], 0, Math.PI * 2); ctx.fill();
+    });
+    // Funkladen
+    var wg = ctx.createLinearGradient(0, 26, 0, 118);
+    wg.addColorStop(0, '#1b1530'); wg.addColorStop(1, '#2f2652');
+    ctx.fillStyle = wg; ctx.fillRect(232, 26, 152, 92);
+    ctx.save();
+    ctx.font = '700 11px "Chakra Petch", sans-serif'; ctx.textBaseline = 'middle';
+    ctx.shadowColor = '#ff4fd8'; ctx.shadowBlur = 8; ctx.fillStyle = '#ffc2f2'; ctx.fillText('FUNKLADEN', 279, 40);
+    ctx.shadowBlur = 3; ctx.fillText('FUNKLADEN', 279, 40);
+    ctx.restore();
+    var fg = ctx.createLinearGradient(0, 58, 0, 112);
+    fg.addColorStop(0, '#0d2e40'); fg.addColorStop(1, '#1f6a86');
+    rundRechteck(ctx, 246, 58, 84, 54, 2); ctx.fillStyle = fg; ctx.fill();
+    ctx.lineWidth = 1; ctx.strokeStyle = LINIE; ctx.stroke();
+    for (var fy = 0; fy < 3; fy++) for (var fx = 0; fx < 6; fx++) {
+      var gx = 252 + fx * 13, gy = 70 + fy * 15;
+      rundRechteck(ctx, gx, gy, 9, 7, 1.2); ctx.fillStyle = '#2a7d98'; ctx.fill();
+      ctx.save(); ctx.shadowColor = (fx + fy) % 2 ? '#59f3ff' : '#ffd86b'; ctx.shadowBlur = 4; ctx.fillStyle = ctx.shadowColor; ctx.fillRect(gx + 1.2, gy + 1.2, 3, 2); ctx.restore();
+    }
+    rundRechteck(ctx, 342, 56, 32, 62, 2); ctx.fillStyle = '#2a2244'; ctx.fill(); ctx.stroke();
+    // Warnstreifen
+    ctx.save(); ctx.beginPath(); ctx.rect(0, 118, 384, 4); ctx.clip();
+    ctx.fillStyle = '#1a1a24'; ctx.fillRect(0, 118, 384, 4);
+    ctx.fillStyle = '#f2c23a';
+    for (var sx = -8; sx < 392; sx += 8) { ctx.beginPath(); ctx.moveTo(sx, 122); ctx.lineTo(sx + 4, 118); ctx.lineTo(sx + 8, 118); ctx.lineTo(sx + 4, 122); ctx.closePath(); ctx.fill(); }
+    ctx.restore();
+    // Deck
+    var dg2 = ctx.createLinearGradient(0, 122, 0, 224);
+    dg2.addColorStop(0, '#26304a'); dg2.addColorStop(1, '#55678a');
+    ctx.fillStyle = dg2; ctx.fillRect(0, 122, 384, 102);
+    ctx.strokeStyle = 'rgba(14,18,32,0.7)'; ctx.lineWidth = 0.7;
+    [134, 150, 172, 200].forEach(function (ny) { ctx.beginPath(); ctx.moveTo(0, ny); ctx.lineTo(384, ny); ctx.stroke(); });
+    [-120, -20, 80, 180, 280, 380, 480].forEach(function (x0) { ctx.beginPath(); ctx.moveTo(bodenX(x0, 122), 122); ctx.lineTo(bodenX(x0, 224), 224); ctx.stroke(); });
+    var sg = ctx.createRadialGradient(295, 128, 2, 295, 140, 60);
+    sg.addColorStop(0, 'rgba(255,79,216,0.35)'); sg.addColorStop(0.5, 'rgba(89,243,255,0.12)'); sg.addColorStop(1, 'rgba(89,243,255,0)');
+    ctx.fillStyle = sg; ctx.fillRect(230, 122, 154, 80);
+    ctx.restore();
+    // Figuren
+    schattenGlatt(ctx, 160 * S, 178 * S, 20 * S, 4.5 * S);
+    schattenGlatt(ctx, 238 * S, 174 * S, 22 * S, 4.5 * S);
+    figurGlatt(ctx, BOLZER, 238 * S, 174 * S, S, true);
+    figurGlatt(ctx, VELA, 160 * S, 178 * S, S, false);
+  }
+  function nahGlatt(cv) {
+    var ctx = cv.getContext('2d'), S = cv.width / 152;
+    var g = ctx.createLinearGradient(0, 0, 0, cv.height);
+    g.addColorStop(0, '#111c35'); g.addColorStop(1, '#283e6a');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, cv.width, cv.height);
+    schattenGlatt(ctx, 44 * S, 84 * S, 19 * S, 3.5 * S);
+    schattenGlatt(ctx, 112 * S, 84 * S, 21 * S, 3.5 * S);
+    figurGlatt(ctx, VELA, 44 * S, 84 * S, S, false);
+    figurGlatt(ctx, BOLZER, 112 * S, 84 * S, S, true);
+  }
+
+  function alles() {
+    szenePixel(document.getElementById('szene1'), 1);
+    nahPixel(document.getElementById('nah1'), 1);
+    szenePixel(document.getElementById('szene2'), 2);
+    nahPixel(document.getElementById('nah2'), 2);
+    szeneGlatt(document.getElementById('szene3'));
+    nahGlatt(document.getElementById('nah3'));
+  }
+  alles();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { szeneGlatt(document.getElementById('szene3')); });
+})();
+</script>
+
+</body>
+</html>
