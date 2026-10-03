@@ -578,24 +578,62 @@ docs/bilder/kontakt_*.png, szene_*.png: <Liste>
 
 ---
 
-## 9. Fremdentwurf als Vergleich (Grok)
+## 9. Fremdentwurf als Vergleich (Grok), Wege A bis C
 
-Der Nutzer lässt testweise eine Figur, zuerst den Rammbock, auch von einem
-anderen Modell (Grok) entwerfen. Opus behandelt das so:
+Der Nutzer lässt den Rammbock testweise auch von Grok entwerfen. Grok
+liefert konsistente Bildblätter (Konzeptbild und Posenblatt liegen vor,
+ein zwölfteiliges Blatt mit gleichbleibender Figur). Opus behandelt das so:
 
-1. **Konzeptbild**: Lädt der Nutzer ein Bild hoch, gilt es für G2 als
-   Entwurfsvorlage für Form, Haltung und Farben des Rammbocks; die
-   Stilregeln aus Abschnitt 1 (Palette, Umriss, Konturen) haben Vorrang,
-   Abweichungen stehen in `docs/grafik.md`.
-2. **Code**: Fügt der Nutzer eine Datei als Text ein (nach Haltepunkt 1,
-   erstellt gegen die Schnittstelle von `puppe.ts`), legt Opus sie als
-   `spiel/grafik/quelle/figuren/rammbock_fremd.ts` ab, lässt sie unverändert
-   durch `bauen.ts` laufen (gleiche Stilprüfungen wie alle Figuren) und
-   behebt nur, was den Bau verhindert (Typfehler, fehlende Importe), mit
-   Liste der Änderungen im Bericht. Kontaktbögen beider Fassungen nach
-   `docs/bilder/kontakt_rammbock.png` und `kontakt_rammbock_fremd.png`,
-   dazu ein Vergleichsbild `vergleich_rammbock.png` (beide im Stand und im
-   Schlag nebeneinander, 2×).
-3. Der Nutzer wählt an Haltepunkt 2, welche Fassung ins Spiel kommt; die
-   andere bleibt im Repo, wird aber nicht in den Atlas gepackt. Die
-   Entscheidung kommt als E24 nach `docs/erkenntnisse.md`.
+### 9.1 Weg A, Konzeptbild als Vorlage
+
+Lädt der Nutzer ein Bild hoch, gilt es für G2 als Entwurfsvorlage für
+Form, Haltung und Farben; die Stilregeln aus Abschnitt 1 haben Vorrang,
+Abweichungen stehen in `docs/grafik.md`.
+
+### 9.2 Weg B, Code von Grok
+
+Fügt der Nutzer eine Datei als Text ein (gegen die Schnittstelle von
+`puppe.ts`), legt Opus sie als `figuren/rammbock_fremd.ts` ab, lässt sie
+unverändert durch `bauen.ts` laufen und behebt nur, was den Bau
+verhindert (Liste im Bericht).
+
+### 9.3 Weg C, Bildblätter von Grok als Sprite-Quelle (Hauptversuch)
+
+Der Nutzer lädt im Opus-Chat PNG-Blätter hoch (Blatt A Posen, B Gehen,
+C Angriffe, D Reaktionen; einfarbiger Hintergrund, Blick rechts, Füße auf
+einer Grundlinie, gleiche Figurgröße auf allen Blättern, keine Nummern in
+den Feldern). Opus legt sie unter `spiel/grafik/quelle/fremd/rammbock/`
+ab (mit `quelle.txt`: Datum, Werkzeug, Prompt) und baut einen
+**Umsetzer** `spiel/grafik/quelle/umsetzer.ts`, der aus Blättern Sprites
+im Atlas-Format erzeugt. Er läuft deterministisch unter Node, ohne
+Paketinstallation; ein PNG-Decoder (`node:zlib` inflate, Filtertypen 0 bis
+4, 8-Bit RGB und RGBA) gehört dazu.
+
+| Schritt | Festlegung |
+|---|---|
+| Zellen finden | Hintergrundfarbe aus den vier Ecken des Blatts; zusammenhängende Nicht-Hintergrund-Bereiche als Zellen (Flutfüllung), Zellen kleiner als 1/50 des Blatts verwerfen (Nummern, Staub); Reihenfolge zeilenweise, dann spaltenweise; alternativ ein festes Raster, wenn das Blatt eines hat (Angabe in `quelle.txt`) |
+| Freistellen | Hintergrund durchsichtig mit Toleranz; Randpixel, die zwischen Figur und Hintergrund liegen, nach dem Mehrheitsnachbarn entscheiden; keine Halbtransparenz |
+| Maßstab | ein Faktor je Figur aus Blatt A, Pose „Stand“: Figurhöhe ohne Schatten auf Zielhöhe (Rammbock 71 px = 76 minus Schatten); derselbe Faktor für alle Blätter; Verkleinern mit Flächenmittel, danach Rundung auf das Raster |
+| Palette | Abbildung jeder Farbe auf die nächstliegende Stufe der Materialtreppen aus `palette.ts` (Haut mittel, Weste oliv, Hose braun, Stahl, Leder), höchstens 15 Farben plus durchsichtig je Figur; welche Materialien, steht je Figur in einer Tabelle; der Abstand im Farbraum wird in `docs/grafik.md` protokolliert, große Abstände sind ein Befund |
+| Kontur | Außenkontur in Konturviolett neu setzen, Innenkonturen aus dem Bild übernehmen, wo sie im dunkelsten Materialton liegen; Streupixel entfernen (Regel aus 1.3) |
+| Anker | Fußpunkt = unterste Zeile der Figur, x = Mitte der Füße (bei liegenden Posen Mitte der Figur); Grundlinie je Blatt gleich, sonst Befund |
+| Zuordnung | Tabelle je Figur: Zelle → Animation und Bildindex (`fremd/rammbock/zuordnung.txt`), von Opus nach Abschnitt 3 gefüllt; fehlende Bilder (etwa drittes Trefferbild) werden durch Wiederholung oder Spiegelung ersetzt und als Lücke gemeldet |
+| Prüfungen | dieselben wie bei der Gliederpuppe (Farben, Konturen, Streupixel, Umriss, Anker, Fußkontakt beim Gehen) |
+
+Videos von Grok (etwa ein Gehzyklus) sind ein Nebenversuch: Der Nutzer
+lädt die Datei hoch, Opus zieht mit `ffmpeg` (nur wenn vorhanden, sonst
+entfällt der Versuch) 8 gleichmäßig verteilte Einzelbilder und gibt sie
+dem Umsetzer; Bewegungsunschärfe und wechselnde Details sind zu erwarten,
+Ergebnis nur zum Vergleich.
+
+### 9.4 Vergleich und Entscheidung
+
+Kontaktbögen `kontakt_rammbock.png` (Gliederpuppe), `kontakt_rammbock_fremd.png`
+(Weg C) und ein Vergleichsbild `vergleich_rammbock.png` (beide im Stand,
+Gehen, Schlag, getroffen nebeneinander, 2×), dazu ein Szenenbild mit
+beiden Fassungen neben Vela im Abschnitt A. Der Nutzer wählt an Haltepunkt
+2; die Wahl kommt als E24 nach `docs/erkenntnisse.md`. Fällt die Wahl auf
+Weg C, wird der Umsetzer der Standardweg für die übrigen Figuren, und der
+Nutzer liefert je Figur die Blätter nach demselben Muster; die
+Gliederpuppe bleibt für Effekte, Gegenstände und als Ersatz, wenn ein
+Blatt fehlt.
