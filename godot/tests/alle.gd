@@ -691,6 +691,7 @@ func _init() -> void:
 	_gruppe("Reinheit von godot/kern", _test_reinheit)
 	_modul("Darstellung", DarstellungTest.lauf())
 	_modul("Vela-Puppe", VelaTest.lauf())
+	_modul("Video", VideoTest.lauf())
 	_modul("Darstellung mit Puppe", PuppeProtokollTest.lauf())
 	if not ohne_szenen:
 		_szenen(nur)

@@ -19,6 +19,8 @@
 # user://aufzeichnung_<seed>.txt), F3 Neustart mit Seed + 1.
 #
 # Kommandozeile (nach „--“):
+#   --platzhalter     Rechtecke statt Vela (weder Video-Clips noch Puppe)
+#   --puppe           die Vela-Puppe aus Teilen erzwingen, auch wo Video-Clips vorliegen
 #   --seed N          Seed des Spielstarts (Standard 1)
 #   --debug           Debug-Anzeige von Beginn an
 #   --szene <datei>   Prüfszene statt Spielstart (Pfad ab Repo-Wurzel)
@@ -60,6 +62,8 @@ var _vorn: Ebene = null
 var _zn_hinten: DarstellungZeichner = null
 var _zn_vorn: DarstellungZeichner = null
 var _puppe: Node2D = null
+## Vela aus Video-Clips (DarstellungVelaFrames), sonst null
+var _frames: Node2D = null
 var _hinweis: String = ""
 var _hinweis_rest: int = 0
 var _beenden: bool = false
@@ -107,10 +111,10 @@ static func stageLaden(buehne: String) -> String:
 
 ## Kommandozeilenargumente (nach „--“) in ein Dictionary:
 ## seed (int, 0 = nicht angegeben), debug, szene, eingabe, schritte (−1 = nicht
-## angegeben), pause, ende, platzhalter (Rechtecke statt der Vela-Puppe), fehler
-## (leer oder Meldung).
+## angegeben), pause, ende, platzhalter (Rechtecke statt Vela), puppe (Vela-Puppe statt Video-Clips),
+## fehler (leer oder Meldung).
 static func parseArgumente(argv: PackedStringArray) -> Dictionary:
-	var a: Dictionary = {"seed": 0, "debug": false, "szene": "", "eingabe": "", "schritte": -1, "pause": false, "ende": false, "platzhalter": false, "fehler": ""}
+	var a: Dictionary = {"seed": 0, "debug": false, "szene": "", "eingabe": "", "schritte": -1, "pause": false, "ende": false, "platzhalter": false, "puppe": false, "fehler": ""}
 	var i: int = 0
 	while i < argv.size():
 		var name: String = argv[i]
@@ -123,6 +127,8 @@ static func parseArgumente(argv: PackedStringArray) -> Dictionary:
 				a["ende"] = true
 			"--platzhalter":
 				a["platzhalter"] = true
+			"--puppe":
+				a["puppe"] = true
 			"--seed", "--schritte", "--szene", "--eingabe":
 				if i + 1 >= argv.size() or argv[i + 1].begins_with("--"):
 					a["fehler"] = "Argument %s ohne Wert" % name
@@ -201,8 +207,11 @@ func _ready() -> void:
 		get_tree().quit(1)
 		return
 	_ebenenAnlegen()
-	if not (a["platzhalter"] as bool):
-		puppeEinhaengen(DarstellungVelaPuppe.new())
+	# Quellen für Vela: Video-Clips (wo für die Aktion einer da ist), sonst die Puppe (wo sie die Aktion
+	# abdeckt), sonst der Platzhalter
+	if not (a.get("platzhalter", false) as bool):
+		var frames: Node2D = null if (a.get("puppe", false) as bool) else DarstellungVelaFrames.new()
+		puppeEinhaengen(DarstellungVelaPuppe.new(), frames)
 
 
 ## Legt die beiden Zeichenebenen an (Hinten, Vorn). Die Ebenen ordnen über
@@ -223,31 +232,43 @@ func _ebenenAnlegen() -> void:
 	_vorn.zeichne = Callable(self, "_zeichneVorn")
 
 
-## Hängt die Puppe der Figur zwischen die beiden Ebenen; ab dann zeichnet die
-## Darstellung den Körper der Figur nicht mehr selbst (nur ihren Schatten). Die
-## Puppe setzt ihre Lage aus DarstellungZeichnen.figurFuss(sitzung.welt).
-func puppeEinhaengen(puppe: Node2D) -> void:
+## Hängt die Quellen der Figur zwischen die beiden Ebenen: die Puppe und optional die Video-Frames. Ab dann
+## zeichnet die Darstellung den Körper der Figur nicht mehr selbst, wo eine Quelle die Aktion abdeckt (nur
+## ihren Schatten). Beide setzen ihre Lage aus DarstellungZeichnen.figurFuss(sitzung.welt).
+func puppeEinhaengen(puppe: Node2D, frames: Node2D = null) -> void:
 	_puppe = puppe
 	puppe.z_index = 1
 	add_child(puppe)
 	move_child(puppe, _vorn.get_index())
+	_frames = frames
+	if frames != null:
+		frames.z_index = 1
+		add_child(frames)
+		move_child(frames, _vorn.get_index())
 	_puppeAktualisieren()
 
 
-## Setzt die Puppe nach der Figur (Lage, Pose, Blick). Deckt sie die Aktion
-## nicht ab, zeichnet die Platzhalterfigur (Rechteck) und die Puppe ruht.
+## Setzt die Quelle nach der Figur (Lage, Pose oder Bild, Blick). Reihenfolge: Video-Frames, wenn für die
+## Aktion ein Clip da ist; sonst die Puppe, wenn sie die Aktion abdeckt; sonst zeichnet die Platzhalterfigur
+## (Rechteck). Die nicht gewählten Quellen ruhen.
 func _puppeAktualisieren() -> void:
-	if _puppe == null or sitzung == null:
+	if (_puppe == null and _frames == null) or sitzung == null:
 		return
 	var f: KernEntitaeten.Figur = sitzung.welt.figur
-	var an: bool = DarstellungVelaPosen.abgedeckt(f)
-	figur_extern = an
-	_puppe.visible = an
-	if an:
+	var video: bool = _frames != null and DarstellungVelaFrames.abgedeckt(f)
+	var mit_puppe: bool = _puppe != null and not video and DarstellungVelaPosen.abgedeckt(f)
+	figur_extern = video or mit_puppe
+	if _puppe != null:
+		_puppe.visible = mit_puppe
+	if _frames != null:
+		_frames.visible = video
+	if video or mit_puppe:
 		var fuss: Vector2 = DarstellungZeichnen.figurFuss(sitzung.welt)
 		# Spiegelachse in der Mitte der Spielpixelspalte (1 Bildpixel rechts vom Fußpunkt)
-		_puppe.position = fuss + Vector2(DarstellungMasse.DARSTELLUNG * 0.5, 0.0)
-		_puppe.call("aus_figur", f, sitzung.welt)
+		var ort: Vector2 = fuss + Vector2(DarstellungMasse.DARSTELLUNG * 0.5, 0.0)
+		var quelle: Node2D = _frames if video else _puppe
+		quelle.position = ort
+		quelle.call("aus_figur", f, sitzung.welt)
 
 
 # ===========================================================================
