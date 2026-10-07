@@ -338,6 +338,70 @@ Porträt Vela für die Figurenwahl: Kopf und Schultern, Blick zum
 Betrachter, dunkler Grund, Pixelstil, dieselbe Figur wie das Konzeptbild.
 ```
 
+## Vela als Video (Auftrag 6, Weg „Grok-Video“, Stand 2026-10-07)
+
+Die Puppe aus Teilen wirkte nicht natürlich genug (starre Teile, keine
+echte Drehung). Für Bewegungen kommen deshalb Videos von Grok: jedes Bild ist
+neu gezeichnet, die Figur bleibt in einem Clip dieselbe. Das Programm
+(`godot/werkzeuge/video_umsetzer.gd`) zerlegt das Video, stellt die Figur frei,
+bringt sie auf 142 px Höhe und höchstens 64 Farben und verschiebt die Bilder
+so in der Zeit, dass der Treffer im ersten aktiven Frame der Logik sitzt. Der
+Nutzer muss nur die Clips erzeugen.
+
+**Regeln für jeden Clip** (gelten zusätzlich zu den Regeln oben):
+
+- Grok „Bild zu Video“ mit der Kampfhaltung als erstem Bild
+  (`spiel/grafik/quelle/fremd/vela/vela_k_kampfhaltung.png`) und dem Teileblatt
+  (`vela_t_teile.png`) als Referenz, damit Jacke, Haare und Handschuhe gleich
+  bleiben.
+- **Kamera fest**, kein Zoom, kein Schwenk, keine Bildwackler. Figur **auf der
+  Stelle** (sie läuft nicht aus dem Bild), ganze Figur immer vollständig im
+  Bild, Seitenansicht in Dreiviertelansicht nach rechts wie das Referenzbild.
+- **Hintergrund: einfarbiges, sattes Grün (reines Chroma-Grün, ohne Verlauf,
+  ohne Boden, ohne Schatten).** Das weicht von den dunklen Hintergründen der
+  Blätter ab: Velas Hose und Top sind sehr dunkel und würden sich auf dunklem
+  Grund nicht sauber freistellen lassen.
+- 24 Bilder je Sekunde oder mehr, mindestens 720 Pixel Höhe, Clip **2 bis 3
+  Sekunden**. Keine Untertitel, keine Schrift, keine Musik nötig.
+- Dateiname `vela_v_<animation>.mp4` (zum Beispiel `vela_v_gehen.mp4`).
+  Hochladen im Chat mit dem Satz „Videos für Vela nach Auftrag 6“. Nimmt der
+  Chat kein MP4 an, als GIF, WebP oder als ZIP der Einzelbilder (PNG) schicken.
+- Bei Schwankungen der Figur (Jacke, Haare, Größe wechseln) den Clip neu
+  erzeugen; ein kürzerer Clip hält die Figur besser.
+
+**Zuerst nur zwei Clips (Test):**
+
+```text
+Clip gehen (vela_v_gehen.mp4): Die Heldin Vela aus dem Referenzbild geht auf
+der Stelle in einem gleichmäßigen, lockeren Gehzyklus nach rechts (die Kamera
+steht fest, die Figur bewegt sich nicht aus dem Bild), genau vier Schritte,
+Arme schwingen im Gegentakt, Zopf schwingt mit. Der Zyklus beginnt und endet
+in derselben Pose (Schleife). Reines grünes Chroma-Key-Hintergrundbild,
+keine Schatten, feste Kamera, Seitenansicht in Dreiviertelansicht nach
+rechts. Pixelgrafik im Stil des Referenzbildes.
+```
+
+```text
+Clip kette1 (vela_v_kette1.mp4): Die Heldin Vela steht in Kampfhaltung wie im
+Referenzbild, holt kurz aus und schlägt mit der vorderen Faust einmal schnell
+und gerade nach vorn (rechts), streckt den Arm vollständig, hält einen
+Augenblick, zieht die Faust zurück und steht wieder in Kampfhaltung. Danach
+bleibt sie still stehen. Feste Kamera, Figur auf der Stelle, reines grünes
+Chroma-Key-Hintergrundbild, keine Schatten, Dreiviertelansicht nach rechts,
+Pixelgrafik im Stil des Referenzbildes.
+```
+
+**Danach, sobald die zwei Clips taugen** (je ein Clip, gleiche Regeln):
+`stand` (Kampfhaltung, ruhig atmend, 3 Sekunden, Schleife), `kette2` (gerader
+Schlag mit der hinteren Faust), `kette3` (Haken von unten), `kette4` (hoher
+Tritt mit Drehung), `sprint` (schneller Lauf auf der Stelle, Zopf fliegt),
+`sprung` (Absprung, Scheitel, Landung in der Hocke), `sprungtritt`,
+`griff` (greift einen Gegner am Kragen; Gegner nur als graue Silhouette),
+`kniestoss`, `wurf`, `spezial` (kniet, schlägt beide Handschuhe auf den Boden,
+blauer Blitz), `getroffen_vorn`, `getroffen_hinten`, `umgeworfen` (Flug, Fall,
+Aufprall, Liegen), `aufstehen`, `waffe` (Raketenwerfer anlegen, schießen,
+absetzen), `aufnehmen`.
+
 ## Nach der Bestellung
 
 Opus baut je Figur die Sprites, legt Kontaktbögen unter `docs/bilder/`
