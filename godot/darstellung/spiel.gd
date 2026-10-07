@@ -255,7 +255,7 @@ func _puppeAktualisieren() -> void:
 	if (_puppe == null and _frames == null) or sitzung == null:
 		return
 	var f: KernEntitaeten.Figur = sitzung.welt.figur
-	var video: bool = _frames != null and DarstellungVelaFrames.abgedeckt(f)
+	var video: bool = _frames != null and DarstellungVelaFrames.abgedeckt(f, sitzung.welt)
 	var mit_puppe: bool = _puppe != null and not video and DarstellungVelaPosen.abgedeckt(f)
 	figur_extern = video or mit_puppe
 	if _puppe != null:

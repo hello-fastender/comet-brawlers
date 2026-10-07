@@ -79,10 +79,11 @@ static func clip_daten(clip: String) -> Dictionary:
 	return c["daten"] if not c.is_empty() else {}
 
 
-## Ist für die Aktion der Figur ein Clip geladen (sonst zeigt die Puppe oder der Platzhalter)?
-static func abgedeckt(f: KernEntitaeten.Figur) -> bool:
-	var n: String = DarstellungVelaFramesTabelle.clip_name(f.aktion, DarstellungVelaPosen.kette_stufe(f))
-	return n != "" and not clip_laden(n).is_empty()
+## Ist für den Zustand der Figur ein Clip vorgesehen und geladen (sonst zeigt die Puppe oder der Platzhalter)? Die Tabelle
+## steht in DarstellungVelaFramesTabelle (Kopf). `welt` entscheidet bei GETROFFEN über vorn oder hinten (ohne Welt: vorn).
+static func abgedeckt(f: KernEntitaeten.Figur, welt: KernWelt = null) -> bool:
+	var w: Dictionary = DarstellungVelaFramesTabelle.wahl(f, welt)
+	return not w.is_empty() and not clip_laden(String(w["clip"])).is_empty()
 
 
 # ---------------------------------------------------------------------------
@@ -91,14 +92,13 @@ static func abgedeckt(f: KernEntitaeten.Figur) -> bool:
 
 ## Zeigt die Figur nach ihrem Zustand (Aktion, Aktionsuhr, Blick); liest die Welt nur. Nicht abgedeckte Aktionen
 ## verstecken den Node.
-func aus_figur(f: KernEntitaeten.Figur, _welt: KernWelt) -> void:
-	var stufe: int = DarstellungVelaPosen.kette_stufe(f)
-	var n: String = DarstellungVelaFramesTabelle.clip_name(f.aktion, stufe)
-	if n == "" or clip_laden(n).is_empty():
+func aus_figur(f: KernEntitaeten.Figur, welt: KernWelt) -> void:
+	var w: Dictionary = DarstellungVelaFramesTabelle.wahl(f, welt)
+	if w.is_empty() or clip_laden(String(w["clip"])).is_empty():
 		visible = false
 		return
-	var uhr: int = DarstellungVelaPosen.kette_uhr(f) if stufe > 0 and (f.aktion == "SCHLAG" or f.aktion == "LEERSCHLAG") else maxi(f.uhr, 1)
-	aus_clip(n, uhr, f.blick)
+	var c: Dictionary = clip_laden(String(w["clip"]))
+	aus_clip_bild(String(w["clip"]), DarstellungVelaFramesTabelle.bildindex_wahl(w, c["daten"]), int(w["blick"]))
 
 
 ## Zeigt den Clip `clip` zur Aktionsuhr `zeit_ticks` (Beginn 1) mit Blick 1 (rechts) oder −1 (links).

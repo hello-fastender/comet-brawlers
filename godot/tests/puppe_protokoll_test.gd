@@ -20,7 +20,7 @@ static func lauf() -> Dictionary:
 		fehler.append("Puppe: Referenz fehlt")
 		return {"geprueft": geprueft, "fehler": fehler}
 	var spiel_skript: GDScript = load("res://darstellung/spiel.gd")
-	var argumente: Dictionary = spiel_skript.call("parseArgumente", PackedStringArray(["--szene", "spiel/tests/szenen/vorfuehrung.txt", "--eingabe", "spiel/tests/eingaben/vorfuehrung.txt"]))
+	var argumente: Dictionary = spiel_skript.call("parseArgumente", PackedStringArray(["--szene", "spiel/tests/szenen/vorfuehrung.txt", "--eingabe", "spiel/tests/eingaben/vorfuehrung.txt", "--puppe"]))
 	var spiel: Node2D = (load("res://darstellung/spiel.tscn") as PackedScene).instantiate()
 	spiel.set("automatisch", false)
 	spiel.set("argumente", argumente)

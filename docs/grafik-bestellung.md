@@ -476,6 +476,57 @@ Weitere Clips (`sprungtritt`, `griff`, `kniestoss`, `wurf`, `spezial`,
 `getroffen_hinten`, `waffe`, `aufnehmen`) folgen nach demselben Schema, sobald
 die ersten gut laufen.
 
+### Stand der Clips auf schwarzem Grund (2026-10-07)
+
+Die elf Clips `stand`, `kette1` bis `kette4`, `sprint`, `sprung`, `getroffen_vorn`, `umgeworfen`, `liegen` und
+`aufstehen` unter `godot/grafik/vela_video/` stammen aus echten Grok-Videos (944 × 944, 24 Bilder/s) mit **schwarzem**
+Hintergrund (Randfarbe 0, 0, 0; Grok hat das Grün der Bestellung nicht eingehalten). Schwarz geht ebenso: Der Umsetzer
+fällt von selbst auf den Modus `ecke` zurück, mit `--tol 6 --loch 2` bleiben auch Top (etwa 15, 18, 30), Hose
+(20, 30, 70) und Stiefel (40, 40, 48) Figur; vom Rand unerreichbare dunkle Flächen werden gefüllt. Die PNG-Bilder schreibt
+der Umsetzer jetzt mit Palette (Index 0 durchsichtig, tRNS): etwa ein Drittel der Größe. Befehle (Videos nicht im Repo;
+`R` = Videoordner, immer `--tol 6 --loch 2`):
+
+| Clip | Video | Zusätze zum Aufruf |
+|---|---|---|
+| `stand` | 1 | `--ab 3 --bis 36 --faktor 0.16949 --zyklus 34` (ein Atemzyklus, 34 Bilder) |
+| `kette1` | 2 | `--bis 96` |
+| `kette2` | 3 | `--ausser 19-24,27-30 --bis 70` (Scheinschlag davor und Funken weg) |
+| `kette3` | 4 | `--ausser 31-35 --ereignis hoch --bis 112 --setze rueckzug=74` (Funken weg) |
+| `kette4` | 5 | `--ausser 52-53 --bis 125 --setze kontakt1=18` (Funken am Fuß weg, erstes Fenster) |
+| `sprint` | 6 | `--ab 119 --bis 134 --faktor 0.16961 --ereignis keine --ankerx mittel --zyklus 16 --schritt lauf` |
+| `sprung` | 7 | `--ankery unten --ereignis sprung --kuerzen ja --bis 137 --ausser 49-54 --setze absprung=41` |
+| `getroffen_vorn` | 8 | `--ereignis treffer --kuerzen ja --bis 137 --setze kontakt=17` |
+| `umgeworfen` | 10 (gleich 9) | `--bis 120 --ankery unten --staub 65 --ereignis flug --kuerzen ja --faktor 0.16935` |
+| `liegen` | 10 | `--ab 188 --bis 188 --ereignis keine --ankery unten --ankerx-video 483.3 --faktor 0.16935` |
+| `aufstehen` | 10 | `--ab 188 --bis 270 --ereignis aufstehen --ankery unten --ankerx uebergang --ankerx-video 483.3 --faktor 0.16935` |
+
+Video 9 und Video 10 sind bis Bild 100 gleich (Höhenverlauf der Silhouette bildgleich bis auf 1 Pixel); Video 10 ist die
+Fortsetzung, deshalb kommen `umgeworfen`, `liegen` und `aufstehen` aus Video 10 und teilen ein Koordinatensystem
+(`--ankerx-video`). Maßstab (clip.txt `massstab`) aller Clips 0,1690 bis 0,1696 Spielbildpixel je Videopixel (0,4 %
+Spielraum, die Kampfhaltung ist in jedem Clip 142 Pixel hoch, im Clip `umgeworfen` 141 wegen der Staubentfernung).
+
+Was Grok falsch gemacht hat (Wünsche für Nachbestellungen):
+
+- **Sprung:** Vela springt am Scheitel aus dem Bild: die Fäuste der Streckung und die Zopfspitze der Hocke im Sprung sind
+  am oberen Bildrand abgeschnitten. Die sechs Bilder mit abgeschnittenen Fäusten (Video 49 bis 54) fehlen im Clip; die
+  Zopfspitze bleibt in etwa 30 Bildern am Scheitel flach abgeschnitten. Nachbestellung: Vela kleiner oder tiefer im Bild,
+  mit mehr Luft über dem Kopf, Sprung nur halb so hoch.
+- **Kette 2:** erst ein Scheinschlag (Jab), dann der eigentliche Schlag mit Funken; die Rückkehr endet in einer entspannten
+  Haltung mit hängenden Armen statt in der Kampfhaltung (der Clip spielt deshalb rückwärts zurück, `rueckkehr=rueckwaerts`).
+- **Kette 3 und 4, Kette 2:** Funkenstrahlen (Bilder 27 bis 30, 31 bis 35, 52 bis 53) werden von der Inselentfernung nicht
+  erfasst, weil sie an der Faust hängen; die Bilder sind per `--ausser` weggelassen.
+- **Umgeworfen:** Staubkörner am Boden ab dem Aufprall (grau, 3 Pixel groß); `--staub 65` entfernt die meisten, ein paar
+  dunkle Flecken bleiben in den ersten acht Bildern nach dem Aufprall (`liegen` ist sauber). Aufprall und Hocke haben
+  im Video eine andere Zeitleiste als die Logik (Flug 2,5 s statt 0,77 s), die Tabelle wählt Bilder aus.
+- **Aufstehen:** endet in einer frontalen Kampfhaltung (Fäuste vor der Brust, Füße schulterbreit), nicht in der
+  Dreiviertelansicht des Startbilds.
+- **Stand:** die Atembewegung ist nur 1 Pixel; die Bilder flimmern von Bild zu Bild um etwa 10 % der Pixel (neu gemalt).
+
+Zuordnung Aktion → Clip und Zeiten: Kopf von `godot/darstellung/vela_frames_tabelle.gd`. Prüfbilder:
+`docs/bilder/godot_video_neue_clips.png`, `godot_video_ketten_stand.png` (Kontaktbögen auf grünem Grund) und die GIFs
+`godot_video_sprung.gif`, `_getroffen.gif`, `_umgeworfen_aufstehen.gif`, `_sprint.gif`, `_stand.gif`, `_kette2.gif`, `_kette3.gif`, `_kette4.gif`
+(Logik-Ticks mit dem Abspieler; jedes zweite Tick-Bild, GIF-Verzögerung auf 1/100 s gerundet: etwa 10 % schneller als in Echtzeit).
+
 ## Nach der Bestellung
 
 Opus baut je Figur die Sprites, legt Kontaktbögen unter `docs/bilder/`

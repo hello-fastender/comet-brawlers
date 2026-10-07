@@ -5,6 +5,9 @@
 ##       --modus bogen --zeilen "_test_gehen:zyklus;_test_kette1:alle:3" --aus docs/bilder/godot_video_test.png
 ##   ... --modus zyklus --clip _probe_grok_gehen --aus <ordner>   Einzelbilder (png) für ein GIF des erkannten Zyklus
 ##   ... --modus ticks --clip _test_kette1 --aus <ordner>         Einzelbilder je Logik-Tick der Zuordnung (Kette, mit Trefferstopp)
+##   ... --modus folge --folge <name> --aus <ordner> [--jede 2]   Einzelbilder (jeder 2. Logik-Tick) einer Aktionsfolge, gespielt
+##       mit dem Abspieler und der Tabelle (wahl): sprung, getroffen, umgeworfen (Umgeworfen, Liegen, Aufstehen), sprint, stand.
+##       Lage und Höhe kommen aus der Logik (Sprungbahn, Bahn F1 aus KernBahn, Sprinttempo).
 ##
 ## Zeilen des Bogens (`name:art`): `zyklus` (die Bilder des erkannten Zyklus), `alle:<n>` (jedes n-te Bild, Ereignisse
 ## Ausholen, Kontakt und Ruhe farbig umrandet), `bilder:<a>,<b>,…` (1-basierte Bildnummern).
@@ -60,8 +63,10 @@ func _lauf() -> void:
 			await _zyklus(String(arg.get("clip", "")), aus)
 		"ticks":
 			await _ticks(String(arg.get("clip", "")), aus)
+		"folge":
+			await _folge(String(arg.get("folge", "")), aus, int(arg.get("jede", "2")))
 		_:
-			printerr("--modus bogen|zyklus|ticks")
+			printerr("--modus bogen|zyklus|ticks|folge")
 			quit(1)
 			return
 	quit(0)
@@ -98,6 +103,23 @@ func _text(vp: SubViewport, x: float, y: float, text: String, farbe: Color = Col
 	l.add_theme_font_size_override("font_size", groesse)
 	l.add_theme_color_override("font_color", farbe)
 	vp.add_child(l)
+
+
+## Bildnummern (0-basiert) der Ereignisse `ereignis_<name>` eines Clips.
+func _ereignis_bilder(d: Dictionary) -> Array[int]:
+	var a: Array[int] = []
+	for k: String in (d["ereignis"] as Dictionary):
+		a.append(int(d["ereignis"][k]))
+	return a
+
+
+## Namen der Ereignisse, die auf Bild i liegen (leer, wenn keines).
+func _ereignis_name(d: Dictionary, i: int) -> String:
+	var t: PackedStringArray = PackedStringArray()
+	for k: String in (d["ereignis"] as Dictionary):
+		if int(d["ereignis"][k]) == i:
+			t.append(k)
+	return ",".join(t)
 
 
 ## Zelle: Boden, Bodenlinie, Figur mit dem Abspieler, Ankerkreuz. `ort` = linke obere Ecke der Zelle (Weltpixel).
@@ -143,7 +165,7 @@ func _bogen(zeilen_text: String, aus: String) -> void:
 			var n: int = int(t[2]) if t.size() > 2 else 1
 			for i: int in range(0, int(d["bilder"]), n):
 				idx.append(i)
-			for e: int in [int(d["ausholen"]), int(d["kontakt"]), int(d["ruhe"])]:
+			for e: int in [int(d["ausholen"]), int(d["kontakt"]), int(d["ruhe"])] + _ereignis_bilder(d):
 				if not idx.has(e):
 					idx.append(e)
 			idx.sort()
@@ -171,6 +193,10 @@ func _bogen(zeilen_text: String, aus: String) -> void:
 			var i: int = idx[k]
 			var rand: Variant = null
 			var marke: String = ""
+			var evn: String = _ereignis_name(d, i)
+			if evn != "":
+				rand = Color(1.0, 0.85, 0.2)
+				marke = " " + evn
 			if String(zl["clip"]).contains("kette"):
 				if i == int(d["ausholen"]):
 					rand = Color(0.3, 0.7, 1.0)
@@ -253,7 +279,7 @@ func _ticks(clip: String, aus: String) -> void:
 		folge.append({"uhr": 0, "stopp": 0})
 	for u: int in range(1, dauer + 1):
 		folge.append({"uhr": u, "stopp": 0})
-		if u == von:
+		if u == von or (stufe == KernWerte.KOMBO_MAX and u == KernWerte.KETTE4_ZWEITES_FENSTER_VON):
 			for s: int in KernWerte.TREFFERSTOPP:
 				folge.append({"uhr": u, "stopp": KernWerte.TREFFERSTOPP - s})
 	for i: int in 8:
@@ -280,7 +306,8 @@ func _ticks(clip: String, aus: String) -> void:
 	for i: int in folge.size():
 		var f: Dictionary = folge[i]
 		var farbe: Color = Color(0.25, 0.28, 0.24)
-		if int(f["uhr"]) >= von and int(f["uhr"]) <= bis:
+		var uu: int = int(f["uhr"])
+		if (uu >= von and uu <= bis) or (stufe == KernWerte.KOMBO_MAX and uu >= KernWerte.KETTE4_ZWEITES_FENSTER_VON and uu <= KernWerte.KETTE4_ZWEITES_FENSTER_BIS):
 			farbe = Color(0.85, 0.55, 0.15)
 		if int(f["stopp"]) > 0:
 			farbe = Color(0.85, 0.2, 0.15)
@@ -324,3 +351,170 @@ func _ticks(clip: String, aus: String) -> void:
 		vp.get_texture().get_image().save_png(aus.path_join("b%04d.png" % nr))
 		nr += 1
 	print("Tick-Bilder: %d in %s" % [nr, aus])
+
+
+# ---------------------------------------------------------------------------
+# Aktionsfolgen über Logik-Ticks (Sprung, Treffer, Umwerfen/Liegen/Aufstehen, Sprint, Stand)
+# ---------------------------------------------------------------------------
+
+const AKTION_FARBE: Dictionary = {
+	"STAND": Color(0.30, 0.33, 0.28), "SPRINT": Color(0.85, 0.75, 0.20), "SPRUNG": Color(0.25, 0.55, 0.85),
+	"LANDUNG": Color(0.20, 0.70, 0.70), "GETROFFEN": Color(0.85, 0.20, 0.15), "UMGEWORFEN": Color(0.85, 0.50, 0.15),
+	"LIEGEN": Color(0.55, 0.55, 0.55), "AUFSTEHEN": Color(0.30, 0.75, 0.35),
+}
+
+
+func _schritt(f: KernEntitaeten.Figur, aktion: String, uhr: int, dx: float = 0.0, dy: float = 0.0, boden: float = 0.0) -> Dictionary:
+	var c: KernEntitaeten.Figur = KernEntitaeten.Figur.new()
+	c.aktion = aktion
+	c.uhr = uhr
+	c.blick = f.blick
+	c.vh = f.vh
+	c.bahn = f.bahn
+	c.bahn_richtung = f.bahn_richtung
+	c.bahn_frame = f.bahn_frame
+	c.bahn_boden = f.bahn_boden
+	c.sprint_n = f.sprint_n
+	c.phase = f.phase
+	return {"fig": c, "dx": dx, "dy": dy, "boden": boden}
+
+
+## Baut die Tickfolge: Array von {fig, dx, dy, boden} (dx, dy in Bildpixeln aus den Positionen der Logik, boden = Scrollen
+## des Bodens beim Sprint).
+func _folge_bauen(name: String) -> Array:
+	var aus: Array = []
+	var f: KernEntitaeten.Figur = KernEntitaeten.Figur.new()
+	var px: float = float(DarstellungMasse.DARSTELLUNG) / 65536.0
+	for i: int in 6:
+		aus.append(_schritt(f, "STAND", i + 1))
+	match name:
+		"sprung":
+			var h: int = 0
+			f.vh = KernWerte.SPRUNG_VH_START
+			for u: int in range(1, KernWerte.SPRUNG_LETZTER_LUFTFRAME + 1):
+				if u >= 2:
+					h = h + f.vh
+					f.vh = f.vh - KernWerte.SPRUNG_SCHWERKRAFT
+				aus.append(_schritt(f, "SPRUNG", u, 0.0, float(h) * px))
+			for u: int in range(1, KernWerte.LANDUNG_DAUER + 1):
+				aus.append(_schritt(f, "LANDUNG", u))
+			for i: int in 14:
+				aus.append(_schritt(f, "STAND", 6 + i))
+		"getroffen":
+			for u: int in range(1, KernWerte.GETROFFEN_DAUER + 1):
+				aus.append(_schritt(f, "GETROFFEN", u))
+			for i: int in 14:
+				aus.append(_schritt(f, "STAND", 6 + i))
+		"umgeworfen":
+			KernBahn.bahnStarten(f, "F1", -1)
+			f.x = 0
+			f.h = 0
+			var ende: int = KernWerte.FIGUR_LIEGEN_ENDE
+			for d: int in range(0, ende + KernWerte.FIGUR_AUFSTEHEN_DAUER + 1):
+				var akt: String = "UMGEWORFEN"
+				var uhr: int = d + 1
+				if d >= KernWerte.FIGUR_LIEGEN_AB:
+					akt = "LIEGEN"
+					uhr = d - KernWerte.FIGUR_LIEGEN_AB + 1
+				if d > ende:
+					akt = "AUFSTEHEN"
+					uhr = d - ende
+				if d > KernWerte.F1_STILLSTAND and d <= KernWerte.FIGUR_UMGEWORFEN_RUHE:
+					KernBahn.bahnSchritt(f, d, null)
+				aus.append(_schritt(f, akt, uhr, float(f.x) * px, float(f.h) * px))
+			for i: int in 14:
+				aus.append(_schritt(f, "STAND", 6 + i, float(f.x) * px))
+		"sprint":
+			f.blick = 1
+			var strecke: int = 0
+			for n: int in range(1, 61):
+				f.sprint_n = n
+				strecke += DarstellungVelaFramesTabelle.sprint_tempo(n)
+				aus.append(_schritt(f, "SPRINT", n, 0.0, 0.0, float(strecke) * px))
+		"stand":
+			for i: int in 170:
+				aus.append(_schritt(f, "STAND", 7 + i))
+	return aus
+
+
+func _folge(name: String, aus: String, jede: int) -> void:
+	var schritte: Array = _folge_bauen(name)
+	if schritte.is_empty():
+		printerr("Folge %s unbekannt (sprung, getroffen, umgeworfen, sprint, stand)" % name)
+		quit(1)
+		return
+	# Bildgröße: Figur 160 × 160 Bildpixel Platz, Weg in x aus den Schritten
+	var xmin: float = 0.0
+	var xmax: float = 0.0
+	var ymax: float = 0.0
+	for st: Dictionary in schritte:
+		xmin = minf(xmin, float(st["dx"]))
+		xmax = maxf(xmax, float(st["dx"]))
+		ymax = maxf(ymax, float(st["dy"]))
+	var rand_l: float = 90.0
+	var rand_r: float = 90.0
+	var b: int = int(xmax - xmin + rand_l + rand_r)
+	var kopf: int = 14
+	var boden_h: int = 14
+	var fig_h: int = 152
+	var zeit_h: int = 22
+	var h: int = int(ymax) + fig_h + kopf + boden_h + zeit_h
+	var vw: Array = _viewport(b, h)
+	var vp: SubViewport = vw[0]
+	var welt: Node2D = vw[1]
+	DirAccess.make_dir_recursive_absolute(aus)
+	var fuss_y: float = float(kopf) + float(int(ymax) + fig_h)
+	var x0: float = rand_l - xmin
+	_rechteck(welt, 0, fuss_y, b, float(boden_h), BODEN)
+	_rechteck(welt, 0, fuss_y - 0.5, b, 0.5, Color(0.9, 0.9, 0.9, 0.7))
+	# Bodenmarken (scrollen beim Sprint)
+	var marken: Array[ColorRect] = []
+	for i: int in (b / 24) + 3:
+		var m: ColorRect = ColorRect.new()
+		m.color = Color(0.20, 0.23, 0.18)
+		m.size = Vector2(2, float(boden_h) - 4.0)
+		m.position = Vector2(float(i * 24), fuss_y + 2.0)
+		welt.add_child(m)
+		marken.append(m)
+	var v: DarstellungVelaFrames = DarstellungVelaFrames.new()
+	welt.add_child(v)
+	var kaesten_y: float = float(h - zeit_h + 6)
+	var box: float = float(b - 8) / float(schritte.size())
+	for i: int in schritte.size():
+		var k: ColorRect = ColorRect.new()
+		k.color = AKTION_FARBE.get((schritte[i]["fig"] as KernEntitaeten.Figur).aktion, Color(0.4, 0.4, 0.4))
+		k.position = Vector2(4.0 + float(i) * box, kaesten_y)
+		k.size = Vector2(maxf(box - 0.5, 1.0), 8)
+		welt.add_child(k)
+	var marke: ColorRect = ColorRect.new()
+	marke.color = Color(1, 1, 1)
+	marke.size = Vector2(maxf(box, 2.0), 2)
+	welt.add_child(marke)
+	var l1: Label = Label.new()
+	l1.add_theme_font_size_override("font_size", 9)
+	l1.position = Vector2(2 * _zoom, 0)
+	vp.add_child(l1)
+	var nr: int = 0
+	for i: int in schritte.size():
+		var st: Dictionary = schritte[i]
+		var f: KernEntitaeten.Figur = st["fig"]
+		v.position = Vector2(x0 + float(st["dx"]), fuss_y - float(st["dy"]))
+		var w: Dictionary = DarstellungVelaFramesTabelle.wahl(f, null)
+		var text: String = "Tick %d  %s uhr %d" % [i + 1, f.aktion, f.uhr]
+		if w.is_empty() or DarstellungVelaFrames.clip_laden(String(w["clip"])).is_empty():
+			v.visible = false
+			text += "  (kein Clip)"
+		else:
+			v.aus_figur(f, null)
+			text += "  %s Bild %d%s" % [w["clip"], v.bild_index() + 1, "  gespiegelt" if v.blick() < 0 else ""]
+		for mi: int in marken.size():
+			marken[mi].position.x = fposmod(float(mi * 24) - float(st["boden"]), float((b / 24 + 3) * 24)) - 24.0
+		marke.position = Vector2(4.0 + float(i) * box, kaesten_y - 3.0)
+		l1.text = text
+		if i % jede != 0 and i != schritte.size() - 1:
+			continue
+		await process_frame
+		await process_frame
+		vp.get_texture().get_image().save_png(aus.path_join("b%04d.png" % nr))
+		nr += 1
+	print("Folge %s: %d Bilder (jeder %d. Tick von %d) in %s, Größe %d x %d" % [name, nr, jede, schritte.size(), aus, b * _zoom, h * _zoom])

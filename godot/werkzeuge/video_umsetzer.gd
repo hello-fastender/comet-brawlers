@@ -7,7 +7,10 @@ extends SceneTree
 ## Aufruf (Repo-Wurzel; Pfade ab Repo-Wurzel oder absolut):
 ##   godot --headless --path godot --script res://werkzeuge/video_umsetzer.gd -- \
 ##       --video <datei> --name <clip> [--aus godot/grafik/vela_video] [--schluessel gruen|ecke] \
-##       [--hoehe 142] [--zyklus <n>] [--ereignis vorn|hoch] [--bilder <n>] [--kuerzen ja|nein|auto] [--behalte]
+##       [--hoehe 142] [--zyklus <n>] [--ereignis vorn|hoch|sprung|treffer|flug|aufstehen|keine] [--bilder <n>]
+##       [--kuerzen ja|nein|auto] [--behalte] [--tol <n>] [--loch <n>] [--fleck <n>] [--staub <n>] [--ab <n>] [--bis <n>]
+##       [--faktor <massstab>|--massstab-von <clip>] [--ankerx fest|schwerpunkt|uebergang] [--ankery fest|unten]
+##       [--schwerpunkt-ab <n>] [--setze name=n,...] [--schleife pingpong]
 ##
 ##   --video <datei>      mp4, webm, gif oder webp (alles, was ffmpeg liest)
 ##   --name <clip>        Name des Clips (a-z, 0-9, _), Ordner <aus>/<clip>/ (gehen, stand, kette1 …)
@@ -20,8 +23,40 @@ extends SceneTree
 ##   --hoehe <n>          Höhe der Figur im ersten Bild in Bildpixeln (Standard 142)
 ##   --zyklus <n>         Zykluslänge in Bildern vorgeben (0 = ganzer Clip), statt sie zu suchen
 ##   --ereignis vorn      Kontakt = größte Ausdehnung nach vorn (Standard, Schläge, Tritte);
-##                        hoch = höchster Punkt (Haken von unten)
+##                        hoch = höchster Punkt (Haken von unten). sprung, treffer, flug, aufstehen: Ereignisse der
+##                        Haltung, Sprungs, Treffers, Flugs und Aufstehens (siehe ereignisse_andere), keine: keine.
 ##   --bilder <n>         nur die ersten n Videobilder verarbeiten (zum Probieren)
+##   --ab <n>, --bis <n>  erstes und letztes zu verarbeitendes Videobild (1-basiert, gezählt nach dem Überspringen
+##                        der Einblendung); schneidet einen Abschnitt aus einem langen Video (z. B. Aufstehen aus
+##                        dem 12-Sekunden-Video). Die Zahlen stehen als `ab`/`bis` in clip.txt.
+##   --tol <n>, --loch <n>, --fleck <n>   nur Modus ecke. tol: Abstand zur Randfarbe (größter Kanalunterschied), ab
+##                        dem ein Punkt Figur ist (Standard 40; auf schwarzem Grund 6, damit auch das fast schwarze
+##                        Top Figur bleibt); loch: vom Rand unerreichbare Flächen mit mittlerem Abstand über `loch`
+##                        sind Figur (Standard 24; auf Schwarz 2: dunkle Kleidung füllen, echte Lücken bleiben offen);
+##                        fleck: kleinste Fläche (Pixel in der Arbeitsauflösung), die als Teil der Figur gilt (Standard 4).
+##   --ausser a-b,c       Videobilder weglassen (1-basiert wie --ab), z. B. Funken-Effekte eines Treffers, die Grok in
+##                        einzelne Bilder gemalt hat. Steht als `ausser=` in clip.txt.
+##   --staub <n>          dunkle Streupixel (Bodenstaub) entfernen: dunkle Figurpixel, in deren 7×7-Umgebung (Arbeits-
+##                        auflösung) weniger als n Prozent Figur sind (Standard 0 = aus; 38 für das Liegen).
+##   --ankerx-video <x>   fester Anker-x in Pixeln des Videos (statt der Fußmitte des ersten Bildes): gleiche Lage für
+##                        mehrere Clips aus demselben Video (umgeworfen, liegen, aufstehen).
+##   --faktor <m>         Maßstab (clip.txt `massstab`: Spielbildpixel je Videopixel) fest vorgeben, statt die Figur
+##                        im ersten Bild auf --hoehe zu bringen (Clips, die nicht in der Kampfhaltung beginnen).
+##   --massstab-von <c>   dasselbe, der Maßstab wird aus <aus>/<c>/clip.txt gelesen.
+##   --ankerx fest        Standard: Fußmitte des ersten Bildes für alle Bilder (die Figur bleibt auf der Stelle).
+##   --ankerx schwerpunkt Der Anker wandert mit dem Schwerpunkt der Silhouette (Flug: die Logik bewegt die Figur, das
+##                        Bild zeigt nur die Haltung). Bis Bild --schwerpunkt-ab geht er gleitend von der Fußmitte des
+##                        ersten Bildes zum Schwerpunkt; ab da ist es der Schwerpunkt (3-Bild-Mittel).
+##   --ankerx mittel      Der Anker ist für alle Bilder der mittlere Schwerpunkt aller Bilder (laufende Figur auf der Stelle:
+##                        die Mitte des Körpers steht über dem Fußpunkt der Logik, Arme und Beine pendeln darum).
+##   --ankerx uebergang   Der Anker geht gleichmäßig vom Schwerpunkt des ersten (oder von --ankerx-video) zur Fußmitte des
+##                        letzten Bildes (Aufstehen: liegt wie `liegen`, steht wie `stand`).
+##   --ankery fest        Standard: Bodenlinie des ersten Bildes. --ankery unten: die unterste Figurzeile jedes Bildes liegt
+##                        auf dem Anker (Sprung, Flug, Liegen: die Höhe liefert die Logik).
+##   --setze n=b,...      Ereignisse von Hand setzen (Name=Bildnummer 1-basiert), überschreibt die Erkennung; steht im
+##                        clip.txt unter `setze=`.
+##   --schritt lauf       Schrittlänge für das Sprinten (Beinspreizung) statt für das Gehen (Fußband).
+##   --schleife pingpong  Schleife hin und her (Zyklus vorwärts, dann rückwärts), wenn kein Zyklus schließt.
 ##   --kuerzen ja|nein|auto  Wartezeit vor dem Schlag abschneiden (auto: Clips, deren Name „kette“ enthält)
 ##   --behalte            Temp-Ordner mit den Zwischenbildern nicht löschen
 ##
@@ -71,8 +106,18 @@ const FLECK_MIN: int = 4
 ## „Nah“: Radius der Erweiterung der größten Fläche = Figurhöhe / NAH_TEILER (Zopfspitzen, abgesetzte Hand).
 const NAH_TEILER: int = 25
 const RAND: int = 2
+## Staub (--staub): dunkle Figurpixel (größter Kanal höchstens STAUB_DUNKEL), in deren (2 · STAUB_RADIUS + 1)²-Fenster
+## weniger als `staub` Prozent der Pixel Figur sind, werden entfernt (Bodenstaub, Streupixel an der Kante).
+const STAUB_DUNKEL: int = 64
+const STAUB_RADIUS: int = 3
+## Auch graue Pixel (Staub ist grau, nicht schwarz): größter Kanal höchstens STAUB_GRAU und Farbigkeit (größter minus kleinster Kanal) höchstens STAUB_FARBIG.
+const STAUB_GRAU: int = 130
+const STAUB_FARBIG: int = 30
 const FUSS_ZEILEN: int = 6
 const FUSS_BAND: int = 10
+## Laufen (--schritt lauf): untere Zeilen, in denen die Beinspreizung gemessen wird, und Länge eines Stiefels in Bildpixeln.
+const LAUF_BAND: int = 56
+const LAUF_STIEFEL: int = 20
 ## Raster der Bildunterschrift für Zyklus und Ereignisse.
 const SIG: int = 24
 const ZYKLUS_MIN: int = 3
@@ -163,9 +208,33 @@ func _lauf() -> void:
 		_fehler("--schluessel: gruen oder ecke")
 		return
 	var ereignis: String = String(arg.get("ereignis", "vorn"))
-	if ereignis != "vorn" and ereignis != "hoch":
-		_fehler("--ereignis: vorn oder hoch")
+	if not ["vorn", "hoch", "sprung", "treffer", "flug", "aufstehen", "keine"].has(ereignis):
+		_fehler("--ereignis: vorn, hoch, sprung, treffer, flug, aufstehen oder keine")
 		return
+	var tol: int = int(arg.get("tol", str(TOL_ECKE)))
+	var loch: int = int(arg.get("loch", str(LOCH_TOL)))
+	var fleck: int = int(arg.get("fleck", str(FLECK_MIN)))
+	var staub: int = int(arg.get("staub", "0"))
+	var ausser: Dictionary = {}
+	for t: String in String(arg.get("ausser", "")).split(",", false):
+		var ab_bis: PackedStringArray = t.split("-")
+		for nr: int in range(int(ab_bis[0]), int(ab_bis[ab_bis.size() - 1]) + 1):
+			ausser[nr] = true
+	var ab: int = maxi(int(arg.get("ab", "1")), 1)
+	var bis: int = int(arg.get("bis", "0"))
+	var anker_x: String = String(arg.get("ankerx", "fest"))
+	var anker_y: String = String(arg.get("ankery", "fest"))
+	if not ["fest", "schwerpunkt", "uebergang", "mittel"].has(anker_x) or not ["fest", "unten"].has(anker_y):
+		_fehler("--ankerx fest|schwerpunkt|uebergang|mittel, --ankery fest|unten")
+		return
+	var rampe: int = int(arg.get("schwerpunkt-ab", "1"))
+	var schleife_art: String = String(arg.get("schleife", ""))
+	var setze: Dictionary = {}
+	for kv: String in String(arg.get("setze", "")).split(",", false):
+		var t: PackedStringArray = kv.split("=")
+		if t.size() == 2:
+			setze[t[0]] = int(t[1])
+	var faktor_vorgabe: float = float(arg.get("faktor", "0"))
 	var ziel_hoehe: int = int(arg.get("hoehe", str(ZIELHOEHE_STANDARD)))
 	if ziel_hoehe < 16 or ziel_hoehe > 600:
 		_fehler("--hoehe außerhalb 16 bis 600")
@@ -173,6 +242,14 @@ func _lauf() -> void:
 	_behalte = arg.has("behalte")
 	var video_pfad: String = absolut(video)
 	var aus_ordner: String = absolut(String(arg.get("aus", AUS_STANDARD)))
+	if arg.has("massstab-von"):
+		var ref_text: String = FileAccess.get_file_as_string(aus_ordner.path_join(String(arg["massstab-von"])).path_join("clip.txt"))
+		for z: String in ref_text.split("\n"):
+			if z.begins_with("massstab="):
+				faktor_vorgabe = float(z.substr(9))
+		if faktor_vorgabe <= 0.0:
+			_fehler("--massstab-von: kein massstab in %s" % String(arg["massstab-von"]))
+			return
 	if not FileAccess.file_exists(video_pfad):
 		_fehler("Video %s nicht gefunden" % video_pfad)
 		return
@@ -212,7 +289,7 @@ func _lauf() -> void:
 	if modus == "gruen" and gruen_dominanz(key0) < GRUEN_DOM_MIN:
 		print("Hinweis: Rand (%d, %d, %d) ist nicht grün, Modus ecke" % [key0.x, key0.y, key0.z])
 		modus = "ecke"
-	var sonde_fig: Dictionary = freistellen(sd, sw, sh, key0, modus)
+	var sonde_fig: Dictionary = freistellen(sd, sw, sh, key0, modus, tol, loch, fleck, staub)
 	var sonde_rahmen: Rect2i = maske_rahmen(sonde_fig["maske"], sw, sh)
 	if sonde_rahmen.size.y == 0:
 		_fehler("keine Figur im Sondenbild gefunden (Schlüsselfarbe (%d, %d, %d), Modus %s)" % [key0.x, key0.y, key0.z, modus])
@@ -251,7 +328,7 @@ func _lauf() -> void:
 		var bd: PackedByteArray = b.get_data()
 		var k: Vector3i = schluessel_farbe(bd, arbeit_w, arbeit_h)
 		keys.append(k)
-		rahmen_je.append(grober_rahmen(bd, arbeit_w, arbeit_h, k, modus, 3))
+		rahmen_je.append(grober_rahmen(bd, arbeit_w, arbeit_h, k, modus, 3, tol))
 	var kr: Array[int] = []
 	var kg: Array[int] = []
 	var kb: Array[int] = []
@@ -271,6 +348,14 @@ func _lauf() -> void:
 		s_bis -= 1
 	var einblend_vorn: int = s_von
 	var einblend_hinten: int = quell_zahl - 1 - s_bis
+	# Abschnitt (--ab, --bis; gezählt ab dem ersten stabilen Bild)
+	var abschnitt_vorn: int = ab - 1
+	s_von += abschnitt_vorn
+	if bis > 0:
+		s_bis = mini(s_bis, einblend_vorn + bis - 1)
+	if s_von > s_bis:
+		_fehler("--ab/--bis: leerer Abschnitt")
+		return
 	print("Randfarbe (Median) (%d, %d, %d); Einblendbilder: %d vorn, %d hinten" % [ref_key.x, ref_key.y, ref_key.z, einblend_vorn, einblend_hinten])
 	var rahmen: Rect2i = Rect2i()
 	var hat_rahmen: bool = false
@@ -293,8 +378,20 @@ func _lauf() -> void:
 		var bd: PackedByteArray = b.get_data()
 		var k: Vector3i = keys[i]
 		var ausschnitt: PackedByteArray = zuschneiden_rgb(bd, arbeit_w, rahmen)
-		var fig: Dictionary = freistellen(ausschnitt, rahmen.size.x, rahmen.size.y, k, modus)
+		var fig: Dictionary = freistellen(ausschnitt, rahmen.size.x, rahmen.size.y, k, modus, tol, loch, fleck, staub)
 		fig["nr"] = i
+		# Berührt die Figur den Rand des Videos? (Grok schneidet sie dann ab)
+		var rm: PackedByteArray = fig["maske"]
+		var beschn: int = 0
+		var rw: int = rahmen.size.x
+		var rh2: int = rahmen.size.y
+		for q: int in rw:
+			if (rahmen.position.y == 0 and rm[q] != 0) or (rahmen.end.y == arbeit_h and rm[(rh2 - 1) * rw + q] != 0):
+				beschn = 1
+		for q: int in rh2:
+			if (rahmen.position.x == 0 and rm[q * rw] != 0) or (rahmen.end.x == arbeit_w and rm[q * rw + rw - 1] != 0):
+				beschn = 1
+		fig["beschnitten"] = beschn
 		bilder.append(fig)
 	print("Freigestellt (%.1f s)" % _sek(t0))
 
@@ -315,6 +412,14 @@ func _lauf() -> void:
 	while hinten_weg < max_weg and unscharf_flag[rest - 1 - hinten_weg]:
 		hinten_weg += 1
 	var behalten: Array = bilder.slice(vorn_weg, rest - hinten_weg)
+	if not ausser.is_empty():
+		var rest_bilder: Array = []
+		for fig: Dictionary in behalten:
+			# Videobildnummer 1-basiert wie --ab (gezählt ab dem ersten stabilen Bild)
+			if not ausser.has(int(fig["nr"]) - einblend_vorn + 1):
+				rest_bilder.append(fig)
+		print("Ohne Bilder %s: %d von %d bleiben" % [str(ausser.keys()), rest_bilder.size(), behalten.size()])
+		behalten = rest_bilder
 	var unscharf_liste: PackedInt32Array = PackedInt32Array()
 	for i: int in behalten.size():
 		if unscharf_flag[vorn_weg + i]:
@@ -325,36 +430,59 @@ func _lauf() -> void:
 	var bw: int = rahmen.size.x
 	var bh: int = rahmen.size.y
 	var ref: Dictionary = behalten[0]
-	var gitter: Dictionary = gitter_bestimmen(ref["maske"], bw, bh, ziel_hoehe)
+	var gitter: Dictionary = {}
+	if faktor_vorgabe > 0.0:
+		# Maßstab vorgegeben: Zielpixel je Arbeitspixel = massstab · Quellhöhe / Arbeitshöhe
+		var fa: float = faktor_vorgabe * float(info["hoehe"]) / float(arbeit_h)
+		var rf: Rect2i = maske_rahmen(ref["maske"], bw, bh)
+		if rf.size.y > 0:
+			gitter = gitter_fuer(ref["maske"], bw, bh, rf, 1.0 / fa)
+	else:
+		gitter = gitter_bestimmen(ref["maske"], bw, bh, ziel_hoehe)
 	if gitter.is_empty():
 		_fehler("erstes Bild ohne Figur")
 		return
 	var finale: Array = []
+	var beschnitten: Array[int] = []
 	for fig: Dictionary in behalten:
+		beschnitten.append(int(fig["beschnitten"]))
 		finale.append(herunter(fig["maske"], fig["farbe"], bw, bh, gitter))
-	# Vereinigung aller Figuren
 	var gb: int = int(gitter["breite"])
 	var gh: int = int(gitter["hoehe"])
-	var x0: int = gb
-	var y0: int = gh
-	var x1: int = -1
-	var y1: int = -1
+	# Kennzahlen je Bild im Gitter und Anker je Bild (Inhaltspunkt, der auf dem Fußpunkt der Logik liegt)
+	var kz: Array = []
 	for f: PackedByteArray in finale:
-		for y: int in gh:
-			var z: int = y * gb * 4
-			for x: int in gb:
-				if f[z + x * 4 + 3] != 0:
-					if x < x0:
-						x0 = x
-					if x > x1:
-						x1 = x
-					if y < y0:
-						y0 = y
-					if y > y1:
-						y1 = y
-	if x1 < 0:
+		kz.append(kennzahlen(f, gb, gh))
+	if int(kz[0]["unten"]) < 0:
 		_fehler("nach dem Verkleinern ist nichts übrig")
 		return
+	var xv_faktor: float = float(arbeit_w) / float(info["breite"])
+	var fest_x: int = -1000000
+	# Spalte des Gitters ↔ x im Video: Zellmitte i = xa + i · inv im zugeschnittenen Arbeitsbild
+	var fussmitte_video: float = (float(gitter["xa16"]) / 65536.0 + float(int(kz[0]["fuss"]) + int(gitter["imin"])) * float(gitter["inv16"]) / 65536.0 + float(rahmen.position.x)) / xv_faktor
+	if arg.has("ankerx-video"):
+		var xw: float = float(arg["ankerx-video"]) * xv_faktor - float(rahmen.position.x)
+		fest_x = roundi((xw - float(gitter["xa16"]) / 65536.0) / (float(gitter["inv16"]) / 65536.0)) - int(gitter["imin"])
+	var fussmitte_letzt: float = (float(gitter["xa16"]) / 65536.0 + float(int(kz[kz.size() - 1]["fuss"]) + int(gitter["imin"])) * float(gitter["inv16"]) / 65536.0 + float(rahmen.position.x)) / xv_faktor
+	print("Fußmitte des ersten Bildes im Video: x = %.1f, des letzten: x = %.1f" % [fussmitte_video, fussmitte_letzt])
+	var ank_je: Array = anker_je_bild(kz, anker_x, anker_y, rampe, fest_x)
+	# Vereinigung aller Figuren (nach der Verschiebung auf den gemeinsamen Anker)
+	var ref_anker: Vector2i = ank_je[0]
+	var x0: int = 1 << 30
+	var y0: int = 1 << 30
+	var x1: int = -(1 << 30)
+	var y1: int = -(1 << 30)
+	var versatz: Array[Vector2i] = []
+	for i: int in finale.size():
+		var v: Vector2i = ref_anker - (ank_je[i] as Vector2i)
+		versatz.append(v)
+		var k: Dictionary = kz[i]
+		if int(k["unten"]) < 0:
+			continue
+		x0 = mini(x0, int(k["links"]) + v.x)
+		x1 = maxi(x1, int(k["rechts"]) + v.x)
+		y0 = mini(y0, int(k["oben"]) + v.y)
+		y1 = maxi(y1, int(k["unten"]) + v.y)
 	x0 -= RAND
 	y0 -= RAND
 	x1 += RAND
@@ -362,11 +490,23 @@ func _lauf() -> void:
 	var ob: int = x1 - x0 + 1
 	var oh: int = y1 - y0 + 1
 	var ausgabe: Array = []
-	for f: PackedByteArray in finale:
-		ausgabe.append(zuschnitt_rgba(f, gb, gh, x0, y0, ob, oh))
-	# Anker im ersten Bild (Gitter, dann Zuschnitt)
-	var ank: Vector2i = anker_bestimmen(ausgabe[0], ob, oh)
+	for i: int in finale.size():
+		ausgabe.append(zuschnitt_rgba(finale[i], gb, gh, x0 - versatz[i].x, y0 - versatz[i].y, ob, oh))
+	# Anker im ersten Bild (Zuschnitt)
+	var ank: Vector2i = ref_anker - Vector2i(x0, y0)
 	print("Maßstab: erstes Bild %d Zeilen, Faktor %.5f (Arbeitsauflösung), Bild %d x %d, Anker %s (%.1f s)" % [int(gitter["hoehe_erstes"]), float(gitter["faktor"]), ob, oh, str(ank), _sek(t0)])
+	# Messreihen in Bildpixeln (vor der Verschiebung, relativ zum ersten Bild): Höhe der Unterkante über der Bodenlinie
+	# des ersten Bildes und Schwerpunkt in x
+	var luft_liste: Array[int] = []
+	var schwerp_liste: Array[int] = []
+	var breite_liste: Array[int] = []
+	var hoehe_liste: Array[int] = []
+	for i: int in finale.size():
+		var k: Dictionary = kz[i]
+		breite_liste.append(int(k["rechts"]) - int(k["links"]) + 1)
+		hoehe_liste.append(int(k["unten"]) - int(k["oben"]) + 1)
+		luft_liste.append(int(kz[0]["unten"]) - int(k["unten"]))
+		schwerp_liste.append(roundi(float(int(k["schw16"]) - int(kz[0]["schw16"])) / 16.0))
 
 	# --- 7. Palette über alle Bilder ---------------------------------------------------------------
 	var pal: Dictionary = palette_anwenden(ausgabe)
@@ -393,6 +533,11 @@ func _lauf() -> void:
 			sigs = sigs.slice(gekuerzt)
 			vorn_liste = vorn_liste.slice(gekuerzt)
 			hoch_liste = hoch_liste.slice(gekuerzt)
+			beschnitten = beschnitten.slice(gekuerzt)
+			luft_liste = luft_liste.slice(gekuerzt)
+			schwerp_liste = schwerp_liste.slice(gekuerzt)
+			breite_liste = breite_liste.slice(gekuerzt)
+			hoehe_liste = hoehe_liste.slice(gekuerzt)
 			print("Wartezeit vorn: %d Bilder abgeschnitten" % gekuerzt)
 	var zyk: Dictionary
 	if arg.has("zyklus"):
@@ -402,9 +547,18 @@ func _lauf() -> void:
 		zyk = zyklus_start_fuer(sigs, zn)
 	else:
 		zyk = zyklus_suchen(sigs)
-	var ereignisse: Dictionary = ereignisse_suchen(sigs, vorn_liste, hoch_liste, ereignis)
-	var schritt: Dictionary = schrittlaenge(ausgabe, ob, oh, ank.y, int(zyk["start"]), int(zyk["n"]))
+	var ereignisse: Dictionary = ereignisse_suchen(sigs, vorn_liste, hoch_liste, ereignis if ereignis == "hoch" else "vorn")
+	var andere: Dictionary = ereignisse_andere(ereignis, sigs, {"luft": luft_liste, "breite": breite_liste, "hoehe": hoehe_liste})
+	for k: String in setze:
+		if ["ausholen", "kontakt", "rueckzug", "ruhe"].has(k):
+			ereignisse[k] = int(setze[k]) - 1
+			if andere.has(k):
+				andere[k] = int(setze[k]) - 1
+		else:
+			andere[k] = int(setze[k]) - 1
+	var schritt: Dictionary = schrittlaenge(ausgabe, ob, oh, ank.y, int(zyk["start"]), int(zyk["n"]), String(arg.get("schritt", "gehen")) == "lauf")
 	print("Zyklus: %s (Kandidaten %s, Güte %d %%, Schluss %d %% eines Bildschritts); Ereignisse: %s; Schritt: %s" % [str({"n": zyk["n"], "start": zyk["start"], "fehler": zyk["fehler"]}), str(zyk["kandidaten"]), zyk["guete"], zyk["schluss"], str(ereignisse), str(schritt)])
+	print("Weitere Ereignisse (%s, 0-basiert): %s" % [ereignis, str(andere)])
 
 	# --- 9. schreiben --------------------------------------------------------------------------------
 	var ziel: String = aus_ordner.path_join(name)
@@ -413,9 +567,11 @@ func _lauf() -> void:
 	for n: String in alt.get_files():
 		if n.begins_with("f_") or n == "clip.txt":
 			alt.remove(n)
+	var pal_liste: Array = pal["palette"]
 	for i: int in ausgabe.size():
-		var img: Image = Image.create_from_data(ob, oh, false, Image.FORMAT_RGBA8, ausgabe[i])
-		img.save_png(ziel.path_join("f_%04d.png" % (i + 1)))
+		var datei_png: FileAccess = FileAccess.open(ziel.path_join("f_%04d.png" % (i + 1)), FileAccess.WRITE)
+		datei_png.store_buffer(png_palette(ausgabe[i], ob, oh, pal_liste))
+		datei_png.close()
 	var text: PackedStringArray = PackedStringArray()
 	text.append("# Clip %s, erzeugt von werkzeuge/video_umsetzer.gd (nicht von Hand ändern). Bilder 1-basiert wie f_0001.png." % name)
 	text.append("version=1")
@@ -425,8 +581,10 @@ func _lauf() -> void:
 	text.append("fps=" + String(info["fps"]))
 	text.append("quell_bilder=%d" % quell_zahl)
 	text.append("einblendung_weg=%d,%d" % [einblend_vorn, einblend_hinten])
-	text.append("verworfen_anfang=%d" % (einblend_vorn + vorn_weg))
+	text.append("verworfen_anfang=%d" % (einblend_vorn + vorn_weg + abschnitt_vorn))
 	text.append("verworfen_ende=%d" % (einblend_hinten + hinten_weg))
+	text.append("ab=%d" % ab)
+	text.append("bis=%d" % bis)
 	text.append("bilder=%d" % ausgabe.size())
 	text.append("groesse=%d,%d" % [ob, oh])
 	text.append("anker=%d,%d" % [ank.x, ank.y])
@@ -460,10 +618,32 @@ func _lauf() -> void:
 	text.append("ruhe=%d" % (int(ereignisse["ruhe"]) + 1))
 	text.append("rueckkehr=" + String(ereignisse["rueckkehr"]))
 	text.append("gekuerzt=%d" % gekuerzt)
+	text.append("anker_modus=%s,%s,%d" % [anker_x, anker_y, rampe])
+	text.append("fussmitte_video=%.1f" % fussmitte_video)
+	var beschn_liste: Array[int] = []
+	for i: int in beschnitten.size():
+		if beschnitten[i] != 0:
+			beschn_liste.append(i + 1)
+	text.append("beschnitten=" + ",".join(Array(beschn_liste).map(func(v: int) -> String: return str(v))))
+	text.append("tol=%d,%d,%d" % [tol, loch, fleck])
+	if not ausser.is_empty():
+		text.append("ausser=" + ",".join(Array(ausser.keys()).map(func(k: int) -> String: return str(k))))
+	if schleife_art != "":
+		text.append("schleife=" + schleife_art)
+	var ak: Array = andere.keys()
+	ak.sort()
+	for k: String in ak:
+		text.append("ereignis_%s=%d" % [k, int(andere[k]) + 1])
+	if not setze.is_empty():
+		text.append("setze=" + ",".join(setze.keys().map(func(k: String) -> String: return "%s=%d" % [k, setze[k]])))
 	text.append("bewegung_ab=%d" % (int(ereignisse["bewegung"]) + 1))
 	text.append("ruhe_schwelle=%d" % int(ereignisse["schwelle"]))
 	text.append("vorn=" + ",".join(Array(vorn_liste).map(func(v: int) -> String: return str(v))))
 	text.append("hoch=" + ",".join(Array(hoch_liste).map(func(v: int) -> String: return str(v))))
+	text.append("luft=" + ",".join(Array(luft_liste).map(func(v: int) -> String: return str(v))))
+	text.append("schwerp=" + ",".join(Array(schwerp_liste).map(func(v: int) -> String: return str(v))))
+	text.append("breite_sil=" + ",".join(Array(breite_liste).map(func(v: int) -> String: return str(v))))
+	text.append("hoehe_sil=" + ",".join(Array(hoehe_liste).map(func(v: int) -> String: return str(v))))
 	var datei: FileAccess = FileAccess.open(ziel.path_join("clip.txt"), FileAccess.WRITE)
 	datei.store_string("\n".join(text) + "\n")
 	datei.close()
@@ -581,19 +761,19 @@ static func schluessel_farbe(d: PackedByteArray, w: int, h: int) -> Vector3i:
 
 
 ## Ist der Punkt Figur? (grobe Prüfung für Stichproben)
-static func ist_figur(r: int, g: int, b: int, key: Vector3i, modus: String) -> bool:
+static func ist_figur(r: int, g: int, b: int, key: Vector3i, modus: String, tol: int = TOL_ECKE) -> bool:
 	if modus == "gruen":
 		var m: int = r if r > b else b
 		return not (g >= GRUEN_G_MIN and (g - m) * 100 >= gruen_grenze(key) * g)
 	var dr: int = absi(r - key.x)
 	var dg: int = absi(g - key.y)
 	var db: int = absi(b - key.z)
-	return maxi(dr, maxi(dg, db)) > TOL_ECKE
+	return maxi(dr, maxi(dg, db)) >= tol
 
 
 ## Umschließendes Rechteck der Stichproben (alle `schritt` Pixel), die Figur sind; Größe 0, wenn keine.
 ## Ein Punkt allein zählt nicht (Rauschen): mindestens zwei Treffer je Zeile und Spalte-Nachbarschaft.
-static func grober_rahmen(d: PackedByteArray, w: int, h: int, key: Vector3i, modus: String, schritt: int) -> Rect2i:
+static func grober_rahmen(d: PackedByteArray, w: int, h: int, key: Vector3i, modus: String, schritt: int, tol: int = TOL_ECKE) -> Rect2i:
 	var x0: int = w
 	var y0: int = h
 	var x1: int = -1
@@ -606,7 +786,7 @@ static func grober_rahmen(d: PackedByteArray, w: int, h: int, key: Vector3i, mod
 		var x: int = 0
 		while x < w:
 			var i: int = (y * w + x) * 3
-			if ist_figur(d[i], d[i + 1], d[i + 2], key, modus):
+			if ist_figur(d[i], d[i + 1], d[i + 2], key, modus, tol):
 				treffer += 1
 				if x < zx0:
 					zx0 = x
@@ -658,7 +838,7 @@ static func maske_rahmen(m: PackedByteArray, w: int, h: int) -> Rect2i:
 
 ## Stellt ein RGB-Bild (w × h) frei. Rückgabe: maske (1 = Figur), farbe (RGB, an Kanten entmischt),
 ## schaerfe (1000 · Kantenpixel / (Kantenpixel + weiche Pixel)).
-static func freistellen(d: PackedByteArray, w: int, h: int, key: Vector3i, modus: String) -> Dictionary:
+static func freistellen(d: PackedByteArray, w: int, h: int, key: Vector3i, modus: String, tol: int = TOL_ECKE, loch: int = LOCH_TOL, fleck: int = FLECK_MIN, staub: int = 0) -> Dictionary:
 	var n: int = w * h
 	var alpha: PackedByteArray = PackedByteArray()
 	alpha.resize(n)
@@ -697,14 +877,16 @@ static func freistellen(d: PackedByteArray, w: int, h: int, key: Vector3i, modus
 			var dg: int = absi(d[i + 1] - key.y)
 			var db: int = absi(d[i + 2] - key.z)
 			var dist: int = maxi(dr, maxi(dg, db))
-			var a: int = mini(255, dist * 128 / TOL_ECKE)
+			var a: int = mini(255, dist * 128 / maxi(tol, 1))
 			alpha[p] = a
 			if a >= 128:
 				maske[p] = 1
 			if a > 32 and a < 224:
 				weich += 1
-	_loecher_fuellen(maske, alpha, d, w, h, key)
-	_inseln_entfernen(maske, w, h)
+	_loecher_fuellen(maske, alpha, d, w, h, key, loch)
+	if staub > 0:
+		_staub_entfernen(maske, d, w, h, staub)
+	_inseln_entfernen(maske, w, h, fleck)
 	var rand: int = 0
 	for y: int in h:
 		for x: int in w:
@@ -720,7 +902,7 @@ static func freistellen(d: PackedByteArray, w: int, h: int, key: Vector3i, modus
 ## Vom Rand aus (4er-Nachbarschaft) unerreichbare Flächen ohne Figur: Figur, wenn klein (Rauschen) oder
 ## im Mittel weiter als LOCH_TOL von der Schlüsselfarbe entfernt (dunkle Kleidung). Echte Lücken zwischen
 ## Arm und Rumpf zeigen die Schlüsselfarbe selbst und bleiben durchsichtig.
-static func _loecher_fuellen(maske: PackedByteArray, alpha: PackedByteArray, d: PackedByteArray, w: int, h: int, key: Vector3i) -> void:
+static func _loecher_fuellen(maske: PackedByteArray, alpha: PackedByteArray, d: PackedByteArray, w: int, h: int, key: Vector3i, loch: int = LOCH_TOL) -> void:
 	var n: int = w * h
 	var aussen: PackedByteArray = PackedByteArray()
 	aussen.resize(n)
@@ -790,15 +972,47 @@ static func _loecher_fuellen(maske: PackedByteArray, alpha: PackedByteArray, d: 
 			if py < h - 1 and maske[p + w] == 0 and aussen[p + w] == 0:
 				aussen[p + w] = 2
 				liste.append(p + w)
-		if liste.size() < LOCH_MIN or summe / liste.size() > LOCH_TOL:
+		if liste.size() < LOCH_MIN or summe / liste.size() > loch:
 			for p: int in liste:
 				maske[p] = 1
 				alpha[p] = 255
 
 
+## Entfernt dunkle, einzeln liegende Figurpixel (Staub): siehe STAUB_DUNKEL. Rechnet mit einem Summenbild der Maske.
+static func _staub_entfernen(maske: PackedByteArray, d: PackedByteArray, w: int, h: int, prozent: int) -> void:
+	var sb: PackedInt32Array = PackedInt32Array()
+	sb.resize((w + 1) * (h + 1))
+	for y: int in h:
+		var zeile: int = 0
+		for x: int in w:
+			zeile += maske[y * w + x]
+			sb[(y + 1) * (w + 1) + x + 1] = sb[y * (w + 1) + x + 1] + zeile
+	var fenster: int = (2 * STAUB_RADIUS + 1) * (2 * STAUB_RADIUS + 1)
+	var weg: PackedInt32Array = PackedInt32Array()
+	for y: int in h:
+		for x: int in w:
+			var p: int = y * w + x
+			if maske[p] == 0:
+				continue
+			var q: int = p * 3
+			var hell: int = maxi(d[q], maxi(d[q + 1], d[q + 2]))
+			var farbig: int = hell - mini(d[q], mini(d[q + 1], d[q + 2]))
+			if hell > STAUB_DUNKEL and not (hell <= STAUB_GRAU and farbig <= STAUB_FARBIG):
+				continue
+			var xa: int = maxi(x - STAUB_RADIUS, 0)
+			var xb: int = mini(x + STAUB_RADIUS + 1, w)
+			var ya: int = maxi(y - STAUB_RADIUS, 0)
+			var yb: int = mini(y + STAUB_RADIUS + 1, h)
+			var summe: int = sb[yb * (w + 1) + xb] - sb[ya * (w + 1) + xb] - sb[yb * (w + 1) + xa] + sb[ya * (w + 1) + xa]
+			if summe * 100 < prozent * fenster:
+				weg.append(p)
+	for p: int in weg:
+		maske[p] = 0
+
+
 ## Behält die größte zusammenhängende Fläche (8er-Nachbarschaft) und alle Teile in ihrer Nähe
 ## (Radius Höhe/NAH_TEILER); alles andere und alles unter FLECK_MIN Pixeln fällt weg.
-static func _inseln_entfernen(maske: PackedByteArray, w: int, h: int) -> void:
+static func _inseln_entfernen(maske: PackedByteArray, w: int, h: int, fleck: int = FLECK_MIN) -> void:
 	var n: int = w * h
 	var marke: PackedInt32Array = PackedInt32Array()
 	marke.resize(n)
@@ -872,7 +1086,7 @@ static func _inseln_entfernen(maske: PackedByteArray, w: int, h: int) -> void:
 	behalte[groesste] = 1
 	for p: int in n:
 		var k: int = marke[p]
-		if k != 0 and vd[p] != 0 and groessen[k] >= FLECK_MIN:
+		if k != 0 and vd[p] != 0 and groessen[k] >= fleck:
 			behalte[k] = 1
 	for p: int in n:
 		var k: int = marke[p]
@@ -914,37 +1128,116 @@ static func gitter_bestimmen(maske: PackedByteArray, w: int, h: int, ziel: int) 
 	var rf: Rect2i = maske_rahmen(maske, w, h)
 	if rf.size.y == 0:
 		return {}
-	var yl: int = rf.end.y - 1
 	var inv: float = float(rf.size.y) / float(ziel)
 	var beste: Dictionary = {}
 	var bester_abstand: int = 1000000
 	for versuch: int in 12:
-		var inv16: int = roundi(inv * 65536.0)
-		var fb: int = maxi(1, roundi(float(FUSS_ZEILEN) * inv))
-		var xmin: int = w
-		var xmax: int = -1
-		for y: int in range(maxi(rf.position.y, yl - fb + 1), yl + 1):
-			for x: int in w:
-				if maske[y * w + x] != 0:
-					if x < xmin:
-						xmin = x
-					if x > xmax:
-						xmax = x
-		var xa16: int = (xmin + xmax + 1) * 65536 / 2
-		var yb16: int = (yl + 1) * 65536
-		var g: Dictionary = _gitter(xa16, yb16, inv16, w, h)
-		var f: PackedByteArray = herunter(maske, PackedByteArray(), w, h, g, true)
-		var hoehe: int = _figurhoehe(f, int(g["breite"]), int(g["hoehe"]))
+		var g: Dictionary = gitter_fuer(maske, w, h, rf, inv)
+		var hoehe: int = int(g["hoehe_erstes"])
 		var abstand: int = absi(hoehe - ziel)
 		if abstand < bester_abstand:
 			bester_abstand = abstand
-			g["hoehe_erstes"] = hoehe
-			g["faktor"] = 65536.0 / float(inv16)
 			beste = g
 		if hoehe == ziel:
 			break
 		inv *= float(hoehe) / float(ziel)
 	return beste
+
+
+## Gitter für einen festen Maßstab `inv` (Arbeitspixel je Zielpixel): Anker aus der Maske `maske` (Mitte der Füße,
+## Bodenlinie), Figurhöhe im Bild als `hoehe_erstes`.
+static func gitter_fuer(maske: PackedByteArray, w: int, h: int, rf: Rect2i, inv: float) -> Dictionary:
+	var yl: int = rf.end.y - 1
+	var inv16: int = roundi(inv * 65536.0)
+	var fb: int = maxi(1, roundi(float(FUSS_ZEILEN) * inv))
+	var xmin: int = w
+	var xmax: int = -1
+	for y: int in range(maxi(rf.position.y, yl - fb + 1), yl + 1):
+		for x: int in w:
+			if maske[y * w + x] != 0:
+				if x < xmin:
+					xmin = x
+				if x > xmax:
+					xmax = x
+	var xa16: int = (xmin + xmax + 1) * 65536 / 2
+	var yb16: int = (yl + 1) * 65536
+	var g: Dictionary = _gitter(xa16, yb16, inv16, w, h)
+	var f: PackedByteArray = herunter(maske, PackedByteArray(), w, h, g, true)
+	g["hoehe_erstes"] = _figurhoehe(f, int(g["breite"]), int(g["hoehe"]))
+	g["faktor"] = 65536.0 / float(inv16)
+	return g
+
+
+## Kennzahlen eines verkleinerten Bildes (RGBA8, b × h): Umriss (links, rechts, oben, unten; unten −1 = leer),
+## Fußmitte (Mitte der untersten FUSS_ZEILEN Zeilen), Schwerpunkt in x (1/16 Pixel), Zahl der Figurpixel.
+static func kennzahlen(f: PackedByteArray, b: int, h: int) -> Dictionary:
+	var links: int = b
+	var rechts: int = -1
+	var oben: int = h
+	var unten: int = -1
+	var summe: int = 0
+	var zahl: int = 0
+	for y: int in h:
+		for x: int in b:
+			if f[(y * b + x) * 4 + 3] != 0:
+				if x < links:
+					links = x
+				if x > rechts:
+					rechts = x
+				if y < oben:
+					oben = y
+				unten = y
+				summe += x * 16 + 8
+				zahl += 1
+	if unten < 0:
+		return {"links": 0, "rechts": 0, "oben": 0, "unten": -1, "fuss": 0, "schw16": 0, "zahl": 0}
+	var fmin: int = b
+	var fmax: int = -1
+	for y: int in range(maxi(0, unten - FUSS_ZEILEN + 1), unten + 1):
+		for x: int in b:
+			if f[(y * b + x) * 4 + 3] != 0:
+				if x < fmin:
+					fmin = x
+				if x > fmax:
+					fmax = x
+	return {"links": links, "rechts": rechts, "oben": oben, "unten": unten, "fuss": (fmin + fmax) / 2, "schw16": summe / zahl, "zahl": zahl}
+
+
+## Inhaltspunkt je Bild (Gitterkoordinaten), der auf dem Fußpunkt der Logik liegt; siehe Kopf (--ankerx, --ankery).
+## Schwerpunkt: gleitend von der Fußmitte des ersten Bildes (Gewicht 0) zum 3-Bild-Mittel des Schwerpunkts (Gewicht 1) bis
+## Bild `rampe` (1-basiert; 1 = gleich der Schwerpunkt). Übergang: vom Schwerpunkt des ersten zur Fußmitte des letzten Bildes.
+static func anker_je_bild(kz: Array, ankerx: String, ankery: String, rampe: int, fest_x: int = -1000000) -> Array:
+	var n: int = kz.size()
+	var aus: Array = []
+	for i: int in n:
+		var cy: int = int((kz[i] if ankery == "unten" else kz[0])["unten"])
+		var cx16: int = int(kz[0]["fuss"]) * 16 if fest_x == -1000000 else fest_x * 16
+		if ankerx == "schwerpunkt":
+			var summe: int = 0
+			var zahl: int = 0
+			for j: int in range(maxi(0, i - 1), mini(n, i + 2)):
+				if int(kz[j]["unten"]) >= 0:
+					summe += int(kz[j]["schw16"])
+					zahl += 1
+			var s16: int = summe / maxi(zahl, 1)
+			var w16: int = 65536
+			if rampe > 1:
+				w16 = mini(i, rampe - 1) * 65536 / (rampe - 1)
+			cx16 = (int(kz[0]["fuss"]) * 16 * (65536 - w16) + s16 * w16) / 65536
+		elif ankerx == "mittel":
+			var sm: int = 0
+			var zm: int = 0
+			for j: int in n:
+				if int(kz[j]["unten"]) >= 0:
+					sm += int(kz[j]["schw16"])
+					zm += 1
+			cx16 = sm / maxi(zm, 1)
+		elif ankerx == "uebergang":
+			var a16: int = int(kz[0]["schw16"]) if fest_x == -1000000 else fest_x * 16
+			var e16: int = int(kz[n - 1]["fuss"]) * 16
+			cx16 = a16 + (e16 - a16) * i / maxi(n - 1, 1)
+		aus.append(Vector2i((cx16 + 8) >> 4, cy))
+	return aus
 
 
 static func _gitter(xa16: int, yb16: int, inv16: int, w: int, h: int) -> Dictionary:
@@ -1394,11 +1687,224 @@ static func ereignisse_suchen(sigs: Array, vorn: Array[int], hoch: Array[int], m
 		ruhe = 0
 	# Rückzug: letztes Bild der vollen Streckung vor der Ruhe (bei Rückkehr rückwärts: das Kontaktbild selbst)
 	var rueckzug: int = kontakt
+	# Rückzug-Toleranz größer als die des Kontakts (ein Viertel des Hubs): Ein Arm, der nach dem Überschwingen lange
+	# nur wenig kürzer gestreckt bleibt, gilt noch als gehalten.
+	var tol_halten: int = maxi(tol, (spitze - kl) / 4)
 	if rueck == "vorwaerts":
 		for i: int in range(kontakt, ruhe):
-			if mass[i] >= spitze - tol:
+			if mass[i] >= spitze - tol_halten:
 				rueckzug = i
 	return {"ausholen": ausholen, "kontakt": kontakt, "rueckzug": rueckzug, "ruhe": ruhe, "bewegung": start, "schwelle": schwelle, "rueckkehr": rueck}
+
+
+# ===========================================================================
+# PNG mit Palette (kleiner als RGBA: 64 Farben, Index 0 = durchsichtig)
+# ===========================================================================
+
+static var _crc_tabelle: PackedInt64Array = PackedInt64Array()
+
+
+static func _crc32(daten: PackedByteArray) -> int:
+	if _crc_tabelle.is_empty():
+		_crc_tabelle.resize(256)
+		for n: int in 256:
+			var c: int = n
+			for _k: int in 8:
+				c = (0xEDB88320 ^ (c >> 1)) if (c & 1) != 0 else (c >> 1)
+			_crc_tabelle[n] = c
+	var crc: int = 0xFFFFFFFF
+	for b: int in daten:
+		crc = _crc_tabelle[(crc ^ b) & 255] ^ (crc >> 8)
+	return crc ^ 0xFFFFFFFF
+
+
+static func _png_block(art: String, daten: PackedByteArray) -> PackedByteArray:
+	var aus: PackedByteArray = PackedByteArray()
+	var laenge: int = daten.size()
+	aus.append_array(PackedByteArray([(laenge >> 24) & 255, (laenge >> 16) & 255, (laenge >> 8) & 255, laenge & 255]))
+	var kd: PackedByteArray = art.to_ascii_buffer()
+	kd.append_array(daten)
+	aus.append_array(kd)
+	var crc: int = _crc32(kd)
+	aus.append_array(PackedByteArray([(crc >> 24) & 255, (crc >> 16) & 255, (crc >> 8) & 255, crc & 255]))
+	return aus
+
+
+## Schreibt ein RGBA8-Bild (Alpha nur 0 oder 255, Farben aus `palette`) als PNG mit Palette (8 Bit, Index 0 durchsichtig,
+## Index k + 1 = palette[k]) und tRNS. Zeilenfilter je Zeile None, Sub oder Up mit der kleinsten Betragssumme (feste Wahl).
+static func png_palette(f: PackedByteArray, b: int, h: int, palette: Array) -> PackedByteArray:
+	var index: Dictionary = {}
+	for k: int in palette.size():
+		index[int(palette[k])] = k + 1
+	var roh: PackedByteArray = PackedByteArray()
+	roh.resize(b * h)
+	for p: int in b * h:
+		var o: int = p * 4
+		if f[o + 3] != 0:
+			roh[p] = int(index[(f[o] << 16) | (f[o + 1] << 8) | f[o + 2]])
+	var gefiltert: PackedByteArray = PackedByteArray()
+	for y: int in h:
+		var z: int = y * b
+		var best: int = 0
+		var beste_summe: int = 1 << 40
+		for fa: int in 3:
+			var summe: int = 0
+			for x: int in b:
+				var v: int = roh[z + x]
+				var l: int = roh[z + x - 1] if x > 0 else 0
+				var u: int = roh[z - b + x] if y > 0 else 0
+				var d: int = (v - (0 if fa == 0 else (l if fa == 1 else u))) & 255
+				summe += d if d < 128 else 256 - d
+			if summe < beste_summe:
+				beste_summe = summe
+				best = fa
+		gefiltert.append(best)
+		for x: int in b:
+			var v: int = roh[z + x]
+			var l: int = roh[z + x - 1] if x > 0 else 0
+			var u: int = roh[z - b + x] if y > 0 else 0
+			gefiltert.append((v - (0 if best == 0 else (l if best == 1 else u))) & 255)
+	var kopf: PackedByteArray = PackedByteArray([(b >> 24) & 255, (b >> 16) & 255, (b >> 8) & 255, b & 255, (h >> 24) & 255, (h >> 16) & 255, (h >> 8) & 255, h & 255, 8, 3, 0, 0, 0])
+	var plte: PackedByteArray = PackedByteArray([0, 0, 0])
+	for c: int in palette:
+		plte.append_array(PackedByteArray([(c >> 16) & 255, (c >> 8) & 255, c & 255]))
+	var aus: PackedByteArray = PackedByteArray([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A])
+	aus.append_array(_png_block("IHDR", kopf))
+	aus.append_array(_png_block("PLTE", plte))
+	aus.append_array(_png_block("tRNS", PackedByteArray([0])))
+	aus.append_array(_png_block("IDAT", gefiltert.compress(FileAccess.COMPRESSION_DEFLATE)))
+	aus.append_array(_png_block("IEND", PackedByteArray()))
+	return aus
+
+
+## Ereignisse der Clips ohne Schlag (0-basierte Bildnummern) nach `typ`. `m` enthält die Messreihen je Bild:
+## luft (Höhe der Unterkante über der Bodenlinie des ersten Bildes, Bildpixel), schwerp, vorn, hoch (Abstand der obersten
+## Zeile vom oberen Bildrand, kleiner = höher), breite und hoehe (Silhouette) sowie die Bildunterschriften `sigs`.
+##  sprung:    hocke (tiefste Haltung vor dem Absprung), absprung (erstes Bild mit Luft ≥ 2 über dem Boden), scheitel
+##             (Mitte des höchsten Abschnitts, höchstens 6 px unter dem Gipfel), aufsetzen (erstes Bild danach mit Luft ≤ 1), tief (tiefste Haltung nach dem
+##             Aufsetzen, Höhe der Silhouette am kleinsten), ruhe (erstes Bild danach, dessen Silhouette wieder so hoch ist
+##             wie im ersten Bild, 3 px Toleranz).
+##  treffer:   start (erstes Bild, das sich vom ersten merklich unterscheidet: ein Fünfundzwanzigstel des größten
+##             Unterschieds), kontakt (erstes Bild mit mindestens 95 % der größten Breite der Silhouette: Arme nach außen,
+##             größte Auslenkung), rueckzug (letztes solches Bild), ruhe (erstes Bild danach, das dem letzten höchstens
+##             ein Sechstel des größten Unterschieds zum letzten Bild gleicht: die Haltung ist erreicht).
+##  flug:      start (wie treffer), abheben (erstes Bild mit Luft ≥ 3), scheitel (größte Luft), aufprall (erstes Bild
+##             danach, dessen Luft höchstens 3 px über dem tiefsten Stand nach dem Scheitel liegt: der Körper liegt auf),
+##             liegt (erstes Bild nach dem Aufprall, das dem letzten höchstens ein Achtel des größten Unterschieds
+##             zum letzten Bild gleicht).
+##  aufstehen: start (erstes Bild, das sich vom ersten merklich unterscheidet), ruhe (erstes Bild, das dem letzten
+##             höchstens ein Sechstel des größten Unterschieds zum letzten Bild gleicht: die Haltung steht).
+## Leer bei vorn, hoch, keine.
+static func ereignisse_andere(typ: String, sigs: Array, m: Dictionary) -> Dictionary:
+	var luft: Array[int] = m["luft"]
+	var breite: Array[int] = m["breite"]
+	var hoehe: Array[int] = m["hoehe"]
+	var n: int = sigs.size()
+	var e: Dictionary = {}
+	if n < 3 or not ["sprung", "treffer", "flug", "aufstehen"].has(typ):
+		return e
+	var d0: Array[int] = []
+	var dl: Array[int] = []
+	var g0: int = 1
+	var gl: int = 1
+	for i: int in n:
+		d0.append(sig_abstand(sigs[i], sigs[0]))
+		dl.append(sig_abstand(sigs[i], sigs[n - 1]))
+		g0 = maxi(g0, d0[i])
+		gl = maxi(gl, dl[i])
+	var start: int = 0
+	for i: int in range(1, n):
+		if d0[i] > maxi(g0 / 25, 1):
+			start = i
+			break
+	if typ == "sprung":
+		var gipfel: int = 0
+		for i: int in n:
+			gipfel = maxi(gipfel, luft[i])
+		var ab: int = 0
+		for i: int in n:
+			if luft[i] >= 2:
+				ab = i
+				break
+		var von: int = -1
+		var bis: int = 0
+		for i: int in range(ab, n):
+			if luft[i] >= gipfel - 6:
+				if von < 0:
+					von = i
+				bis = i
+		var scheitel: int = (von + bis) / 2
+		var auf: int = n - 1
+		for i: int in range(bis + 1, n):
+			if luft[i] <= 1:
+				auf = i
+				break
+		var tief: int = auf
+		for i: int in range(auf, n):
+			if hoehe[i] < hoehe[tief]:
+				tief = i
+		var hocke: int = 0
+		for i: int in range(0, ab):
+			if hoehe[i] < hoehe[hocke]:
+				hocke = i
+		var ruhe: int = n - 1
+		for i: int in range(tief, n):
+			if hoehe[i] >= hoehe[0] - 3:
+				ruhe = i
+				break
+		e = {"hocke": hocke, "absprung": ab, "scheitel": scheitel, "aufsetzen": auf, "tief": tief, "ruhe": ruhe}
+	elif typ == "treffer":
+		var wmax: int = 0
+		for i: int in n:
+			wmax = maxi(wmax, breite[i])
+		var kontakt: int = 0
+		var rueck: int = 0
+		for i: int in n:
+			if breite[i] * 100 >= wmax * 95:
+				if kontakt == 0:
+					kontakt = i
+				rueck = i
+		var ruhe: int = n - 1
+		for i: int in range(rueck, n):
+			if dl[i] <= maxi(gl / 6, 1):
+				ruhe = i
+				break
+		e = {"start": start, "kontakt": kontakt, "rueckzug": rueck, "ruhe": ruhe}
+	elif typ == "flug":
+		var scheitel: int = 0
+		for i: int in n:
+			if luft[i] > luft[scheitel]:
+				scheitel = i
+		var ab: int = 0
+		for i: int in n:
+			if luft[i] >= 3:
+				ab = i
+				break
+		var boden: int = luft[scheitel]
+		for i: int in range(scheitel, n):
+			boden = mini(boden, luft[i])
+		var auf: int = n - 1
+		for i: int in range(scheitel, n):
+			if luft[i] <= boden + 3:
+				auf = i
+				break
+		var gl2: int = 1
+		for i: int in range(auf, n):
+			gl2 = maxi(gl2, dl[i])
+		var liegt: int = n - 1
+		for i: int in range(auf, n):
+			if dl[i] <= maxi(gl2 / 8, 1):
+				liegt = i
+				break
+		e = {"start": start, "abheben": ab, "scheitel": scheitel, "aufprall": auf, "liegt": liegt}
+	else:
+		var ruhe: int = n - 1
+		for i: int in n:
+			if dl[i] <= maxi(gl / 6, 1):
+				ruhe = i
+				break
+		e = {"start": start, "ruhe": ruhe}
+	return e
 
 
 ## Schrittlänge für das Gehen: Im Fußband (die untersten FUSS_BAND Zeilen über der Bodenlinie `bodeny`) ist die Breite
@@ -1407,14 +1913,14 @@ static func ereignisse_suchen(sigs: Array, vorn: Array[int], hoch: Array[int], m
 ## dem Gehtempo der Logik (KernWerte.LAUF_X · 2 Bildpixel je Tick) ergibt sich die Zyklusdauer in Ticks,
 ## damit der Standfuß nicht rutscht. Nicht messbar (Schritt unter 8 px): 24 Ticks.
 ## Gemessen wird über die Bilder des Zyklus (start, n).
-static func schrittlaenge(bilder: Array, b: int, h: int, bodeny: int, start: int, n: int) -> Dictionary:
+static func schrittlaenge(bilder: Array, b: int, h: int, bodeny: int, start: int, n: int, lauf: bool = false) -> Dictionary:
 	var kleinst: int = 1 << 30
 	var groesst: int = 0
 	for i: int in range(start, mini(start + n, bilder.size())):
 		var f: PackedByteArray = bilder[i]
 		var xmin: int = b
 		var xmax: int = -1
-		for y: int in range(maxi(0, bodeny - FUSS_BAND + 1), mini(h, bodeny + 1)):
+		for y: int in range(maxi(0, bodeny - (LAUF_BAND if lauf else FUSS_BAND) + 1), mini(h, bodeny + 1)):
 			for x: int in b:
 				if f[(y * b + x) * 4 + 3] != 0:
 					if x < xmin:
@@ -1426,6 +1932,11 @@ static func schrittlaenge(bilder: Array, b: int, h: int, bodeny: int, start: int
 			kleinst = mini(kleinst, breite)
 			groesst = maxi(groesst, breite)
 	var schritt: int = groesst - kleinst if groesst > 0 else 0
+	if lauf:
+		# Laufen: breiteste Spreizung der Beine (Zehe bis Zehe) minus eine Stiefellänge ist die Schrittlänge; Zyklusdauer
+		# in Ticks beim mittleren Sprinttempo (3,5 px je Tick), die Tabelle rechnet das Tempo je Frame selbst
+		schritt = maxi(groesst - LAUF_STIEFEL, 8)
+		return {"schritt": schritt, "ticks": clampi((schritt * 65536 + 114688) / 229376, 12, 60)}
 	var ticks: int = 24
 	if schritt >= 8:
 		ticks = clampi((schritt * 65536 + KernWerte.LAUF_X / 2) / KernWerte.LAUF_X, 12, 60)

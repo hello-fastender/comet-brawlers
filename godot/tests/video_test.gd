@@ -1,5 +1,6 @@
-## Test des Video-Wegs für Vela: Ergebnisse des Umsetzers an den TESTCLIPS (aus der Puppe, nicht von Grok), die
-## Zuordnung Aktion/Uhr → Bild, der Abspieler und die Rückfallreihenfolge der Quellen in der Darstellung.
+## Test des Video-Wegs für Vela: Ergebnisse des Umsetzers an den TESTCLIPS (aus der Puppe, nicht von Grok) und an den
+## echten Clips (aus den Grok-Videos), die Zuordnung Aktion/Uhr → Bild, der Abspieler und die Rückfallreihenfolge der
+## Quellen in der Darstellung.
 ## Läuft ohne Fenster und ohne ffmpeg (liest die bereits erzeugten Ordner unter godot/grafik/vela_video/):
 ##   godot --headless --path godot --script res://tests/alle.gd
 ## Einbindung: `var r := VideoTest.lauf()`; r["geprueft"] Zahl der Prüfungen, r["fehler"] Meldungen.
@@ -10,6 +11,25 @@ const ORDNER: String = "res://grafik/vela_video/"
 const GEHEN: String = "_test_gehen"
 const KETTE: String = "_test_kette1"
 const SCHRITTE: int = 600
+## Echte Clips (Grok-Videos): Name → Prüfparameter. min: Mindestzahl der Bilder; hoehe: erlaubte Figurhöhe im ersten Bild
+## (Kampfhaltung = 142, ±1 wegen der Staubentfernung bzw. des Atems); ankerx: Anker x = Mitte der untersten 6 Zeilen
+## des ersten Bildes (Fußmitte, nicht bei Schwerpunkt- und Übergangsanker).
+const ECHTE: Dictionary = {
+	"stand": {"min": 30, "hoehe": [142, 143], "ankerx": true},
+	"kette1": {"min": 30, "hoehe": [142, 142], "ankerx": true},
+	"kette2": {"min": 30, "hoehe": [142, 142], "ankerx": true},
+	"kette3": {"min": 30, "hoehe": [142, 142], "ankerx": true},
+	"kette4": {"min": 30, "hoehe": [142, 142], "ankerx": true},
+	"sprint": {"min": 16, "hoehe": [], "ankerx": false},
+	"sprung": {"min": 60, "hoehe": [142, 142], "ankerx": true},
+	"getroffen_vorn": {"min": 60, "hoehe": [142, 142], "ankerx": true},
+	"umgeworfen": {"min": 60, "hoehe": [141, 142], "ankerx": false},
+	"liegen": {"min": 1, "hoehe": [], "ankerx": false},
+	"aufstehen": {"min": 60, "hoehe": [], "ankerx": false},
+}
+## Maßstab (clip.txt, Spielbildpixel je Videopixel) aller echten Clips: dieselbe Größe der Figur, 0,3 % Spielraum.
+const MASSSTAB: float = 0.1694
+const MASSSTAB_TOL: float = 0.0006
 ## Raster der Bildunterschriften des Umsetzers (video_umsetzer.gd SIG)
 const SIG: int = 24
 const T = preload("res://darstellung/vela_frames_tabelle.gd")
@@ -40,6 +60,9 @@ func _alles() -> void:
 	DarstellungVelaFrames.clips_vergessen()
 	_clips(GEHEN)
 	_clips(KETTE)
+	_echte_clips()
+	_tabelle_neu()
+	_logik_szenen()
 	_gehen_clip()
 	_kette_clip()
 	_umsetzer_funktionen()
@@ -98,13 +121,13 @@ func _liste(clip: String, schluessel: String) -> Array[int]:
 # Ergebnisse des Umsetzers an den Testclips
 # ---------------------------------------------------------------------------
 
-func _clips(clip: String) -> void:
+func _clips(clip: String, min_n: int = 20, hoehe_ok: Array = [142, 142], ankerx_pruefen: bool = true) -> void:
 	var d: Dictionary = _daten(clip)
 	_ok(not d.is_empty(), "%s: clip.txt lesbar" % clip)
 	if d.is_empty():
 		return
 	var n: int = d["bilder"]
-	_ok(n >= 20, "%s: mindestens 20 Bilder (%d)" % [clip, n])
+	_ok(n >= min_n, "%s: mindestens %d Bilder (%d)" % [clip, min_n, n])
 	var breite: int = d["breite"]
 	var hoehe: int = d["hoehe"]
 	var farben: Dictionary = {}
@@ -135,7 +158,9 @@ func _clips(clip: String) -> void:
 	if b1 == null:
 		return
 	var z: Array[int] = _zeilen(b1)
-	_gleich(z[1] - z[0] + 1, 142, "%s: Figur im ersten Bild 142 Bildpixel hoch" % clip)
+	if not hoehe_ok.is_empty():
+		var hh: int = z[1] - z[0] + 1
+		_ok(hh >= int(hoehe_ok[0]) and hh <= int(hoehe_ok[1]), "%s: Figur im ersten Bild %d bis %d Bildpixel hoch (%d)" % [clip, hoehe_ok[0], hoehe_ok[1], hh])
 	_gleich(int(d["ankery"]), z[1], "%s: Anker y = unterste Figurzeile des ersten Bildes" % clip)
 	var px1: PackedByteArray = b1.get_data()
 	var xmin: int = breite
@@ -145,7 +170,8 @@ func _clips(clip: String) -> void:
 			if px1[(y * breite + x) * 4 + 3] != 0:
 				xmin = mini(xmin, x)
 				xmax = maxi(xmax, x)
-	_gleich(int(d["ankerx"]), (xmin + xmax) / 2, "%s: Anker x = Mitte der untersten 6 Zeilen" % clip)
+	if ankerx_pruefen:
+		_gleich(int(d["ankerx"]), (xmin + xmax) / 2, "%s: Anker x = Mitte der untersten 6 Zeilen" % clip)
 	_ok(int(d["ankerx"]) > 0 and int(d["ankerx"]) < breite and int(d["ankery"]) < hoehe, "%s: Anker im Bild" % clip)
 	# Zuschnitt: 2 px Rand um die Vereinigung aller Figuren
 	var x0: int = breite
@@ -415,7 +441,9 @@ func _tabelle_clipdaten() -> void:
 	_gleich(T.clip_name("LAUF", 0), "gehen", "Aktion LAUF → Clip gehen")
 	_gleich(T.clip_name("SCHLAG", 3), "kette3", "Aktion SCHLAG Stufe 3 → Clip kette3")
 	_gleich(T.clip_name("LEERSCHLAG", 1), "kette1", "Aktion LEERSCHLAG → Clip kette")
-	_gleich(T.clip_name("SPRUNG", 1), "", "Aktion SPRUNG → kein Clip vorgesehen")
+	_gleich(T.clip_name("SPRUNGANGRIFF", 1), "", "Aktion SPRUNGANGRIFF → kein Clip vorgesehen")
+	for paar: Array in [["SPRINT", "sprint"], ["SPRUNG", "sprung"], ["LANDUNG", "sprung"], ["GETROFFEN", "getroffen_vorn"], ["UMGEWORFEN", "umgeworfen"], ["TOT", "umgeworfen"], ["LIEGEN", "liegen"], ["AUFSTEHEN", "aufstehen"]]:
+		_gleich(T.clip_name(paar[0], 1), paar[1], "Aktion %s → Clip %s" % [paar[0], paar[1]])
 	_gleich(T.stufe_aus_name("kette4"), 4, "Stufe aus dem Namen kette4")
 	_gleich(T.stufe_aus_name("_test_kette1"), 1, "Stufe aus dem Namen _test_kette1")
 	_gleich(T.stufe_aus_name("gehen"), 0, "gehen ist kein Schlagclip")
@@ -470,8 +498,17 @@ func _abspieler() -> void:
 
 func _abdeckung() -> void:
 	var f: KernEntitaeten.Figur = KernEntitaeten.Figur.new()
-	f.aktion = "SPRUNG"
-	_ok(not DarstellungVelaFrames.abgedeckt(f), "abgedeckt: Aktion ohne Clip (SPRUNG) ist nicht abgedeckt")
+	f.aktion = "SPRUNGANGRIFF"
+	_ok(not DarstellungVelaFrames.abgedeckt(f), "abgedeckt: Aktion ohne Clip (SPRUNGANGRIFF) ist nicht abgedeckt")
+	# je Aktion genau dann abgedeckt, wenn der Clip geladen ist (TOT: umgeworfen bzw. ab der Ruhe liegen)
+	for paar: Array in [["SPRINT", "sprint"], ["SPRUNG", "sprung"], ["LANDUNG", "sprung"], ["GETROFFEN", "getroffen_vorn"], ["UMGEWORFEN", "umgeworfen"], ["TOT", "umgeworfen"], ["LIEGEN", "liegen"], ["AUFSTEHEN", "aufstehen"]]:
+		f.aktion = paar[0]
+		f.phase = ""
+		_gleich(DarstellungVelaFrames.abgedeckt(f), not DarstellungVelaFrames.clip_laden(paar[1]).is_empty(), "abgedeckt: %s genau dann, wenn der Clip %s geladen ist" % [paar[0], paar[1]])
+	f.aktion = "TOT"
+	f.phase = "R"
+	_gleich(DarstellungVelaFrames.abgedeckt(f), not DarstellungVelaFrames.clip_laden("liegen").is_empty(), "abgedeckt: TOT ab der Ruhe genau dann, wenn liegen geladen ist")
+	f.phase = ""
 	f.aktion = "STAND"
 	_gleich(DarstellungVelaFrames.abgedeckt(f), not DarstellungVelaFrames.clip_laden("stand").is_empty(), "abgedeckt: STAND genau dann, wenn der Clip stand geladen ist")
 	f.aktion = "LAUF"
@@ -483,6 +520,442 @@ func _abdeckung() -> void:
 	# Namen der Testclips fangen nie eine Aktion ab
 	f.aktion = "STAND"
 	_ok(DarstellungVelaFramesTabelle.clip_name(f.aktion, 1) == "stand", "abgedeckt: Aktion wählt nur die echten Clipnamen")
+
+
+# ---------------------------------------------------------------------------
+# Echte Clips (Grok-Videos, Umsetzer: Freistellen auf Schwarz)
+# ---------------------------------------------------------------------------
+
+func _diff(clip: String, a: int, b: int) -> int:
+	var x: PackedByteArray = _bild(clip, a).get_data()
+	var y: PackedByteArray = _bild(clip, b).get_data()
+	var n: int = 0
+	for p: int in x.size() / 4:
+		var o: int = p * 4
+		if x[o + 3] != y[o + 3] or (x[o + 3] != 0 and (x[o] != y[o] or x[o + 1] != y[o + 1] or x[o + 2] != y[o + 2])):
+			n += 1
+	return n
+
+
+func _echte_clips() -> void:
+	for clip: String in ECHTE:
+		var sp: Dictionary = ECHTE[clip]
+		_clips(clip, int(sp["min"]), sp["hoehe"], bool(sp["ankerx"]))
+		var d: Dictionary = _daten(clip)
+		if d.is_empty():
+			continue
+		_ok(absf(float(d["massstab"]) - MASSSTAB) <= MASSSTAB_TOL, "%s: Maßstab %.5f gleich bei allen echten Clips (%.4f ± %.4f)" % [clip, d["massstab"], MASSSTAB, MASSSTAB_TOL])
+		_ok(int(d["farben"]) <= 63, "%s: höchstens 64 Farben mit durchsichtig" % clip)
+		var n: int = d["bilder"]
+		var ev: Dictionary = d["ereignis"]
+		# Ereignisse liegen im Clip
+		for k: String in ev:
+			_ok(int(ev[k]) >= 0 and int(ev[k]) < n, "%s: Ereignis %s im Clip" % [clip, k])
+		if clip.begins_with("kette"):
+			var a: int = d["ausholen"]
+			var kt: int = d["kontakt"]
+			var r: int = d["ruhe"]
+			var rz: int = d["rueckzug"]
+			_ok(a < kt and kt <= rz and rz < n, "%s: Ausholen (%d) < Kontakt (%d) ≤ Rückzug (%d) < Bilderzahl" % [clip, a, kt, rz])
+			if String(d["rueckkehr"]) == "vorwaerts":
+				_ok(rz < r and r < n, "%s: Ruhe (%d) nach dem Rückzug, im Clip" % [clip, r])
+			if clip == "kette4":
+				_ok(int(d["kontakt1"]) > 0 and int(d["kontakt1"]) < kt, "kette4: erstes Trefferfenster (%d) liegt vor dem Tritt (%d)" % [d["kontakt1"], kt])
+			var vorn: Array[int] = _liste(clip, "vorn")
+			if clip != "kette3":
+				_ok(vorn[kt] - vorn[0] >= 25, "%s: im Kontakt ist die Figur weit nach vorn gestreckt (%d gegen %d)" % [clip, vorn[kt], vorn[0]])
+		elif clip == "stand":
+			_gleich(int(d["fps"]), 24, "stand: Quelle 24 Bilder/s")
+			_gleich(int(d["zyklus_bilder"]), n, "stand: der ganze Clip ist der Zyklus")
+			var mittel: int = 0
+			for i: int in range(1, n):
+				mittel += _diff(clip, i, i + 1)
+			mittel /= n - 1
+			_ok(_diff(clip, n, 1) <= 4 * mittel, "stand: die Schleife schließt (Unterschied letztes zum ersten Bild %d, mittlerer Bildschritt %d)" % [_diff(clip, n, 1), mittel])
+			_gleich(T.zyklus_ticks("stand", d), 85, "stand: 34 Bilder bei 24 Bildern/s in 85 Ticks")
+		elif clip == "sprint":
+			_gleich(int(d["zyklus_bilder"]), 16, "sprint: Doppelschritt aus 16 Bildern")
+			var mittel2: int = 0
+			for i: int in range(1, n):
+				mittel2 += _diff(clip, i, i + 1)
+			mittel2 /= n - 1
+			_ok(_diff(clip, n, 1) <= 2 * mittel2, "sprint: die Schleife schließt (Unterschied letztes zum ersten Bild %d, mittlerer Bildschritt %d)" % [_diff(clip, n, 1), mittel2])
+			_ok(int(d["schritt_px"]) >= 40 and int(d["schritt_px"]) <= 120, "sprint: Schrittlänge %d Bildpixel plausibel" % d["schritt_px"])
+		elif clip == "sprung":
+			var luft: Array[int] = _liste(clip, "luft")
+			var ab: int = ev["absprung"]
+			var sch: int = ev["scheitel"]
+			var au: int = ev["aufsetzen"]
+			_ok(int(ev["hocke"]) < ab and ab < sch and sch < au and au < int(ev["tief"]) and int(ev["tief"]) <= int(ev["ruhe"]), "sprung: Hocke < Absprung < Scheitel < Aufsetzen < Tief ≤ Ruhe")
+			var erste_luft: int = 0
+			while luft[erste_luft] < 2:
+				erste_luft += 1
+			_ok(ab <= erste_luft and erste_luft - ab <= 4, "sprung: das Absprungbild (Strecken, Arme hoch) liegt höchstens 4 Bilder vor dem ersten Luftbild (%d, erstes Luftbild %d)" % [ab, erste_luft])
+			_ok(luft[sch] >= luft.max() - 6, "sprung: das Scheitelbild gehört zum höchsten Abschnitt (%d von %d)" % [luft[sch], luft.max()])
+			_ok(luft[au] <= 1 and luft[au - 1] > 1, "sprung: das Aufsetzbild ist das erste am Boden (%d, davor %d)" % [luft[au], luft[au - 1]])
+			_ok(String(d["rueckkehr"]) == "vorwaerts" and int(ev["ruhe"]) < n, "sprung: der Clip reicht bis zur Kampfhaltung (Ruhe %d von %d)" % [ev["ruhe"], n])
+		elif clip == "getroffen_vorn":
+			var br: Array[int] = _liste(clip, "breite_sil")
+			_ok(int(ev["start"]) < int(ev["kontakt"]) and int(ev["kontakt"]) < int(ev["rueckzug"]) and int(ev["rueckzug"]) < int(ev["ruhe"]), "getroffen_vorn: Start < Auslenkung < Rückzug < Ruhe")
+			_ok(br[ev["kontakt"]] >= br.max() * 9 / 10, "getroffen_vorn: im Kontaktbild sind die Arme weit außen (%d von %d)" % [br[ev["kontakt"]], br.max()])
+			_ok(br[ev["ruhe"]] <= br[0] + 6, "getroffen_vorn: die Ruhe ist wieder eine Haltung (Breite %d, Anfang %d)" % [br[ev["ruhe"]], br[0]])
+		elif clip == "umgeworfen":
+			var lu: Array[int] = _liste(clip, "luft")
+			_ok(int(ev["start"]) < int(ev["abheben"]) and int(ev["abheben"]) < int(ev["scheitel"]) and int(ev["scheitel"]) < int(ev["aufprall"]) and int(ev["aufprall"]) < int(ev["liegt"]) and int(ev["liegt"]) < n, "umgeworfen: Start < Abheben < Scheitel < Aufprall < Liegt")
+			_ok(lu[ev["scheitel"]] >= lu.max() - 1, "umgeworfen: der Scheitel ist der höchste Punkt (%d von %d)" % [lu[ev["scheitel"]], lu.max()])
+			var tiefst: int = lu[ev["scheitel"]]
+			for i: int in range(int(ev["scheitel"]), n):
+				tiefst = mini(tiefst, lu[i])
+			_ok(lu[ev["aufprall"]] <= tiefst + 3 and lu[int(ev["aufprall"]) - 1] > tiefst + 3, "umgeworfen: der Aufprall ist das erste Bild am Boden (Luft %d, davor %d, tiefster Stand %d)" % [lu[ev["aufprall"]], lu[int(ev["aufprall"]) - 1], tiefst])
+			_ok(lu[int(ev["aufprall"]) - 1] - lu[ev["aufprall"]] >= 6, "umgeworfen: beim Aufprall fällt die Körperunterkante deutlich (%d px)" % (lu[int(ev["aufprall"]) - 1] - lu[ev["aufprall"]]))
+		elif clip == "liegen":
+			_gleich(n, 1, "liegen: ein Standbild (ohne Staubkörner)")
+		elif clip == "aufstehen":
+			_ok(int(ev["start"]) < int(ev["ruhe"]) and int(ev["ruhe"]) < n, "aufstehen: Start < Ruhe (Kampfhaltung) < Bilderzahl")
+	# Liegen und Aufstehen gehören zusammen: das erste Bild von aufstehen ist das Liegebild (dieselbe Lage, Anker auf der Bodenlinie)
+	var dl: Dictionary = _daten("liegen")
+	var da: Dictionary = _daten("aufstehen")
+	if not dl.is_empty() and not da.is_empty():
+		var bl: Image = _bild("liegen", 1)
+		var ba: Image = _bild("aufstehen", 1)
+		var zl: Array[int] = _zeilen(bl)
+		var za: Array[int] = _zeilen(ba)
+		_gleich(int(dl["ankery"]) - zl[1], int(da["ankery"]) - za[1], "liegen/aufstehen: Bodenlinie gleich weit unter der untersten Zeile")
+		_ok(absi((zl[1] - zl[0]) - (za[1] - za[0])) <= 2, "liegen/aufstehen: erstes Bild von aufstehen gleich hoch wie das Liegebild")
+
+
+# ---------------------------------------------------------------------------
+# Zuordnung der echten Clips (Zeiten aus KernWerte)
+# ---------------------------------------------------------------------------
+
+func _figur(aktion: String) -> KernEntitaeten.Figur:
+	var f: KernEntitaeten.Figur = KernEntitaeten.Figur.new()
+	f.aktion = aktion
+	f.uhr = 1
+	return f
+
+
+func _tabelle_neu() -> void:
+	var sd: Dictionary = _daten("sprung")
+	var sp: Dictionary = _daten("sprint")
+	var gv: Dictionary = _daten("getroffen_vorn")
+	var um: Dictionary = _daten("umgeworfen")
+	var au: Dictionary = _daten("aufstehen")
+	var st: Dictionary = _daten("stand")
+	if sd.is_empty() or sp.is_empty() or gv.is_empty() or um.is_empty() or au.is_empty() or st.is_empty():
+		_ok(false, "Zuordnung: die echten Clips fehlen")
+		return
+	# --- Sprint: Schleife nach der Strecke, kein Rutschen, schließt ---
+	var start: int = sp["zyklus_start"]
+	var zn: int = sp["zyklus_bilder"]
+	var z: int = int(sp["schritt_px"]) * 65536
+	_gleich(T.sprint_bild(1, sp), start, "Sprint: Sprintframe 1 zeigt das Startbild")
+	_gleich(T.sprint_tempo(1), KernWerte.SPRINT_X_FRAME1, "Sprint: Frame 1 mit Gehtempo")
+	_gleich(T.sprint_tempo(2), KernWerte.SPRINT_V_START, "Sprint: Frame 2 mit dem Starttempo 3,875")
+	_gleich(T.sprint_tempo(8), KernWerte.SPRINT_V_START - KernWerte.SPRINT_V_STUFE, "Sprint: das Tempo sinkt alle 6 Frames um 0,125")
+	var sprint_ok: bool = true
+	var gesehen: Dictionary = {}
+	var rueck: bool = false
+	var letzter: int = -1
+	for n: int in range(1, KernWerte.SPRINT_MAX_FRAMES + 1):
+		var i: int = T.sprint_bild(n, sp)
+		if i < start or i >= start + zn:
+			sprint_ok = false
+		gesehen[i] = true
+		# Die Phase wächst mit der Strecke: das Bild springt nur beim Umbruch zurück
+		if letzter >= 0 and i < letzter and T.sprint_strecke(n - 1) % z > T.sprint_tempo(n) + 1:
+			rueck = true
+		letzter = i
+		_ok(i == T.sprint_bild(n, sp), "Sprint: deterministisch")
+	_ok(sprint_ok, "Sprint: alle Bilder im Zyklus")
+	_ok(not rueck, "Sprint: das Bild geht nur am Zyklusende zurück (Phase folgt der Strecke)")
+	_ok(gesehen.size() >= zn - 2, "Sprint: alle %d Zyklusbilder kommen in 90 Sprintframes vor (%d)" % [zn, gesehen.size()])
+	# Eine Zyklenlänge Strecke (schritt_px Spielpixel) später dasselbe Bild: schließt
+	var n0: int = 3
+	var stre: int = T.sprint_strecke(n0)
+	var dn: int = 0
+	while T.sprint_strecke(n0 + dn) < stre + z and n0 + dn < 90:
+		dn += 1
+	if n0 + dn < 90:
+		_ok(absi(T.sprint_bild(n0 + dn + 1, sp) - T.sprint_bild(n0 + 1, sp)) <= maxi(2, zn / 6) or T.sprint_bild(n0 + dn + 1, sp) < start + 2, "Sprint: nach einer Zyklenlänge Strecke wieder das Ausgangsbild (±1 Bild)")
+	var fs: KernEntitaeten.Figur = _figur("SPRINT")
+	fs.sprint_n = 5
+	_gleich(T.wahl(fs)["clip"], "sprint", "Sprint: Aktion SPRINT → Clip sprint")
+	# Cyclus-Dauer des Gehens aus der Schrittlänge: 24-Tick-Schleife bleibt für gehen
+	# --- Sprung: Hocke, Absprung, Scheitel auf dem Scheitelframe, Aufsetzen, Landung ---
+	var ev: Dictionary = sd["ereignis"]
+	# Scheitel der Logik aus der Sprungbahn (Kampf 4.4): h += vh, vh −= 0,25 ab J+2
+	var h: int = 0
+	var vh: int = KernWerte.SPRUNG_VH_START
+	var hmax: int = 0
+	var u_scheitel: int = 0
+	for u: int in range(2, KernWerte.SPRUNG_LETZTER_LUFTFRAME + 1):
+		h = KernFestkomma.add(h, vh)
+		vh = KernFestkomma.sub(vh, KernWerte.SPRUNG_SCHWERKRAFT)
+		if h > hmax:
+			hmax = h
+			u_scheitel = u
+	_gleich(u_scheitel, KernWerte.SPRUNG_SCHEITEL_FRAME, "Sprung: die Bahn der Logik hat den Scheitel in uhr 21 (J+21)")
+	_gleich(T.sprung(1, sd), int(ev["hocke"]), "Sprung: uhr 1 zeigt die Hocke")
+	_gleich(T.sprung(KernWerte.SPRUNG_ABSPRUNG, sd), int(ev["absprung"]), "Sprung: Absprung in uhr 2 (J+2) zeigt das Absprungbild")
+	_gleich(T.sprung(u_scheitel, sd), int(ev["scheitel"]), "Sprung: das Scheitelbild steht im Scheitelframe (uhr 21)")
+	_gleich(T.sprung(KernWerte.SPRUNG_LETZTER_LUFTFRAME, sd), int(ev["aufsetzen"]) - 1, "Sprung: das letzte Luftbild steht im letzten Luftframe (uhr 41)")
+	var mono: bool = true
+	var vl: Array[int] = []
+	for u: int in range(1, KernWerte.SPRUNG_LETZTER_LUFTFRAME + 1):
+		vl.append(T.sprung(u, sd))
+		if vl.size() > 1 and vl[vl.size() - 1] < vl[vl.size() - 2]:
+			mono = false
+	_ok(mono, "Sprung: die Bilder laufen vorwärts, kein Zurückspringen")
+	_gleich(T.landung(1, sd), int(ev["aufsetzen"]), "Landung: uhr 1 (Aufsetzen J+42) zeigt das Aufsetzbild")
+	_gleich(T.landung(KernWerte.LANDUNG_DAUER, sd), int(ev["ruhe"]), "Landung: uhr 6 zeigt das aufgerichtete Bild")
+	_gleich(T.landung(KernWerte.LANDUNG_DAUER + 3, sd), int(ev["ruhe"]), "Landung: außerhalb der Dauer hält die Aufrichtung")
+	var fj: KernEntitaeten.Figur = _figur("SPRUNG")
+	fj.uhr = 21
+	_gleich(T.bildindex_wahl(T.wahl(fj), sd), int(ev["scheitel"]), "Sprung: wahl(SPRUNG, uhr 21) → Scheitelbild")
+	# nach einem Sprungangriff (Fallpose) zählt die Geschwindigkeit: vh im Scheitel = Start − 20 · Schwerkraft
+	fj.sprung_angriff = true
+	fj.uhr = 3
+	fj.vh = KernWerte.SPRUNG_VH_START - 20 * KernWerte.SPRUNG_SCHWERKRAFT
+	_gleich(T.wahl(fj)["uhr"], 21, "Sprung nach Sprungangriff: die Sprunguhr folgt aus vh (Scheitel 21)")
+	var fl: KernEntitaeten.Figur = _figur("LANDUNG")
+	fl.uhr = 6
+	_gleich(T.bildindex_wahl(T.wahl(fl), sd), int(ev["ruhe"]), "Landung: wahl(LANDUNG, uhr 6) → aufgerichtet")
+	for a: String in ["SPRUNGANGRIFF", "SPRINTSPRUNG", "NEUEINSTIEG", "GRIFF", "SPEZIAL"]:
+		_ok(T.wahl(_figur(a)).is_empty(), "Zuordnung: %s hat keinen Clip (Puppe oder Platzhalter)" % a)
+	# --- Getroffen: Auslenkung früh, Rückkehr bis uhr 27 ---
+	var ge: Dictionary = gv["ereignis"]
+	_gleich(T.treffer(T.TREFFER_KONTAKT_VON, gv), int(ge["kontakt"]), "Getroffen: die Auslenkung steht ab uhr %d" % T.TREFFER_KONTAKT_VON)
+	_gleich(T.treffer(T.TREFFER_KONTAKT_BIS, gv), int(ge["kontakt"]), "Getroffen: die Auslenkung hält bis uhr %d" % T.TREFFER_KONTAKT_BIS)
+	_gleich(T.treffer(KernWerte.GETROFFEN_DAUER, gv), int(ge["ruhe"]), "Getroffen: im letzten Frame (uhr %d) ist die Haltung erreicht" % KernWerte.GETROFFEN_DAUER)
+	var tv: Array[int] = []
+	for u: int in range(1, KernWerte.GETROFFEN_DAUER + 6):
+		tv.append(T.treffer(u, gv))
+	_ok(tv[0] >= int(ge["start"]) and tv[0] < int(ge["kontakt"]), "Getroffen: uhr 1 zeigt schon die Reaktion (vor der Auslenkung)")
+	var gmono: bool = true
+	for u: int in range(T.TREFFER_KONTAKT_BIS, tv.size()):
+		if tv[u] < tv[u - 1]:
+			gmono = false
+	_ok(gmono, "Getroffen: nach der Auslenkung nur noch vorwärts bis zur Ruhe")
+	_gleich(tv[tv.size() - 1], int(ge["ruhe"]), "Getroffen: nach der Dauer hält die Ruhe")
+	# vorn und hinten (G1-11): nur von vorn gibt es einen Clip
+	var welt: KernWelt = KernWelt.new()
+	var fg: KernEntitaeten.Figur = _figur("GETROFFEN")
+	welt.figur = fg
+	var gegner: KernEntitaeten.Gegner = KernEntitaeten.gegnerLeer(0)
+	welt.gegner = [gegner]
+	fg.x = KernFestkomma.ausGanz(100)
+	fg.blick = 1
+	fg.letzter_angreifer = "s0"
+	gegner.x = KernFestkomma.ausGanz(150)
+	_gleich(T.wahl(fg, welt).get("clip", ""), "getroffen_vorn", "Getroffen: Angreifer vor der Figur → getroffen_vorn")
+	gegner.x = KernFestkomma.ausGanz(100)
+	_gleich(T.wahl(fg, welt).get("clip", ""), "getroffen_vorn", "Getroffen: gleiche x-Lage zählt als vorn")
+	gegner.x = KernFestkomma.ausGanz(50)
+	_ok(T.wahl(fg, welt).is_empty() and not DarstellungVelaFrames.abgedeckt(fg, welt), "Getroffen: Angreifer hinter der Figur → kein Clip (Puppe oder Platzhalter)")
+	fg.blick = -1
+	_gleich(T.wahl(fg, welt).get("clip", ""), "getroffen_vorn", "Getroffen: Blick links, Angreifer links → vorn")
+	fg.letzter_angreifer = null
+	_gleich(T.wahl(fg, welt).get("clip", ""), "getroffen_vorn", "Getroffen: ohne Angreifer → vorn")
+	# --- Flug: Aufprall im Bodenkontaktframe der Logik ---
+	var fe: Dictionary = um["ereignis"]
+	for art: String in ["F1", "F4"]:
+		var f2: KernEntitaeten.Figur = _figur("UMGEWORFEN" if art == "F1" else "TOT")
+		var still: int = KernWerte.F1_STILLSTAND if art == "F1" else KernWerte.F4_STILLSTAND
+		KernBahn.bahnStarten(f2, art, -1)
+		var boden_k: int = KernWerte.F1_BODEN if art == "F1" else KernWerte.F4_BODEN
+		var idx_vor: int = -1
+		var kontakt_k: int = -1
+		var fmono: bool = true
+		var alle: Array[int] = []
+		for k: int in range(0, 58):
+			f2.uhr = k + 1
+			if k >= 1:
+				KernBahn.bahnSchritt(f2, k, null)
+			var w: Dictionary = T.wahl(f2)
+			var i: int = T.bildindex_wahl(w, um)
+			alle.append(i)
+			if k > 0 and i < alle[k - 1]:
+				fmono = false
+			if f2.bahn_boden > 0 and kontakt_k < 0:
+				kontakt_k = k
+				_gleich(i, int(fe["aufprall"]), "%s: das Aufprallbild steht im Bodenkontaktframe der Logik (k = %d)" % [art, k])
+			if kontakt_k < 0:
+				idx_vor = i
+		_gleich(kontakt_k, boden_k, "%s: Bodenkontakt der Bahn in H+%d (KernWerte)" % [art, boden_k])
+		_ok(idx_vor < int(fe["aufprall"]), "%s: vor dem Bodenkontakt nie das Aufprallbild (%d)" % [art, idx_vor])
+		_ok(fmono, "%s: die Bilder laufen vorwärts, kein Zurückspringen" % art)
+		_gleich(alle[boden_k + FLUG_NACH], int(fe["liegt"]), "%s: %d Ticks nach dem Aufprall ist das Liegebild erreicht" % [art, FLUG_NACH])
+		_gleich(alle[0], int(fe["start"]), "%s: der Treffer-Frame zeigt den Beginn der Reaktion" % art)
+		_gleich(alle[still + 1], int(fe["abheben"]), "%s: der erste Bahnframe (Abheben) zeigt das Abhebebild (H+%d)" % [art, still + 1])
+		# Stillstand: nur die Reaktion, danach Flug
+		for k: int in range(1, still + 1):
+			_ok(alle[k] < int(fe["abheben"]), "%s: im Stillstand (k = %d) noch vor dem Abheben" % [art, k])
+	# Treffer aus der Luft: die Bahn dauert länger, das letzte Luftbild hält bis zum Bodenkontakt
+	var f3: KernEntitaeten.Figur = _figur("UMGEWORFEN")
+	f3.bahn_frame = 45
+	f3.bahn_boden = 0
+	f3.uhr = 54
+	_gleich(T.bildindex_wahl(T.wahl(f3), um), int(fe["aufprall"]) - 1, "UMGEWORFEN: länger in der Luft (Treffer in der Luft) hält das letzte Luftbild")
+	f3.bahn_frame = 30
+	f3.bahn_boden = 30
+	_gleich(T.bildindex_wahl(T.wahl(f3), um), int(fe["aufprall"]), "UMGEWORFEN: früherer Bodenkontakt (Treffer in der Luft) zeigt sofort den Aufprall")
+	# Spiegelung: der Clip fliegt nach links (Blick rechts); Flug nach links ungespiegelt, nach rechts gespiegelt (G1-12)
+	for a: String in ["UMGEWORFEN", "LIEGEN", "AUFSTEHEN", "TOT"]:
+		var fm: KernEntitaeten.Figur = _figur(a)
+		fm.blick = 1
+		fm.bahn_richtung = -1
+		_gleich(T.wahl(fm)["blick"], 1, "%s: Flug nach links (bahn_richtung −1) zeigt den Clip ungespiegelt" % a)
+		fm.bahn_richtung = 1
+		_gleich(T.wahl(fm)["blick"], -1, "%s: Flug nach rechts zeigt den Clip gespiegelt" % a)
+		fm.blick = -1
+		_gleich(T.wahl(fm)["blick"], -1, "%s: die Spiegelung hängt nur von der Flugrichtung ab" % a)
+	var fb: KernEntitaeten.Figur = _figur("STAND")
+	fb.blick = -1
+	fb.bahn_richtung = -1
+	_gleich(T.wahl(fb)["blick"], -1, "STAND: Blick der Logik gilt (nicht die Flugrichtung)")
+	# TOT: Flug wie UMGEWORFEN, ab der Ruhe (phase R) das Liegebild
+	var ft: KernEntitaeten.Figur = _figur("TOT")
+	ft.phase = "R"
+	ft.bahn_richtung = -1
+	_gleich(T.wahl(ft)["clip"], "liegen", "TOT ab der Ruhe → Clip liegen")
+	ft.phase = "B"
+	_gleich(T.wahl(ft)["clip"], "umgeworfen", "TOT im Flug → Clip umgeworfen")
+	# Liegen hält das Bild; Aufstehen über 26 Ticks von liegt bis zur Kampfhaltung
+	_gleich(T.bildindex("liegen", 99, _daten("liegen")), 0, "Liegen: hält das Liegebild")
+	_gleich(T.aufstehen(1, au), 0, "Aufstehen: uhr 1 zeigt das erste Bild (liegt wie `liegen`)")
+	_gleich(T.aufstehen(KernWerte.FIGUR_AUFSTEHEN_DAUER, au), int(au["ereignis"]["ruhe"]), "Aufstehen: uhr 26 (letzter Frame) zeigt die Kampfhaltung")
+	var amono: bool = true
+	var av: Array[int] = []
+	for u: int in range(1, KernWerte.FIGUR_AUFSTEHEN_DAUER + 4):
+		av.append(T.aufstehen(u, au))
+		if av.size() > 1 and av[av.size() - 1] < av[av.size() - 2]:
+			amono = false
+	_ok(amono, "Aufstehen: die Bilder laufen gleichmäßig vorwärts")
+	# Kette 4: zwei Fenster (3 bis 6 und 17 bis 20), Drehung dazwischen
+	var k4: Dictionary = _daten("kette4")
+	if not k4.is_empty():
+		var kk: int = k4["kontakt"]
+		var k1: int = k4["kontakt1"]
+		var v4: Array[int] = T.verlauf("kette4", KernWerte.KETTE4_DAUER + 5, k4)
+		_gleich(v4[KernWerte.KETTE_AKTIV_VON[3] - 1], k1, "Kette 4: erstes Fenster beginnt mit dem ersten Kontaktbild (uhr %d)" % KernWerte.KETTE_AKTIV_VON[3])
+		_gleich(v4[KernWerte.KETTE_AKTIV_BIS[3] - 1], k1, "Kette 4: erstes Fenster hält bis uhr %d" % KernWerte.KETTE_AKTIV_BIS[3])
+		_gleich(v4[KernWerte.KETTE4_ZWEITES_FENSTER_VON - 1], kk, "Kette 4: zweites Fenster beginnt mit dem Tritt (uhr %d)" % KernWerte.KETTE4_ZWEITES_FENSTER_VON)
+		_gleich(v4[KernWerte.KETTE4_ZWEITES_FENSTER_BIS - 1], kk, "Kette 4: zweites Fenster hält bis uhr %d" % KernWerte.KETTE4_ZWEITES_FENSTER_BIS)
+		var dreh: bool = true
+		for u: int in range(KernWerte.KETTE_AKTIV_BIS[3] + 1, KernWerte.KETTE4_ZWEITES_FENSTER_VON):
+			if v4[u - 1] <= k1 or v4[u - 1] >= kk or v4[u - 1] < v4[u - 2]:
+				dreh = false
+		_ok(dreh, "Kette 4: zwischen den Fenstern läuft die Drehung (Bilder zwischen den beiden Kontakten, vorwärts)")
+		_gleich(v4[KernWerte.KETTE4_DAUER - 1], int(k4["ruhe"]), "Kette 4: im letzten Tick (uhr 25) ist die Kampfhaltung erreicht")
+	# Kette 2 bis 4 mit Ausfallschritt: Uhr wie bei kette1 (kette_uhr)
+	for stufe: int in range(2, 5):
+		var dk: Dictionary = _daten("kette%d" % stufe)
+		if dk.is_empty():
+			continue
+		var von: int = KernWerte.KETTE_AKTIV_VON[stufe - 1]
+		var bis: int = KernWerte.KETTE_AKTIV_BIS[stufe - 1]
+		var fk: KernEntitaeten.Figur = _figur("SCHLAG")
+		fk.kombo = stufe
+		for u: int in range(1, T.kette_dauer(stufe) + 1):
+			fk.uhr = u
+			_ok(T.bildindex_wahl(T.wahl(fk), dk) == T.schlag(u, stufe, dk), "kette%d: wahl folgt der Schlagtabelle (uhr %d)" % [stufe, u])
+		fk.uhr = von
+		var kt: int = dk["kontakt"] if stufe != 4 else dk["kontakt1"]
+		_gleich(T.bildindex_wahl(T.wahl(fk), dk), kt, "kette%d: Kontaktbild im ersten aktiven Frame (uhr %d)" % [stufe, von])
+		fk.ausfallschritt = 1
+		fk.uhr = KernWerte.AUSFALL_AKTIV_VON[stufe - 1]
+		_gleich(T.bildindex_wahl(T.wahl(fk), dk), kt, "kette%d: mit Ausfallschritt steht das Kontaktbild im ersten aktiven Frame des Ausfallschritts (uhr %d)" % [stufe, fk.uhr])
+		_ok(bis >= von, "kette%d: Fenster" % stufe)
+	# Stand mit Pingpong: hin und her, kein Sprung, jedes Bild kommt vor
+	var pd: Dictionary = {"bilder": 10, "zyklus_start": 2, "zyklus_bilder": 6, "fps": 24, "schleife": "pingpong", "zyklus_ticks": 0}
+	var pt: int = T.zyklus_ticks("stand", pd)
+	_gleich(pt, (10 * 60 + 12) / 24, "Pingpong: 2 · (6 − 1) = 10 Bildschritte in %d Ticks" % ((10 * 60 + 12) / 24))
+	var pv: Array[int] = []
+	for u: int in range(1, 2 * pt + 1):
+		pv.append(T.bildindex("stand", u, pd))
+	var pok: bool = true
+	var pgesehen: Dictionary = {}
+	for u: int in pv.size():
+		pgesehen[pv[u]] = true
+		if pv[u] < 2 or pv[u] > 7 or (u > 0 and absi(pv[u] - pv[u - 1]) > 1) or pv[u] != pv[(u + pt) % pv.size()]:
+			pok = false
+	_ok(pok, "Pingpong: Bilder 2 bis 7, Schritte höchstens 1, nach einer Periode von vorn")
+	_gleich(pgesehen.size(), 6, "Pingpong: alle 6 Bilder kommen vor")
+	_gleich(pv[0], 2, "Pingpong: Uhr 1 zeigt das erste Zyklusbild")
+	_ok(pv.max() == 7 and pv.find(7) < pt, "Pingpong: das letzte Zyklusbild ist die Mitte der Periode")
+
+
+const FLUG_NACH: int = 7
+
+
+# ---------------------------------------------------------------------------
+# Zuordnung an der laufenden Logik (echte Szenen)
+# ---------------------------------------------------------------------------
+
+## Szenen der Prüfbühne, in denen die Aktionen vorkommen: Sprint (T11_a), Sprung und Landung (T15_b, T2), Treffer,
+## Umwerfen, Liegen und Aufstehen (T7_a, T9_c), Tod (T9_b).
+const SZENEN: Array[String] = ["T11_a", "T15_b", "T2", "T7_a", "T9_b", "T9_c"]
+
+
+func _logik_szenen() -> void:
+	var skript: GDScript = load("res://darstellung/spiel.gd")
+	var gesehen: Dictionary = {}
+	for sn: String in SZENEN:
+		var argv: PackedStringArray = PackedStringArray(["--szene", "spiel/tests/szenen/%s.txt" % sn, "--eingabe", "spiel/tests/eingaben/%s.txt" % sn])
+		var spiel: Node2D = _spiel(skript, argv)
+		var sitzung: DarstellungSitzung = spiel.get("sitzung")
+		if sitzung == null:
+			_ok(false, "Szene %s: gestartet" % sn)
+			spiel.free()
+			continue
+		var schritte: int = 0
+		var gut: bool = true
+		var kontakt_gesehen: bool = false
+		var letzte_clip: String = ""
+		var sprung_scheitel_ok: bool = true
+		var aufprall_ok: bool = true
+		var auf_ende_ok: bool = true
+		var blick_ok: bool = true
+		while schritte < 800 and not sitzung.amEnde():
+			sitzung.logikSchritt()
+			schritte += 1
+			var f: KernEntitaeten.Figur = sitzung.welt.figur
+			var w: Dictionary = T.wahl(f, sitzung.welt)
+			if w.is_empty():
+				continue
+			var cn: String = String(w["clip"])
+			var c: Dictionary = DarstellungVelaFrames.clip_laden(cn)
+			if c.is_empty():
+				continue
+			var d: Dictionary = c["daten"]
+			var i: int = T.bildindex_wahl(w, d)
+			gesehen["%s:%s" % [f.aktion, cn]] = int(gesehen.get("%s:%s" % [f.aktion, cn], 0)) + 1
+			if i < 0 or i >= int(d["bilder"]) or int(w["blick"]) == 0:
+				gut = false
+			if f.aktion == "SPRUNG" and not f.sprung_angriff and f.uhr == KernWerte.SPRUNG_SCHEITEL_FRAME and i != int(d["ereignis"]["scheitel"]):
+				sprung_scheitel_ok = false
+			if f.aktion == "UMGEWORFEN" and f.bahn_boden > 0 and f.bahn_frame == f.bahn_boden:
+				kontakt_gesehen = true
+				if i != int(d["ereignis"]["aufprall"]):
+					aufprall_ok = false
+			if f.aktion == "UMGEWORFEN" and f.bahn_boden == 0 and i >= int(d["ereignis"]["aufprall"]):
+				aufprall_ok = false
+			if f.aktion == "AUFSTEHEN" and f.uhr == KernWerte.FIGUR_AUFSTEHEN_DAUER and i != int(d["ereignis"]["ruhe"]):
+				auf_ende_ok = false
+			if f.aktion in ["UMGEWORFEN", "LIEGEN", "AUFSTEHEN", "TOT"] and int(w["blick"]) != -f.bahn_richtung:
+				blick_ok = false
+			letzte_clip = cn
+		_ok(gut, "Szene %s: alle Bildindizes im Clip, Blick ±1" % sn)
+		_ok(sprung_scheitel_ok, "Szene %s: Sprung: Scheitelbild im Scheitelframe" % sn)
+		_ok(aufprall_ok, "Szene %s: Umgeworfen: Aufprall genau im Bodenkontaktframe, davor nie" % sn)
+		_ok(auf_ende_ok, "Szene %s: Aufstehen: im letzten Frame die Kampfhaltung" % sn)
+		_ok(blick_ok, "Szene %s: Flugrichtung bestimmt die Spiegelung" % sn)
+		if sn == "T7_a" or sn == "T9_c":
+			_ok(kontakt_gesehen, "Szene %s: Bodenkontakt kam vor" % sn)
+		spiel.free()
+	for k: String in ["SPRINT:sprint", "SPRUNG:sprung", "LANDUNG:sprung", "GETROFFEN:getroffen_vorn", "UMGEWORFEN:umgeworfen", "LIEGEN:liegen", "AUFSTEHEN:aufstehen", "TOT:umgeworfen"]:
+		_ok(int(gesehen.get(k, 0)) > 0, "Szenen: %s kam mit dem Clip vor (%d Ticks)" % [k, int(gesehen.get(k, 0))])
 
 
 # ---------------------------------------------------------------------------
@@ -565,7 +1038,7 @@ func _szene() -> void:
 	spiel3.free()
 	# 4. ohne Clips (Rückfall): Puppe, wo sie abdeckt
 	DarstellungVelaFrames.clips_vergessen()
-	for n: String in ["stand", "gehen", "kette1", "kette2", "kette3", "kette4"]:
+	for n: String in ["stand", "gehen", "kette1", "kette2", "kette3", "kette4", "sprint", "sprung", "getroffen_vorn", "umgeworfen", "liegen", "aufstehen"]:
 		DarstellungVelaFrames._clips[n] = {}
 	var spiel4: Node2D = _spiel(skript, sz)
 	var s4: DarstellungSitzung = spiel4.get("sitzung")
