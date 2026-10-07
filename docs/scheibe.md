@@ -1,5 +1,12 @@
 # Comet Brawlers: vertikale Scheibe (Programm)
 
+> **Hinweis (E26, 2026-10-03):** `spiel/` ist ab jetzt die
+> **Referenzfassung** und Prüfstein für den Godot-Port unter `godot/`
+> (`docs/godot.md`). Sie wird nicht mehr weiterentwickelt und nicht
+> geändert; ihre Protokolle unter `spiel/tests/referenz/alle/` sind der
+> Maßstab für jede andere Fassung. Bedienung, Bildtabelle und Festlegungen
+> in diesem Dokument gelten für beide Fassungen.
+
 Stand 2026-10-03, im Aufbau (Auftrag 3). Das Programm setzt
 `docs/spezifikation-kampf.md` und `docs/spezifikation-welt.md` um. Es liegt
 in `spiel/`, ist in TypeScript geschrieben und hat keine Abhängigkeiten
