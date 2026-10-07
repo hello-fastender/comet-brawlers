@@ -372,23 +372,33 @@ Nutzer muss nur die Clips erzeugen.
 **Zuerst nur zwei Clips (Test):**
 
 ```text
-Clip gehen (vela_v_gehen.mp4), Fassung 2 (nach dem ersten Versuch):
+Clip gehen (vela_v_gehen.mp4), Fassung 3 (nach zwei Versuchen):
 Startbild: das beigefügte Standbild (Vela im Stand, Arme locker, Profil nach
-rechts: spiel/grafik/quelle/fremd/vela/vela_stand_referenz.png). Der Hintergrund
-wird von Beginn an durch ein einfarbiges, sattes Grün ersetzt (reines
-Chroma-Key-Grün, ohne Verlauf, ohne Boden, ohne Bodenschatten, kein
-Überblenden vom ersten Bild).
+rechts: spiel/grafik/quelle/fremd/vela/vela_stand_referenz.png). Das Video
+beginnt SOFORT mit einem einfarbigen, sattem Chroma-Key-Grün als Hintergrund
+(kein schwarzes Anfangsbild, kein Überblenden, kein Verlauf, kein Boden, KEIN
+Bodenschatten, nichts außer der Figur).
+
 Die Heldin Vela geht auf der Stelle in einem langsamen, gleichmäßigen Schritt
 nach rechts (die Kamera steht fest, die Figur bewegt sich nicht aus dem Bild),
-in strenger Seitenansicht von rechts (Profil, sie blickt nach rechts), genau
-drei Schritte, drei Sekunden. Die Arme hängen locker herunter und schwingen im
-Gegentakt zu den Beinen; die Fäuste sind NICHT erhoben, KEINE Kampfhaltung,
-keine Gegner. Jeder Fuß setzt deutlich vor dem Körper auf und hebt hinter ihm
+in strenger Seitenansicht von rechts (Profil, sie blickt nach rechts). Der
+Clip zeigt genau drei Doppelschritte (linker und rechter Schritt) in drei
+Sekunden und endet in derselben Pose, in der er beginnt (Schleife).
+
+Armbewegung, ganz wichtig: Die Arme schwingen deutlich, abwechselnd und im
+Gegentakt zu den Beinen. Ist das linke Bein vorn, schwingt der rechte Arm nach
+vorn und der linke Arm nach hinten; beim nächsten Schritt umgekehrt. Beide
+Fäuste sind nie gleichzeitig vorn. Die Hände sind locker geschlossen und
+bleiben auf Hüfthöhe, nie auf Brusthöhe. Die Fäuste sind NICHT erhoben, KEINE
+Kampfhaltung, keine Gegner.
+
+Beinbewegung: Jeder Fuß setzt deutlich vor dem Körper auf und hebt hinter ihm
 ab; die Beine kreuzen sich nicht und tauschen nicht die Seiten, das vordere
 Bein bleibt zu jedem Zeitpunkt eindeutig das vordere. Der Zopf schwingt mit.
-Der Clip beginnt und endet in derselben Pose (Schleife). Pixelgrafik im Stil des
-Startbilds, dieselbe Kleidung und dieselben Farben, keine Schrift, keine Musik.
+Pixelgrafik im Stil des Startbilds, dieselbe Kleidung und dieselben Farben,
+keine Schrift, keine Musik.
 ```
+
 
 
 ```text
