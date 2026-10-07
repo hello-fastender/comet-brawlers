@@ -1,4 +1,5 @@
-## Test der Vela-Puppe (Auftrag 6, Phase 2): Teile, Farben, Maßstab, Posen, Zuordnung.
+## Test der Vela-Puppe (Auftrag 6, Phase 2): Teile, Farben, Maßstab, Posen, Zuordnung; dazu das Tor der Bewegung
+## (VelaQa: Fußrutschen, Glätte, Schlüsselposen, Sohle, Gelenkspalt, Feder, Determinismus).
 ## Läuft ohne Fenster:  godot --headless --path godot --script res://tests/alle.gd
 ## (Einbindung: `var r := VelaTest.lauf()`; r["geprueft"] Zahl der Prüfungen, r["fehler"] Meldungen.)
 class_name VelaTest
@@ -16,6 +17,11 @@ var _fehler: Array[String] = []
 static func lauf() -> Dictionary:
 	var t: VelaTest = VelaTest.new()
 	t._alles()
+	# das Tor für die Bewegung (Fußrutschen, Glätte, Posen, Sohle, Gelenke, Feder, Determinismus)
+	var qa: Dictionary = VelaQa.lauf()
+	t._geprueft += int(qa["geprueft"])
+	for m: String in (qa["fehler"] as Array):
+		t._fehler.append(m)
 	return {"geprueft": t._geprueft, "fehler": t._fehler}
 
 
@@ -134,25 +140,34 @@ func _posen(puppe: DarstellungVelaPuppe) -> void:
 		_gleich(liste.size(), DarstellungVelaPosen.dauern(anim).size(), "Bildzahl = Zahl der Dauern: " + anim)
 		for i: int in liste.size():
 			var p: Dictionary = liste[i]
-			var w: Dictionary = p["winkel"]
 			var name: String = "%s Bild %d" % [anim, i]
+			# Absicht lösen: alle 16 Bones bekommen einen Winkel
+			puppe.setze_pose(p)
+			var w: Dictionary = puppe.aktuelle_pose()["winkel"]
 			_gleich(w.size(), DarstellungVelaPuppe.BONES.size(), "Pose setzt alle Bones: " + name)
 			for b: String in DarstellungVelaPuppe.BONES:
-				_ok(w.has(b), "Pose setzt Bone %s: %s" % [b, name])
-			for k: String in (p["tausch"] as Dictionary):
+				_ok(w.has(b) and not is_nan(float(w[b])), "Pose setzt Bone %s: %s" % [b, name])
+			for k: String in (p["t"] as Dictionary):
 				var gueltig: bool = false
 				for g: DarstellungVelaPuppe.Gelenk in (puppe.gelenke.get(k, []) as Array):
-					if g.teil == (p["tausch"] as Dictionary)[k]:
+					if g.teil == (p["t"] as Dictionary)[k]:
 						gueltig = true
 				_ok(gueltig, "Tausch ist ein Teilbild des Bones (%s %s)" % [k, name])
-			for k: String in (p["ebenen"] as Dictionary):
-				var z: int = (p["ebenen"] as Dictionary)[k]
+			for k: String in (p["e"] as Dictionary):
+				var z: int = (p["e"] as Dictionary)[k]
 				_ok(z >= 0 and z < DarstellungVelaPuppe.EBENEN_BREITE, "Ebene im Bereich: %s %s" % [k, name])
-			# Puppe übernimmt jeden Winkel
-			puppe.setze_pose(p)
+			# Puppe übernimmt jeden Winkel (gewickelt auf ±180°)
 			for b: String in DarstellungVelaPuppe.BONES:
 				var bone: Bone2D = puppe.bones[b]
-				_ok(absf(bone.rotation + deg_to_rad(float(w[b]))) < 1e-5, "Bone %s übernimmt den Winkel: %s" % [b, name])
+				_ok(absf(angle_difference(bone.rotation, -deg_to_rad(float(w[b])))) < 1e-5, "Bone %s übernimmt den Winkel: %s" % [b, name])
+		# Winkel stufenlos: keine 15°-Rundung mehr (irgendein Winkel ist kein Vielfaches von 5°)
+		if anim != "stand":
+			puppe.setze_pose(liste[0])
+			var w0: Dictionary = puppe.aktuelle_pose()["winkel"]
+			var krumm: bool = false
+			for b: String in DarstellungVelaPuppe.BONES:
+				krumm = krumm or absf(fposmod(float(w0[b]) + 2.5, 5.0) - 2.5) > 0.05
+			_ok(krumm, "Winkel stufenlos (nicht gerundet): " + anim)
 
 
 # ---------------------------------------------------------------------------
@@ -171,8 +186,8 @@ func _zeiten() -> void:
 	_gleich(_summe(DarstellungVelaPosen.dauern("kette2")), KernWerte.KETTE2_LEER_DAUER, "Kette 2 Summe = KETTE2_LEER_DAUER")
 	_gleich(_summe(DarstellungVelaPosen.dauern("kette3")), KernWerte.KETTE3_LEER_DAUER, "Kette 3 Summe = KETTE3_LEER_DAUER")
 	_gleich(_summe(DarstellungVelaPosen.dauern("kette4")), KernWerte.KETTE4_DAUER, "Kette 4 Summe = KETTE4_DAUER")
-	_gleich(DarstellungVelaPosen.dauern("gehen").size(), 12, "Gehen hat 12 Bilder")
-	_gleich(_summe(DarstellungVelaPosen.dauern("gehen")), 48, "Gehen: 12 Bilder zu 4 Frames")
+	_gleich(DarstellungVelaPosen.dauern("gehen").size(), DarstellungVelaPosen.GEHEN_BILDER, "Gehen hat 12 Bilder (Kontaktbogen, alle 2 Ticks)")
+	_gleich(_summe(DarstellungVelaPosen.dauern("gehen")), DarstellungVelaPosen.GEHEN_ZYKLUS, "Gehen: Zyklus 24 Ticks (12 Bilder zu 2 Frames)")
 	for stufe: int in range(1, 5):
 		var anim: String = "kette%d" % stufe
 		var von: int = KernWerte.KETTE_AKTIV_VON[stufe - 1]
@@ -180,21 +195,22 @@ func _zeiten() -> void:
 		var treffer: int = DarstellungVelaPosen.treffer_bild(stufe)
 		var posen: Array = DarstellungVelaPosen.posen(anim)
 		_gleich(DarstellungVelaPosen.bild_index(anim, von), treffer, "Trefferbild im ersten aktiven Frame: " + anim)
-		_ok(DarstellungVelaPosen.pose(anim, von) == posen[treffer], "Pose im ersten aktiven Frame ist das Trefferbild: " + anim)
+		_ok(DarstellungVelaPosen.pose(anim, von, false) == posen[treffer], "Pose im ersten aktiven Frame ist das Trefferbild: " + anim)
 		_ok(DarstellungVelaPosen.bild_index(anim, von - 1) != treffer, "Trefferbild beginnt erst im ersten aktiven Frame: " + anim)
 		for u: int in range(von, bis + 1):
 			_gleich(DarstellungVelaPosen.bild_index(anim, u), treffer, "Trefferbild hält in allen aktiven Frames: %s uhr %d" % [anim, u])
 		# Treffer: der Arm bzw. das Bein ist gestreckt, also anders als die Standpose
-		_ok(posen[treffer]["winkel"] != DarstellungVelaPosen.posen("stand")[0]["winkel"], "Trefferbild unterscheidet sich vom Stand: " + anim)
+		_ok(posen[treffer] != DarstellungVelaPosen.posen("stand")[0], "Trefferbild unterscheidet sich vom Stand: " + anim)
 	var zweites: int = DarstellungVelaPosen.treffer_bild_zweites_fenster()
 	for u: int in range(KernWerte.KETTE4_ZWEITES_FENSTER_VON, KernWerte.KETTE4_ZWEITES_FENSTER_BIS + 1):
 		_gleich(DarstellungVelaPosen.bild_index("kette4", u), zweites, "Kette 4 zweites Fenster: Trefferbild uhr %d" % u)
 	# Schleife des Gehens
 	_gleich(DarstellungVelaPosen.bild_index("gehen", 1), 0, "Gehen uhr 1 = Bild 0")
-	_gleich(DarstellungVelaPosen.bild_index("gehen", 4), 0, "Gehen uhr 4 = Bild 0")
-	_gleich(DarstellungVelaPosen.bild_index("gehen", 5), 1, "Gehen uhr 5 = Bild 1")
-	_gleich(DarstellungVelaPosen.bild_index("gehen", 49), 0, "Gehen Schleife: uhr 49 = Bild 0")
-	_gleich(DarstellungVelaPosen.bild_index("kette1", 999), 5, "Kette hält das letzte Bild")
+	_gleich(DarstellungVelaPosen.bild_index("gehen", 2), 0, "Gehen uhr 2 = Bild 0")
+	_gleich(DarstellungVelaPosen.bild_index("gehen", 3), 1, "Gehen uhr 3 = Bild 1")
+	_gleich(DarstellungVelaPosen.bild_index("gehen", 25), 0, "Gehen Schleife: uhr 25 = Bild 0")
+	_ok(DarstellungVelaPosen.pose("gehen", 25) == DarstellungVelaPosen.pose("gehen", 1), "Gehen: Pose der Schleife schließt (uhr 25 = uhr 1)")
+	_gleich(DarstellungVelaPosen.bild_index("kette1", 999), DarstellungVelaPosen.posen("kette1").size() - 1, "Kette hält das letzte Bild")
 
 
 # ---------------------------------------------------------------------------

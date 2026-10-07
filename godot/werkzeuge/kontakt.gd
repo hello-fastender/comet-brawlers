@@ -47,21 +47,31 @@ func _argumente() -> Dictionary:
 	return aus
 
 
-## Reihen des Bogens: [Beschriftung, Animation, Array der Bildindizes]
+## Reihen des Bogens: [Beschriftung, Animation, Array von Bildern {"pose", "text", "treffer"}]
+## (Stand, Gehen über einen ganzen Zyklus in Abständen von 2 Ticks bzw. 1 Tick mit --alle,
+## Kette 1 bis 4 mit allen Schlüsselposen, Treffer rot umrandet; Verwischbilder eigens).
 func _reihen(alle: bool, nur: PackedStringArray) -> Array:
 	var r: Array = []
-	var stand: Array = [0]
-	var gehen: Array = range(DarstellungVelaPosen.GEHEN_BILDER) if alle else [0, 2, 4, 6, 8, 10]
-	var k1: Array = range(6) if alle else [0, 1, 3, 5]
-	var k2: Array = range(4)
-	var k3: Array = range(5) if alle else [0, 2, 3, 4]
-	var k4: Array = range(12) if alle else [0, 2, 4, 5, 8, 11]
-	r.append(["stand", "stand", stand])
+	r.append(["stand", "stand", [{"pose": DarstellungVelaPosen.pose("stand", 1), "text": "stand", "treffer": false}]])
+	var schritt: int = 1 if alle else DarstellungVelaPosen.GEHEN_BILD_DAUER
+	var gehen: Array = []
+	for u: int in range(0, DarstellungVelaPosen.GEHEN_ZYKLUS, schritt):
+		gehen.append({"pose": DarstellungVelaPosen.pose_bei("gehen", 1.0 + float(u)), "text": "gehen %d" % u, "treffer": false})
 	r.append(["gehen", "gehen", gehen])
-	r.append(["kette1", "kette1", k1])
-	r.append(["kette2", "kette2", k2])
-	r.append(["kette3", "kette3", k3])
-	r.append(["kette4", "kette4", k4])
+	for stufe: int in range(1, 5):
+		var anim: String = "kette%d" % stufe
+		var bilder: Array = []
+		var ks: Array = DarstellungVelaPosen.schluessel(anim)
+		var treffer_idx: Array = [DarstellungVelaPosen.treffer_bild(stufe)]
+		if stufe == 4:
+			treffer_idx.append(DarstellungVelaPosen.treffer_bild_zweites_fenster())
+		for i: int in ks.size():
+			var k: Dictionary = ks[i]
+			var ist_treffer: bool = treffer_idx.has(i)
+			if k.has("sm"):
+				bilder.append({"pose": DarstellungVelaPosen.pose_bei(anim, float(k["t"]), true), "text": "%s t%d Verwischbild" % [anim, int(k["t"])], "treffer": true})
+			bilder.append({"pose": DarstellungVelaPosen.pose_bei(anim, float(k["t"]), false), "text": "%s t%d%s" % [anim, int(k["t"]), " Treffer" if ist_treffer else ""], "treffer": ist_treffer})
+		r.append([anim, anim, bilder])
 	if nur.size() > 0 and nur[0] != "":
 		var f: Array = []
 		for e: Array in r:
@@ -86,7 +96,7 @@ func _lauf() -> void:
 	var umbruch: Array = []
 	for e: Array in reihen:
 		var l: Array = e[2]
-		var n: int = 6
+		var n: int = 8
 		for a: int in range(0, l.size(), n):
 			umbruch.append([e[0], e[1], l.slice(a, a + n), a == 0])
 	reihen = umbruch
@@ -122,16 +132,11 @@ func _lauf() -> void:
 				_zelle(welt, spalte, zeile, "Maßstab 142 px", false)
 				_zelle_inhalt(welt, spalte, zeile).add_child(s)
 				spalte += 1
-		var posen: Array = DarstellungVelaPosen.posen(e[1])
-		for idx: int in e[2]:
-			var treffer: bool = false
-			if String(e[1]).begins_with("kette"):
-				var stufe: int = int(String(e[1]).substr(5))
-				treffer = idx == DarstellungVelaPosen.treffer_bild(stufe) or (stufe == 4 and idx == DarstellungVelaPosen.treffer_bild_zweites_fenster())
-			var inhalt: Node2D = _zelle(welt, spalte, zeile, "%s %d%s" % [e[1], idx, " Treffer" if treffer else ""], treffer)
+		for eintrag: Dictionary in e[2]:
+			var inhalt: Node2D = _zelle(welt, spalte, zeile, String(eintrag["text"]), bool(eintrag["treffer"]))
 			var p: DarstellungVelaPuppe = DarstellungVelaPuppe.new()
 			p.setze_blick(_blick)
-			p.setze_pose(posen[idx])
+			p.setze_pose(eintrag["pose"])
 			inhalt.add_child(p)
 			if _gelenke:
 				for bn: String in DarstellungVelaPuppe.BONES:
