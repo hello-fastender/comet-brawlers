@@ -372,14 +372,24 @@ Nutzer muss nur die Clips erzeugen.
 **Zuerst nur zwei Clips (Test):**
 
 ```text
-Clip gehen (vela_v_gehen.mp4): Die Heldin Vela aus dem Referenzbild geht auf
-der Stelle in einem gleichmäßigen, lockeren Gehzyklus nach rechts (die Kamera
-steht fest, die Figur bewegt sich nicht aus dem Bild), genau vier Schritte,
-Arme schwingen im Gegentakt, Zopf schwingt mit. Der Zyklus beginnt und endet
-in derselben Pose (Schleife). Reines grünes Chroma-Key-Hintergrundbild,
-keine Schatten, feste Kamera, Seitenansicht in Dreiviertelansicht nach
-rechts. Pixelgrafik im Stil des Referenzbildes.
+Clip gehen (vela_v_gehen.mp4), Fassung 2 (nach dem ersten Versuch):
+Startbild: das beigefügte Standbild (Vela im Stand, Arme locker, Profil nach
+rechts: spiel/grafik/quelle/fremd/vela/vela_stand_referenz.png). Der Hintergrund
+wird von Beginn an durch ein einfarbiges, sattes Grün ersetzt (reines
+Chroma-Key-Grün, ohne Verlauf, ohne Boden, ohne Bodenschatten, kein
+Überblenden vom ersten Bild).
+Die Heldin Vela geht auf der Stelle in einem langsamen, gleichmäßigen Schritt
+nach rechts (die Kamera steht fest, die Figur bewegt sich nicht aus dem Bild),
+in strenger Seitenansicht von rechts (Profil, sie blickt nach rechts), genau
+drei Schritte, drei Sekunden. Die Arme hängen locker herunter und schwingen im
+Gegentakt zu den Beinen; die Fäuste sind NICHT erhoben, KEINE Kampfhaltung,
+keine Gegner. Jeder Fuß setzt deutlich vor dem Körper auf und hebt hinter ihm
+ab; die Beine kreuzen sich nicht und tauschen nicht die Seiten, das vordere
+Bein bleibt zu jedem Zeitpunkt eindeutig das vordere. Der Zopf schwingt mit.
+Der Clip beginnt und endet in derselben Pose (Schleife). Pixelgrafik im Stil des
+Startbilds, dieselbe Kleidung und dieselben Farben, keine Schrift, keine Musik.
 ```
+
 
 ```text
 Clip kette1 (vela_v_kette1.mp4): Die Heldin Vela steht in Kampfhaltung wie im
