@@ -351,7 +351,7 @@ Durchlauf.
 
 | Fehler in Runde 1 | Ursache | Gegenmittel in Fassung 2 |
 |---|---|---|
-| Hintergrund schwarz statt grün | Das Startbild `vela_k_kampfhaltung.png` hat einen schwarzen Grund, Grok übernimmt ihn | neues Startbild **`vela_k_kampfhaltung_gruen.png`** (gleiche Figur, Grund reines Grün RGB 0, 177, 64); der Prompt nennt die Farbe als Zahl |
+| Hintergrund schwarz statt grün | Das Startbild `vela_k_kampfhaltung.png` hat einen schwarzen Grund, Grok übernimmt ihn | neues Startbild **`vela_k_kampfhaltung_gruen_quadrat.png`** (gleiche Figur, Grund reines Grün RGB 0, 177, 64, quadratisch, Figur 60 % der Bildhöhe); der Prompt nennt die Farbe als Zahl |
 | Einblendung von Schwarz zu Grün in den ersten Bildern | Wechsel zwischen Startbild und Prompt-Hintergrund | gleiche Farbe in Startbild und Prompt, ausdrücklich „kein Überblenden, kein Anfangsbild“ |
 | weicher Bodenschatten, Staubkörner am Aufprall | Grok malt Boden und Staub von sich aus | Negativliste im Vorspann: kein Boden, kein Schatten, kein Staub, keine Funken |
 | Funkenstrahlen an der Faust (Kette 2 bis 4) | Grok erfindet Trefferblitze | Negativliste („keine Funken, Blitze, Strahlen, Linien, Wischer“) |
@@ -365,8 +365,9 @@ Durchlauf.
 
 ### Dateien, die du für jeden Clip brauchst
 
-1. **Startbild:** `spiel/grafik/quelle/fremd/vela/vela_k_kampfhaltung_gruen.png`
-   (784 × 1168, Vela in Kampfhaltung auf reinem Grün). Für `aufstehen` ein
+1. **Startbild:** `spiel/grafik/quelle/fremd/vela/vela_k_kampfhaltung_gruen_quadrat.png`
+   (1024 × 1024, Vela in Kampfhaltung auf reinem Grün, Figur 60 % der
+   Bildhöhe, 22 % Platz darüber, 18 % darunter; passt zum Videoformat 1:1). Für `aufstehen` ein
    anderes Startbild, siehe dort.
 2. **Zweites Referenzbild:** `spiel/grafik/quelle/fremd/vela/vela_t_teile.png`
    (Teileblatt: Jacke, Haare, Handschuhe; nur zur Kontrolle der Kleidung).
@@ -399,8 +400,7 @@ BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
 Schwenk, kein Wackeln, kein Neigen). Die Kamera schaut waagrecht auf Vela. Vela
 steht auf der Stelle und bleibt an ihrem Platz in der Bildmitte (mit Ausnahme
 der Bewegungen, die unten verlangt werden). Die ganze Figur ist in jedem Bild
-vollständig zu sehen, auch Stiefel, Fäuste und Zopfspitze. Vela nimmt höchstens
-65 Prozent der Bildhöhe ein; zwischen Kopf (bei Sprüngen und Tritten:
+vollständig zu sehen, auch Stiefel, Fäuste und Zopfspitze. Vela nimmt im Startbild 60 Prozent der Bildhöhe ein und wird nie größer als 65 Prozent; zwischen Kopf (bei Sprüngen und Tritten:
 höchster Punkt) und oberem Bildrand bleiben mindestens 15 Prozent Platz, seitlich
 mindestens 20 Prozent.
 
@@ -646,7 +646,7 @@ ENDE: Das letzte Bild gleicht dem Startbild (Kampfhaltung).
 **spezial** (`vela_v_spezial.mp4`, 4,0 s)
 
 ```text
-HANDLUNG: Vela knien und schlägt beide Handschuhe auf den Boden. 0,0 bis 0,5 s:
+HANDLUNG: Vela kniet nieder und schlägt beide Handschuhe auf den Boden. 0,0 bis 0,5 s:
 still in der Kampfhaltung. 0,5 bis 1,0 s: sie geht tief in die Knie, die Arme
 gehen nach oben. 1,0 bis 1,3 s: beide Fäuste schlagen zu Boden (Fäuste berühren
 den Boden unter den Schultern). 1,3 bis 2,3 s: sie hält die Pose, die Handschuhe
