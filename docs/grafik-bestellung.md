@@ -338,143 +338,380 @@ Porträt Vela für die Figurenwahl: Kopf und Schultern, Blick zum
 Betrachter, dunkler Grund, Pixelstil, dieselbe Figur wie das Konzeptbild.
 ```
 
-## Vela als Video (Auftrag 6, Weg „Grok-Video“, Stand 2026-10-07)
+## Vela als Video (Auftrag 6, Weg „Grok-Video“), Fassung 2 vom 2026-10-07
 
-Die Puppe aus Teilen wirkte nicht natürlich genug (starre Teile, keine
-echte Drehung). Für Bewegungen kommen deshalb Videos von Grok: jedes Bild ist
-neu gezeichnet, die Figur bleibt in einem Clip dieselbe. Das Programm
-(`godot/werkzeuge/video_umsetzer.gd`) zerlegt das Video, stellt die Figur frei,
-bringt sie auf 142 px Höhe und höchstens 64 Farben und verschiebt die Bilder
-so in der Zeit, dass der Treffer im ersten aktiven Frame der Logik sitzt. Der
-Nutzer muss nur die Clips erzeugen.
+Vela wird aus kurzen Grok-Videos als Bildfolge ins Spiel gebracht
+(`godot/werkzeuge/video_umsetzer.gd`; Ablauf und Befehle: Abschnitt „Stand der
+Clips“ unten). Dieser Abschnitt ersetzt die erste Fassung der Videobestellung.
+Er beschreibt, was bei der ersten Runde schiefging, und gibt Prompts, die diese
+Fehler ausschließen sollen. Ein Clip zeigt immer **eine** Handlung in **einem**
+Durchlauf.
 
-**Regeln für jeden Clip** (gelten zusätzlich zu den Regeln oben; Stand 2026-10-07
-nach den ersten echten Clips):
+### Was in der ersten Runde schiefging und was jetzt dagegen steht
 
-- **Startbild immer die Kampfhaltung**
-  (`spiel/grafik/quelle/fremd/vela/vela_k_kampfhaltung.png`), für JEDEN Clip,
-  auch für Gehen und Sprint. Entscheidung des Nutzers: einheitlich bleiben, weil
-  das Standbild vom Teileblatt (`vela_stand_referenz.png`) etwas anders aussieht.
-  Jeder Clip beginnt also in derselben Pose; das Werkzeug nimmt das erste stabile
-  Bild als Maßstab (142 px) und als Fußanker.
-- Das Teileblatt (`vela_t_teile.png`) als zweites Referenzbild mitgeben, damit
-  Jacke, Haare und Handschuhe gleich bleiben.
-- **Kamera fest**, kein Zoom, kein Schwenk. Figur **auf der Stelle**, ganze
-  Figur immer vollständig im Bild.
-- **Hintergrund: einfarbiges, sattes Chroma-Key-Grün** vom ersten Bild an (kein
-  schwarzes Anfangsbild, kein Überblenden, kein Verlauf, kein Boden, **kein
-  Bodenschatten**). Velas Hose und Top sind sehr dunkel und würden sich auf
-  dunklem Grund nicht sauber freistellen lassen.
-- 24 Bilder je Sekunde oder mehr, mindestens 720 Pixel Höhe. Länge je Clip siehe
-  unten; kürzere Clips halten die Figur besser. Keine Schrift, keine Musik.
-- Dateiname `vela_v_<animation>.mp4`. Hochladen im Chat mit dem Satz „Videos für
-  Vela nach Auftrag 6“. Nimmt der Chat kein MP4 an, als GIF, WebP oder ZIP der
-  Einzelbilder.
-- Bei Schwankungen der Figur (Jacke, Haare, Größe wechseln) den Clip neu
-  erzeugen. Ein Fehler in einem Abschnitt (zum Beispiel ein Arm, der nicht
-  zurückgeht) ist nicht schlimm: das Werkzeug schneidet den guten Abschnitt aus
-  (`--bilder n`).
+| Fehler in Runde 1 | Ursache | Gegenmittel in Fassung 2 |
+|---|---|---|
+| Hintergrund schwarz statt grün | Das Startbild `vela_k_kampfhaltung.png` hat einen schwarzen Grund, Grok übernimmt ihn | neues Startbild **`vela_k_kampfhaltung_gruen.png`** (gleiche Figur, Grund reines Grün RGB 0, 177, 64); der Prompt nennt die Farbe als Zahl |
+| Einblendung von Schwarz zu Grün in den ersten Bildern | Wechsel zwischen Startbild und Prompt-Hintergrund | gleiche Farbe in Startbild und Prompt, ausdrücklich „kein Überblenden, kein Anfangsbild“ |
+| weicher Bodenschatten, Staubkörner am Aufprall | Grok malt Boden und Staub von sich aus | Negativliste im Vorspann: kein Boden, kein Schatten, kein Staub, keine Funken |
+| Funkenstrahlen an der Faust (Kette 2 bis 4) | Grok erfindet Trefferblitze | Negativliste („keine Funken, Blitze, Strahlen, Linien, Wischer“) |
+| Doppelschlag oder Scheinschlag (Kette 1, 2) | „einmal schlagen“ wurde frei gedeutet | „genau EIN Schlag, danach keine weitere Bewegung der Arme“, Zeitplan in Sekunden |
+| Arme nicht im Gegentakt, Beine vertauscht (Gehen) | Dreiviertelansicht, Kampfhaltung als Vorbild | strenge Seitenansicht, Armregel mit Beispiel, Beinregel |
+| Figur oben abgeschnitten (Sprung), Zopf flach | Figur zu groß im Bild | Größenvorgabe: Figur höchstens 65 % der Bildhöhe, Kopf nie näher als 15 % am oberen Rand |
+| Aufstehen endet frontal, Pose springt zum Stand | Endpose war nicht vorgegeben | Endpose ausdrücklich „genau das Startbild, Dreiviertelansicht nach rechts“ |
+| Fliegen beim Umwerfen 2,5 s statt etwa 0,8 s | keine Zeitvorgabe | Zeitplan je Clip in Sekunden |
+| Atmen im Stand kaum sichtbar | keine Größenvorgabe | „Schultern heben und senken sich deutlich, Brustkorb ± 3 % der Körperhöhe“ |
+| Clip zu lang, Fehler am Ende (Arm geht nicht zurück) | 6 s Standardlänge | kurze Clips, 3 bis 5 s, letzte Sekunde „bleibt still“ |
 
-**Gemeinsamer Vorspann für jeden Prompt** (vor die Handlung setzen):
+### Dateien, die du für jeden Clip brauchst
 
-```text
-Startbild: das beigefügte Bild der Heldin Vela in Kampfhaltung. Zweites
-Referenzbild: das Teileblatt (Kleidung, Haare, Handschuhe). Der Hintergrund ist
-vom ersten Bild an ein einfarbiges, sattes Chroma-Key-Grün (kein schwarzes
-Anfangsbild, kein Überblenden, kein Verlauf, kein Boden, KEIN Bodenschatten,
-nichts außer der Figur). Feste Kamera, kein Zoom, kein Schwenk, die Figur bleibt
-auf der Stelle und immer ganz im Bild. Dreiviertelansicht nach rechts wie im
-Startbild, wenn nicht anders angegeben. Pixelgrafik im Stil des Startbilds,
-dieselbe Kleidung und dieselben Farben. Keine Schrift, keine Musik.
-Handlung:
-```
+1. **Startbild:** `spiel/grafik/quelle/fremd/vela/vela_k_kampfhaltung_gruen.png`
+   (784 × 1168, Vela in Kampfhaltung auf reinem Grün). Für `aufstehen` ein
+   anderes Startbild, siehe dort.
+2. **Zweites Referenzbild:** `spiel/grafik/quelle/fremd/vela/vela_t_teile.png`
+   (Teileblatt: Jacke, Haare, Handschuhe; nur zur Kontrolle der Kleidung).
+3. Seitenverhältnis des Videos **1:1** (quadratisch), mindestens 720 Pixel.
+   24 Bilder je Sekunde, ohne Ton.
+4. Dateiname `vela_v_<clip>.mp4`. Hochladen im Chat mit „Videos für Vela nach
+   Auftrag 6, Fassung 2“. Nimmt der Chat kein MP4 an: GIF, WebP oder ZIP der
+   Einzelbilder.
 
-**Handlungen** (je Clip, hinter den Vorspann):
+### Vorspann (vor JEDEN Prompt setzen, unverändert)
 
 ```text
-gehen (Länge 4 Sekunden): Vela löst sich aus der Kampfhaltung und geht auf der
-Stelle in einem gleichmäßigen Schritt nach rechts, in strenger Seitenansicht von
-rechts (Profil). Genau drei Doppelschritte. Die Arme schwingen deutlich,
-abwechselnd und im Gegentakt zu den Beinen: ist das linke Bein vorn, schwingt
-der rechte Arm nach vorn und der linke nach hinten; beide Fäuste nie
-gleichzeitig vorn; die Hände locker geschlossen auf Hüfthöhe. Jeder Fuß setzt
-vor dem Körper auf und hebt hinter ihm ab, die Beine kreuzen sich nicht und
-tauschen nicht die Seiten. Der Zopf schwingt mit. Der Clip endet in der Pose,
-in der der Doppelschritt beginnt (Schleife).
+STARTBILD: Das beigefügte erste Bild zeigt die Heldin Vela vor einem einfarbigen
+grünen Hintergrund (reines Chroma-Key-Grün, RGB 0, 177, 64, Hexwert #00B140).
+Das Video beginnt exakt mit diesem Bild (gleiche Pose, gleiche Größe, gleicher
+Ort im Bild, gleicher grüner Hintergrund) und der Hintergrund bleibt in
+JEDEM einzelnen Bild bis zum letzten Bild genau dieses Grün. Kein schwarzes
+Bild am Anfang, kein Einblenden, kein Überblenden, kein Farbverlauf, keine
+Vignette, kein Rauschen, keine Textur im Hintergrund.
+
+FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
+Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
+Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
+Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Das zweite beigefügte
+Bild (Teileblatt) zeigt Kleidung und Haare genau; nichts davon ändern, nichts
+hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
+im Startbild.
+
+BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
+Schwenk, kein Wackeln, kein Neigen). Die Kamera schaut waagrecht auf Vela. Vela
+steht auf der Stelle und bleibt an ihrem Platz in der Bildmitte (mit Ausnahme
+der Bewegungen, die unten verlangt werden). Die ganze Figur ist in jedem Bild
+vollständig zu sehen, auch Stiefel, Fäuste und Zopfspitze. Vela nimmt höchstens
+65 Prozent der Bildhöhe ein; zwischen Kopf (bei Sprüngen und Tritten:
+höchster Punkt) und oberem Bildrand bleiben mindestens 15 Prozent Platz, seitlich
+mindestens 20 Prozent.
+
+VERBOTEN (nirgends im Video): Boden, Bodenlinie, Schatten (auch kein weicher
+Schatten unter den Füßen), Staub, Rauch, Funken, Blitze, Strahlen, Wischlinien,
+Geschwindigkeitslinien, Schweißtropfen, Sterne, Kreise, Treffereffekte,
+Gegner, Waffen (außer wo verlangt), zweite Personen, Schrift, Zahlen, Logos,
+Wasserzeichen, Untertitel, Rahmen, Musik, Ton.
+
+ABLAUF: Genau EINE Handlung, genau EIN Durchlauf, keine Wiederholung. Das
+Video endet mit der Pose, die im Prompt unter ENDE genannt ist, und Vela
+bewegt sich in der letzten Sekunde nicht mehr.
 ```
+
+### Die Handlungen (je Clip hinter den Vorspann; Zeiten in Sekunden)
+
+**stand** (`vela_v_stand.mp4`, Länge 3,0 s, Schleife)
 
 ```text
-stand (Länge 3 Sekunden): Vela bleibt in der Kampfhaltung und atmet ruhig, die
-Schultern heben und senken sich leicht, die Fäuste federn minimal, der Zopf
-bewegt sich kaum. Sie bewegt die Füße nicht. Das letzte Bild gleicht dem ersten
-(Schleife).
+HANDLUNG: Vela bleibt in der Kampfhaltung des Startbilds und atmet ruhig. Ihre
+Füße bewegen sich nicht und bleiben fest an derselben Stelle. Die Schultern
+heben und senken sich deutlich (etwa 3 Prozent der Körperhöhe), der Brustkorb
+hebt und senkt sich im Rhythmus des Atems, die Fäuste federn dabei leicht mit,
+der Pferdeschwanz wippt leicht. Ein Atemzug (Heben und Senken) dauert genau 3
+Sekunden. 0,0 bis 1,5 s heben, 1,5 bis 3,0 s senken.
+ENDE: Das letzte Bild gleicht dem ersten Bild: dieselbe Pose, dieselbe
+Position, dieselbe Größe (Schleife).
 ```
+
+**gehen** (`vela_v_gehen.mp4`, 4,0 s, Schleife)
 
 ```text
-kette1 (Länge 4 Sekunden): Aus der Kampfhaltung holt Vela kurz aus und schlägt
-mit der vorderen Faust einmal schnell und gerade nach vorn (rechts), streckt den
-Arm voll aus, hält einen Augenblick, zieht die Faust zurück und steht wieder in
-der Kampfhaltung, in der sie begonnen hat. Danach bleibt sie still stehen.
+HANDLUNG: Vela lässt die Fäuste sinken, dreht sich in eine strenge Seitenansicht
+von rechts (Profil, sie blickt nach rechts) und geht auf der Stelle in einem
+gleichmäßigen, lockeren Schritt (die Kamera und Vela bleiben am Platz; die Füße
+treten auf der Stelle). 0,0 bis 0,6 s: Fäuste sinken, Drehung ins Profil. 0,6 bis
+4,0 s: genau drei Doppelschritte (linker Schritt, rechter Schritt = ein
+Doppelschritt), jeder Doppelschritt dauert genau 1,1 Sekunden. Die Arme schwingen
+deutlich und abwechselnd im Gegentakt zu den Beinen: ist das linke Bein vorn,
+schwingt der rechte Arm nach vorn und der linke nach hinten, beim nächsten
+Schritt umgekehrt. Die Fäuste sind locker geschlossen und bleiben auf Hüfthöhe,
+nie auf Brusthöhe, nie erhoben. Beide Fäuste sind nie gleichzeitig vorn. Jeder
+Fuß setzt deutlich vor dem Körper auf und hebt hinter ihm ab. Die Beine kreuzen
+sich nie und tauschen nie die Seiten: das vordere Bein bleibt zu jedem
+Zeitpunkt eindeutig das vordere. Der Pferdeschwanz schwingt mit.
+ENDE: Das Video endet am Ende des dritten Doppelschritts in derselben Pose, in der
+der erste Doppelschritt begann (Schleife); Vela bleibt im Profil.
 ```
+
+**sprint** (`vela_v_sprint.mp4`, 3,0 s, Schleife)
 
 ```text
-kette2 (Länge 4 Sekunden): Aus der Kampfhaltung schlägt Vela mit der hinteren
-Faust einen kräftigen geraden Schlag nach vorn (rechts), die Hüfte dreht mit
-ein, hält einen Augenblick mit voll ausgestrecktem Arm, kehrt dann in die
-Kampfhaltung zurück und bleibt still stehen.
+HANDLUNG: Vela dreht sich aus der Kampfhaltung in die strenge Seitenansicht von
+rechts (Profil, Blick nach rechts) und läuft auf der Stelle schnell, wie bei
+einem Sprint: Oberkörper 15 Grad nach vorn geneigt, lange Schritte, die Knie
+heben sich hoch, die Arme sind angewinkelt und schwingen kräftig im Gegentakt
+zu den Beinen (ein Arm vor, der andere zurück, nie beide gleichzeitig vorn),
+der Pferdeschwanz fliegt waagrecht nach hinten. 0,0 bis 0,4 s: Drehung ins
+Profil und Anlauf. 0,4 bis 3,0 s: genau vier Doppelschritte (je 0,65 s). Die
+Beine kreuzen sich nie und tauschen nie die Seiten.
+ENDE: Das Video endet am Ende des vierten Doppelschritts in derselben Pose, in
+der der erste begann (Schleife), im Profil.
 ```
+
+**kette1** (`vela_v_kette1.mp4`, 4,0 s)
 
 ```text
-kette3 (Länge 4 Sekunden): Aus der Kampfhaltung schlägt Vela mit der vorderen
-Faust einen kräftigen Haken von unten schräg nach oben-vorn (rechts), der Körper
-streckt sich, hält einen Augenblick, kehrt dann in die Kampfhaltung zurück und
-bleibt still stehen.
+HANDLUNG: Genau EIN Schlag mit der vorderen (linken, dem Betrachter näheren)
+Faust, ein gerader Jab nach vorn (nach rechts). 0,0 bis 0,6 s: Vela bleibt
+völlig still in der Kampfhaltung. 0,6 bis 0,9 s: sie holt kurz aus, die Schulter
+dreht minimal ein. 0,9 bis 1,1 s: die Faust schießt gerade nach vorn und der Arm
+ist voll gestreckt. 1,1 bis 1,8 s: sie hält den voll gestreckten Arm. 1,8 bis 2,5
+s: sie zieht die Faust zurück. 2,5 bis 4,0 s: sie steht still in der
+Kampfhaltung. Nur dieser eine Schlag, kein zweiter Schlag, kein Scheinschlag,
+kein Zucken. Die Füße bleiben am Boden und an derselben Stelle.
+ENDE: Das letzte Bild gleicht dem ersten Bild (Kampfhaltung, dieselbe Pose,
+Position und Größe).
 ```
+
+**kette2** (`vela_v_kette2.mp4`, 4,0 s)
 
 ```text
-kette4 (Länge 5 Sekunden): Aus der Kampfhaltung holt Vela aus, dreht sich einmal
-um sich selbst und führt einen hohen Tritt mit dem hinteren Bein nach vorn
-(rechts) aus, das Bein ist waagrecht gestreckt, hält einen Augenblick, setzt den
-Fuß ab und kehrt in die Kampfhaltung zurück. Danach bleibt sie still stehen.
+HANDLUNG: Genau EIN Schlag mit der hinteren (rechten) Faust, ein kräftiger
+gerader Schlag nach vorn (nach rechts) mit Hüftdrehung. 0,0 bis 0,6 s: völlig
+still in der Kampfhaltung. 0,6 bis 1,0 s: sie holt aus, der Oberkörper dreht
+nach hinten, die rechte Faust geht zurück. 1,0 bis 1,2 s: die hintere Faust
+schießt gerade nach vorn, Hüfte und Schulter drehen mit ein, der Arm ist voll
+gestreckt. 1,2 bis 1,9 s: sie hält den voll gestreckten Arm. 1,9 bis 2,6 s: sie
+zieht die Faust zurück und dreht Hüfte und Schulter zurück. 2,6 bis 4,0 s:
+still in der Kampfhaltung. Nur dieser eine Schlag, kein Vorschlag, kein
+Scheinschlag. Keine Funken, keine Blitze an der Faust.
+ENDE: Das letzte Bild gleicht dem ersten Bild (Kampfhaltung).
 ```
+
+**kette3** (`vela_v_kette3.mp4`, 4,0 s)
 
 ```text
-sprint (Länge 3 Sekunden): Vela läuft auf der Stelle schnell in strenger
-Seitenansicht von rechts (Profil), der Oberkörper nach vorn geneigt, lange
-Schritte, die Arme schwingen kräftig im Gegentakt, der Zopf fliegt waagrecht nach
-hinten. Genau vier Doppelschritte. Schleife.
+HANDLUNG: Genau EIN Haken von unten: ein Aufwärtshaken mit der vorderen
+(linken) Faust, der von unten schräg nach vorn-oben (rechts oben) geht. 0,0 bis
+0,6 s: still in der Kampfhaltung. 0,6 bis 1,0 s: sie geht in den Knien etwas
+tiefer, die vordere Faust sinkt nach unten. 1,0 bis 1,3 s: der Körper streckt
+sich, die Faust fährt von unten schräg nach oben, der Arm ist am Ende gestreckt
+und zeigt schräg nach oben-vorn. 1,3 bis 2,0 s: sie hält diese Pose. 2,0 bis 2,7
+s: sie senkt den Arm und geht zurück. 2,7 bis 4,0 s: still in der Kampfhaltung.
+Keine Funken, keine Blitze, keine Strahlen an der Faust. Der Kopf bleibt immer
+mit 15 Prozent Abstand zum oberen Bildrand.
+ENDE: Das letzte Bild gleicht dem ersten Bild (Kampfhaltung).
 ```
+
+**kette4** (`vela_v_kette4.mp4`, 5,0 s)
 
 ```text
-sprung (Länge 3 Sekunden): Aus der Kampfhaltung geht Vela in die Hocke, springt
-senkrecht in die Luft (die Figur steigt im Bild auf und fällt wieder), hält am
-Scheitel kurz, fällt, landet in der Hocke und richtet sich in die Kampfhaltung
-auf.
+HANDLUNG: Genau EIN Dreh-Tritt: ein hoher Tritt mit Drehung. 0,0 bis 0,6 s:
+still in der Kampfhaltung. 0,6 bis 1,0 s: sie holt aus. 1,0 bis 1,2 s: kurzer
+gerader Armstoß nach vorn (rechts) mit der vorderen Faust. 1,2 bis 1,8 s: sie
+dreht sich um die eigene Achse nach hinten (Rückenansicht ist zu sehen, ganze
+Drehung etwa 270 Grad) und hebt dabei das hintere Bein. 1,8 bis 2,0 s: das
+hintere Bein tritt waagrecht nach vorn (rechts), das Bein ist gestreckt und
+waagrecht in Hüfthöhe, der Oberkörper lehnt zurück. 2,0 bis 2,8 s: sie hält die
+Trittpose. 2,8 bis 3,4 s: sie setzt den Fuß ab und dreht zurück in die
+Kampfhaltung. 3,4 bis 5,0 s: still in der Kampfhaltung. Das Standbein bleibt am
+Boden und rutscht nicht. Der Kopf und der Zopf bleiben mit 15 Prozent Abstand
+zum oberen Bildrand.
+ENDE: Das letzte Bild gleicht dem ersten Bild (Kampfhaltung).
 ```
+
+**sprung** (`vela_v_sprung.mp4`, 3,0 s)
 
 ```text
-getroffen_vorn (Länge 2 Sekunden): Aus der Kampfhaltung wird Vela von vorn
-getroffen: der Kopf und der Oberkörper schnellen nach hinten, das Gesicht
-verzieht sich vor Schmerz, die Arme fliegen leicht nach außen, sie bleibt auf
-den Füßen, fängt sich und kehrt in die Kampfhaltung zurück.
+HANDLUNG: Genau EIN Sprung auf der Stelle, senkrecht nach oben. Wichtig: Vela
+springt NUR ETWA EINE HALBE KÖRPERHÖHE hoch (der Kopf steigt höchstens um 25
+Prozent der Bildhöhe), damit nichts am oberen Bildrand abgeschnitten wird. 0,0
+bis 0,5 s: still in der Kampfhaltung. 0,5 bis 0,8 s: sie geht tief in die Hocke,
+die Arme gehen nach hinten-unten. 0,8 bis 1,0 s: Absprung, die Arme schwingen
+nach oben, die Beine strecken sich. 1,0 bis 1,3 s: sie steigt, am Scheitel
+(1,3 s) zieht sie die Knie an, die Fäuste bleiben vor der Brust. 1,3 bis 1,7 s:
+sie fällt. 1,7 bis 1,9 s: Landung in der tiefen Hocke. 1,9 bis 2,5 s: sie richtet
+sich auf und kehrt in die Kampfhaltung zurück. 2,5 bis 3,0 s: still. Der Kopf
+und der Zopf bleiben im ganzen Video vollständig im Bild.
+ENDE: Das letzte Bild gleicht dem ersten Bild (Kampfhaltung).
 ```
+
+**getroffen_vorn** (`vela_v_getroffen_vorn.mp4`, 2,5 s)
 
 ```text
-umgeworfen (Länge 4 Sekunden): Aus der Kampfhaltung wird Vela von vorn hart
-getroffen, hebt vom Boden ab, fliegt nach hinten (links) durch die Luft, schlägt
-mit dem Rücken auf den Boden auf und bleibt liegen. Danach steht sie nicht auf.
+HANDLUNG: Vela wird von vorn (aus Richtung rechts) getroffen (der Treffer selbst
+ist nicht zu sehen). 0,0 bis 0,5 s: still in der Kampfhaltung. 0,5 bis 0,6 s: der
+Treffer: Kopf und Oberkörper schnellen nach hinten (nach links), der Mund
+verzieht sich vor Schmerz, die Augen kneifen zu, die Fäuste öffnen sich leicht
+und die Arme gehen leicht nach außen. Die Füße bleiben am Boden. 0,6 bis 1,0 s:
+sie hält die Auslenkung. 1,0 bis 1,8 s: sie fängt sich und kommt zurück. 1,8 bis
+2,5 s: still in der Kampfhaltung. Kein Fallen, kein Taumeln über mehr als 5
+Prozent der Bildbreite.
+ENDE: Das letzte Bild gleicht dem ersten Bild (Kampfhaltung).
 ```
+
+**getroffen_hinten** (`vela_v_getroffen_hinten.mp4`, 2,5 s)
 
 ```text
-aufstehen (Länge 3 Sekunden): Vela liegt auf dem Rücken am Boden (Startlage wie
-am Ende von „umgeworfen“), stützt sich ab, rollt zur Seite, kommt auf die Knie
-und richtet sich in die Kampfhaltung auf. (Dafür das letzte Bild aus „umgeworfen“
-als Startbild benutzen.)
+HANDLUNG: Vela wird von hinten (aus Richtung links) getroffen. 0,0 bis 0,5 s:
+still in der Kampfhaltung. 0,5 bis 0,6 s: der Treffer: der Oberkörper schnellt
+nach vorn (nach rechts), der Kopf geht nach vorn-unten, das Gesicht verzieht sich
+vor Schmerz, die Arme gehen nach hinten-außen. Die Füße bleiben am Boden. 0,6
+bis 1,0 s: sie hält die Auslenkung. 1,0 bis 1,8 s: sie fängt sich und kommt
+zurück. 1,8 bis 2,5 s: still in der Kampfhaltung.
+ENDE: Das letzte Bild gleicht dem ersten Bild (Kampfhaltung).
 ```
 
-Weitere Clips (`sprungtritt`, `griff`, `kniestoss`, `wurf`, `spezial`,
-`getroffen_hinten`, `waffe`, `aufnehmen`) folgen nach demselben Schema, sobald
-die ersten gut laufen.
+**umgeworfen** (`vela_v_umgeworfen.mp4`, 4,0 s)
+
+```text
+HANDLUNG: Vela wird hart von vorn (aus Richtung rechts) getroffen, hebt ab, fliegt
+rückwärts (nach links) durch die Luft und schlägt auf dem Rücken auf. Es gibt
+keinen Boden, keinen Staub, keinen Schatten. 0,0 bis 0,4 s: still in der
+Kampfhaltung. 0,4 bis 0,6 s: harter Treffer, Oberkörper und Kopf schnellen nach
+hinten. 0,6 bis 1,0 s: sie hebt ab, der Körper kippt nach hinten, die Arme
+fliegen auseinander. 1,0 bis 1,4 s: sie fliegt in flachem Bogen etwa 20 Prozent
+der Bildbreite nach links und ist waagrecht in der Luft. 1,4 bis 1,5 s: sie
+schlägt mit dem Rücken auf (der Körper liegt dann waagrecht auf der Höhe der
+Fußlinie des Startbilds). 1,5 bis 4,0 s: sie liegt still auf dem Rücken, die
+Arme zur Seite, das Gesicht nach oben, Zopf neben dem Kopf, keine Bewegung außer
+sehr leichtem Atmen.
+ENDE: Vela liegt auf dem Rücken, regungslos, vor demselben grünen Hintergrund.
+Kein Staub, kein Schatten.
+```
+
+**aufstehen** (`vela_v_aufstehen.mp4`, 4,0 s)
+
+```text
+STARTBILD FÜR DIESEN CLIP: das letzte Bild des Clips umgeworfen (Vela liegt auf
+dem Rücken auf dem grünen Hintergrund); als zweites Bild das Startbild der
+Kampfhaltung (Zielpose). Bei diesem Clip gilt abweichend: die Kamera, die Figur
+und der Hintergrund bleiben wie im Startbild, die Figur liegt zu Beginn.
+HANDLUNG: 0,0 bis 0,4 s: Vela liegt still. 0,4 bis 1,0 s: sie stützt sich auf
+einen Arm und richtet den Oberkörper auf (Sitzen). 1,0 bis 1,6 s: sie zieht ein
+Bein an und kommt auf ein Knie (Kniestand, die Faust am Boden). 1,6 bis 2,4 s:
+sie steht auf. 2,4 bis 3,0 s: sie nimmt die Fäuste hoch und geht in die
+Kampfhaltung. 3,0 bis 4,0 s: still in der Kampfhaltung. Die Endpose ist GENAU
+die Kampfhaltung des zweiten Bildes: Dreiviertelansicht, Vela blickt nach rechts,
+gleiche Größe, Fäuste vor der Brust (nicht frontal zur Kamera).
+ENDE: Das letzte Bild gleicht der Kampfhaltung des zweiten Bildes.
+```
+
+**griff** (`vela_v_griff.mp4`, 3,0 s)
+
+```text
+HANDLUNG: Vela greift mit beiden Händen einen unsichtbaren Gegner, der direkt
+vor ihr (rechts, 15 Prozent der Bildbreite entfernt) steht; der Gegner ist NICHT
+im Bild (auch keine Silhouette): die Hände greifen und halten ins Leere auf
+Brusthöhe, als würde sie den Kragen eines Gegners packen. 0,0 bis 0,5 s: still in
+der Kampfhaltung. 0,5 bis 1,0 s: beide Arme strecken sich nach vorn und die Hände
+packen zu (Fäuste um den Kragen). 1,0 bis 3,0 s: sie hält fest, zieht leicht
+nach unten und hält den Oberkörper leicht nach vorn gelehnt, die Füße fest.
+ENDE: Vela hält den Griff, regungslos (diese Pose hält die letzten 1,5 Sekunden).
+```
+
+**kniestoss** (`vela_v_kniestoss.mp4`, 3,0 s)
+
+```text
+HANDLUNG: Vela hält mit beiden Händen einen unsichtbaren Gegner am Kragen (wie am
+Ende von griff, Hände auf Brusthöhe vor ihr, kein Gegner im Bild) und stößt das
+hintere Knie hoch nach vorn-oben. 0,0 bis 0,6 s: sie hält den Griff. 0,6 bis 1,0
+s: das hintere Knie fährt hoch bis Hüfthöhe, der Oberkörper beugt leicht nach
+vorn und zieht nach unten. 1,0 bis 1,6 s: sie hält das Knie oben. 1,6 bis 2,2 s:
+sie setzt den Fuß ab. 2,2 bis 3,0 s: sie hält wieder den Griff.
+ENDE: Vela hält den Griff wie am Anfang.
+```
+
+**wurf** (`vela_v_wurf.mp4`, 4,0 s)
+
+```text
+HANDLUNG: Vela wirft einen unsichtbaren Gegner (nicht im Bild) über die Schulter.
+0,0 bis 0,5 s: sie hält ihn am Kragen (beide Hände vor der Brust). 0,5 bis 1,2
+s: sie beugt sich vor und hebt ihn mit beiden Armen an (die Arme gehen nach oben
+über den Kopf). 1,2 bis 1,8 s: sie dreht den Oberkörper und schwingt die Arme
+über die rechte Schulter nach vorn-unten, wie bei einem Schulterwurf. 1,8 bis 2,2
+s: sie lässt los, die Hände öffnen sich, die Arme zeigen nach vorn-unten. 2,2 bis
+3,0 s: der Schwung klingt aus. 3,0 bis 4,0 s: sie richtet sich auf und steht in
+der Kampfhaltung.
+ENDE: Das letzte Bild gleicht dem Startbild (Kampfhaltung).
+```
+
+**spezial** (`vela_v_spezial.mp4`, 4,0 s)
+
+```text
+HANDLUNG: Vela knien und schlägt beide Handschuhe auf den Boden. 0,0 bis 0,5 s:
+still in der Kampfhaltung. 0,5 bis 1,0 s: sie geht tief in die Knie, die Arme
+gehen nach oben. 1,0 bis 1,3 s: beide Fäuste schlagen zu Boden (Fäuste berühren
+den Boden unter den Schultern). 1,3 bis 2,3 s: sie hält die Pose, die Handschuhe
+am Boden. 2,3 bis 3,2 s: sie richtet sich auf. 3,2 bis 4,0 s: still in der
+Kampfhaltung. KEINE Blitze, KEINE Wellen, KEIN Leuchten, KEINE Risse im Boden
+(die Welle zeichnet das Spiel).
+ENDE: Das letzte Bild gleicht dem Startbild (Kampfhaltung).
+```
+
+**waffe** (`vela_v_waffe.mp4`, 4,0 s)
+
+```text
+HANDLUNG: Vela hebt einen Raketenwerfer (ein Rohr aus grauem Stahl, etwa
+Schulterlänge, auf der rechten Schulter aufliegend) an, zielt und schießt. 0,0
+bis 0,5 s: sie steht in der Kampfhaltung. 0,5 bis 1,2 s: sie legt sich das Rohr auf die
+rechte Schulter und hält es mit beiden Händen, die Mündung zeigt nach vorn
+(rechts). 1,2 bis 2,0 s: sie zielt ruhig. 2,0 bis 2,1 s: Abschuss, das Rohr
+rückt leicht nach hinten (Rückstoß). 2,1 bis 3,0 s: sie senkt das Rohr. 3,0 bis
+4,0 s: sie steht in der Kampfhaltung (das Rohr ist verschwunden).
+KEIN Mündungsfeuer, KEINE Rakete, KEIN Rauch.
+ENDE: Das letzte Bild gleicht dem Startbild (Kampfhaltung, ohne Waffe).
+```
+
+**aufnehmen** (`vela_v_aufnehmen.mp4`, 3,0 s)
+
+```text
+HANDLUNG: Vela bückt sich und hebt etwas vom Boden auf (das aufgehobene Ding ist
+NICHT sichtbar, die Hand schließt sich um etwas Kleines). 0,0 bis 0,5 s: still in
+der Kampfhaltung. 0,5 bis 1,1 s: sie beugt sich vor, die vordere Hand geht zum
+Boden vor den Füßen. 1,1 bis 1,5 s: die Hand schließt sich. 1,5 bis 2,2 s: sie
+richtet sich wieder auf. 2,2 bis 3,0 s: still in der Kampfhaltung.
+ENDE: Das letzte Bild gleicht dem Startbild (Kampfhaltung).
+```
+
+**sprungtritt** (`vela_v_sprungtritt.mp4`, 3,5 s)
+
+```text
+HANDLUNG: Sprung mit seitlichem Tritt. Wichtig: Vela springt NUR ETWA EINE HALBE
+KÖRPERHÖHE hoch, der Kopf bleibt mit 15 Prozent Abstand zum oberen Bildrand.
+0,0 bis 0,5 s: still in der Kampfhaltung. 0,5 bis 0,8 s: tiefe Hocke. 0,8 bis
+1,0 s: Absprung. 1,0 bis 1,3 s: in der Luft zieht sie das hintere Bein an. 1,3
+bis 1,6 s: sie tritt mit dem hinteren Bein gestreckt waagrecht nach vorn
+(rechts), das Standbein ist angezogen. 1,6 bis 1,9 s: sie hält den Tritt am
+höchsten Punkt. 1,9 bis 2,2 s: sie fällt, das Bein geht zurück. 2,2 bis 2,5 s:
+Landung in der Hocke. 2,5 bis 3,5 s: sie richtet sich auf und steht in der
+Kampfhaltung.
+ENDE: Das letzte Bild gleicht dem Startbild (Kampfhaltung).
+```
+
+### Abnahmeliste für dich (vor dem Hochladen, 1 Minute je Clip)
+
+1. Das erste Bild gleicht dem Startbild, der Hintergrund ist ab dem ersten Bild
+   grün (kein Schwarz, kein Verlauf).
+2. Kein Schatten am Boden, kein Staub, keine Funken, keine Linien, kein Text.
+3. Vela ist in jedem Bild vollständig sichtbar (Kopf, Zopfspitze, Stiefel,
+   Fäuste), der Kopf nie am oberen Rand.
+4. Genau die verlangte Handlung, genau einmal. Kein zweiter Schlag.
+5. Das Ende entspricht dem Prompt (Kampfhaltung wie am Anfang, bei Schleifen
+   Pose wie am Anfang).
+6. Gehen und Sprint: Arme und Beine im Gegentakt, Beine kreuzen sich nicht.
+7. Kleidung und Gesicht bleiben dieselben (Streifen auf der Jacke, Haare, Farben).
+
+Wenn ein Punkt nicht stimmt: den Clip erneut erzeugen (zwei bis drei Versuche
+sind normal) und den besten nehmen. Ein Fehler in einem Abschnitt ist nicht
+schlimm, das Werkzeug schneidet den guten Abschnitt aus.
 
 ### Stand der Clips auf schwarzem Grund (2026-10-07)
 
