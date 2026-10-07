@@ -348,79 +348,133 @@ bringt sie auf 142 px Höhe und höchstens 64 Farben und verschiebt die Bilder
 so in der Zeit, dass der Treffer im ersten aktiven Frame der Logik sitzt. Der
 Nutzer muss nur die Clips erzeugen.
 
-**Regeln für jeden Clip** (gelten zusätzlich zu den Regeln oben):
+**Regeln für jeden Clip** (gelten zusätzlich zu den Regeln oben; Stand 2026-10-07
+nach den ersten echten Clips):
 
-- Grok „Bild zu Video“ mit der Kampfhaltung als erstem Bild
-  (`spiel/grafik/quelle/fremd/vela/vela_k_kampfhaltung.png`) und dem Teileblatt
-  (`vela_t_teile.png`) als Referenz, damit Jacke, Haare und Handschuhe gleich
-  bleiben.
-- **Kamera fest**, kein Zoom, kein Schwenk, keine Bildwackler. Figur **auf der
-  Stelle** (sie läuft nicht aus dem Bild), ganze Figur immer vollständig im
-  Bild, Seitenansicht in Dreiviertelansicht nach rechts wie das Referenzbild.
-- **Hintergrund: einfarbiges, sattes Grün (reines Chroma-Grün, ohne Verlauf,
-  ohne Boden, ohne Schatten).** Das weicht von den dunklen Hintergründen der
-  Blätter ab: Velas Hose und Top sind sehr dunkel und würden sich auf dunklem
-  Grund nicht sauber freistellen lassen.
-- 24 Bilder je Sekunde oder mehr, mindestens 720 Pixel Höhe, Clip **2 bis 3
-  Sekunden**. Keine Untertitel, keine Schrift, keine Musik nötig.
-- Dateiname `vela_v_<animation>.mp4` (zum Beispiel `vela_v_gehen.mp4`).
-  Hochladen im Chat mit dem Satz „Videos für Vela nach Auftrag 6“. Nimmt der
-  Chat kein MP4 an, als GIF, WebP oder als ZIP der Einzelbilder (PNG) schicken.
+- **Startbild immer die Kampfhaltung**
+  (`spiel/grafik/quelle/fremd/vela/vela_k_kampfhaltung.png`), für JEDEN Clip,
+  auch für Gehen und Sprint. Entscheidung des Nutzers: einheitlich bleiben, weil
+  das Standbild vom Teileblatt (`vela_stand_referenz.png`) etwas anders aussieht.
+  Jeder Clip beginnt also in derselben Pose; das Werkzeug nimmt das erste stabile
+  Bild als Maßstab (142 px) und als Fußanker.
+- Das Teileblatt (`vela_t_teile.png`) als zweites Referenzbild mitgeben, damit
+  Jacke, Haare und Handschuhe gleich bleiben.
+- **Kamera fest**, kein Zoom, kein Schwenk. Figur **auf der Stelle**, ganze
+  Figur immer vollständig im Bild.
+- **Hintergrund: einfarbiges, sattes Chroma-Key-Grün** vom ersten Bild an (kein
+  schwarzes Anfangsbild, kein Überblenden, kein Verlauf, kein Boden, **kein
+  Bodenschatten**). Velas Hose und Top sind sehr dunkel und würden sich auf
+  dunklem Grund nicht sauber freistellen lassen.
+- 24 Bilder je Sekunde oder mehr, mindestens 720 Pixel Höhe. Länge je Clip siehe
+  unten; kürzere Clips halten die Figur besser. Keine Schrift, keine Musik.
+- Dateiname `vela_v_<animation>.mp4`. Hochladen im Chat mit dem Satz „Videos für
+  Vela nach Auftrag 6“. Nimmt der Chat kein MP4 an, als GIF, WebP oder ZIP der
+  Einzelbilder.
 - Bei Schwankungen der Figur (Jacke, Haare, Größe wechseln) den Clip neu
-  erzeugen; ein kürzerer Clip hält die Figur besser.
+  erzeugen. Ein Fehler in einem Abschnitt (zum Beispiel ein Arm, der nicht
+  zurückgeht) ist nicht schlimm: das Werkzeug schneidet den guten Abschnitt aus
+  (`--bilder n`).
 
-**Zuerst nur zwei Clips (Test):**
-
-```text
-Clip gehen (vela_v_gehen.mp4), Fassung 3 (nach zwei Versuchen):
-Startbild: das beigefügte Standbild (Vela im Stand, Arme locker, Profil nach
-rechts: spiel/grafik/quelle/fremd/vela/vela_stand_referenz.png). Das Video
-beginnt SOFORT mit einem einfarbigen, sattem Chroma-Key-Grün als Hintergrund
-(kein schwarzes Anfangsbild, kein Überblenden, kein Verlauf, kein Boden, KEIN
-Bodenschatten, nichts außer der Figur).
-
-Die Heldin Vela geht auf der Stelle in einem langsamen, gleichmäßigen Schritt
-nach rechts (die Kamera steht fest, die Figur bewegt sich nicht aus dem Bild),
-in strenger Seitenansicht von rechts (Profil, sie blickt nach rechts). Der
-Clip zeigt genau drei Doppelschritte (linker und rechter Schritt) in drei
-Sekunden und endet in derselben Pose, in der er beginnt (Schleife).
-
-Armbewegung, ganz wichtig: Die Arme schwingen deutlich, abwechselnd und im
-Gegentakt zu den Beinen. Ist das linke Bein vorn, schwingt der rechte Arm nach
-vorn und der linke Arm nach hinten; beim nächsten Schritt umgekehrt. Beide
-Fäuste sind nie gleichzeitig vorn. Die Hände sind locker geschlossen und
-bleiben auf Hüfthöhe, nie auf Brusthöhe. Die Fäuste sind NICHT erhoben, KEINE
-Kampfhaltung, keine Gegner.
-
-Beinbewegung: Jeder Fuß setzt deutlich vor dem Körper auf und hebt hinter ihm
-ab; die Beine kreuzen sich nicht und tauschen nicht die Seiten, das vordere
-Bein bleibt zu jedem Zeitpunkt eindeutig das vordere. Der Zopf schwingt mit.
-Pixelgrafik im Stil des Startbilds, dieselbe Kleidung und dieselben Farben,
-keine Schrift, keine Musik.
-```
-
-
+**Gemeinsamer Vorspann für jeden Prompt** (vor die Handlung setzen):
 
 ```text
-Clip kette1 (vela_v_kette1.mp4): Die Heldin Vela steht in Kampfhaltung wie im
-Referenzbild, holt kurz aus und schlägt mit der vorderen Faust einmal schnell
-und gerade nach vorn (rechts), streckt den Arm vollständig, hält einen
-Augenblick, zieht die Faust zurück und steht wieder in Kampfhaltung. Danach
-bleibt sie still stehen. Feste Kamera, Figur auf der Stelle, reines grünes
-Chroma-Key-Hintergrundbild, keine Schatten, Dreiviertelansicht nach rechts,
-Pixelgrafik im Stil des Referenzbildes.
+Startbild: das beigefügte Bild der Heldin Vela in Kampfhaltung. Zweites
+Referenzbild: das Teileblatt (Kleidung, Haare, Handschuhe). Der Hintergrund ist
+vom ersten Bild an ein einfarbiges, sattes Chroma-Key-Grün (kein schwarzes
+Anfangsbild, kein Überblenden, kein Verlauf, kein Boden, KEIN Bodenschatten,
+nichts außer der Figur). Feste Kamera, kein Zoom, kein Schwenk, die Figur bleibt
+auf der Stelle und immer ganz im Bild. Dreiviertelansicht nach rechts wie im
+Startbild, wenn nicht anders angegeben. Pixelgrafik im Stil des Startbilds,
+dieselbe Kleidung und dieselben Farben. Keine Schrift, keine Musik.
+Handlung:
 ```
 
-**Danach, sobald die zwei Clips taugen** (je ein Clip, gleiche Regeln):
-`stand` (Kampfhaltung, ruhig atmend, 3 Sekunden, Schleife), `kette2` (gerader
-Schlag mit der hinteren Faust), `kette3` (Haken von unten), `kette4` (hoher
-Tritt mit Drehung), `sprint` (schneller Lauf auf der Stelle, Zopf fliegt),
-`sprung` (Absprung, Scheitel, Landung in der Hocke), `sprungtritt`,
-`griff` (greift einen Gegner am Kragen; Gegner nur als graue Silhouette),
-`kniestoss`, `wurf`, `spezial` (kniet, schlägt beide Handschuhe auf den Boden,
-blauer Blitz), `getroffen_vorn`, `getroffen_hinten`, `umgeworfen` (Flug, Fall,
-Aufprall, Liegen), `aufstehen`, `waffe` (Raketenwerfer anlegen, schießen,
-absetzen), `aufnehmen`.
+**Handlungen** (je Clip, hinter den Vorspann):
+
+```text
+gehen (Länge 4 Sekunden): Vela löst sich aus der Kampfhaltung und geht auf der
+Stelle in einem gleichmäßigen Schritt nach rechts, in strenger Seitenansicht von
+rechts (Profil). Genau drei Doppelschritte. Die Arme schwingen deutlich,
+abwechselnd und im Gegentakt zu den Beinen: ist das linke Bein vorn, schwingt
+der rechte Arm nach vorn und der linke nach hinten; beide Fäuste nie
+gleichzeitig vorn; die Hände locker geschlossen auf Hüfthöhe. Jeder Fuß setzt
+vor dem Körper auf und hebt hinter ihm ab, die Beine kreuzen sich nicht und
+tauschen nicht die Seiten. Der Zopf schwingt mit. Der Clip endet in der Pose,
+in der der Doppelschritt beginnt (Schleife).
+```
+
+```text
+stand (Länge 3 Sekunden): Vela bleibt in der Kampfhaltung und atmet ruhig, die
+Schultern heben und senken sich leicht, die Fäuste federn minimal, der Zopf
+bewegt sich kaum. Sie bewegt die Füße nicht. Das letzte Bild gleicht dem ersten
+(Schleife).
+```
+
+```text
+kette1 (Länge 4 Sekunden): Aus der Kampfhaltung holt Vela kurz aus und schlägt
+mit der vorderen Faust einmal schnell und gerade nach vorn (rechts), streckt den
+Arm voll aus, hält einen Augenblick, zieht die Faust zurück und steht wieder in
+der Kampfhaltung, in der sie begonnen hat. Danach bleibt sie still stehen.
+```
+
+```text
+kette2 (Länge 4 Sekunden): Aus der Kampfhaltung schlägt Vela mit der hinteren
+Faust einen kräftigen geraden Schlag nach vorn (rechts), die Hüfte dreht mit
+ein, hält einen Augenblick mit voll ausgestrecktem Arm, kehrt dann in die
+Kampfhaltung zurück und bleibt still stehen.
+```
+
+```text
+kette3 (Länge 4 Sekunden): Aus der Kampfhaltung schlägt Vela mit der vorderen
+Faust einen kräftigen Haken von unten schräg nach oben-vorn (rechts), der Körper
+streckt sich, hält einen Augenblick, kehrt dann in die Kampfhaltung zurück und
+bleibt still stehen.
+```
+
+```text
+kette4 (Länge 5 Sekunden): Aus der Kampfhaltung holt Vela aus, dreht sich einmal
+um sich selbst und führt einen hohen Tritt mit dem hinteren Bein nach vorn
+(rechts) aus, das Bein ist waagrecht gestreckt, hält einen Augenblick, setzt den
+Fuß ab und kehrt in die Kampfhaltung zurück. Danach bleibt sie still stehen.
+```
+
+```text
+sprint (Länge 3 Sekunden): Vela läuft auf der Stelle schnell in strenger
+Seitenansicht von rechts (Profil), der Oberkörper nach vorn geneigt, lange
+Schritte, die Arme schwingen kräftig im Gegentakt, der Zopf fliegt waagrecht nach
+hinten. Genau vier Doppelschritte. Schleife.
+```
+
+```text
+sprung (Länge 3 Sekunden): Aus der Kampfhaltung geht Vela in die Hocke, springt
+senkrecht in die Luft (die Figur steigt im Bild auf und fällt wieder), hält am
+Scheitel kurz, fällt, landet in der Hocke und richtet sich in die Kampfhaltung
+auf.
+```
+
+```text
+getroffen_vorn (Länge 2 Sekunden): Aus der Kampfhaltung wird Vela von vorn
+getroffen: der Kopf und der Oberkörper schnellen nach hinten, das Gesicht
+verzieht sich vor Schmerz, die Arme fliegen leicht nach außen, sie bleibt auf
+den Füßen, fängt sich und kehrt in die Kampfhaltung zurück.
+```
+
+```text
+umgeworfen (Länge 4 Sekunden): Aus der Kampfhaltung wird Vela von vorn hart
+getroffen, hebt vom Boden ab, fliegt nach hinten (links) durch die Luft, schlägt
+mit dem Rücken auf den Boden auf und bleibt liegen. Danach steht sie nicht auf.
+```
+
+```text
+aufstehen (Länge 3 Sekunden): Vela liegt auf dem Rücken am Boden (Startlage wie
+am Ende von „umgeworfen“), stützt sich ab, rollt zur Seite, kommt auf die Knie
+und richtet sich in die Kampfhaltung auf. (Dafür das letzte Bild aus „umgeworfen“
+als Startbild benutzen.)
+```
+
+Weitere Clips (`sprungtritt`, `griff`, `kniestoss`, `wurf`, `spezial`,
+`getroffen_hinten`, `waffe`, `aufnehmen`) folgen nach demselben Schema, sobald
+die ersten gut laufen.
 
 ## Nach der Bestellung
 
