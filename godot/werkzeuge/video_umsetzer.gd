@@ -75,6 +75,9 @@ const FUSS_BAND: int = 10
 ## Raster der Bildunterschrift für Zyklus und Ereignisse.
 const SIG: int = 24
 const ZYKLUS_MIN: int = 3
+## Täler der Paarunterschiede: tief (Prozent des Bergs davor) bzw. noch zulässig, wenn es kein tiefes gibt.
+const TAL_STRENG: int = 60
+const TAL_LOCKER: int = 90
 const UNSCHARF_PROZENT: int = 75
 const TRIMM_PROZENT: int = 25
 const KONTAKT_TOL: int = 1
@@ -384,7 +387,7 @@ func _lauf() -> void:
 		hoch_liste.append(e.y)
 	var ereignisse: Dictionary = ereignisse_suchen(sigs, vorn_liste, hoch_liste, ereignis)
 	var schritt: Dictionary = schrittlaenge(ausgabe, ob, oh, ank.y, int(zyk["start"]), int(zyk["n"]))
-	print("Zyklus: %s; Ereignisse: %s; Schritt: %s" % [str({"n": zyk["n"], "start": zyk["start"], "fehler": zyk["fehler"]}), str(ereignisse), str(schritt)])
+	print("Zyklus: %s (Kandidaten %s, Güte %d %%, Schluss %d %% eines Bildschritts); Ereignisse: %s; Schritt: %s" % [str({"n": zyk["n"], "start": zyk["start"], "fehler": zyk["fehler"]}), str(zyk["kandidaten"]), zyk["guete"], zyk["bewegung"], str(ereignisse), str(schritt)])
 
 	# --- 9. schreiben --------------------------------------------------------------------------------
 	var ziel: String = aus_ordner.path_join(name)
@@ -418,6 +421,19 @@ func _lauf() -> void:
 	text.append("zyklus_bilder=%d" % int(zyk["n"]))
 	text.append("zyklus_start=%d" % (int(zyk["start"]) + 1))
 	text.append("zyklus_fehler=%d" % int(zyk["fehler"]))
+	text.append("zyklus_guete=%d" % int(zyk["guete"]))
+	text.append("zyklus_schluss_in_schritten=%d" % int(zyk["bewegung"]))
+	var kand_text: PackedStringArray = PackedStringArray()
+	for k: Array in (zyk["kandidaten"] as Array):
+		kand_text.append("%d:%d:%d" % [k[0], k[1], k[2]])
+	text.append("# zyklus_kandidaten = Länge:Wert:Tiefe in Prozent")
+	text.append("zyklus_kandidaten=" + ",".join(kand_text))
+	var wt: PackedStringArray = PackedStringArray()
+	var wk: Array = (zyk["werte"] as Dictionary).keys()
+	wk.sort()
+	for k: int in wk:
+		wt.append("%d:%d" % [k, (zyk["werte"] as Dictionary)[k]])
+	text.append("zyklus_werte=" + ",".join(wt))
 	text.append("schritt_px=%d" % int(schritt["schritt"]))
 	text.append("zyklus_ticks=%d" % int(schritt["ticks"]))
 	text.append("ereignis_metrik=" + ereignis)
@@ -1138,19 +1154,22 @@ static func sig_abstand(a: PackedByteArray, b: PackedByteArray) -> int:
 	return s
 
 
-## Zyklus aus Bildpaaren (i, i + n): n ist das kleinste lokale Minimum der mittleren Unterschiede, das
-## deutlich unter dem Mittel liegt (höchstens 40 % des Medians, oder 3/2 des besten); findet sich keines,
-## ist der ganze Clip der Zyklus. Rückgabe n, start (0-basiert, Anfang mit dem kleinsten Schließfehler),
-## fehler (Unterschied zwischen Bild start und start + n, Bytesumme der Bildunterschrift; bei n = Bilderzahl
-## zwischen letztem und erstem Bild).
+## Zyklus aus Bildpaaren (i, i + n). Für jedes n ist der Wert der mittlere Unterschied der Bildunterschriften von
+## Bild i und Bild i + n. Zykluslänge = kleinstes n, das ein lokales Minimum ist und höchstens 60 % des größten
+## Wertes davor erreicht (ein Tal nach einem Berg; ein stetig wachsender Verlauf einer langsamen Bewegung hat keines).
+## Findet sich keines, ist der ganze Clip der Zyklus. Der Start ist das Bild mit dem kleinsten Schließfehler
+## D(i, i + n) unter den Anfängen, in deren Abschnitt Bewegung ist (mittlerer Unterschied aufeinanderfolgender
+## Bilder mindestens die Hälfte des oberen Viertels), damit nicht ein ruhiger Anfang oder Schluss gewählt wird.
+## Rückgabe: n, start (0-basiert), fehler (D(start, start + n)), guete (Prozent unter dem Median der Werte),
+## bewegung (Schließfehler in Prozent des mittleren Unterschieds aufeinanderfolgender Bilder im Zyklus),
+## kandidaten (Array von [n, Wert]), werte (Dictionary n → Wert).
 static func zyklus_suchen(sigs: Array) -> Dictionary:
 	var zahl: int = sigs.size()
 	var nmax: int = zahl / 2
-	if nmax < ZYKLUS_MIN + 1:
+	if nmax < ZYKLUS_MIN + 2:
 		return zyklus_start_fuer(sigs, zahl)
 	var werte: Dictionary = {}
 	var liste: Array[int] = []
-	var bestes: int = 1 << 60
 	for n: int in range(ZYKLUS_MIN, nmax + 1):
 		var s: int = 0
 		for i: int in zahl - n:
@@ -1158,31 +1177,80 @@ static func zyklus_suchen(sigs: Array) -> Dictionary:
 		var mittel: int = s * 16 / (zahl - n)
 		werte[n] = mittel
 		liste.append(mittel)
-		if mittel < bestes:
-			bestes = mittel
-	var med: int = median_int(liste)
-	var grenze: int = maxi(bestes * 3 / 2, med * 4 / 10)
+	# Täler (lokale Minima nach einem Berg), mit Tiefe in Prozent unter dem größten Wert davor
+	var kandidaten: Array = []
+	var berg: int = 0
 	for n: int in range(ZYKLUS_MIN, nmax + 1):
+		var w: int = werte[n]
 		var links: int = int(werte.get(n - 1, 1 << 60))
 		var rechts: int = int(werte.get(n + 1, 1 << 60))
-		if int(werte[n]) <= links and int(werte[n]) <= rechts and int(werte[n]) <= grenze:
-			return zyklus_start_fuer(sigs, n)
-	return zyklus_start_fuer(sigs, zahl)
+		if n > ZYKLUS_MIN and w <= links and w <= rechts and w * 100 <= berg * TAL_LOCKER:
+			kandidaten.append([n, w, 100 - w * 100 / maxi(berg, 1)])
+		berg = maxi(berg, w)
+	# erstes tiefes Tal (höchstens 60 % des Bergs), sonst das erste flache (höchstens TAL_LOCKER %)
+	var wahl: int = -1
+	for k: int in kandidaten.size():
+		if int((kandidaten[k] as Array)[2]) >= 100 - TAL_STRENG:
+			wahl = k
+			break
+	if wahl < 0 and not kandidaten.is_empty():
+		wahl = 0
+	var r: Dictionary
+	if wahl < 0:
+		r = zyklus_start_fuer(sigs, zahl)
+	else:
+		r = zyklus_start_fuer(sigs, int((kandidaten[wahl] as Array)[0]))
+		r["guete"] = int((kandidaten[wahl] as Array)[2])
+	r["kandidaten"] = kandidaten
+	r["werte"] = werte
+	return r
+
+
+## Mittlerer Unterschied aufeinanderfolgender Bilder (Bewegung) je Bild i (zu i + 1), für den ganzen Clip.
+static func bewegung_je_bild(sigs: Array) -> Array[int]:
+	var b: Array[int] = []
+	for i: int in sigs.size() - 1:
+		b.append(sig_abstand(sigs[i], sigs[i + 1]))
+	return b
 
 
 ## Bester Startpunkt für die Zykluslänge n; bei n = Bilderzahl der ganze Clip (Start 0, Schließfehler letzter → erster).
 static func zyklus_start_fuer(sigs: Array, n: int) -> Dictionary:
 	var zahl: int = sigs.size()
+	var bew: Array[int] = bewegung_je_bild(sigs)
+	var sortiert: Array[int] = bew.duplicate()
+	sortiert.sort()
+	var viertel: int = sortiert[sortiert.size() * 3 / 4] if not sortiert.is_empty() else 0
+	var mittel_bew: int = 0
 	if n >= zahl:
-		return {"n": zahl, "start": 0, "fehler": sig_abstand(sigs[zahl - 1], sigs[0])}
+		for v: int in bew:
+			mittel_bew += v
+		mittel_bew = mittel_bew / maxi(bew.size(), 1)
+		var fe: int = sig_abstand(sigs[zahl - 1], sigs[0])
+		return {"n": zahl, "start": 0, "fehler": fe, "bewegung": fe * 100 / maxi(mittel_bew, 1), "guete": 0, "kandidaten": [], "werte": {}}
 	var bester: int = 1 << 60
-	var start: int = 0
+	var start: int = -1
 	for i: int in zahl - n:
+		var summe: int = 0
+		for k: int in range(i, i + n):
+			summe += bew[k]
+		if summe * 2 < viertel * n:
+			continue
 		var d: int = sig_abstand(sigs[i], sigs[i + n])
 		if d < bester:
 			bester = d
 			start = i
-	return {"n": n, "start": start, "fehler": bester}
+	if start < 0:
+		# keine Bewegung im Clip: kleinster Schließfehler überall
+		for i: int in zahl - n:
+			var d: int = sig_abstand(sigs[i], sigs[i + n])
+			if d < bester:
+				bester = d
+				start = i
+	var sm: int = 0
+	for k: int in range(start, start + n):
+		sm += bew[k]
+	return {"n": n, "start": start, "fehler": bester, "bewegung": bester * 100 / maxi(sm / n, 1), "guete": 0, "kandidaten": [], "werte": {}}
 
 
 ## Größte Ausdehnung der Figur nach vorn (x relativ zum Anker, nach rechts) und höchster Punkt
@@ -1201,9 +1269,10 @@ static func ausdehnung(f: PackedByteArray, b: int, h: int, ankerx: int) -> Vecto
 
 
 ## Ausholen-Ende, Kontakt, Ruhe (0-basierte Bildnummern).
-##  Kontakt: erstes Bild, dessen Ausdehnung (vorn: nach rechts, hoch: nach oben) höchstens KONTAKT_TOL unter dem
-##           Größtwert des Clips liegt (die Pose vor dem Zurückziehen).
-##  Ausholen-Ende: letztes Bild bis zum Kontakt, dessen Ausdehnung höchstens KONTAKT_TOL über dem Kleinstwert
+##  Kontakt: erstes Bild, dessen Ausdehnung (vorn: nach rechts, hoch: nach oben) höchstens ein Zehntel des Hubs
+##           (mindestens KONTAKT_TOL) unter dem Größtwert des Clips liegt (die Pose vor dem Zurückziehen; ein leicht
+##           weiter ausholender Nachschwung zählt nicht).
+##  Ausholen-Ende: letztes Bild bis zum Kontakt, dessen Ausdehnung höchstens diese Toleranz über dem Kleinstwert
 ##           bis dahin liegt (am weitesten zurückgezogen, danach beginnt der Schlag).
 ##  Ruhe: erstes Bild nach dem Kontakt, das dem ersten Bild wieder gleicht (Bildunterschrift höchstens ein
 ##           Sechstel des größten Unterschieds zum ersten Bild).
@@ -1216,9 +1285,19 @@ static func ereignisse_suchen(sigs: Array, vorn: Array[int], hoch: Array[int], m
 	var spitze: int = mass[0]
 	for v: int in mass:
 		spitze = maxi(spitze, v)
+	var am: int = 0
+	for i: int in zahl:
+		if mass[i] == spitze:
+			am = i
+			break
+	var kl: int = mass[0]
+	for i: int in range(0, am + 1):
+		kl = mini(kl, mass[i])
+	# Toleranz: ein Zehntel des Hubs (Ausholen bis Spitze), mindestens KONTAKT_TOL Bildpixel
+	var tol: int = maxi(KONTAKT_TOL, (spitze - kl) / 10)
 	var kontakt: int = 0
 	for i: int in zahl:
-		if mass[i] >= spitze - KONTAKT_TOL:
+		if mass[i] >= spitze - tol:
 			kontakt = i
 			break
 	var kleinst: int = mass[0]
@@ -1226,7 +1305,7 @@ static func ereignisse_suchen(sigs: Array, vorn: Array[int], hoch: Array[int], m
 		kleinst = mini(kleinst, mass[i])
 	var ausholen: int = 0
 	for i: int in range(0, kontakt + 1):
-		if mass[i] <= kleinst + KONTAKT_TOL:
+		if mass[i] <= kleinst + tol:
 			ausholen = i
 	var d0: Array[int] = []
 	var gipfel: int = 0
