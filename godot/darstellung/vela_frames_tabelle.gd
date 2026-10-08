@@ -57,7 +57,10 @@ const TICKS_JE_SEKUNDE: int = 60
 # ---------------------------------------------------------------------------
 
 ## Liest clip.txt. Rückgabe: Dictionary mit
-##   name, bilder, breite, hoehe, ankerx, ankery, massstab (float), fps (int, 0 unbekannt), farben,
+##   name, bilder, breite, hoehe, ankerx, ankery (Spielbildpixel: bei Pixel-Clips gleich den Pixeln der Dateien, bei HD-Clips
+##   umgerechnet), bild_breite, bild_hoehe (Pixel der Dateien), weich (bool: HD-Clip, lineare Filterung), skala (float,
+##   Spielbildpixel je Dateipixel, Pixel-Clips 1.0), fuss (Vector2: Fußpunkt in Dateipixeln, Pixel-Clips (ankerx + 0,5,
+##   ankery + 1)), format („png“ oder „webp“), massstab (float), fps (int, 0 unbekannt), farben,
 ##   zyklus_bilder, zyklus_start, zyklus_ticks, ausholen, kontakt, rueckzug, ruhe (0-basiert), rueckkehr
 ##   („vorwaerts“ oder „rueckwaerts“), unscharf (Array[int], 0-basiert), schritt_px, schleife („“ oder „pingpong“),
 ##   ereignis (Dictionary Name → Bildnummer 0-basiert aus den Zeilen `ereignis_<name>`: hocke, absprung, scheitel,
@@ -83,10 +86,28 @@ static func clip_lesen(text: String) -> Dictionary:
 	var d: Dictionary = {}
 	d["name"] = String(roh.get("name", ""))
 	d["bilder"] = int(roh["bilder"])
-	d["breite"] = int(gr[0])
-	d["hoehe"] = int(gr[1])
-	d["ankerx"] = int(an[0])
-	d["ankery"] = int(an[1])
+	d["bild_breite"] = int(gr[0])
+	d["bild_hoehe"] = int(gr[1])
+	d["weich"] = int(roh.get("weich", "0")) != 0
+	d["format"] = String(roh.get("format", "png"))
+	var skala: float = float(roh.get("skala", "1")) if d["weich"] else 1.0
+	d["skala"] = skala
+	var fuss: Vector2 = Vector2(float(int(an[0])) + 0.5, float(int(an[1])) + 1.0)
+	var ff: PackedStringArray = String(roh.get("fuss_fein", "")).split(",")
+	if ff.size() == 2:
+		fuss = Vector2(float(ff[0]), float(ff[1]))
+	d["fuss"] = fuss
+	if d["weich"]:
+		# HD-Clip: Abmessungen und Anker für alle Verbraucher in Spielbildpixeln (Kontaktbögen, Tests)
+		d["breite"] = ceili(float(gr[0]) * skala)
+		d["hoehe"] = ceili(float(gr[1]) * skala)
+		d["ankerx"] = roundi(fuss.x * skala - 0.5)
+		d["ankery"] = roundi(fuss.y * skala - 1.0)
+	else:
+		d["breite"] = int(gr[0])
+		d["hoehe"] = int(gr[1])
+		d["ankerx"] = int(an[0])
+		d["ankery"] = int(an[1])
 	d["massstab"] = float(roh.get("massstab", "0"))
 	d["fps"] = roundi(float(roh.get("fps", "0")))
 	d["farben"] = int(roh.get("farben", "0"))

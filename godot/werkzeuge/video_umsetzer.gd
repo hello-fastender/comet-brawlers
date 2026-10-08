@@ -258,7 +258,7 @@ func _lauf() -> void:
 	if arbeit_prozent < 100 or arbeit_prozent > 400:
 		_fehler("--arbeit außerhalb 100 bis 400 (Prozent der Zielhöhe)")
 		return
-	var bild_format: String = String(arg.get("format", "png")) if hd else "png"
+	var bild_format: String = String(arg.get("format", "webp")) if hd else "png"
 	if bild_format != "png" and bild_format != "webp":
 		_fehler("--format: png oder webp")
 		return
@@ -1219,8 +1219,8 @@ static func weich_freistellen(d: PackedByteArray, farbe: PackedByteArray, w: int
 	# Abstand zur Kante der Maske: +k innen, −k außen (1 = unmittelbar an der Kante), 0 = weiter als `kante` entfernt
 	var tiefe: PackedInt32Array = PackedInt32Array()
 	tiefe.resize(n)
-	var innen: Array = [PackedInt32Array()]
-	var aussen: Array = [PackedInt32Array()]
+	var innen1: PackedInt32Array = PackedInt32Array()
+	var aussen1: PackedInt32Array = PackedInt32Array()
 	for y: int in h:
 		var z: int = y * w
 		for x: int in w:
@@ -1229,10 +1229,13 @@ static func weich_freistellen(d: PackedByteArray, farbe: PackedByteArray, w: int
 			if (x > 0 and maske[p - 1] != m) or (x < w - 1 and maske[p + 1] != m) or (y > 0 and maske[p - w] != m) or (y < h - 1 and maske[p + w] != m):
 				if m != 0:
 					tiefe[p] = 1
-					(innen[0] as PackedInt32Array).append(p)
+					innen1.append(p)
 				else:
 					tiefe[p] = -1
-					(aussen[0] as PackedInt32Array).append(p)
+					aussen1.append(p)
+	# Schichten 1 bis kante (Packed-Arrays werden per Referenz abgelegt, daher erst füllen, dann einhängen)
+	var innen: Array = [innen1]
+	var aussen: Array = [aussen1]
 	for k: int in range(2, kante + 1):
 		for art: int in 2:
 			var vor: PackedInt32Array = (innen if art == 0 else aussen)[k - 2]

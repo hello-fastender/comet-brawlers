@@ -1,7 +1,8 @@
 ## Test des Video-Wegs für Vela: Ergebnisse des Umsetzers an den TESTCLIPS (aus der Puppe, nicht von Grok) und an den
 ## echten Clips (aus den Grok-Videos), die Zuordnung Aktion/Uhr → Bild, der Abspieler und die Rückfallreihenfolge der
 ## Quellen in der Darstellung.
-## Läuft ohne Fenster und ohne ffmpeg (liest die bereits erzeugten Ordner unter godot/grafik/vela_video/):
+## Läuft ohne Fenster und ohne ffmpeg (liest die bereits erzeugten Ordner unter godot/grafik/vela_video/); nur die
+## Umsetzung eines synthetischen HD-Videos (`_hd_umsetzung`) braucht ffmpeg und wird ohne es übersprungen:
 ##   godot --headless --path godot --script res://tests/alle.gd
 ## Einbindung: `var r := VideoTest.lauf()`; r["geprueft"] Zahl der Prüfungen, r["fehler"] Meldungen.
 class_name VideoTest
@@ -33,6 +34,9 @@ const MASSSTAB_TOL: float = 0.0006
 ## Raster der Bildunterschriften des Umsetzers (video_umsetzer.gd SIG)
 const SIG: int = 24
 const T = preload("res://darstellung/vela_frames_tabelle.gd")
+## Synthetischer HD-Test (`_hd_umsetzung`): Höhe der Figur in Dateipixeln und Zahl der Videobilder (klein halten: Laufzeit).
+const HD_HOEHE: int = 240
+const HD_BILDER: int = 8
 
 var _geprueft: int = 0
 var _fehler: Array[String] = []
@@ -70,6 +74,8 @@ func _alles() -> void:
 	_tabelle_schleife()
 	_tabelle_clipdaten()
 	_abspieler()
+	_hd_funktionen()
+	_hd_umsetzung()
 	_abdeckung()
 	_szene()
 	DarstellungVelaFrames.clips_vergessen()
@@ -494,6 +500,292 @@ func _abspieler() -> void:
 	_ok(not v.aus_clip("gibt_es_nicht", 1, 1) and not v.visible, "Abspieler: fehlender Clip versteckt den Node")
 	# aus_figur: Aktion → Clip (die Testclips heißen nicht stand/gehen/kette, daher nur über aus_clip)
 	v.free()
+
+
+# ---------------------------------------------------------------------------
+# HD-Modus des Umsetzers (--hd): weiche Kante, RGBA, Skala; Abspieler mit linearer Filterung
+# ---------------------------------------------------------------------------
+
+## Funktionen des HD-Modus an künstlichen Daten (ohne ffmpeg).
+func _hd_funktionen() -> void:
+	var u: GDScript = load("res://werkzeuge/video_umsetzer.gd")
+	_gleich(u.call("kante_standard", 540.0), 4, "HD: Übergang 4 px bei 540 Zeilen Figur im Arbeitsbild")
+	_gleich(u.call("kante_standard", 284.0), 2, "HD: Übergang mindestens 2 px")
+	_gleich(u.call("kante_standard", 5000.0), 6, "HD: Übergang höchstens 6 px")
+	# Gewichte einer Achse: Box (Verkleinern) summiert auf inv16, Dreieck (Vergrößern) auf 65536
+	for inv16: int in [98304, 65536, 40000, 25000]:
+		var t: Dictionary = u.call("_achse", 5 * 65536 + 12345, inv16, 8, 40)
+		var summe_ok: bool = true
+		for o: int in 8:
+			var s: int = 0
+			for k: int in (t["zahl"] as PackedInt32Array)[o]:
+				s += (t["gew"] as PackedInt32Array)[(t["ab"] as PackedInt32Array)[o] + k]
+			if absi(s - int(t["nenner"])) > 2:
+				summe_ok = false
+		_ok(summe_ok, "HD: Gewichte der Achse (inv16 %d) summieren auf den Nenner" % inv16)
+		_gleich(t["nenner"], inv16 if inv16 >= 65536 else 65536, "HD: Nenner der Achse (inv16 %d)" % inv16)
+	# Verkleinern ohne dunklen Saum: rotes Quadrat auf Durchsichtig (Farbe unter Alpha 0 ist Schwarz), Gitter 1,5-fach, versetzt
+	var wa: PackedByteArray = PackedByteArray()
+	var wf: PackedByteArray = PackedByteArray()
+	wa.resize(100)
+	wf.resize(300)
+	for y: int in range(2, 8):
+		for x: int in range(2, 8):
+			wa[y * 10 + x] = 255
+			wf[(y * 10 + x) * 3] = 255
+	var f: PackedByteArray = u.call("herunter_weich", wa, wf, 10, 10, 20000, 20000, 98304, 6, 6)
+	var rot_ok: bool = true
+	var teil: int = 0
+	var voll: int = 0
+	for p: int in 36:
+		var a: int = f[p * 4 + 3]
+		if a == 0:
+			continue
+		if f[p * 4] != 255 or f[p * 4 + 1] != 0 or f[p * 4 + 2] != 0:
+			rot_ok = false
+		if a == 255:
+			voll += 1
+		else:
+			teil += 1
+	_ok(rot_ok, "HD verkleinern: Farbe an der Kante bleibt Rot (kein Schwarz aus dem durchsichtigen Grund)")
+	_ok(teil > 0 and voll > 0, "HD verkleinern: deckende Mitte und teildurchsichtiger Rand")
+	var f2: PackedByteArray = u.call("herunter_weich", wa, wf, 10, 10, 20000, 20000, 98304, 6, 6)
+	_ok(f == f2, "HD verkleinern: deterministisch")
+	# Vergrößern (inv16 < 65536): bilinear, Mitte bleibt deckend
+	var fv: PackedByteArray = u.call("herunter_weich", wa, wf, 10, 10, 0, 0, 32768, 20, 20)
+	_gleich(fv[(10 * 20 + 10) * 4 + 3], 255, "HD vergrößern: Mitte deckend")
+	_ok(fv[(4 * 20 + 4) * 4 + 3] > 0 and fv[(4 * 20 + 4) * 4 + 3] < 255, "HD vergrößern: Rand bilinear weich")
+	# Farbrand: ein deckendes Pixel, Nachbarn bis Radius 2 bekommen seine Farbe, Alpha bleibt 0
+	var fr: PackedByteArray = PackedByteArray()
+	fr.resize(11 * 11 * 4)
+	var mitte: int = (5 * 11 + 5) * 4
+	fr[mitte] = 10
+	fr[mitte + 1] = 200
+	fr[mitte + 2] = 30
+	fr[mitte + 3] = 255
+	u.call("farbrand", fr, 11, 11, 2)
+	var nah: int = (5 * 11 + 7) * 4
+	var fern: int = (5 * 11 + 9) * 4
+	_ok(fr[nah] == 10 and fr[nah + 1] == 200 and fr[nah + 2] == 30 and fr[nah + 3] == 0, "Farbrand: Nachbar bis Radius 2 hat die Farbe, Alpha 0")
+	_ok(fr[fern] == 0 and fr[fern + 1] == 0 and fr[fern + 3] == 0, "Farbrand: weiter entfernt bleibt leer")
+	# Weiche Kante: blaues Rechteck auf Grün, Rand als Mischung (Alpha 0,5 bei x = 9 und 30, 0,2 bei x = 8 und 31)
+	var w: int = 40
+	var h: int = 30
+	var key: Vector3i = Vector3i(0, 177, 64)
+	var fig: Vector3i = Vector3i(20, 30, 120)
+	var rgb: PackedByteArray = PackedByteArray()
+	rgb.resize(w * h * 3)
+	var maske: PackedByteArray = PackedByteArray()
+	maske.resize(w * h)
+	for y: int in h:
+		for x: int in w:
+			var a: float = 0.0
+			if y >= 8 and y <= 21:
+				if x >= 10 and x <= 29:
+					a = 1.0
+				elif x == 9 or x == 30:
+					a = 0.5
+				elif x == 8 or x == 31:
+					a = 0.2
+			var i: int = (y * w + x) * 3
+			rgb[i] = roundi(a * fig.x + (1.0 - a) * key.x)
+			rgb[i + 1] = roundi(a * fig.y + (1.0 - a) * key.y)
+			rgb[i + 2] = roundi(a * fig.z + (1.0 - a) * key.z)
+			if y >= 8 and y <= 21 and x >= 10 and x <= 29:
+				maske[y * w + x] = 1
+	var farbe: PackedByteArray = rgb.duplicate()
+	for p: int in w * h:
+		farbe[p * 3 + 1] = mini(farbe[p * 3 + 1], maxi(farbe[p * 3], farbe[p * 3 + 2]))
+	var wr: Dictionary = u.call("weich_freistellen", rgb, farbe, w, h, key, "gruen", maske, 4, 40)
+	var al: PackedByteArray = wr["alpha"]
+	var fa: PackedByteArray = wr["farbe"]
+	_gleich(al[15 * w + 20], 255, "Weiche Kante: Mitte deckend")
+	_gleich(al[15 * w + 2], 0, "Weiche Kante: Hintergrund durchsichtig")
+	_ok(absi(al[15 * w + 9] - 128) <= 16, "Weiche Kante: Mischpixel 50 %% → Alpha etwa 128 (ist %d)" % al[15 * w + 9])
+	_ok(absi(al[15 * w + 30] - 128) <= 16, "Weiche Kante: Mischpixel rechts 50 %% → Alpha etwa 128 (ist %d)" % al[15 * w + 30])
+	_ok(absi(al[15 * w + 8] - 51) <= 24, "Weiche Kante: Mischpixel 20 %% → Alpha etwa 51 (ist %d)" % al[15 * w + 8])
+	var edge: int = (15 * w + 9) * 3
+	_ok(fa[edge + 2] > fa[edge + 1] and fa[edge + 1] <= maxi(fa[edge], fa[edge + 2]), "Weiche Kante: kein Grünstich am Randpixel (Farbe %d, %d, %d)" % [fa[edge], fa[edge + 1], fa[edge + 2]])
+	_ok(absi(fa[edge] - fig.x) <= 24 and absi(fa[edge + 1] - fig.y) <= 24 and absi(fa[edge + 2] - fig.z) <= 24, "Weiche Kante: Randfarbe zurück zur Figurfarbe entmischt (ist %d, %d, %d)" % [fa[edge], fa[edge + 1], fa[edge + 2]])
+	var wr2: Dictionary = u.call("weich_freistellen", rgb, farbe, w, h, key, "gruen", maske, 4, 40)
+	_ok(wr["alpha"] == wr2["alpha"] and wr["farbe"] == wr2["farbe"], "Weiche Kante: deterministisch")
+	# Staub und Inseln, die die harte Maske entfernt hat, kommen nicht als weiche Kante zurück: Insel weit weg von der Maske
+	var rgb3: PackedByteArray = rgb.duplicate()
+	var i3: int = (3 * w + 35) * 3
+	rgb3[i3] = 30
+	rgb3[i3 + 1] = 30
+	rgb3[i3 + 2] = 30
+	var wr3: Dictionary = u.call("weich_freistellen", rgb3, rgb3, w, h, key, "gruen", maske, 4, 40)
+	_gleich((wr3["alpha"] as PackedByteArray)[3 * w + 35], 0, "Weiche Kante: Pixel außerhalb des Bandes bleibt durchsichtig")
+	# clip.txt eines HD-Clips: Größe und Anker für alle Verbraucher in Spielbildpixeln
+	var hd: Dictionary = T.clip_lesen("bilder=3\nweich=1\nformat=webp\ngroesse=100,200\nanker=50,190\nfuss_fein=50.5,190.9\nskala=0.4\nhoehe=360\n")
+	_ok(bool(hd["weich"]), "clip.txt HD: weich")
+	_gleich(hd["format"], "webp", "clip.txt HD: Format")
+	_gleich(hd["skala"], 0.4, "clip.txt HD: Skala")
+	_gleich([hd["bild_breite"], hd["bild_hoehe"]], [100, 200], "clip.txt HD: Größe der Dateien")
+	_gleich([hd["breite"], hd["hoehe"], hd["ankerx"], hd["ankery"]], [40, 80, 20, 75], "clip.txt HD: Größe und Anker in Spielbildpixeln")
+	_gleich(hd["fuss"], Vector2(50.5, 190.9), "clip.txt HD: Fußpunkt in Dateipixeln")
+	var px: Dictionary = T.clip_lesen("bilder=3\ngroesse=100,200\nanker=50,190\n")
+	_ok(not bool(px["weich"]) and px["skala"] == 1.0 and px["format"] == "png" and px["fuss"] == Vector2(50.5, 191.0), "clip.txt Pixel: nicht weich, Skala 1, Fußpunkt (anker + 0,5; + 1)")
+
+
+## Synthetisches HD-Video (aus dem Quellbild von Vela auf Grün, mit Hüpfen, Skalierung und H.264-Kompression) im Umsetzer
+## mit --hd umgesetzt und gegen den Pixelmodus desselben Videos geprüft. Braucht ffmpeg; ohne wird übersprungen.
+func _hd_umsetzung() -> void:
+	var u: GDScript = load("res://werkzeuge/video_umsetzer.gd")
+	var projekt: String = ProjectSettings.globalize_path("res://")
+	var quelle: String = projekt.path_join("..").path_join("spiel/grafik/quelle/fremd/vela/vela_k_kampfhaltung_gruen_quadrat.png").simplify_path()
+	if String(u.call("ffmpeg_version")) == "" or not FileAccess.file_exists(quelle):
+		_ok(true, "HD-Umsetzung übersprungen (kein ffmpeg oder Quellbild)")
+		print("Hinweis: HD-Umsetzung übersprungen (ffmpeg oder Quellbild fehlt)")
+		return
+	var temp: String = ProjectSettings.globalize_path("user://hd_test")
+	DirAccess.make_dir_recursive_absolute(temp)
+	var video: String = temp.path_join("hdtest.mp4")
+	var fc: String = "[1:v]scale=iw*0.94:ih*0.94:flags=bicubic[f];[0:v][f]overlay=x='(W-w)/2+sin(t*6.2832*1.5)*12':y='(H-h)/2-abs(sin(t*6.2832*1.5))*18':shortest=1,format=yuv420p"
+	var r: Dictionary = u.call("ffmpeg_lauf", ["-y", "-loglevel", "error", "-f", "lavfi", "-i", "color=c=0x00B140:s=1024x1024:r=24:d=1", "-loop", "1", "-framerate", "24", "-t", "1", "-i", quelle, "-filter_complex", fc, "-c:v", "libx264", "-crf", "18", "-r", "24", "-frames:v", str(HD_BILDER), video])
+	_gleich(r["code"], 0, "HD: Testvideo mit ffmpeg erzeugt")
+	if int(r["code"]) != 0:
+		return
+	var aus: String = temp.path_join("aus")
+	for modus: Array in [["hdtest", ["--hd", "--hoehe", str(HD_HOEHE)]], ["pixtest", []]]:
+		var ausgabe: Array = []
+		var args: Array = ["--headless", "--path", projekt, "--script", "res://werkzeuge/video_umsetzer.gd", "--", "--video", video, "--name", modus[0], "--aus", aus]
+		args.append_array(modus[1])
+		var code: int = OS.execute(OS.get_executable_path(), PackedStringArray(args), ausgabe, true)
+		_gleich(code, 0, "HD: Umsetzer läuft (%s)" % modus[0])
+		if code != 0:
+			print("".join(PackedStringArray(ausgabe)))
+			return
+	_ok(DarstellungVelaFrames.clip_registrieren("_hd_test", aus.path_join("hdtest") + "/"), "HD: Clip lesbar")
+	_ok(DarstellungVelaFrames.clip_registrieren("_hd_pixel", aus.path_join("pixtest") + "/"), "HD: Pixelclip desselben Videos lesbar")
+	var d: Dictionary = DarstellungVelaFrames.clip_daten("_hd_test")
+	var dp: Dictionary = DarstellungVelaFrames.clip_daten("_hd_pixel")
+	if d.is_empty() or dp.is_empty():
+		return
+	_ok(bool(d["weich"]) and not bool(dp["weich"]), "HD: clip.txt weich=1 im HD-Clip, nicht im Pixelclip")
+	_gleich(d["bilder"], HD_BILDER, "HD: Zahl der Bilder")
+	_gleich(d["bilder"], dp["bilder"], "HD: gleich viele Bilder wie im Pixelmodus")
+	_gleich(d["format"], "webp", "HD: Standardformat verlustfreies WebP")
+	_gleich(int(FileAccess.get_file_as_string(aus.path_join("hdtest/clip.txt")).contains("hoehe=%d\n" % HD_HOEHE)), 1, "HD: hoehe in clip.txt")
+	_gleich(d["farben"], 0, "HD: keine Palette (farben=0)")
+	# Größe: Figur im ersten Bild = gewünschte Höhe ±2; im Spiel so groß wie im Pixelmodus
+	var b0: Image = (DarstellungVelaFrames.clip_laden("_hd_test")["bilder"] as Array)[0]
+	var z0: Rect2i = _alpha_rahmen(b0, 128)
+	_ok(absi(z0.size.y - HD_HOEHE) <= 2, "HD: Figur im ersten Bild %d Zeilen hoch (soll %d ±2)" % [z0.size.y, HD_HOEHE])
+	var p0: Image = (DarstellungVelaFrames.clip_laden("_hd_pixel")["bilder"] as Array)[0]
+	var zp: Rect2i = _alpha_rahmen(p0, 128)
+	var spiel_hd: float = float(z0.size.y) * float(d["skala"])
+	_ok(absf(spiel_hd - float(zp.size.y)) <= 2.0, "HD: Figur im Spiel (%.1f Bildpixel) so hoch wie im Pixelmodus (%d)" % [spiel_hd, zp.size.y])
+	_ok(absf(float(d["skala"]) * float(HD_HOEHE) - 142.0) <= 1.0, "HD: Skala · Höhe gleich 142 Spielbildpixeln (%.2f)" % (float(d["skala"]) * float(HD_HOEHE)))
+	# Fußpunkt gegenüber der Figur (Spielbildpixel): Abstand vom linken Rand der Figur und von ihrer Unterkante wie im Pixelmodus
+	var fuss: Vector2 = (d["fuss"] as Vector2) * float(d["skala"])
+	var fuss_p: Vector2 = Vector2(float(dp["ankerx"]) + 0.5, float(dp["ankery"]) + 1.0)
+	var rel: Vector2 = Vector2(fuss.x - float(z0.position.x) * float(d["skala"]), fuss.y - float(z0.end.y) * float(d["skala"]))
+	var rel_p: Vector2 = Vector2(fuss_p.x - float(zp.position.x), fuss_p.y - float(zp.end.y))
+	_ok(absf(rel.x - rel_p.x) <= 1.5 and absf(rel.y - rel_p.y) <= 1.5, "HD: Fußpunkt zur Figur %s wie im Pixelclip %s (±1,5 Bildpixel)" % [str(rel), str(rel_p)])
+	# Eigenschaften der Bilder: Zwischenwerte im Alpha, mehr als 64 Farben, kein Grünstich am Rand
+	var farben: Dictionary = {}
+	var rand_zahl: int = 0
+	var rand_gruen: int = 0
+	var rand_r: int = 0
+	var rand_g: int = 0
+	var rand_b: int = 0
+	var rgba_ok: bool = true
+	var groesse_ok: bool = true
+	var min_zwischen: int = 1 << 30
+	var voll_zahl: int = 0
+	var bilder: Array = DarstellungVelaFrames.clip_laden("_hd_test")["bilder"]
+	for b: Image in bilder:
+		if b.get_format() != Image.FORMAT_RGBA8:
+			rgba_ok = false
+		if b.get_width() != int(d["bild_breite"]) or b.get_height() != int(d["bild_hoehe"]):
+			groesse_ok = false
+		var px_d: PackedByteArray = b.get_data()
+		var zwischen: int = 0
+		for p: int in px_d.size() / 4:
+			var a: int = px_d[p * 4 + 3]
+			if a == 255:
+				voll_zahl += 1
+				if farben.size() <= 64:
+					farben[(px_d[p * 4] << 16) | (px_d[p * 4 + 1] << 8) | px_d[p * 4 + 2]] = true
+			elif a >= 8 and a <= 247:
+				zwischen += 1
+				rand_zahl += 1
+				var rr: int = px_d[p * 4]
+				var gg: int = px_d[p * 4 + 1]
+				var bb: int = px_d[p * 4 + 2]
+				rand_r += rr
+				rand_g += gg
+				rand_b += bb
+				if gg > maxi(rr, bb) + 12:
+					rand_gruen += 1
+		min_zwischen = mini(min_zwischen, zwischen)
+	_ok(rgba_ok and groesse_ok, "HD: alle Bilder RGBA 8 Bit in der Größe aus clip.txt")
+	_ok(min_zwischen >= 200, "HD: Alpha hat Zwischenwerte in jedem Bild (mindestens %d Randpixel)" % min_zwischen)
+	_ok(float(rand_zahl) > 0.01 * float(voll_zahl), "HD: weicher Rand umfasst mehr als 1 %% der deckenden Pixel (%d von %d)" % [rand_zahl, voll_zahl])
+	_ok(farben.size() > 64, "HD: mehr als 64 verschiedene Farben (keine Palette)")
+	var mr: float = float(rand_r) / float(maxi(rand_zahl, 1))
+	var mg: float = float(rand_g) / float(maxi(rand_zahl, 1))
+	var mb: float = float(rand_b) / float(maxi(rand_zahl, 1))
+	_ok(mg <= maxf(mr, mb) + 4.0, "HD: kein Grünstich im Mittel der Randpixel (R %.1f, G %.1f, B %.1f)" % [mr, mg, mb])
+	_ok(float(rand_gruen) <= 0.03 * float(maxi(rand_zahl, 1)), "HD: höchstens 3 %% der Randpixel mit deutlichem Grünanteil (%d von %d)" % [rand_gruen, rand_zahl])
+	# Pixelclip desselben Videos: Palette, harte Kante wie vorher
+	var p_farben: Dictionary = {}
+	var p_hart: bool = true
+	for b: Image in (DarstellungVelaFrames.clip_laden("_hd_pixel")["bilder"] as Array):
+		var px_p: PackedByteArray = b.get_data()
+		for p: int in px_p.size() / 4:
+			if px_p[p * 4 + 3] != 0 and px_p[p * 4 + 3] != 255:
+				p_hart = false
+			if px_p[p * 4 + 3] == 255:
+				p_farben[(px_p[p * 4] << 16) | (px_p[p * 4 + 1] << 8) | px_p[p * 4 + 2]] = true
+	_ok(p_hart and p_farben.size() <= 63, "HD: der Pixelmodus bleibt hart und hat höchstens 63 Farben (%d)" % p_farben.size())
+	# Abspieler: HD-Clip lineare Filterung und Maßstab, Pixelclip NEAREST und Maßstab 1; beide im selben Spiel
+	var v: DarstellungVelaFrames = DarstellungVelaFrames.new()
+	v.aus_clip_bild("_hd_test", 0, 1)
+	var s: Sprite2D = v.get_node("Bild")
+	_gleich(s.texture_filter, CanvasItem.TEXTURE_FILTER_LINEAR, "HD-Abspieler: lineare Texturfilterung")
+	_gleich(s.scale, Vector2(float(d["skala"]), float(d["skala"])), "HD-Abspieler: Sprite im Maßstab skala")
+	_gleich(s.offset, -(d["fuss"] as Vector2), "HD-Abspieler: Fußpunkt wird abgezogen")
+	v.aus_clip_bild("_hd_pixel", 0, 1)
+	_gleich(s.texture_filter, CanvasItem.TEXTURE_FILTER_NEAREST, "HD-Abspieler: danach Pixelclip wieder NEAREST")
+	_gleich(s.scale, Vector2(1.0, 1.0), "HD-Abspieler: Pixelclip im Maßstab 1")
+	v.aus_clip_bild("_hd_test", HD_BILDER - 1, -1)
+	_gleich(v.scale, Vector2(-1.0, 1.0), "HD-Abspieler: Blick links spiegelt")
+	_ok(v.aktuelles_bild().get_data() == bilder[HD_BILDER - 1].get_data(), "HD-Abspieler: zeigt unverändert das Dateibild")
+	v.free()
+	DarstellungVelaFrames.clips_vergessen()
+	# Aufräumen
+	for ordner: String in ["hdtest", "pixtest"]:
+		var dd: DirAccess = DirAccess.open(aus.path_join(ordner))
+		if dd != null:
+			for n: String in dd.get_files():
+				dd.remove(n)
+		DirAccess.remove_absolute(aus.path_join(ordner))
+	DirAccess.remove_absolute(aus)
+	DirAccess.remove_absolute(video)
+	DirAccess.remove_absolute(temp)
+
+
+## Umschließendes Rechteck der Pixel mit Alpha ab `schwelle`.
+func _alpha_rahmen(b: Image, schwelle: int) -> Rect2i:
+	var dd: PackedByteArray = b.get_data()
+	var w: int = b.get_width()
+	var x0: int = w
+	var x1: int = -1
+	var oben: int = -1
+	var unten: int = -1
+	for y: int in b.get_height():
+		for x: int in w:
+			if dd[(y * w + x) * 4 + 3] >= schwelle:
+				if oben < 0:
+					oben = y
+				unten = y
+				x0 = mini(x0, x)
+				x1 = maxi(x1, x)
+	return Rect2i(x0, oben, x1 - x0 + 1, unten - oben + 1)
+
 
 
 func _abdeckung() -> void:

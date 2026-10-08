@@ -1,7 +1,13 @@
 ## Vela aus den Bildfolgen der Video-Clips (Weg „Vela als Video“): ein Sprite, das je Tick genau ein Bild
 ## des Clips zeigt. Die Bilder und clip.txt stammen aus `res://grafik/vela_video/<clip>/` (erzeugt von
-## werkzeuge/video_umsetzer.gd, Pixelkunst: 142 Bildpixel hohe Figur, höchstens 64 Farben, harte Kante);
-## geladen wird per Dateizugriff, ohne Editor-Import, Texturfilter NEAREST, kein Überblenden.
+## werkzeuge/video_umsetzer.gd); geladen wird per Dateizugriff, ohne Editor-Import, kein Überblenden.
+## Zwei Arten von Clips, die im Spiel gemischt vorkommen dürfen:
+##   Pixel-Clip (Standard): Pixelkunst, 142 Bildpixel hohe Figur, höchstens 64 Farben, harte Kante, PNG mit Palette;
+##     Texturfilter NEAREST, Sprite im Maßstab 1.
+##   HD-Clip (clip.txt `weich=1`, Umsetzer `--hd`): gemalter Look, RGBA 8 Bit mit weicher Kante, verlustfreies WebP
+##     oder PNG, Figur z. B. 360 Dateipixel hoch; Texturfilter LINEAR (ohne Mipmaps: schärfer, sie machten das auf
+##     0,39 verkleinerte Bild sichtbar unscharf), Sprite im Maßstab `skala` (Spielbildpixel je Dateipixel, z. B.
+##     142 / 360): im Spiel ist die Figur so groß wie die Pixel-Figur, nur feiner aufgelöst.
 ##
 ## Ursprung des Nodes = Fußpunkt in Bildpixeln (wie bei der Puppe; Spiegelachse in der Mitte der Fußspalte,
 ## die Hauptsitzung setzt `position` aus DarstellungZeichnen.figurFuss(welt) + 1 Bildpixel nach rechts). Der
@@ -46,8 +52,18 @@ static func clip_laden(clip: String) -> Dictionary:
 	return ergebnis
 
 
-static func _lade_von_platte(clip: String) -> Dictionary:
-	var ordner: String = ORDNER + clip + "/"
+## Lädt einen Clip aus einem beliebigen Ordner (absoluter Pfad oder res://…, mit Schrägstrich am Ende) und merkt ihn unter
+## dem Namen `clip`, auch wenn es dort schon einen gab (Werkzeuge und Tests, z. B. HD-Clips außerhalb des Projekts).
+## Rückgabe: true, wenn der Clip lesbar ist.
+static func clip_registrieren(clip: String, ordner: String) -> bool:
+	var ergebnis: Dictionary = _lade_von_platte(clip, ordner)
+	_clips[clip] = ergebnis
+	return not ergebnis.is_empty()
+
+
+static func _lade_von_platte(clip: String, ordner: String = "") -> Dictionary:
+	if ordner == "":
+		ordner = ORDNER + clip + "/"
 	var text: String = FileAccess.get_file_as_string(ordner + "clip.txt")
 	if text == "":
 		return {}
@@ -57,9 +73,13 @@ static func _lade_von_platte(clip: String) -> Dictionary:
 	var bilder: Array[Image] = []
 	var texturen: Array[ImageTexture] = []
 	for i: int in int(daten["bilder"]):
-		var bytes: PackedByteArray = FileAccess.get_file_as_bytes(ordner + "f_%04d.png" % (i + 1))
+		var endung: String = "webp" if String(daten["format"]) == "webp" else "png"
+		var bytes: PackedByteArray = FileAccess.get_file_as_bytes(ordner + "f_%04d.%s" % [i + 1, endung])
 		var bild: Image = Image.new()
-		if bytes.is_empty() or bild.load_png_from_buffer(bytes) != OK:
+		var fehler: int = ERR_INVALID_DATA
+		if not bytes.is_empty():
+			fehler = bild.load_webp_from_buffer(bytes) if endung == "webp" else bild.load_png_from_buffer(bytes)
+		if fehler != OK:
 			push_error("Clip %s: Bild %d fehlt oder ist unlesbar" % [clip, i + 1])
 			return {}
 		bild.convert(Image.FORMAT_RGBA8)
@@ -124,8 +144,12 @@ func aus_clip_bild(clip: String, index: int, blick: int) -> bool:
 	_index = i
 	_blick = -1 if blick < 0 else 1
 	_sprite.texture = (c["texturen"] as Array)[i]
-	# Anker (Mitte der Fußspalte, unterste Figurzeile) liegt im Ursprung: Spalte um ihre Mitte, Zeile über dem Boden
-	_sprite.offset = Vector2(-(float(d["ankerx"]) + 0.5), -(float(d["ankery"]) + 1.0))
+	# Anker (Mitte der Fußspalte, unterste Figurzeile) liegt im Ursprung: Spalte um ihre Mitte, Zeile über dem Boden.
+	# Pixel-Clip: (ankerx + 0,5, ankery + 1) Pixel, Maßstab 1, NEAREST. HD-Clip: Fußpunkt in Dateipixeln, Maßstab `skala`, LINEAR.
+	var weich: bool = bool(d["weich"])
+	_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR if weich else CanvasItem.TEXTURE_FILTER_NEAREST
+	_sprite.scale = Vector2(float(d["skala"]), float(d["skala"]))
+	_sprite.offset = -(d["fuss"] as Vector2)
 	scale = Vector2(float(_blick), 1.0)
 	visible = true
 	return true
