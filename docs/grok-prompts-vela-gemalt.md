@@ -1,5 +1,5 @@
 # Fertige Grok-Prompts für Vela, gemalter Stil (HD)
-Jeder Abschnitt ist ein vollständiger Prompt (gemalter Vorspann + Handlung). Startbild: `spiel/grafik/quelle/fremd/vela/vela_k_kampfhaltung_gemalt_60.png` (1024 × 1024, Figur 60 % der Höhe). Format 1:1, 24 B/s. Für `aufstehen` siehe dort. Begründung: `docs/grafik-bestellung.md`, Abschnitt „Gemalter Stil (HD)“.
+Jeder Abschnitt ist ein vollständiger Prompt (gemalter Vorspann + Handlung). Startbild: `spiel/grafik/quelle/fremd/vela/vela_k_kampfhaltung_gemalt_60.png` (1024 × 1024, Figur 60 % der Höhe); für `sprung` und `sprungtritt` `vela_k_kampfhaltung_gemalt_sprung.png` (Figur 45 %, tief im Bild). Format 1:1, 24 B/s. Für `aufstehen` siehe dort. Begründung: `docs/grafik-bestellung.md`, Abschnitt „Gemalter Stil (HD)“.
 
 ## stand (vela_v_stand.mp4, Länge 3,0 s, Schleife)
 
@@ -16,11 +16,13 @@ FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
 Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
-nichts hinzufügen. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
+nichts hinzufügen. Auf Jacke, Ärmeln und Schultern gibt es keine Abzeichen,
+Sterne, Logos oder Aufnäher. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
 weichen Farbverläufen und Cel-Shading, exakt wie im Startbild. Kein
 Stilwechsel während des Videos, keine Pixelkanten, kein Realismus, keine
 3D-Optik. Die dunkle Kontur um die Figur bleibt in jedem Bild gleich dick und
-rundum geschlossen. Nichts an der Figur wird grün.
+rundum geschlossen. Nichts an der Figur wird grün. Auf Jacke, Ärmeln und
+Schultern gibt es keine Abzeichen, Sterne, Logos oder Aufnäher.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
 Schwenk, kein Wackeln, kein Neigen). Die Kamera schaut waagrecht auf Vela. Vela
@@ -65,11 +67,13 @@ FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
 Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
-nichts hinzufügen. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
+nichts hinzufügen. Auf Jacke, Ärmeln und Schultern gibt es keine Abzeichen,
+Sterne, Logos oder Aufnäher. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
 weichen Farbverläufen und Cel-Shading, exakt wie im Startbild. Kein
 Stilwechsel während des Videos, keine Pixelkanten, kein Realismus, keine
 3D-Optik. Die dunkle Kontur um die Figur bleibt in jedem Bild gleich dick und
-rundum geschlossen. Nichts an der Figur wird grün.
+rundum geschlossen. Nichts an der Figur wird grün. Auf Jacke, Ärmeln und
+Schultern gibt es keine Abzeichen, Sterne, Logos oder Aufnäher.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
 Schwenk, kein Wackeln, kein Neigen). Die Kamera schaut waagrecht auf Vela. Vela
@@ -121,11 +125,13 @@ FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
 Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
-nichts hinzufügen. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
+nichts hinzufügen. Auf Jacke, Ärmeln und Schultern gibt es keine Abzeichen,
+Sterne, Logos oder Aufnäher. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
 weichen Farbverläufen und Cel-Shading, exakt wie im Startbild. Kein
 Stilwechsel während des Videos, keine Pixelkanten, kein Realismus, keine
 3D-Optik. Die dunkle Kontur um die Figur bleibt in jedem Bild gleich dick und
-rundum geschlossen. Nichts an der Figur wird grün.
+rundum geschlossen. Nichts an der Figur wird grün. Auf Jacke, Ärmeln und
+Schultern gibt es keine Abzeichen, Sterne, Logos oder Aufnäher.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
 Schwenk, kein Wackeln, kein Neigen). Die Kamera schaut waagrecht auf Vela. Vela
@@ -172,11 +178,13 @@ FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
 Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
-nichts hinzufügen. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
+nichts hinzufügen. Auf Jacke, Ärmeln und Schultern gibt es keine Abzeichen,
+Sterne, Logos oder Aufnäher. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
 weichen Farbverläufen und Cel-Shading, exakt wie im Startbild. Kein
 Stilwechsel während des Videos, keine Pixelkanten, kein Realismus, keine
 3D-Optik. Die dunkle Kontur um die Figur bleibt in jedem Bild gleich dick und
-rundum geschlossen. Nichts an der Figur wird grün.
+rundum geschlossen. Nichts an der Figur wird grün. Auf Jacke, Ärmeln und
+Schultern gibt es keine Abzeichen, Sterne, Logos oder Aufnäher.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
 Schwenk, kein Wackeln, kein Neigen). Die Kamera schaut waagrecht auf Vela. Vela
@@ -223,11 +231,13 @@ FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
 Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
-nichts hinzufügen. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
+nichts hinzufügen. Auf Jacke, Ärmeln und Schultern gibt es keine Abzeichen,
+Sterne, Logos oder Aufnäher. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
 weichen Farbverläufen und Cel-Shading, exakt wie im Startbild. Kein
 Stilwechsel während des Videos, keine Pixelkanten, kein Realismus, keine
 3D-Optik. Die dunkle Kontur um die Figur bleibt in jedem Bild gleich dick und
-rundum geschlossen. Nichts an der Figur wird grün.
+rundum geschlossen. Nichts an der Figur wird grün. Auf Jacke, Ärmeln und
+Schultern gibt es keine Abzeichen, Sterne, Logos oder Aufnäher.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
 Schwenk, kein Wackeln, kein Neigen). Die Kamera schaut waagrecht auf Vela. Vela
@@ -274,11 +284,13 @@ FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
 Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
-nichts hinzufügen. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
+nichts hinzufügen. Auf Jacke, Ärmeln und Schultern gibt es keine Abzeichen,
+Sterne, Logos oder Aufnäher. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
 weichen Farbverläufen und Cel-Shading, exakt wie im Startbild. Kein
 Stilwechsel während des Videos, keine Pixelkanten, kein Realismus, keine
 3D-Optik. Die dunkle Kontur um die Figur bleibt in jedem Bild gleich dick und
-rundum geschlossen. Nichts an der Figur wird grün.
+rundum geschlossen. Nichts an der Figur wird grün. Auf Jacke, Ärmeln und
+Schultern gibt es keine Abzeichen, Sterne, Logos oder Aufnäher.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
 Schwenk, kein Wackeln, kein Neigen). Die Kamera schaut waagrecht auf Vela. Vela
@@ -325,11 +337,13 @@ FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
 Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
-nichts hinzufügen. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
+nichts hinzufügen. Auf Jacke, Ärmeln und Schultern gibt es keine Abzeichen,
+Sterne, Logos oder Aufnäher. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
 weichen Farbverläufen und Cel-Shading, exakt wie im Startbild. Kein
 Stilwechsel während des Videos, keine Pixelkanten, kein Realismus, keine
 3D-Optik. Die dunkle Kontur um die Figur bleibt in jedem Bild gleich dick und
-rundum geschlossen. Nichts an der Figur wird grün.
+rundum geschlossen. Nichts an der Figur wird grün. Auf Jacke, Ärmeln und
+Schultern gibt es keine Abzeichen, Sterne, Logos oder Aufnäher.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
 Schwenk, kein Wackeln, kein Neigen). Die Kamera schaut waagrecht auf Vela. Vela
@@ -378,11 +392,13 @@ FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
 Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
-nichts hinzufügen. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
+nichts hinzufügen. Auf Jacke, Ärmeln und Schultern gibt es keine Abzeichen,
+Sterne, Logos oder Aufnäher. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
 weichen Farbverläufen und Cel-Shading, exakt wie im Startbild. Kein
 Stilwechsel während des Videos, keine Pixelkanten, kein Realismus, keine
 3D-Optik. Die dunkle Kontur um die Figur bleibt in jedem Bild gleich dick und
-rundum geschlossen. Nichts an der Figur wird grün.
+rundum geschlossen. Nichts an der Figur wird grün. Auf Jacke, Ärmeln und
+Schultern gibt es keine Abzeichen, Sterne, Logos oder Aufnäher.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
 Schwenk, kein Wackeln, kein Neigen). Die Kamera schaut waagrecht auf Vela. Vela
@@ -402,17 +418,23 @@ ABLAUF: Genau EINE Handlung, genau EIN Durchlauf, keine Wiederholung. Das
 Video endet mit der Pose, die im Prompt unter ENDE genannt ist, und Vela
 bewegt sich in der letzten Sekunde nicht mehr.
 
-HANDLUNG: Genau EIN Sprung auf der Stelle, senkrecht nach oben. Wichtig: Vela
-springt NUR ETWA EINE HALBE KÖRPERHÖHE hoch (der Kopf steigt höchstens um 25
-Prozent der Bildhöhe), damit nichts am oberen Bildrand abgeschnitten wird. 0,0
-bis 0,5 s: still in der Kampfhaltung. 0,5 bis 0,8 s: sie geht tief in die Hocke,
-die Arme gehen nach hinten-unten. 0,8 bis 1,0 s: Absprung, die Arme schwingen
-nach oben, die Beine strecken sich. 1,0 bis 1,3 s: sie steigt, am Scheitel
-(1,3 s) zieht sie die Knie an, die Fäuste bleiben vor der Brust. 1,3 bis 1,7 s:
-sie fällt. 1,7 bis 1,9 s: Landung in der tiefen Hocke. 1,9 bis 2,5 s: sie richtet
-sich auf und kehrt in die Kampfhaltung zurück. 2,5 bis 3,0 s: still. Der Kopf
-und der Zopf bleiben im ganzen Video vollständig im Bild.
-ENDE: Das letzte Bild gleicht dem ersten Bild (Kampfhaltung).
+STARTBILD FÜR DIESEN CLIP: `vela_k_kampfhaltung_gemalt_sprung.png` (Vela nur 45 %
+der Bildhöhe groß, Füße bei 88 % der Höhe, 43 % Platz über dem Kopf).
+ABWEICHUNG VOM VORSPANN: Hier ist Vela im Startbild kleiner und steht tief im
+Bild, damit der Sprung Platz hat. Die Größe ändert sich im ganzen Video nicht.
+Der Kopf kommt im Sprung höchstens bis auf 15 Prozent an den oberen Bildrand,
+nie weiter, und ist in jedem Bild ganz zu sehen.
+HANDLUNG: Genau EIN niedriger Sprung auf der Stelle, senkrecht nach oben. Die
+Füße heben sich nur etwa eine halbe Körperhöhe vom Boden, nicht mehr. 0,0 bis
+0,5 s: still in der Kampfhaltung. 0,5 bis 0,8 s: sie geht tief in die Hocke, die
+Arme gehen nach hinten-unten. 0,8 bis 1,0 s: Absprung, die Arme schwingen nach
+oben, die Beine strecken sich. 1,0 bis 1,3 s: sie steigt, am Scheitel (1,3 s)
+zieht sie die Knie an, die Fäuste bleiben vor der Brust. 1,3 bis 1,7 s: sie
+fällt. 1,7 bis 1,9 s: Landung in der tiefen Hocke, beide Füße am Boden (nie ein
+Knie am Boden, nie hinknien). 1,9 bis 2,5 s: sie richtet sich auf und kehrt in
+die Kampfhaltung zurück. 2,5 bis 3,0 s: still.
+ENDE: Das letzte Bild gleicht dem ersten Bild (Kampfhaltung, gleiche Größe und
+gleicher Ort im Bild).
 ```
 
 ## getroffen_vorn (vela_v_getroffen_vorn.mp4, 2,5 s)
@@ -430,11 +452,13 @@ FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
 Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
-nichts hinzufügen. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
+nichts hinzufügen. Auf Jacke, Ärmeln und Schultern gibt es keine Abzeichen,
+Sterne, Logos oder Aufnäher. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
 weichen Farbverläufen und Cel-Shading, exakt wie im Startbild. Kein
 Stilwechsel während des Videos, keine Pixelkanten, kein Realismus, keine
 3D-Optik. Die dunkle Kontur um die Figur bleibt in jedem Bild gleich dick und
-rundum geschlossen. Nichts an der Figur wird grün.
+rundum geschlossen. Nichts an der Figur wird grün. Auf Jacke, Ärmeln und
+Schultern gibt es keine Abzeichen, Sterne, Logos oder Aufnäher.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
 Schwenk, kein Wackeln, kein Neigen). Die Kamera schaut waagrecht auf Vela. Vela
@@ -480,11 +504,13 @@ FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
 Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
-nichts hinzufügen. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
+nichts hinzufügen. Auf Jacke, Ärmeln und Schultern gibt es keine Abzeichen,
+Sterne, Logos oder Aufnäher. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
 weichen Farbverläufen und Cel-Shading, exakt wie im Startbild. Kein
 Stilwechsel während des Videos, keine Pixelkanten, kein Realismus, keine
 3D-Optik. Die dunkle Kontur um die Figur bleibt in jedem Bild gleich dick und
-rundum geschlossen. Nichts an der Figur wird grün.
+rundum geschlossen. Nichts an der Figur wird grün. Auf Jacke, Ärmeln und
+Schultern gibt es keine Abzeichen, Sterne, Logos oder Aufnäher.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
 Schwenk, kein Wackeln, kein Neigen). Die Kamera schaut waagrecht auf Vela. Vela
@@ -528,11 +554,13 @@ FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
 Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
-nichts hinzufügen. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
+nichts hinzufügen. Auf Jacke, Ärmeln und Schultern gibt es keine Abzeichen,
+Sterne, Logos oder Aufnäher. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
 weichen Farbverläufen und Cel-Shading, exakt wie im Startbild. Kein
 Stilwechsel während des Videos, keine Pixelkanten, kein Realismus, keine
 3D-Optik. Die dunkle Kontur um die Figur bleibt in jedem Bild gleich dick und
-rundum geschlossen. Nichts an der Figur wird grün.
+rundum geschlossen. Nichts an der Figur wird grün. Auf Jacke, Ärmeln und
+Schultern gibt es keine Abzeichen, Sterne, Logos oder Aufnäher.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
 Schwenk, kein Wackeln, kein Neigen). Die Kamera schaut waagrecht auf Vela. Vela
@@ -582,11 +610,13 @@ FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
 Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
-nichts hinzufügen. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
+nichts hinzufügen. Auf Jacke, Ärmeln und Schultern gibt es keine Abzeichen,
+Sterne, Logos oder Aufnäher. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
 weichen Farbverläufen und Cel-Shading, exakt wie im Startbild. Kein
 Stilwechsel während des Videos, keine Pixelkanten, kein Realismus, keine
 3D-Optik. Die dunkle Kontur um die Figur bleibt in jedem Bild gleich dick und
-rundum geschlossen. Nichts an der Figur wird grün.
+rundum geschlossen. Nichts an der Figur wird grün. Auf Jacke, Ärmeln und
+Schultern gibt es keine Abzeichen, Sterne, Logos oder Aufnäher.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
 Schwenk, kein Wackeln, kein Neigen). Die Kamera schaut waagrecht auf Vela. Vela
@@ -635,11 +665,13 @@ FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
 Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
-nichts hinzufügen. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
+nichts hinzufügen. Auf Jacke, Ärmeln und Schultern gibt es keine Abzeichen,
+Sterne, Logos oder Aufnäher. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
 weichen Farbverläufen und Cel-Shading, exakt wie im Startbild. Kein
 Stilwechsel während des Videos, keine Pixelkanten, kein Realismus, keine
 3D-Optik. Die dunkle Kontur um die Figur bleibt in jedem Bild gleich dick und
-rundum geschlossen. Nichts an der Figur wird grün.
+rundum geschlossen. Nichts an der Figur wird grün. Auf Jacke, Ärmeln und
+Schultern gibt es keine Abzeichen, Sterne, Logos oder Aufnäher.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
 Schwenk, kein Wackeln, kein Neigen). Die Kamera schaut waagrecht auf Vela. Vela
@@ -684,11 +716,13 @@ FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
 Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
-nichts hinzufügen. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
+nichts hinzufügen. Auf Jacke, Ärmeln und Schultern gibt es keine Abzeichen,
+Sterne, Logos oder Aufnäher. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
 weichen Farbverläufen und Cel-Shading, exakt wie im Startbild. Kein
 Stilwechsel während des Videos, keine Pixelkanten, kein Realismus, keine
 3D-Optik. Die dunkle Kontur um die Figur bleibt in jedem Bild gleich dick und
-rundum geschlossen. Nichts an der Figur wird grün.
+rundum geschlossen. Nichts an der Figur wird grün. Auf Jacke, Ärmeln und
+Schultern gibt es keine Abzeichen, Sterne, Logos oder Aufnäher.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
 Schwenk, kein Wackeln, kein Neigen). Die Kamera schaut waagrecht auf Vela. Vela
@@ -732,11 +766,13 @@ FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
 Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
-nichts hinzufügen. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
+nichts hinzufügen. Auf Jacke, Ärmeln und Schultern gibt es keine Abzeichen,
+Sterne, Logos oder Aufnäher. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
 weichen Farbverläufen und Cel-Shading, exakt wie im Startbild. Kein
 Stilwechsel während des Videos, keine Pixelkanten, kein Realismus, keine
 3D-Optik. Die dunkle Kontur um die Figur bleibt in jedem Bild gleich dick und
-rundum geschlossen. Nichts an der Figur wird grün.
+rundum geschlossen. Nichts an der Figur wird grün. Auf Jacke, Ärmeln und
+Schultern gibt es keine Abzeichen, Sterne, Logos oder Aufnäher.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
 Schwenk, kein Wackeln, kein Neigen). Die Kamera schaut waagrecht auf Vela. Vela
@@ -782,11 +818,13 @@ FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
 Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
-nichts hinzufügen. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
+nichts hinzufügen. Auf Jacke, Ärmeln und Schultern gibt es keine Abzeichen,
+Sterne, Logos oder Aufnäher. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
 weichen Farbverläufen und Cel-Shading, exakt wie im Startbild. Kein
 Stilwechsel während des Videos, keine Pixelkanten, kein Realismus, keine
 3D-Optik. Die dunkle Kontur um die Figur bleibt in jedem Bild gleich dick und
-rundum geschlossen. Nichts an der Figur wird grün.
+rundum geschlossen. Nichts an der Figur wird grün. Auf Jacke, Ärmeln und
+Schultern gibt es keine Abzeichen, Sterne, Logos oder Aufnäher.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
 Schwenk, kein Wackeln, kein Neigen). Die Kamera schaut waagrecht auf Vela. Vela
@@ -831,11 +869,13 @@ FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
 Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
-nichts hinzufügen. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
+nichts hinzufügen. Auf Jacke, Ärmeln und Schultern gibt es keine Abzeichen,
+Sterne, Logos oder Aufnäher. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
 weichen Farbverläufen und Cel-Shading, exakt wie im Startbild. Kein
 Stilwechsel während des Videos, keine Pixelkanten, kein Realismus, keine
 3D-Optik. Die dunkle Kontur um die Figur bleibt in jedem Bild gleich dick und
-rundum geschlossen. Nichts an der Figur wird grün.
+rundum geschlossen. Nichts an der Figur wird grün. Auf Jacke, Ärmeln und
+Schultern gibt es keine Abzeichen, Sterne, Logos oder Aufnäher.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
 Schwenk, kein Wackeln, kein Neigen). Die Kamera schaut waagrecht auf Vela. Vela
@@ -881,11 +921,13 @@ FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
 Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
-nichts hinzufügen. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
+nichts hinzufügen. Auf Jacke, Ärmeln und Schultern gibt es keine Abzeichen,
+Sterne, Logos oder Aufnäher. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
 weichen Farbverläufen und Cel-Shading, exakt wie im Startbild. Kein
 Stilwechsel während des Videos, keine Pixelkanten, kein Realismus, keine
 3D-Optik. Die dunkle Kontur um die Figur bleibt in jedem Bild gleich dick und
-rundum geschlossen. Nichts an der Figur wird grün.
+rundum geschlossen. Nichts an der Figur wird grün. Auf Jacke, Ärmeln und
+Schultern gibt es keine Abzeichen, Sterne, Logos oder Aufnäher.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
 Schwenk, kein Wackeln, kein Neigen). Die Kamera schaut waagrecht auf Vela. Vela
@@ -928,11 +970,13 @@ FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
 Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
-nichts hinzufügen. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
+nichts hinzufügen. Auf Jacke, Ärmeln und Schultern gibt es keine Abzeichen,
+Sterne, Logos oder Aufnäher. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
 weichen Farbverläufen und Cel-Shading, exakt wie im Startbild. Kein
 Stilwechsel während des Videos, keine Pixelkanten, kein Realismus, keine
 3D-Optik. Die dunkle Kontur um die Figur bleibt in jedem Bild gleich dick und
-rundum geschlossen. Nichts an der Figur wird grün.
+rundum geschlossen. Nichts an der Figur wird grün. Auf Jacke, Ärmeln und
+Schultern gibt es keine Abzeichen, Sterne, Logos oder Aufnäher.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
 Schwenk, kein Wackeln, kein Neigen). Die Kamera schaut waagrecht auf Vela. Vela
@@ -952,14 +996,20 @@ ABLAUF: Genau EINE Handlung, genau EIN Durchlauf, keine Wiederholung. Das
 Video endet mit der Pose, die im Prompt unter ENDE genannt ist, und Vela
 bewegt sich in der letzten Sekunde nicht mehr.
 
-HANDLUNG: Sprung mit seitlichem Tritt. Wichtig: Vela springt NUR ETWA EINE HALBE
-KÖRPERHÖHE hoch, der Kopf bleibt mit 15 Prozent Abstand zum oberen Bildrand.
-0,0 bis 0,5 s: still in der Kampfhaltung. 0,5 bis 0,8 s: tiefe Hocke. 0,8 bis
-1,0 s: Absprung. 1,0 bis 1,3 s: in der Luft zieht sie das hintere Bein an. 1,3
-bis 1,6 s: sie tritt mit dem hinteren Bein gestreckt waagrecht nach vorn
-(rechts), das Standbein ist angezogen. 1,6 bis 1,9 s: sie hält den Tritt am
-höchsten Punkt. 1,9 bis 2,2 s: sie fällt, das Bein geht zurück. 2,2 bis 2,5 s:
-Landung in der Hocke. 2,5 bis 3,5 s: sie richtet sich auf und steht in der
-Kampfhaltung.
-ENDE: Das letzte Bild gleicht dem Startbild (Kampfhaltung).
+STARTBILD FÜR DIESEN CLIP: `vela_k_kampfhaltung_gemalt_sprung.png` (Vela nur 45 %
+der Bildhöhe groß, Füße bei 88 % der Höhe, 43 % Platz über dem Kopf).
+ABWEICHUNG VOM VORSPANN: Hier ist Vela im Startbild kleiner und steht tief im
+Bild, damit der Sprung Platz hat. Die Größe ändert sich im ganzen Video nicht.
+Der Kopf kommt im Sprung höchstens bis auf 15 Prozent an den oberen Bildrand,
+nie weiter, und ist in jedem Bild ganz zu sehen.
+HANDLUNG: Sprung mit geradem Tritt nach vorn. Die Füße heben sich nur etwa eine
+halbe Körperhöhe vom Boden. 0,0 bis 0,5 s: still in der Kampfhaltung. 0,5 bis
+0,8 s: tiefe Hocke. 0,8 bis 1,0 s: Absprung. 1,0 bis 1,3 s: in der Luft zieht
+sie das hintere Bein an. 1,3 bis 1,6 s: sie tritt mit dem hinteren Bein gestreckt
+waagrecht nach vorn (rechts), das Standbein ist angezogen. 1,6 bis 1,9 s: sie
+hält den Tritt am höchsten Punkt. 1,9 bis 2,2 s: sie fällt, das Bein geht
+zurück. 2,2 bis 2,5 s: Landung in der Hocke, beide Füße am Boden. 2,5 bis 3,5 s:
+sie richtet sich auf und steht in der Kampfhaltung.
+ENDE: Das letzte Bild gleicht dem ersten Bild (Kampfhaltung, gleiche Größe und
+gleicher Ort im Bild).
 ```
