@@ -211,6 +211,9 @@ func _ready() -> void:
 	# abdeckt), sonst der Platzhalter
 	if not (a.get("platzhalter", false) as bool):
 		var frames: Node2D = null if (a.get("puppe", false) as bool) else DarstellungVelaFrames.new()
+		# Clips nach Bedarf laden und im Leerlauf vorausladen, nur im laufenden Spiel; Fotos, Filme, Tests und --ende
+		# laden sofort und ganz (reproduzierbar, siehe vela_frames.gd)
+		DarstellungVelaFrames.nachladen = frames != null and automatisch and not _beenden
 		puppeEinhaengen(DarstellungVelaPuppe.new(), frames)
 
 
@@ -293,6 +296,8 @@ func _process(_delta: float) -> void:
 		if _hinweis_rest == 0:
 			_hinweis = ""
 	_puppeAktualisieren()
+	if DarstellungVelaFrames.nachladen:
+		DarstellungVelaFrames.vorausladen_schritt(DarstellungVelaFrames.vorausladen_budget_us())
 	_hinten.queue_redraw()
 	_vorn.queue_redraw()
 	if _beenden and (_gezeichnet >= 1 or _bilder >= 5):

@@ -694,7 +694,8 @@ func _abspieler() -> void:
 	# Lage: Anker im Ursprung, Texturfilter NEAREST, Blick links spiegelt
 	v.aus_clip(KETTE, 1, 1)
 	var s: Sprite2D = v.get_node("Bild")
-	_gleich(s.offset, Vector2(-(float(d["ankerx"]) + 0.5), -(float(d["ankery"]) + 1.0)), "Abspieler: Anker wird abgezogen")
+	_gleich(s.offset, DarstellungVelaFrames.bild_versatz(KETTE, v.bild_index()) - Vector2(float(d["ankerx"]) + 0.5, float(d["ankery"]) + 1.0), "Abspieler: Anker wird abgezogen (Zuschnitt der Textur eingerechnet)")
+	_gleich(s.scale, Vector2.ONE * float(DarstellungVelaFrames.ASSET_ZU_BILD), "Abspieler: Pixelclip im Maßstab ASSET_ZU_BILD")
 	_gleich(s.texture_filter, CanvasItem.TEXTURE_FILTER_NEAREST, "Abspieler: Texturfilter NEAREST")
 	_gleich(v.scale, Vector2(1.0, 1.0), "Abspieler: Blick rechts")
 	v.aus_clip(KETTE, 1, -1)
@@ -872,10 +873,10 @@ func _hd_umsetzung() -> void:
 	_gleich(int(FileAccess.get_file_as_string(aus.path_join("hdtest/clip.txt")).contains("hoehe=%d\n" % HD_HOEHE)), 1, "HD: hoehe in clip.txt")
 	_gleich(d["farben"], 0, "HD: keine Palette (farben=0)")
 	# Größe: Figur im ersten Bild = gewünschte Höhe ±2; im Spiel so groß wie im Pixelmodus
-	var b0: Image = (DarstellungVelaFrames.clip_laden("_hd_test")["bilder"] as Array)[0]
+	var b0: Image = DarstellungVelaFrames.bild_aus_datei("_hd_test", 0)
 	var z0: Rect2i = _alpha_rahmen(b0, 128)
 	_ok(absi(z0.size.y - HD_HOEHE) <= 2, "HD: Figur im ersten Bild %d Zeilen hoch (soll %d ±2)" % [z0.size.y, HD_HOEHE])
-	var p0: Image = (DarstellungVelaFrames.clip_laden("_hd_pixel")["bilder"] as Array)[0]
+	var p0: Image = DarstellungVelaFrames.bild_aus_datei("_hd_pixel", 0)
 	var zp: Rect2i = _alpha_rahmen(p0, 128)
 	var spiel_hd: float = float(z0.size.y) * float(d["skala"])
 	_ok(absf(spiel_hd - float(zp.size.y)) <= 2.0, "HD: Figur im Spiel (%.1f Bildpixel) so hoch wie im Pixelmodus (%d)" % [spiel_hd, zp.size.y])
@@ -897,7 +898,9 @@ func _hd_umsetzung() -> void:
 	var groesse_ok: bool = true
 	var min_zwischen: int = 1 << 30
 	var voll_zahl: int = 0
-	var bilder: Array = DarstellungVelaFrames.clip_laden("_hd_test")["bilder"]
+	var bilder: Array[Image] = []
+	for bi: int in HD_BILDER:
+		bilder.append(DarstellungVelaFrames.bild_aus_datei("_hd_test", bi))
 	for b: Image in bilder:
 		if b.get_format() != Image.FORMAT_RGBA8:
 			rgba_ok = false
@@ -935,7 +938,8 @@ func _hd_umsetzung() -> void:
 	# Pixelclip desselben Videos: Palette, harte Kante wie vorher
 	var p_farben: Dictionary = {}
 	var p_hart: bool = true
-	for b: Image in (DarstellungVelaFrames.clip_laden("_hd_pixel")["bilder"] as Array):
+	for pi: int in int(dp["bilder"]):
+		var b: Image = DarstellungVelaFrames.bild_aus_datei("_hd_pixel", pi)
 		var px_p: PackedByteArray = b.get_data()
 		for p: int in px_p.size() / 4:
 			if px_p[p * 4 + 3] != 0 and px_p[p * 4 + 3] != 255:
@@ -948,11 +952,11 @@ func _hd_umsetzung() -> void:
 	v.aus_clip_bild("_hd_test", 0, 1)
 	var s: Sprite2D = v.get_node("Bild")
 	_gleich(s.texture_filter, CanvasItem.TEXTURE_FILTER_LINEAR, "HD-Abspieler: lineare Texturfilterung")
-	_gleich(s.scale, Vector2(float(d["skala"]), float(d["skala"])), "HD-Abspieler: Sprite im Maßstab skala")
-	_gleich(s.offset, -(d["fuss"] as Vector2), "HD-Abspieler: Fußpunkt wird abgezogen")
+	_gleich(s.scale, Vector2.ONE * float(d["skala"]) * float(DarstellungVelaFrames.ASSET_ZU_BILD), "HD-Abspieler: Sprite im Maßstab skala · ASSET_ZU_BILD")
+	_gleich(s.offset, DarstellungVelaFrames.bild_versatz("_hd_test", 0) - (d["fuss"] as Vector2), "HD-Abspieler: Fußpunkt wird abgezogen (Zuschnitt der Textur eingerechnet)")
 	v.aus_clip_bild("_hd_pixel", 0, 1)
 	_gleich(s.texture_filter, CanvasItem.TEXTURE_FILTER_NEAREST, "HD-Abspieler: danach Pixelclip wieder NEAREST")
-	_gleich(s.scale, Vector2(1.0, 1.0), "HD-Abspieler: Pixelclip im Maßstab 1")
+	_gleich(s.scale, Vector2.ONE * float(DarstellungVelaFrames.ASSET_ZU_BILD), "HD-Abspieler: Pixelclip im Maßstab ASSET_ZU_BILD")
 	v.aus_clip_bild("_hd_test", HD_BILDER - 1, -1)
 	_gleich(v.scale, Vector2(-1.0, 1.0), "HD-Abspieler: Blick links spiegelt")
 	_ok(v.aktuelles_bild().get_data() == bilder[HD_BILDER - 1].get_data(), "HD-Abspieler: zeigt unverändert das Dateibild")
@@ -973,8 +977,8 @@ func _hd_umsetzung() -> void:
 
 ## Im Spiel gemischt: HD-Clip als „stand“, Pixelclip als „gehen“ (nur im Speicher). Jeder Clip wird mit seiner Art gezeigt.
 func _hd_gemischt() -> void:
-	DarstellungVelaFrames._clips["stand"] = DarstellungVelaFrames.clip_laden("_hd_test")
-	DarstellungVelaFrames._clips["gehen"] = DarstellungVelaFrames.clip_laden("_hd_pixel")
+	DarstellungVelaFrames.clip_alias("stand", "_hd_test")
+	DarstellungVelaFrames.clip_alias("gehen", "_hd_pixel")
 	var skript: GDScript = load("res://darstellung/spiel.gd")
 	var spiel: Node2D = _spiel(skript, PackedStringArray(["--szene", "spiel/tests/szenen/vorfuehrung.txt", "--eingabe", "spiel/tests/eingaben/vorfuehrung.txt"]))
 	var sitzung: DarstellungSitzung = spiel.get("sitzung")
@@ -995,11 +999,11 @@ func _hd_gemischt() -> void:
 			continue
 		if frames.clip_name() == "stand":
 			hd_gesehen += 1
-			if sprite.texture_filter != CanvasItem.TEXTURE_FILTER_LINEAR or not is_equal_approx(sprite.scale.x, skala):
+			if sprite.texture_filter != CanvasItem.TEXTURE_FILTER_LINEAR or not is_equal_approx(sprite.scale.x, skala * float(DarstellungVelaFrames.ASSET_ZU_BILD)):
 				arten_ok = false
 		elif frames.clip_name() == "gehen":
 			pixel_gesehen += 1
-			if sprite.texture_filter != CanvasItem.TEXTURE_FILTER_NEAREST or sprite.scale != Vector2.ONE:
+			if sprite.texture_filter != CanvasItem.TEXTURE_FILTER_NEAREST or sprite.scale != Vector2.ONE * float(DarstellungVelaFrames.ASSET_ZU_BILD):
 				arten_ok = false
 	_ok(hd_gesehen > 0 and pixel_gesehen > 0, "HD gemischt: beide Arten kamen im Spiel vor (HD %d, Pixel %d Ticks)" % [hd_gesehen, pixel_gesehen])
 	_ok(arten_ok, "HD gemischt: HD-Clip mit LINEAR und Skala, Pixelclip mit NEAREST und Maßstab 1, auch im Wechsel")
@@ -1525,13 +1529,10 @@ func _logik_szenen() -> void:
 
 func _szene() -> void:
 	# Testclips als „stand“, „gehen“, „kette1“ bis „kette4“ vortäuschen (nur im Speicher)
-	var cache: Dictionary = {}
-	cache["stand"] = DarstellungVelaFrames.clip_laden(GEHEN)
-	cache["gehen"] = DarstellungVelaFrames.clip_laden(GEHEN)
+	DarstellungVelaFrames.clip_alias("stand", GEHEN)
+	DarstellungVelaFrames.clip_alias("gehen", GEHEN)
 	for k: int in range(1, 5):
-		cache["kette%d" % k] = DarstellungVelaFrames.clip_laden(KETTE)
-	for n: String in cache:
-		DarstellungVelaFrames._clips[n] = cache[n]
+		DarstellungVelaFrames.clip_alias("kette%d" % k, KETTE)
 	var w: String = VergleichHilfe.wurzel()
 	var ref_roh: Variant = VergleichHilfe.lesen(w.path_join("spiel/tests/referenz/alle/vorfuehrung.protokoll.csv"))
 	_ok(ref_roh != null, "Szene: Referenzprotokoll vorhanden")
@@ -1600,7 +1601,7 @@ func _szene() -> void:
 	# 4. ohne Clips (Rückfall): Puppe, wo sie abdeckt
 	DarstellungVelaFrames.clips_vergessen()
 	for n: String in ["stand", "gehen", "kette1", "kette2", "kette3", "kette4", "sprint", "sprung", "getroffen_vorn", "umgeworfen", "liegen", "aufstehen"]:
-		DarstellungVelaFrames._clips[n] = {}
+		DarstellungVelaFrames.clip_registrieren(n, "res://gibt_es_nicht/%s/" % n)
 	var spiel4: Node2D = _spiel(skript, sz)
 	var s4: DarstellungSitzung = spiel4.get("sitzung")
 	var puppe_sichtbar: int = 0
