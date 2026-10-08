@@ -1,6 +1,6 @@
 # Comet Brawlers: Fassung in Godot (Programm)
 
-Stand 2026-10-07 (Auftrag 6, Entscheidung E26). Dieses Dokument beschreibt
+Stand 2026-10-08 (Auftrag 6, Entscheidung E26; Auflösung 1536 × 896 nach E28, Speicher der Clips E27/E28). Dieses Dokument beschreibt
 den Port der vertikalen Scheibe nach Godot 4.7.2 mit GDScript: Aufbau,
 Befehle, Tastenbelegung, Tests, Abweichungen und Lücken. Die
 TypeScript-Fassung unter `spiel/` ist die Referenzimplementierung (nicht
@@ -14,18 +14,21 @@ unverändert.
 
 ```
 godot/
-  project.godot        Fenster 768 × 448, Stretch viewport, Filter nearest,
-                       60 Physiktakte je Sekunde (höchstens 4 je Bild),
+  project.godot        Spielbild 1536 × 896 (Viewport), Startfenster 1280 × 747, Stretch viewport (Seitenverhältnis
+                       bleibt), Fenster frei skalierbar, Filter nearest, 60 Physiktakte je Sekunde (höchstens 4 je Bild),
                        Renderer gl_compatibility, Hauptszene darstellung/spiel.tscn
   kern/                reiner Logikkern (RefCounted, keine Nodes, Festkomma 16.16),
                        35 Dateien; je Datei eine TypeScript-Datei von spiel/src/kern/
     figur/ gegner/     Unterordner wie in TypeScript
   pruef/               Prüflauf: eingabe, szene, protokoll, pruefung, lauf.gd
   darstellung/         Zeichnen, Anzeige, Debug, Tastatur, Sitzung, spiel.gd/.tscn,
-                       Vela-Puppe (vela_puppe.gd, vela_posen.gd)
-  werkzeuge/           foto.gd (Bildschirmfotos), kontakt.gd (Kontaktbögen),
-                       umsetzer.gd (Teileblatt → Teile), ggf. film.gd (GIFs)
-  tests/               alle.gd (Testlauf), vergleich.gd (Fehlersuche), Testmodule
+                       Vela-Puppe (vela_puppe.gd, vela_posen.gd), Vela aus Video-Clips (vela_frames.gd mit Laden nach Bedarf
+                       und Speicherbudget, vela_frames_tabelle.gd)
+  werkzeuge/           foto.gd (Bildschirmfotos), kontakt.gd (Kontaktbögen), umsetzer.gd (Teileblatt → Teile),
+                       film.gd (Einzelbilder der Puppe), video_umsetzer.gd und video_bogen.gd (Videos → Clips, Prüfbögen),
+                       hd_vorschau.gd, speicher_messung.gd und leistung.gd (Messungen)
+  tests/               alle.gd (Testlauf), vergleich.gd (Fehlersuche), Testmodule (darstellung_test, vela_test, vela_qa,
+                       video_test, speicher_test, puppe_protokoll_test)
   grafik/vela/         erzeugte Teile der Vela-Puppe und teile.txt
 ```
 
@@ -44,9 +47,11 @@ Godot laden (Cloud-Sitzung; Befehl und Version stehen in `AGENTS.md`), dann:
 | `godot --headless --path godot --script res://tests/alle.gd` | alle Tests: Grundlagen, Reinheit des Kerns, Darstellung, Vela-Puppe, alle 74 Szenen bitgleich, Determinismus; Exit 1 bei einer Abweichung. Argumente nach `--`: `--nur <Teil>` (Szenen), `--ohne-szenen` |
 | `godot --headless --path godot --script res://pruef/lauf.gd -- --szene <datei> --eingabe <datei> --aus <ordner>` | Prüflauf, schreibt `protokoll.csv` und `objekte.csv` und gibt beide MD5 aus; Pfade ab der Repo-Wurzel (zum Beispiel `spiel/tests/szenen/T1.txt`) |
 | `godot --headless --path godot --script res://tests/vergleich.gd -- --ist <datei> --soll <datei>` | erste abweichende Zeile mit Frame, Spaltenname und beiden Werten |
-| `godot --path godot` | Spiel starten (Fenster); Argumente nach `--`: `--seed N`, `--debug`, `--szene <datei>`, `--eingabe <datei>`, `--schritte N`, `--pause`, `--ende`, `--platzhalter` (Rechtecke statt Vela-Puppe) |
-| `xvfb-run -a godot --path godot --rendering-driver opengl3 --script res://werkzeuge/foto.gd -- --szene <datei> --eingabe <datei> --nach 300,600 --aus docs/bilder/name` | Bildschirmfotos nach n Logikschritten (PNG `<aus>_<n:04d>.png`); unter `--headless` gibt es kein Rendering, deshalb Xvfb |
+| `godot --path godot` | Spiel starten (Fenster 1280 × 747, frei skalierbar, F11 Vollbild); Argumente nach `--`: `--seed N`, `--debug`, `--szene <datei>`, `--eingabe <datei>`, `--schritte N`, `--pause`, `--ende`, `--platzhalter` (Rechtecke statt Vela), `--puppe` (die Pixel-Puppe statt der Clips) |
+| `xvfb-run -a godot --path godot --rendering-driver opengl3 --script res://werkzeuge/foto.gd -- --szene <datei> --eingabe <datei> --nach 300,600 --aus docs/bilder/name` | Bildschirmfotos nach n Logikschritten (PNG `<aus>_<n:04d>.png`, 1536 × 896 aus `DarstellungZeichner`); lädt alle Clips sofort und ganz; unter `--headless` gibt es kein Rendering, deshalb Xvfb |
 | `xvfb-run -a godot --path godot --rendering-driver opengl3 --script res://werkzeuge/kontakt.gd -- --aus docs/bilder/godot_kontakt_vela.png` | Kontaktbogen der Vela-Puppe |
+| `godot --headless --path godot --script res://werkzeuge/speicher_messung.gd -- --modus clips` | Speicher (RSS, static, Texturen) und Ladezeit je Clip; mit `--modus spiel --bilder 900` unter Xvfb: Nachladen im laufenden Spiel (Bild, ab dem jeder Clip bereit ist, Zeit je Bild) |
+| `godot --headless --path godot --script res://werkzeuge/leistung.gd -- --modus logik` | Zeit je Logikschritt und Zeichenbefehle je Bild; `--modus bild` unter Xvfb: Zeit je gerendertem Bild (Software-Rendering, siehe „Auflösung und Leistung“) |
 | `godot --headless --path godot --script res://werkzeuge/video_umsetzer.gd -- --video <datei> --name <clip> [--hd]` | Video von Vela in eine Bildfolge umsetzen (Pixelmodus oder HD-Modus), siehe „Video-Umsetzer“ |
 | `xvfb-run -a godot --path godot --rendering-driver opengl3 --script res://werkzeuge/hd_vorschau.gd -- --ordner <clip> --aus docs/bilder/godot_hd_test.png` | Vorschau eines HD-Clips auf Grau und Weiß |
 
@@ -60,7 +65,8 @@ Wie `docs/scheibe.md`: Pfeile = L R O U; Y oder Z = Angriff A (nach der Lage
 der Taste); X = Sprung S; P = Pause (außerhalb der Logik); N = Einzelschritt
 in der Pause; F1 = Debug-Anzeige; F2 = Eingabeaufzeichnung (Datei im Format
 der Eingabedatei mit `# seed=N` im Kopf nach `user://aufzeichnung_<seed>.txt`);
-F3 = Neustart mit Seed + 1. Ein Druck zwischen zwei Abfragen zählt noch in der
+F3 = Neustart mit Seed + 1; F11 = Vollbild an und aus (das Spielbild bleibt 1536 × 896, `stretch viewport` hält das Seitenverhältnis, bei anderen
+Fenstern entstehen Ränder). Ein Druck zwischen zwei Abfragen zählt noch in der
 nächsten Abfrage (Festlegung K6). Nach GAME OVER und nach dem Ende der Scheibe
 beginnt das Spiel neu mit Seed + 1.
 
@@ -76,12 +82,13 @@ Hülle, damit Tests die Sitzung ohne Fenster treiben können. Zwei Zeichenebenen
 
 ## Tests
 
-`alle.gd` (Laufzeit etwa 10 s): Festkomma, Zufall, Tasten, Eingabeparser,
+`alle.gd` (Laufzeit etwa 50 s): Festkomma, Zufall, Tasten, Eingabeparser,
 Stage-Parser, Protokollformat, Reinheit von `godot/kern/` (sucht die Wörter
 `float`, `Vector2`, `Rect2`, `randi`, `randf`, `Time.`, `OS.`, `signal`, auch in
 Kommentaren), Darstellung (`darstellung_test.gd`: Zeichnen ändert die Welt
 nicht, Vorführung mit Darstellung 600 Schritte gleich der Referenz), Vela-Puppe
-(`vela_test.gd`, `vela_qa.gd`), Darstellung mit Puppe
+(`vela_test.gd`, `vela_qa.gd`), Video-Clips (`video_test.gd`: Umsetzer, Zuordnung, Abspieler, Lage und Rand im Spielbild), Speicher der Clips
+(`speicher_test.gd`: Laden nach Bedarf, Häppchen, Budget, Pixelverlust, Zielwert), Darstellung mit Puppe
 (`puppe_protokoll_test.gd`), alle 74 Szenen byteweise gegen die Referenz,
 Determinismus (zwei Läufe, gleiche MD5).
 
@@ -104,6 +111,90 @@ Determinismus (zwei Läufe, gleiche MD5).
 - Die Platzhalterbilder sind nicht pixelgleich zur Canvas-Fassung (Dreiecke und
   Ellipsen ohne Glättung als Fächer, Strichmuster 4/4 in Bildpixeln).
 - Bildschirmfotos brauchen Xvfb und `gl_compatibility`.
+
+## Auflösung 1536 × 896 (E28)
+
+Entscheidung des Nutzers (2026-10-08, E28): Das Spielbild hat 1536 × 896 Bildpixel, Faktor 4 gegenüber den 384 × 224 Spielpixeln der Logik
+(bisher 768 × 448, Faktor 2, E25). Die Logik, die Protokolle und der Kern sind unverändert (74 von 74 Szenen bitgleich).
+
+| Teil | Umsetzung |
+|---|---|
+| `DarstellungMasse.DARSTELLUNG` | 4; daraus folgen der Zeichner (`BILDPIXEL_BREITE` 1536, `BILDPIXEL_HOEHE` 896), Anzeigeleiste und Schrift (5 × 7 und 3 × 5 als Blöcke zu 4 × 4 Bildpixeln, große Texte ×2 davon), Schatten, Hintergrundbänder, Debug-Anzeige, Kamera und Platzhalter; in Spielpixeln ändert sich nichts |
+| `ASSET_BASIS` (2), `ASSET_ZU_BILD` (2) | Puppe, Pixel-Clips und HD-Clips sind in Basispixeln (768 × 448) vermessen; `clip.txt` (Größe, Anker, `skala`, `schritt_px`) und das Gehtempo der Puppe bleiben gültig. Die Puppe (`vela_puppe.gd`) und der Abspieler (`vela_frames.gd`) vergrößern sich selbst um `ASSET_ZU_BILD`, ganzzahlig (die Pixel-Figuren bleiben scharf, Filter NEAREST); Werkzeuge, die in Basispixeln zeichnen (Kontaktbögen, Filme), setzen `asset_zu_bild = 1` |
+| `project.godot` | Viewport 1536 × 896, Stretch `viewport`, Seitenverhältnis `keep`, Startfenster 1280 × 747 (`window_width_override`, `window_height_override`, passt auf 1366 × 768), Fenster frei skalierbar |
+| F11 | Vollbild an und aus (`DarstellungSitzung.vollbild_anfrage`, `spiel.gd`: `vollbildUmschalten`); bei anderem Seitenverhältnis des Schirms entstehen Ränder |
+| `foto.gd` | Bildgröße aus `DarstellungZeichner`; `film.gd`, `kontakt.gd`, `video_bogen.gd`, `hd_vorschau.gd` behalten ihre Bogengrößen (Basispixel, `--zoom`), `hd_vorschau.gd` zeigt die Spielzeile jetzt direkt in der Größe des Spielbilds |
+
+**Größe der Figur, Korrektur zu E28.** Die Figur ist 142 *Basispixel* hoch (die Pixel-Puppe und die Pixel-Clips sind 142 Zeilen hoch bei
+768 × 448; der Umriss der Spezifikation für Vela ist 57 × 76 Spielpixel = 71 Spielpixel Figur), im Spiel bei 1536 × 896 also **284
+Bildschirmpixel**, nicht 568. Ein Clip mit 360 Zeilen wird mit 284 / 360 = 0,79 gezeigt, also verkleinert, nicht 1,58-fach vergrößert.
+Die Höhe von Vela im Bild blieb damit gleich (32 % der Bildhöhe); ein Spielbild mit 568 Pixel großer Vela (63 % der Bildhöhe) war
+nicht gemeint.
+
+**Höhe der gemalten Clips: 360 Zeilen bleiben, 480 nicht übernommen.** Weil die Annahme „1,58-fach vergrößert“ nicht zutrifft, wurde
+gemessen, was 480 Zeilen (`--hoehe 480`) bringen würden. Alle fünf Clips wurden mit 480 neu umgesetzt (Befehle aus „Gemalte Vela“, nur
+`--hoehe 480`, Ergebnis nicht im Repo; `werkzeuge/vela_hd_clips.sh <videoordner> 480` erzeugt sie neu) und im Spiel verglichen:
+
+| | 360 Zeilen (im Repo) | 480 Zeilen |
+|---|---|---|
+| Maßstab im Spiel (Bildschirmpixel je Dateipixel) | 0,79 | 0,59 |
+| Dateien der fünf Clips (stand / kette1 / sprint / sprung / sprungtritt) | 3,69 + 1,95 + 1,26 + 7,05 + 4,37 = 18,3 MB | 5,79 + 3,05 + 1,82 + 10,57 + 6,55 = 27,8 MB |
+| Texturspeicher der fünf Clips (zugeschnitten, MiB) | 68,4 | 120,2 |
+| Ladezeit je Bild (headless, Mittel) | 2,7 bis 4,6 ms | 4,1 bis 7,4 ms |
+
+Bild `docs/bilder/godot_hd1536_clip_hoehen.png` (Stand mit 288, 360 und 480 Zeilen, Ausschnitt auf Kopf und Handschuhe, ×3) und
+`docs/bilder/godot_hd1536_clip_hoehen_kette_sprung.png` (Kette 1 und Sprung mit 360 und 480, ×2): 480 ist bei Kette 1 und Stand sichtbar
+knackiger (Haarsträhnen, Schnalle, Nähte der Handschuhe), aber nur im vergrößerten Ausschnitt; beim Sprung, dessen Quellvideo die
+Figur nur 433 Pixel hoch zeigt, gibt es keinen erkennbaren Unterschied (die Umsetzung vergrößert dort das Arbeitsbild von 429 auf 480
+Zeilen, ohne neue Bildinformation). 288 Zeilen (1 : 1) sind merklich weicher. Das Speicherziel von etwa 100 MB für die fünf Clips (E27)
+erfüllt 360 (68 MB), 480 überschreitet es (120 MB, am Renderer-Zähler rund 160 MB). Deshalb gilt 360. Wer 480 will:
+`werkzeuge/vela_hd_clips.sh <videoordner> 480`, die Tests prüfen die Skala (`0,3 bis 0,5`) und müssten auf 0,2958 angepasst werden;
+für Sprint wählte die Suche bei 480 nur 15 statt 16 Bilder (Bild 63 wird als unscharf abgeschnitten), das wäre mit `--ab 62` zu prüfen.
+Die Befehle in „Gemalte Vela“ und das Skript erzeugen die 360-Clips des Repos bitgleich (geprüft am 2026-10-08).
+
+**Pixel-Clips und Puppe.** `gehen`, `kette2` bis `kette4`, `getroffen_vorn`, `umgeworfen`, `liegen`, `aufstehen` und die Puppe sind
+2× vergrößert (NEAREST): jedes Pixel der Grafik ist 2 × 2 Bildschirmpixel, die gemalte Vela hat die feine Auflösung eines Bildschirmpixels.
+Der Stilbruch Pixel gegen gemalt ist damit deutlicher als bei 768 × 448 (Bild `godot_hd1536_pixel_und_gemalt.png`: Gehen, Kette 2 bis 4 als Pixel, Kette 1 und Stand gemalt). Geprüft: Keiner der Clips berührt den Rand seines Dateibildes (nichts abgeschnitten, `speicher_test.gd`), der
+Abspieler sitzt am Fußpunkt der Logik, und im Spiel liegt keine Textur außerhalb des Spielbildes (`video_test.gd`, Vorführung).
+
+**Befund (vorbestehend, nicht geändert): Anker der gemalten Clips.** Der Anker der Clips liegt auf der Mitte der untersten 6 Zeilen des ersten
+Bildes, in der Kampfhaltung also auf dem vorderen Stiefel (der hintere steht höher). Gemessen (Mitte der unteren 76 Dateizeilen gegen `fuss_fein`):
+bei `stand`, `kette1` und `sprung` liegt der Anker 32 bis 37 Basispixel (16 bis 18 Spielpixel, 65 bis 74 Bildschirmpixel) rechts von der Fußmitte,
+bei `sprint` 11 (`--ankerx mittel`), bei den Pixel-Clips `gehen`, `kette2` bis `kette4` höchstens 2,5 Basispixel im ersten Bild. Die gemalte Vela steht
+also im Spielbild links vom Schatten (Bilder `vorfuehrung_0300.png`, `kette1_streifen.png`, `sprung_streifen.png`), und beim Wechsel zwischen gemalten
+und Pixel-Clips (Stand → Gehen, Kette 1 → Kette 2) springt sie um rund 50 Bildschirmpixel (`pixel_und_gemalt.png`, Tick 166 gegen 184). Die Logik
+(Trefferfläche, Schatten) ist um den Fußpunkt zentriert. Das ist kein Fehler der Auflösung (bei 768 × 448 war es genauso, halb so groß). Behebung: die Clips
+mit `--ankerx-video` auf die Mitte zwischen den Füßen neu umsetzen (`werkzeuge/vela_hd_clips.sh`) oder `anker` und `fuss_fein` in `clip.txt` um 32 Dateipixel-Äquivalente nach
+links verschieben; dann stimmt auch der Test `video_test.gd` für `stand` (`ankerx` = Mitte der untersten 6 Zeilen) nicht mehr und muss angepasst werden. Das ist eine Entscheidung
+über die Lage der Figur zur Trefferfläche und wurde deshalb nicht still geändert.
+
+**Leistung (was sich messen lässt).** Die Logik ist unverändert; `werkzeuge/leistung.gd`:
+
+- Zeit je Logikschritt (Kern, Vorführung, 6000 Schritte, Dummy-Renderer): im Mittel 0,59 ms, größter 4,95 ms, bei 16,67 ms je Tick.
+- Zeichenbefehle je Bild: im Mittel 408, CPU-Zeit zum Erzeugen 1,5 ms; die Zahl der Befehle hängt nicht vom Faktor ab (die Zeichnung geht in Spielpixeln
+  in den Zeichner), nur die zu füllende Fläche wächst auf das Vierfache.
+- Zeit je gerendertem Bild unter Xvfb mit Software-Rendering (llvmpipe, vier Kerne, 600 Bilder, ohne Takt): 768 × 448 im Mittel 12,5 bis
+  13,0 ms (95 % 17 bis 19 ms), 1536 × 896 im Mittel 26,8 bis 27,1 ms (95 % 33,6 ms). **Das sagt nichts über eine echte GPU**: llvmpipe
+  rechnet auf der CPU, die Füllrate ist dort der Engpass; auf einer GPU kostet ein Bild von 1,4 Megapixeln mit einigen hundert Rechtecken und einem
+  Sprite wenig. Ob das Spiel auf dem Rechner des Nutzers mit 60 Bildern je Sekunde läuft, muss er selbst bestätigen (Fenster 1280 × 747 und
+  Vollbild, F1 zeigt die Debug-Anzeige).
+
+Belege (alle `docs/bilder/godot_hd1536_*`): `vorfuehrung_0300.png` und `vorfuehrung_0900.png` (Spielbild 1536 × 896, Vorführung nach
+300 und 900 Schritten), `kette1_streifen.png` und `sprung_streifen.png` (Tick-Streifen im Spiel, Szene `werkzeuge/hd_film/`), `vergleich_vorher_nachher.png` (dieselbe
+Szene bei 768 × 448 und 1536 × 896, Ausschnitt: links vorher ×4, rechts nachher ×2), `platzhalter_0600.png` (`--platzhalter`), `clip_hoehen*.png`, `pixel_und_gemalt.png` (Pixel-Clips neben gemalten, 2 × 2-Pixel-Blöcke).
+
+Beurteilung (ehrlich, nach Ansicht der Bilder):
+
+- Schärfe: Die gemalte Vela ist bei 1536 × 896 deutlich schärfer als bei 768 × 448 (Gesicht, Handschuhe, Nähte, Haare im Vergleichsbild); die
+  Kanten sind glatt, kein Grünsaum. Gegenüber der Quelle ist sie mit 0,79 leicht verkleinert, die Schärfe ist gut, nicht „knackig“.
+- Stilbruch: Der Unterschied zwischen der feinen gemalten Vela und allem anderen ist größer geworden. Hintergrund, Gegner, Behälter und Anzeige sind flache
+  Farbflächen (Platzhalter) bzw. Pixelschrift in 4 × 4-Blöcken; die Pixel-Clips (Kette 2 bis 4, Gehen, Getroffen) sind 2 × 2-Pixelkunst. Zwischen
+  gemalten und Pixel-Clips in einer Folge (Kette 1 → 2, Stand → Gehen) wechselt die Auflösung sichtbar. Das lässt sich erst mit gemalten
+  Clips für die übrigen Aktionen und mit Gegner- und Hintergrundgrafik lösen.
+- Lesbarkeit der Anzeige: Die Pixelschrift (Name, Punkte, Leben, Namen der Gegner) ist in 4 × 4-Blöcken gut lesbar und groß; der Debug-Text (3 × 5, 12 × 20 Pixel je
+  Zeichen) bedeckt viel Fläche, ist nur für die Fehlersuche gedacht. Nichts wird am Rand abgeschnitten (HUD und Texte liegen in Spielpixeln und wurden nicht verschoben).
+- Farbfehler der Quellen (olivgrünes Haar, rosa Streifen) sind bei der Vergrößerung deutlicher sichtbar (Sprungstreifen, Tick 334 und 370); Nachbestellung der betroffenen
+  Bilder wäre besser als das Weglassen.
 
 ## Grafik: Vela
 
@@ -134,7 +225,7 @@ Art gezeigt):
 | Alpha | 0 oder 255 | 0 bis 255 (weicher Übergang, Standard 4 Arbeitspixel) |
 | Dateien | `f_0001.png` (indiziert) | `f_0001.webp` (verlustfrei) oder `.png` (`--format png`) |
 | clip.txt | wie bisher | zusätzlich `weich=1`, `format`, `skala`, `spielhoehe`, `fuss_fein`; `groesse` und `anker` in Dateipixeln |
-| im Spiel | `TEXTURE_FILTER_NEAREST`, Maßstab 1 | `TEXTURE_FILTER_LINEAR`, Sprite-Maßstab `skala` (142 / 360 = 0,394) |
+| im Spiel | `TEXTURE_FILTER_NEAREST`, Maßstab 1 · `ASSET_ZU_BILD` (2) | `TEXTURE_FILTER_LINEAR`, Sprite-Maßstab `skala` (142 / 360 = 0,394) · `ASSET_ZU_BILD` (2) = 0,789 Bildschirmpixel je Dateipixel |
 
 Befehle (Repo-Wurzel; Beispiel Clip `stand` aus dem Video `stand.mp4`):
 
@@ -145,7 +236,7 @@ godot --headless --path godot --script res://werkzeuge/video_umsetzer.gd -- --vi
 ```
 
 HD-Optionen (alle anderen Optionen gelten unverändert): `--hd`; `--hoehe <n>` Figur in Dateipixeln (16 bis 600, Standard im
-HD-Modus 360); `--spielhoehe <n>` Figur im Spiel in Bildpixeln der Logik (Standard 142); `--arbeit <p>` Arbeitsauflösung in
+HD-Modus 360); `--spielhoehe <n>` Figur im Spiel in Basispixeln (Bildpixeln bei 768 × 448, Standard 142; im Spiel 1536 × 896 sind das 284 Bildschirmpixel, siehe „Auflösung 1536 × 896“); `--arbeit <p>` Arbeitsauflösung in
 Prozent der `--hoehe` (Standard 150); `--kante <n>` Breite des weichen Übergangs in Arbeitspixeln; `--format webp|png`.
 `--massstab-von <clip>` und `--faktor` liefern denselben Maßstab (Spielbildpixel je Videopixel) wie bei einem Pixel-Clip,
 damit alle Clips die Figur gleich groß zeigen.
@@ -176,9 +267,9 @@ Speicher und Laufzeit (Messung am Testvideo, Figur 360 Zeilen, Bild 220 × 379):
 - Dateigröße je Bild: etwa 66 bis 76 KB (WebP verlustfrei) gegenüber 87 KB (PNG); die Pixel-Clips haben im Mittel etwa
   4 KB je Bild. Ein Clip mit 50 Bildern sind also rund 3,3 bis 3,8 MB; die 14 vorhandenen Clips (rund 1030 Bilder) wären
   als HD rund 70 MB statt 8 MB. Breite Bilder (ausgestreckter Arm, 471 × 434 bei Höhe 420) bis zu 140 KB (PNG).
-- Arbeitsspeicher im Spiel: RGBA8 = 4 Byte je Pixel, 220 × 379 sind 333 KB je Bild; der Abspieler hält das Bild und die
-  Textur (Faktor 2), ein Clip mit 50 Bildern etwa 33 MB, alle vorhandenen Clips bei dieser Größe grob 700 MB. Die Clips
-  werden erst beim ersten Gebrauch geladen; `clips_vergessen()` gibt sie frei. Mehr als 360 Zeilen kostet quadratisch.
+- Arbeitsspeicher im Spiel: RGBA8 = 4 Byte je Pixel, 220 × 379 sind 333 KB je Bild, ein Clip mit 50 Bildern etwa 17 MB, mehr
+  als 360 Zeilen kostet quadratisch. Seit E27/E28 hält der Abspieler nur die zugeschnittene Textur (nicht mehr das Image) und
+  lädt Clips nach Bedarf, siehe „Speicher der Clips“.
 - Laufzeit des Umsetzers: etwa 0,75 s je Bild bei einem Quellvideo mit 1024 × 1024 (Pixelmodus 0,2 s), 1,1 s je Bild bei
   1280 × 720 und Höhe 420; ein 6-Sekunden-Clip (144 Bilder) braucht also rund 2 bis 3 Minuten. Spitzenverbrauch an
   Arbeitsspeicher des Umsetzers bei 48 Bildern: 232 MB (Godot selbst eingerechnet).
@@ -212,16 +303,13 @@ umgesetzt; ungleichmäßiger Grund (Verlauf, Schatten auf dem Boden) und Bewegun
 
 Offene Punkte:
 
-- **Basisauflösung des Spiels.** Das Fenster ist 768 × 448 (`DARSTELLUNG` = 2, Stretch `viewport`); die Figur ist 142 Bildpixel
-  hoch. Ein HD-Clip wird deshalb auf 0,39 verkleinert und gewinnt gegenüber dem Pixelmodus nur weiche Kanten und volle
-  Farben, nicht Schärfe (Bild: Mitte gegenüber oben). Für echtes HD muss die Basisauflösung angehoben werden (Viewport
-  z. B. 1536 × 896 und `DARSTELLUNG` 4, dann der Sprite-Maßstab nahe 1: `--spielhoehe 284`), samt der übrigen Grafik der Szene
-  (Hintergrund, Gegner), die noch Pixelkunst ist.
-- Texturfilter: einfaches LINEAR bei Maßstab 0,39 ist scharf, kann aber bei Bewegung an dünnen Strukturen flimmern; Mipmaps
-  (`TEXTURE_FILTER_LINEAR_WITH_MIPMAPS`) machten das Bild sichtbar unscharf und wurden verworfen. Bei Maßstab nahe 1 (nach
-  der Anhebung der Basisauflösung) entfällt das Problem.
-- Speicher: alle HD-Clips zugleich im Speicher sind zu viel (siehe oben); Entladen nach Gebrauch, kleinere Höhe oder nur ein
-  Bild und die Textur halten (das Bild wird nur für Tests gebraucht) wären die Mittel.
+- **Basisauflösung des Spiels** (erledigt mit E28): Das Spielbild ist 1536 × 896 (`DARSTELLUNG` = 4), die Figur 284 Bildschirmpixel
+  hoch; ein 360-Zeilen-Clip wird mit 0,79 gezeigt (verkleinert, nicht vergrößert), siehe „Auflösung 1536 × 896“.
+- Texturfilter: einfaches LINEAR ist bei Maßstab 0,79 (E28) ohne Mipmaps scharf; bei größerer Dateihöhe (480 Zeilen, Maßstab 0,59)
+  nimmt das Verkleinern ohne Mipmaps Texel aus, das Bild wirkt etwas „knackiger“, kann an dünnen Haaren aber stärker flimmern.
+  Mipmaps (`TEXTURE_FILTER_LINEAR_WITH_MIPMAPS`) machten das Bild bei 0,39 sichtbar unscharf und wurden verworfen (bei 0,79
+  nicht neu geprüft).
+- Speicher (erledigt mit E27/E28): Textur ohne Image, Zuschnitt, Laden nach Bedarf, Budget mit LRU, siehe „Speicher der Clips“.
 - Die Bildunterschriften für Zyklus und Ereignisse benutzen im HD-Modus die ungeminderten Farben statt der Palette; für denselben
   Clip können die Zyklusgrenzen um ein Bild von denen des Pixelmodus abweichen.
 - Weiche Quellen mit sehr breitem Übergang (mehr als `--kante` Pixel) verlangen eine größere `--kante`.
@@ -291,9 +379,8 @@ Anker und Skala: Der Fußpunkt (`fuss_fein`) liegt auf der Fußmitte der Kampfha
 der Figur auf 45 % der Bildhöhe, `stand` hat 0,16937 und `kette1`/`sprint` 0,16996 (0,35 % Unterschied: die Figur ist im Stand ein
 halber Bildpixel kleiner, nicht sichtbar).
 
-Speicher: Dateien 18,3 MB (oben). Im Arbeitsspeicher hält der Abspieler je Bild das RGBA8-Bild und die Textur: `stand` 28 MB,
-`kette1` 23 MB, `sprint` 16 MB, `sprung` 106 MB, `sprungtritt` 83 MB, zusammen rund 256 MB, sobald alle fünf benutzt wurden
-(`clips_vergessen()` gibt sie frei). Der Sprung ist wegen der breiten, hohen Bilder (284 × 487) der größte Posten.
+Speicher: Dateien 18,3 MB (oben; dezimal gezählt, 17,5 MiB). Im Arbeitsspeicher
+halten die fünf Clips seit E27/E28 nur noch die zugeschnittenen Texturen: 68 MB statt 256 MB (siehe „Speicher der Clips“).
 
 Belege (Spielszene mit Gerüst-Bühne, Vela von der Logik getrieben; Eingabe `werkzeuge/hd_film/`): GIFs je Clip
 `docs/bilder/godot_hd_spiel_{stand,kette1,sprint,sprung,sprungtritt}.gif` (jeder zweite Tick, 30 Bilder/s = Echtzeit; Bild für
@@ -326,14 +413,64 @@ Offene Punkte:
 - SPRUNGANGRIFF H (hoch) und T (runter) haben keinen gemalten Clip und zeigen den Platzhalter; SPRINTSPRUNG ebenso.
 - `kette2` bis `kette4`, `gehen`, `getroffen_vorn`, `umgeworfen`, `liegen`, `aufstehen` sind noch Pixel (Stilbruch in Folgen
   wie Kette 1 → 2: gemalt → Pixel; Stand → Gehen).
-- Arbeitsspeicher (rund 256 MB für die fünf Clips) wächst mit jedem weiteren HD-Clip; Textur ohne Bild halten oder kleinere
-  Dateien (`--hoehe 300`) wären Mittel. Die Basisauflösung des Spiels (siehe oben) bleibt der eigentliche Hebel.
+- Arbeitsspeicher wächst mit jedem weiteren HD-Clip (68 MB für fünf, rund 104 MB für alle 13 Clips, Pixel-Clips eingerechnet); das
+  Budget von 128 MB entlädt den am längsten ungenutzten Clip, wenn mehr zusammenkommt (siehe „Speicher der Clips“).
 - Hocke und Absprung: die Hocke des Sprungs ist im Clip lang, in der Logik ein Tick; ein sichtbarer Anlauf bräuchte
   Spielraum in der Logik (nicht Aufgabe der Darstellung).
 
+## Speicher der Clips (E27/E28, Teil A)
+
+Ziel: deutlich weniger Arbeitsspeicher für die gemalten Clips ohne Ruckler. Alle Zahlen in MiB (1048576 Byte); Code `darstellung/vela_frames.gd`,
+Tests `tests/speicher_test.gd` (122 Prüfungen), Messung `werkzeuge/speicher_messung.gd`.
+
+Vorher (jedes Bild als Image und als Textur, alle Clips beim ersten Gebrauch ganz geladen): fünf gemalte Clips (360 Zeilen) 122,3 MB Images
+(Prozess `MEMORY_STATIC` +122) und 162,5 MB Texturen am Renderer-Zähler (`RENDER_TEXTURE_MEM_USED`), im Prozess (RSS unter Xvfb) +247 MB, unter
+`--headless` +122 MB; Laden des Sprungs allein 0,8 s am Stück (8 ms je Bild unter Xvfb), der Rest 2 ms je Bild headless.
+
+Maßnahmen:
+
+1. **Textur statt Image.** Nach `ImageTexture.create_from_image` wird das Image verworfen. Wer Pixel braucht (Tests, Werkzeuge), liest das Bild mit
+   `DarstellungVelaFrames.bild_aus_datei` neu aus der Datei (verlustfrei, also pixelgleich zu vorher).
+2. **Zuschnitt.** Die Textur ist das sichtbare Rechteck des Bildes (`Image.get_used_rect()`) plus 1 Pixel Rand; der Versatz (`bild_versatz`) geht in
+   `Sprite2D.offset` ein. Die Dateien bleiben unverändert (die Umsetzer-Ausgabe ist auf die Vereinigung aller Figuren zugeschnitten, einzelne Bilder
+   brauchen weniger). Alles außerhalb ist Alpha 0: geprüft, dass kein sichtbares Pixel verloren geht (Textur = Ausschnitt des Dateibildes Byte für Byte,
+   Ausschnitt umschließt alle Pixel mit Alpha > 0, alle Bilder aller 13 Clips). Spart bei den fünf Clips 44 % (122,0 → 68,4 MB).
+3. **Laden nach Bedarf, Vorausladen in Häppchen.** `clip_daten` liest nur `clip.txt`. Im Spiel (`DarstellungVelaFrames.nachladen`, von `spiel.gd` gesetzt, nicht in
+   Tests, Fotos und mit `--ende`) lädt `abgedeckt` nie: ein noch nicht bereiter Clip gilt als nicht abgedeckt (die Darstellung nimmt Puppe oder Platzhalter, wie bei jedem
+   Clip ohne Abdeckung) und wird vorgemerkt; `vorausladen_schritt` lädt je gezeichnetem Bild ein Häppchen (mindestens ein Bild, solange 3 ms nicht verbraucht sind, 6 ms bei vorgemerkten Clips), zuerst die
+   vorgemerkten Clips, dann `VORAUS_REIHE` (stand, gehen, kette1, sprint, sprung, sprungtritt, kette2 bis 4, getroffen_vorn, umgeworfen, liegen, aufstehen). Der Wechsel der Quelle (Puppe → gemalt)
+   geschieht einmal je Clip, sobald er ganz geladen ist; es gibt kein Flackern, weil ein Clip nie halb gezeigt wird (beim Wechsel springt die Figur allerdings, siehe Befund zum Anker unter „Auflösung 1536 × 896“). Synchrones Laden mitten im Spiel gibt es nicht
+   (Ladezeit je Bild 2,7 bis 4,6 ms headless, 2,7 bis 5,6 ms (größtes Bild 10 ms) unter Xvfb mit Textur-Upload; der Sprung am Stück 0,4 s, daher die Häppchen).
+   Nach dem Start sind im laufenden Spiel (`speicher_messung.gd --modus spiel`, Vorführung unter Xvfb, Bilder zu rund 26 ms) stand nach 15 Bildern bereit, kette1 nach 52, sprint nach 68, sprung nach
+   180, sprungtritt nach 231 und alle 13 Clips nach 300 Bildern (rund 5 s bei 60 Bildern je Sekunde auf einer echten GPU, wo ein Bild kürzer dauert, die Zeit je Häppchen aber gleich bleibt);
+   solange zeigt das Spiel für Aktionen, deren Clip fehlt, die Puppe bzw. den Platzhalter (in der Messung 154 bis 157 von 900 Bildern, darin auch die Aktionen, die nie einen Clip haben).
+4. **Budget mit LRU.** `SPEICHER_BUDGET_MB` = 128 (`budget_bytes`): Fordert ein Clip mehr Platz an, als das Budget lässt, entlädt `_platz_schaffen` ganze Clips,
+   zuerst den am längsten nicht benutzten; der gerade gezeigte Clip, der angeforderte und die `schutz_zuletzt` (2) zuletzt benutzten bleiben. Das Vorausladen entlädt nie,
+   es hört beim Budget auf. Alle 13 Clips brauchen 103,7 MB und passen ins Budget; ein Entladen geschieht erst, wenn weitere gemalte Clips dazukommen (die Pixel-Clips werden dann ersetzt).
+   Ein entladener Clip lädt bei Bedarf wieder (Puppe/Platzhalter bis dahin).
+5. **Abbildung der Zeit unverändert.** Die Tabelle (`vela_frames_tabelle.gd`) liest nur `clip.txt`; die Bildindizes vor dem Laden, nach dem Laden und nach Entladen und Wiederladen
+   sind gleich (Test), 74 von 74 Szenen bitgleich, die Vorführung mit Darstellung 600 Schritte gleich der Referenz.
+
+Nachher (fünf gemalte Clips, 360 Zeilen, ganz geladen; `speicher_messung.gd --modus clips`):
+
+| Zähler | vorher | nachher |
+|---|---|---|
+| eigene Summe der Texturen | 122,0 MB (volle Rechtecke) | **68,4 MB** (stand 13,1, kette1 8,2, sprint 5,6, sprung 24,5, sprungtritt 16,9) |
+| Images im Prozess (`MEMORY_STATIC`, Xvfb) | +122 MB | +0,2 MB |
+| Texturen am Renderer-Zähler (Xvfb, llvmpipe) | 162,5 MB | 91,0 MB (der Zähler liegt rund ein Drittel über der eigenen Summe, vermutlich wegen einer Mipmap-Kette des Treibers; nicht geprüft) |
+| Prozess (RSS, Xvfb) | +247 MB | +73 MB |
+| Prozess (RSS, `--headless`) | +122 MB | +69 MB (der Dummy-Renderer hält die Bilder der Texturen) |
+
+Die Zielvorgabe (höchstens etwa 100 MB Texturspeicher für die fünf gemalten Clips) ist mit 68 MB (eigene Summe) bzw. 91 MB (Zähler) erfüllt. Mit
+480 Zeilen wären es 120 MB bzw. rund 160 MB (siehe „Auflösung 1536 × 896“). Was sich nicht messen lässt: `RENDER_TEXTURE_MEM_USED` ist unter `--headless` 0 (kein Renderer);
+der Verbrauch an Grafikspeicher einer echten GPU und eine eventuelle Kompression der Treiber sind hier nicht beobachtbar (llvmpipe nutzt den Hauptspeicher). Eine GPU-Kompression
+(BPTC/S3TC, 4 : 1) wurde nicht eingesetzt, weil sie die weichen Kanten und Farben der gemalten Clips verfälschen würde.
+
 ## Stand
 
-Phase 0 bis 2 und 4 von Auftrag 6 erledigt; 74 von 74 Szenen bitgleich zur
-TypeScript-Referenz; `alle.gd` grün. Offen: Abnahme der Leistung im Fenster
-(60 Bilder je Sekunde, vom Nutzer zu bestätigen), die Entscheidung über den Weg
-der Figurenanimation, Grafik der übrigen Figuren, Ton, Export.
+Phase 0 bis 2 und 4 von Auftrag 6 erledigt; Spielbild 1536 × 896 (E28), Speicher der Clips begrenzt (E27/E28, Teil A); 74 von 74 Szenen bitgleich zur
+TypeScript-Referenz, die Vorführung mit Darstellung 600 Schritte gleich der Referenz; `alle.gd` grün (4065 Prüfungen, etwa 47 s). Offen: Abnahme der
+Leistung im Fenster (60 Bilder je Sekunde bei 1536 × 896, vom Nutzer zu bestätigen; hier nur Software-Rendering gemessen), die Entscheidung über die Höhe der gemalten
+Clips (360 gewählt, 480 gemessen, siehe „Auflösung 1536 × 896“), der Anker der gemalten Clips (Figur steht links vom Schatten, springt beim Wechsel zu den Pixel-Clips), die Entscheidung über den Weg der Figurenanimation,
+gemalte Clips für die übrigen Aktionen, Grafik der übrigen Figuren und des Hintergrunds, Ton, Export. `docs/grafik.md` (Zeile „Anzeigeleiste, Schrift“ und „Effekte“, „bei 2× verdoppelt“) ist noch
+auf Faktor 2 geschrieben; im Code folgt alles aus `DARSTELLUNG` = 4 und die Schrift ist 4 × 4 Bildpixel je Schriftpixel.
