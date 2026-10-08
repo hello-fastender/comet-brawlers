@@ -239,7 +239,7 @@ func _lauf() -> void:
 	var video: String = String(arg.get("video", ""))
 	var name: String = String(arg.get("name", ""))
 	if video == "" or name == "":
-		_fehler("Aufruf: --video <datei> --name <clip> [--aus <ordner>] [--schluessel gruen|ecke] [--hoehe 142] [--zyklus n] [--ereignis vorn|hoch] [--bilder n] [--behalte]")
+		_fehler("Aufruf: --video <datei> --name <clip> [--aus <ordner>] [--schluessel gruen|ecke] [--hoehe 142] [--zyklus n] [--ereignis vorn|hoch] [--bilder n] [--behalte] [--hd [--spielhoehe 142] [--arbeit 150] [--kante n] [--format webp|png]]")
 		return
 	var muster: RegEx = RegEx.new()
 	muster.compile("^[a-z0-9_]+$")
