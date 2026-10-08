@@ -454,7 +454,10 @@ Zeilen: 64 %) und kürzere Clips (weniger Haltebilder) sparen ebenfalls; mehr Ze
 
 Alle Bilder: Spielszene mit Gerüst-Bühne, Vela von der Logik getrieben (Bild für Bild aus `foto.gd`, 1536 × 896, ausgeschnitten und beschriftet:
 Tick, Aktion, Aktionsuhr, Clip und Nummer des Bildes), GIFs mit jedem zweiten Tick bei 30 Bildern/s (Echtzeit). Alles erzeugt
-`werkzeuge/vela_belege.sh` (Szenen: Vorführung der Scheibe, `werkzeuge/hd_film/treffer_*` und `griff_*`); die Gegner sind Platzhalter-Kästen.
+`werkzeuge/vela_belege.sh` (Szenen: Vorführung der Scheibe, `werkzeuge/hd_film/treffer_*` und `griff_*`); die Gegner sind Platzhalter-Kästen
+(grün: Bolzer in Ruhe, gelb: kündigt an, beige: Puppe, weiß: getroffen, hell lila: gehalten, flach grau: liegt oder wird geworfen, rot: Angriff aktiv; die Figur selbst ist als
+Platzhalter orange, wenn sie angreift). Beschriftung: oben links Tick,
+Aktion (mit Phase) und Aktionsuhr, unten links Clip und Nummer des Bildes (Datei `f_XXXX.webp`); `platzhalter` heißt: kein Clip, der Kasten zeichnet die Figur.
 
 | Beleg | Streifen / GIF (`docs/bilder/godot_hd_spiel_…`) |
 |---|---|
@@ -485,20 +488,23 @@ die Option `--info`, eine CSV mit Fußpunkt, Aktion, Uhr, Quelle und Clipbild je
 - **Rückkehr in die Kampfhaltung:** nach Kette 4, Getroffen, Wurf und Aufstehen steht der Clip `stand` ohne erkennbaren Bruch (Aufstehen: kleiner Sprung); aus der Haltepose des
   Griffs (nach dem Losreißen in g+61) in die Kampfhaltung springt die Pose (Vorbeuge und breiter Stand gegen aufrecht, der Hinterfuß springt nach vorn), ebenso aus dem Gehen.
 - **Flackern:** in den neun neuen Clips gibt es kein Ausreißerbild (Prüfung aller Bilder: ein Bild, dessen Abstand zu beiden Nachbarn mehr als das 1,6-fache des
-  Abstands der Nachbarn untereinander ist, kommt nicht vor); in `sprung` weicht Bild 35 geringfügig ab. Die GIFs flackern nicht; `stand` und `gehen` laufen als
-  Schleife ohne Naht.
-- **Farbfehler der Quellen:** olivgrüne oder grüne Stellen gibt es in den fünfzehn Clips nicht mehr (Zählung grünlicher Pixel: Median 0 bis 2 je Bild, höchstens 16
-  in `sprungtritt`). Die Handschuhe wechseln im Schwung des Wurfs (Bilder 50 bis 56) die Farbe: grau-blau, lila, türkis mit gelben Fingerspitzen, dunkelviolett mit
-  orangen Spitzen (Bild 55 = das Loslassen); im Spiel sind das etwa sechs Ticks (0,1 s) im Frame des Loslassens und davor. Der orange Streifen der Jacke
-  (Brust, Schulter, Oberarm) liegt je Clip woanders (Kette 3: am Oberarm, Stand: Brust); das fällt im Spiel kaum auf, bleibt aber ein Unterschied zwischen
-  den Clips. Nachbestellung oder Retusche der Wurf-Bilder 50 bis 56 wäre sauberer.
+  Abstands der Nachbarn untereinander ist, kommt nicht vor); in `sprung` weicht Bild 35 geringfügig ab. In den Streifen und GIFs (jeder zweite Tick) ist kein Flackern zu sehen; `stand` und
+  `gehen` laufen als Schleife ohne sichtbare Naht.
+- **Farbfehler der Quellen:** kein Grünsaum und keine grünen Flächen mehr (Zählung grünlicher Pixel: Median 0 bis 2 je Bild, höchstens 16 in `sprungtritt`). Wohl aber
+  einzelne Bilder, in denen die KI-Videos die Farbe von Handschuhen, Stiefeln und Haarspitzen driften lassen (grünlich-olivfarbener Schimmer, gefunden mit einer Zählung
+  gelbgrüner Pixel und am Bild geprüft): `gehen` 10 und 22 (Haarspitzen, Stiefelkanten, Handschuh; je 1 bis 2 Ticks in 39, im Spiel kaum zu sehen), `getroffen_vorn` 11 (gelbe
+  Fingerspitzen), `umgeworfen` 11 und 12 (violetter Handschuh), `sprungtritt` 6 (kräftig: olivgrüne Handschuhe und Stiefel, bekannt aus der ersten Lieferung) und `wurf` 50 bis 56:
+  die Handschuhe wechseln im Schwung die Farbe (grau-blau, lila, türkis mit gelben Fingerspitzen in Bild 54, dunkelviolett mit orangen Spitzen in Bild 55 = dem Loslassen,
+  schwarz-gold in 56); im Spiel sind das etwa sechs Ticks (0,1 s) bis nach dem Loslassen, die auffälligste Stelle der neuen Clips. Der orange Streifen der Jacke (Brust,
+  Schulter, Oberarm) liegt je Clip woanders (Kette 3: am Oberarm, Stand: Brust), im Gehen ist er in der einen Hälfte des Zyklus sichtbar, in der anderen nicht; das fällt im
+  Spiel kaum auf, bleibt aber ein Unterschied zwischen den Clips. Nachbestellung oder Retusche der Wurf-Bilder 50 bis 56 wäre sauberer.
 - **Zeit:** Griff, Wurf, Kette und Treffer laufen im Takt der Logik (Tests an den Zeitpunkten des Kerns). Der Schwung des Wurfs läuft mit 1 bis 2 Quellbildern je
-  Tick, das Tragen in 21 Ticks (0,35 s) statt der 2 s des Videos, die erste Hälfte der Wartezeit (Ducken) mit 3 bis 4 Bildern je Tick; das Ausschwingen mit
+  Tick, das Tragen in 21 Ticks (0,35 s) statt der 2,25 s des Videos, die erste Hälfte der Wartezeit (Ducken) mit 3 bis 4 Bildern je Tick; das Ausschwingen mit
   tiefen Händen (Bilder 56 bis 62) läuft über 5 Ticks.
 - **Kniestoß:** für jeden Kniestoß (22 Ticks, bis zu drei) ersetzt ein orangefarbener Kasten (Platzhalter, 57 × 71 Spielpixel) die gemalte Vela
   (`godot_hd_spiel_griff_knie_wurf_streifen.png`); der Gegner steht dahinter. Das ist der auffälligste Bruch im Spiel. Ohne neuen Clip wäre das Halten der Haltepose
-  während des Kniestoßes die einfachste Linderung (drei Zeilen in `wahl`: GRIFF-Clip mit `halten`); sie wurde nicht eingebaut, weil der Kniestoß laut Auftrag
-  ohne Clip bleibt.
+  während des Kniestoßes die einfachste Linderung (wenige Zeilen in `wahl`: für KNIESTOSS den Clip `griff` mit `halten` wählen); sie ist nicht eingebaut, weil der Kniestoß laut
+  Vorgabe ohne Clip bleibt (Entscheidung der Hauptsitzung).
 - **Stilbruch:** Vela ist durchgehend gemalt. Hintergrund, Gegner, Behälter und Anzeige sind weiter flache Platzhalter; neben den Kästen wirkt die gemalte Vela
   „höher aufgelöst“ als alles um sie.
 
@@ -512,7 +518,7 @@ Szenen mit Kniestoß und Spezial zeigen den Platzhalter, fehlende Clips fallen a
 
 - Gemalte Clips (Nachbestellung) für die Aktionen oben, vor allem Kniestoß (jeder Griff mit Kniestoß zeigt den Kasten), Spezial und Sprintangriff; ein Wurf
   rückwärts (Gegner über die Schulter) und ein Anlauf für das Zugreifen (der Kern hat keinen).
-- Wurf: Farbwechsel der Handschuhe in den Bildern 50 bis 56 (Retusche oder Nachbestellung).
+- Wurf: Farbwechsel der Handschuhe in den Bildern 50 bis 56, außerdem `sprungtritt` 6 und kleinere Stiche in `gehen` 10 und 22 (Retusche oder Nachbestellung).
 - Gehen und Stand: ein Übergangsclip (Gehen anfangen und aufhören) nähme die Posesprünge; die Logik hat dafür keine Frames, die Darstellung müsste Ticks über die Aktion hinaus
   zeigen (Entscheidung offen).
 - Arbeitsspeicher wächst mit jedem Clip (209 MiB für Vela allein): bei weiteren Figuren siehe „Speicher“ oben.

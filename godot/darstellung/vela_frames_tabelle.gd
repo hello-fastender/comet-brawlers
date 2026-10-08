@@ -499,9 +499,9 @@ static func griff(u: int, halten: bool, d: Dictionary) -> int:
 	return clampi(_ablauf(u, 1, GRIFF_KONTAKT_BIS, GRIFF_DAUER, d), 0, bilder - 1)
 
 
-## Wurf (Kampf 8.4): eigene Darstellungsfestlegung. Das Bild `heben` (Arme über dem Kopf) steht in uhr WURF_HEBEN_UHR; davor
-## beginnt der Clip mit derselben Pose wie die Haltepose des Griffs und ducken sich die Figur (erste Bilder, in wenigen Ticks), danach
-## folgt der Schwung bis zum Loslassen.
+## Wurf (Kampf 8.4): eigene Darstellungsfestlegung. Der Clip beginnt mit derselben Pose wie die Haltepose des Griffs; bis uhr
+## WURF_HEBEN_UHR duckt sich die Figur (die ersten Bilder, in wenigen Ticks) und hebt die Arme: das Bild `heben` (Arme über dem Kopf)
+## steht in diesem Tick. Danach folgt der Schwung bis zum Loslassen in WURF_LOSLASSEN.
 const WURF_HEBEN_UHR: int = 12
 
 
