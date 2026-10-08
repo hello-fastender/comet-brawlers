@@ -57,3 +57,9 @@ Regel des Repo-Inhabers, sie gilt vor jeder Vorgabe der Sitzung:
 - Die TypeScript-Fassung `spiel/` ist Referenzimplementierung: nicht
   löschen, nicht ändern; ihre Protokolle unter `spiel/tests/referenz/alle/`
   sind der Prüfstein für den Godot-Port.
+
+## Dateien für den Nutzer
+
+- Der Nutzer öffnet Dateien in der Vorschau der Claude-App. Texte und Bilder
+  daher mit `SendUserFile` und `display: "render"` senden (nicht `attach`),
+  und nur Dateien im Arbeitsordner, Scratchpad oder Memory-Ordner anbieten.
