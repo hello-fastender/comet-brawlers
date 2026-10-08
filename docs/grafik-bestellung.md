@@ -412,6 +412,78 @@ Video endet mit der Pose, die im Prompt unter ENDE genannt ist, und Vela
 bewegt sich in der letzten Sekunde nicht mehr.
 ```
 
+### Gemalter Stil (HD): Startbild und geänderter Vorspann
+
+Entscheidung vom 2026-10-08: Vela wird probeweise im gemalten HD-Look
+(glatte Kanten, volle Farben) statt als Pixelfigur umgesetzt. Der Pixel-Weg
+bleibt als Rückfall bestehen. Der Stil ist ein eigener gemalter Stil, keine
+Kopie einer bestehenden Spielfigur. Erst wenn ein Testclip trägt, wird der
+Stil für das ganze Spiel festgelegt. Umsetzung im Werkzeug: Modus `--hd` in
+`godot/werkzeuge/video_umsetzer.gd`, siehe `docs/godot.md`.
+
+Ablauf:
+
+1. **Startbild malen lassen** (Bildfunktion von Grok, Format 1:1). Referenz ist
+   `vela_k_kampfhaltung_gruen_quadrat.png`. Vier Varianten erzeugen, die beste
+   wählen. Prüfen: Pose gleich, Grund überall dasselbe Grün, dunkle Kontur
+   geschlossen, nichts Grünes an der Figur.
+2. **Testclip `kette1`** mit dem gemalten Startbild und dem gemalten Vorspann
+   (unten) erzeugen, zwei bis drei Versuche.
+3. Ich setze den Clip im HD-Modus um und wir beurteilen Kanten, Gleichmäßigkeit
+   und Größe. Danach die Entscheidung über den Stil.
+
+**Prompt für das gemalte Startbild** (Referenzbild anhängen):
+
+```text
+Zeichne die Figur im beigefügten Referenzbild (Vela, Heldin eines Prügelspiels)
+neu als gemalte, hochauflösende 2D-Spielfigur im Stil moderner handgemalter
+Beat-'em-up-Spiele: saubere, gleichmäßig dicke dunkle Kontur um die ganze Figur
+(etwa 1 Prozent der Bildhöhe, rundum geschlossen), weiche Farbverläufe mit zwei
+bis drei Schattierungsstufen, Cel-Shading, leicht überzeichnete Proportionen,
+kräftige Farben. Keine Pixelkanten, kein Realismus, keine 3D-Optik, keine
+Unschärfe.
+
+BEHALTE aus dem Referenzbild genau: die Pose (Kampfhaltung, Dreiviertelansicht,
+Vela blickt nach rechts, beide Fäuste vor der Brust, Beine gespreizt, Gewicht
+auf dem hinteren Bein), das Gesicht (entschlossener Blick, braune Augen), das
+rotbraune Haar mit hohem, langem Pferdeschwanz, die blaue Jacke mit orangem
+Querstreifen und goldenen Nähten, das dunkle Top, den schwarzen Gürtel, die
+dunkelblaue Hose, die schwarzen Schnürstiefel mit goldenen Ösen und die
+graublauen Stahlhandschuhe mit goldenen Manschetten. Nichts hinzufügen,
+nichts weglassen, kein Zubehör, keine Waffe.
+
+HINTERGRUND: ein einziger einfarbiger flacher Grünton, reines Chroma-Key-Grün
+RGB 0, 177, 64 (Hexwert #00B140), in jedem Pixel gleich. Kein Verlauf, kein
+Boden, kein Schatten, kein Glühen, keine Textur, keine Vignette. Nichts Grünes
+an der Figur selbst.
+
+BILD: quadratisch 1:1, 1024 mal 1024 Pixel. Vela steht in der Bildmitte, ganze
+Figur sichtbar, 60 Prozent der Bildhöhe groß, 22 Prozent Platz über dem Kopf,
+18 Prozent unter den Stiefeln. Keine Schrift, kein Rahmen, keine Zahlen, keine
+zweite Person.
+```
+
+**Geänderter Vorspann für gemalte Clips.** Der Vorspann oben bleibt, nur der
+Absatz FIGUR ändert sich, und im Absatz VERBOTEN kommen drei Wörter dazu.
+
+Im Absatz FIGUR den letzten Satz („Stil: Pixelgrafik … wie im Startbild.“)
+ersetzen durch:
+
+```text
+Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
+weichen Farbverläufen und Cel-Shading, exakt wie im Startbild. Kein
+Stilwechsel während des Videos, keine Pixelkanten, kein Realismus, keine
+3D-Optik. Die dunkle Kontur um die Figur bleibt in jedem Bild gleich dick und
+rundum geschlossen. Nichts an der Figur wird grün.
+```
+
+Im Absatz VERBOTEN ergänzen: „Bewegungsunschärfe, Tiefenunschärfe, Glühen,
+Lichthöfe“.
+
+Warum: Bewegungsunschärfe und Glühen machen die Kante breiig, dann bleibt beim
+Freistellen ein grüner Rand. Die dunkle, geschlossene Kontur trennt Figur und
+Grün sauber.
+
 ### Die Handlungen (je Clip hinter den Vorspann; Zeiten in Sekunden)
 
 **stand** (`vela_v_stand.mp4`, Länge 3,0 s, Schleife)
