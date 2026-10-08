@@ -60,10 +60,15 @@ beleg() {
 		local ph=""; [ -n "$phase" ] && ph="/$phase"
 		local etikett="$frame  $aktion$ph $uhr"
 		local quell="$quelle"; [ "$bild" != "0" ] && quell="$quelle $bild"
+		[ "$schritt" -gt 0 ] || [ "$gskala" != "0" ] || continue
 		ausschneiden "$d/f_$f4.png" "$x0" "$y0" "$c" "$e" "$d/w_$f4.png"
-		convert "$d/w_$f4.png" -resize "${skala}%" -font DejaVu-Sans-Mono -pointsize 12 -fill white -undercolor '#000000a0' -gravity NorthWest -annotate +2+2 " $etikett " \
-			-gravity SouthWest -annotate +2+2 " $quell " "$d/t_$f4.png"
-		convert "$d/w_$f4.png" -resize "${gskala}%" -font DejaVu-Sans-Mono -pointsize 12 -fill white -undercolor '#000000a0' -gravity SouthWest -annotate +2+2 " $etikett  $quell " "$d/g_$f4.png"
+		if [ "$schritt" -gt 0 ]; then
+			convert "$d/w_$f4.png" -resize "${skala}%" -font DejaVu-Sans-Mono -pointsize 12 -fill white -undercolor '#000000a0' -gravity NorthWest -annotate +2+2 " $etikett " \
+				-gravity SouthWest -annotate +2+2 " $quell " "$d/t_$f4.png"
+		fi
+		if [ "$gskala" != "0" ]; then
+			convert "$d/w_$f4.png" -resize "${gskala}%" -font DejaVu-Sans-Mono -pointsize 12 -fill white -undercolor '#000000a0' -gravity SouthWest -annotate +2+2 " $etikett  $quell " "$d/g_$f4.png"
+		fi
 	done < "$d/info.csv"
 	local i
 	if [ "$schritt" -gt 0 ]; then
@@ -113,9 +118,13 @@ mach griff_wurf "$VOR_S" "$VOR_E" 517 600 3 8 "folgen:260,330,560,380" 45 65
 # Griff, zwei Kniestöße (kein Clip: Platzhalter), Griff gehalten, Wurf rückwärts (Szene hd_film/griff)
 mach griff_knie_wurf "$FILM/griff_szene.txt" "$FILM/griff_eingabe.txt" 18 112 4 8 "folgen:300,330,560,380" 45 60
 
+# Nur für die Übergänge (kein Streifen, kein GIF): Gehen → Stand (Vorführung, Tick 101 → 102) und Losreißen aus dem Griff (T16_b, Tick 82 → 83)
+mach gehen_stopp "$VOR_S" "$VOR_E" 96 108 0 0 "folgen:260,330,520,380" 50 0
+mach griff_losreissen spiel/tests/szenen/T16_b.txt spiel/tests/eingaben/T16_b.txt 76 90 0 0 "folgen:260,330,520,380" 50 0
+
 # --- Übergänge zwischen Clips (Posesprünge) ---
 # Je Wechsel der Quelle das letzte Bild des alten und das erste Bild des neuen Clips, 1:1 im Fenster um den Fußpunkt (Skala 60 %), aus den
-# Belegläufen oben (kette_folge, getroffen_vorn, umgeworfen_aufstehen, griff_wurf, griff_knie_wurf, gehen).
+# Belegläufen oben (gehen, gehen_stopp, kette_folge, getroffen_vorn, umgeworfen_aufstehen, griff_wurf, griff_knie_wurf, griff_losreissen).
 kachel() {
 	local d="$1" tick="$2" ziel="$3" zeile
 	zeile=$(awk -F, -v t="$tick" '$1==t' "$d/info.csv")
@@ -135,10 +144,10 @@ uebergaenge() {
 	local ziel="$AUS/godot_hd_spiel_uebergaenge.png" u="$T/uebergaenge" k=0
 	rm -rf "$u"; mkdir -p "$u"
 	local spez b von nach paar a z
-	for spez in gehen:stand:gehen kette_folge:stand:kette1 kette_folge:kette1:kette2 kette_folge:kette2:kette3 kette_folge:kette3:kette4 \
+	for spez in gehen:stand:gehen gehen_stopp:gehen:stand kette_folge:stand:kette1 kette_folge:kette1:kette2 kette_folge:kette2:kette3 kette_folge:kette3:kette4 \
 		kette_folge:kette4:stand getroffen_vorn:stand:getroffen_vorn getroffen_vorn:getroffen_vorn:stand umgeworfen_aufstehen:stand:umgeworfen \
 		umgeworfen_aufstehen:umgeworfen:liegen umgeworfen_aufstehen:liegen:aufstehen umgeworfen_aufstehen:aufstehen:stand griff_wurf:gehen:griff \
-		griff_wurf:griff:wurf griff_wurf:wurf:stand griff_knie_wurf:griff:platzhalter griff_knie_wurf:platzhalter:griff; do
+		griff_wurf:griff:wurf griff_wurf:wurf:stand griff_losreissen:griff:stand griff_knie_wurf:griff:platzhalter griff_knie_wurf:platzhalter:griff; do
 		IFS=: read -r b von nach <<< "$spez"
 		[ -f "$T/$b/info.csv" ] || { echo "   $b fehlt (zuerst den Beleg erzeugen)"; continue; }
 		paar=$(awk -F, -v v="$von" -v n="$nach" 'NR>2 && pq==v && $8==n {print pf, $1; exit} NR>1 {pq=$8; pf=$1}' "$T/$b/info.csv")
