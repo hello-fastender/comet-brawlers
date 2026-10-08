@@ -1,0 +1,13 @@
+# Eingabe zu szene.txt (Format Kampf 11.1: von,bis,tasten); Vela steht am Start und schaut nach rechts.
+# seed=1
+# Stand: bis Frame 150 keine Taste
+# Kette 1: ein Schlag in 160 (ein Schlag ohne Folgetaste)
+160,160,A
+# Sprint: Doppeltipp nach rechts (Tipp 205 bis 208, zweiter Druck ab 213), gehalten bis 275
+205,208,R
+213,275,R
+# Sprung auf der Stelle in 330
+330,330,S
+# Sprung mit Sprungangriff (neutral) in 420, A in 432
+420,420,S
+432,432,A

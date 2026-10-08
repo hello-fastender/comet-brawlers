@@ -1,7 +1,7 @@
 # Bildschirmfotos der Platzhalterdarstellung (Auftrag 6, Phase 2, 3.4).
 #
 #   xvfb-run -a godot --path godot --rendering-driver opengl3 --script res://werkzeuge/foto.gd -- \
-#       --szene <datei> --eingabe <datei> --nach 300,600,900 --aus <ordnerPrefix> [--debug] [--seed N]
+#       --szene <datei> --eingabe <datei> --nach 300,600,900 --aus <ordnerPrefix> [--debug] [--seed N] [--puppe|--platzhalter]
 #
 # Lädt darstellung/spiel.tscn in einen SubViewport (768 × 448), lässt die
 # Sitzung die Logikschritte laufen (ohne Echtzeit, ohne Takt) und speichert zu
@@ -22,7 +22,7 @@ func _initialize() -> void:
 
 ## Argumente --name wert (und --debug) → Dictionary; Fehler im Schlüssel "fehler".
 func _argumente(argv: PackedStringArray) -> Dictionary:
-	var a: Dictionary = {"szene": "", "eingabe": "", "nach": "", "aus": "", "seed": "", "debug": false, "platzhalter": false, "fehler": ""}
+	var a: Dictionary = {"szene": "", "eingabe": "", "nach": "", "aus": "", "seed": "", "debug": false, "platzhalter": false, "puppe": false, "fehler": ""}
 	var i: int = 0
 	while i < argv.size():
 		var name: String = argv[i]
@@ -32,6 +32,10 @@ func _argumente(argv: PackedStringArray) -> Dictionary:
 			continue
 		if name == "--platzhalter":
 			a["platzhalter"] = true
+			i += 1
+			continue
+		if name == "--puppe":
+			a["puppe"] = true
 			i += 1
 			continue
 		if not (name in ["--szene", "--eingabe", "--nach", "--aus", "--seed"]):
@@ -71,6 +75,8 @@ func _lauf() -> void:
 		argv.append("--debug")
 	if a["platzhalter"]:
 		argv.append("--platzhalter")
+	if a["puppe"]:
+		argv.append("--puppe")
 	var spiel_skript: GDScript = load("res://darstellung/spiel.gd")
 	var spiel_args: Dictionary = spiel_skript.call("parseArgumente", argv)
 	var vp: SubViewport = SubViewport.new()

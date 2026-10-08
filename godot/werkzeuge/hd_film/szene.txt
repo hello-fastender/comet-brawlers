@@ -1,0 +1,4 @@
+# Szene für die Spielfilme der gemalten (HD-)Vela (docs/godot.md, „Video/HD“): Bühne scheibe ab Spielstart, Welle 1 aus,
+# damit nichts in die Aktionen greift. Eingabe hd_film.txt: Stand, Kette 1, Sprint, Sprung, Sprungangriff.
+szene name=hd_film endframe=700 seed=1 buehne=scheibe
+pruefstart welle.1=aus welle.2=aus welle.9=aus

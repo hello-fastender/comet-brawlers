@@ -847,6 +847,27 @@ Zuordnung Aktion → Clip und Zeiten: Kopf von `godot/darstellung/vela_frames_ta
 `godot_video_sprung.gif`, `_getroffen.gif`, `_umgeworfen_aufstehen.gif`, `_sprint.gif`, `_stand.gif`, `_kette2.gif`, `_kette3.gif`, `_kette4.gif`
 (Logik-Ticks mit dem Abspieler; jedes zweite Tick-Bild, GIF-Verzögerung auf 1/100 s gerundet: etwa 10 % schneller als in Echtzeit).
 
+### Stand der Clips, gemalt (2026-10-08)
+
+Entscheidung des Nutzers: Vela gilt im gemalten Stil (Vorbild Streets of Rage 4). Fünf gemalte Grok-Clips (944² bzw. 960²,
+24 Bilder/s, grüner Grund) ersetzen die Pixel-Clips derselben Handlung; alle anderen Clips bleiben vorerst Pixel (gemischter
+Betrieb). Umgesetzt mit `video_umsetzer.gd --hd --hoehe 360` (verlustfreies WebP, weiche Kante); Befehle und Zuordnung in
+`docs/godot.md`, Abschnitt „Gemalte Vela (HD-Clips im Spiel)“.
+
+| Clip | Video | Bilder | Größe | Dateien | Stand |
+|---|---|---|---|---|---|
+| `stand` | `v4` | 47 | 203 × 368 | 3,7 MB | ein Atemzyklus, schließt; ersetzt den Pixel-Clip |
+| `kette1` | `vela_v_kette1_gemalt` | 26 | 301 × 368 | 1,9 MB | ab Ausholen-Ende, ohne Haltebilder; ersetzt den Pixel-Clip |
+| `sprint` | `v3` | 16 | 336 × 370 | 1,3 MB | ein Doppelschritt (Video 63 bis 78); ersetzt den Pixel-Clip |
+| `sprung` | `w1` | 96 | 284 × 487 | 7,0 MB | Sprung-Startbild (Figur 45 % der Bildhöhe); ersetzt den Pixel-Clip |
+| `sprungtritt` | `w2` | 52 | 385 × 516 | 4,4 MB | neu; Sprungangriff N und R; Farbwechsel-Bilder 56 bis 60 und 62 fehlen |
+
+Nachbestellwünsche: In `sprung` und `sprungtritt` wechseln einzelne Bilder die Farbe (olivgrünes Haar, dunkelgrüne oder
+lila Handschuhe, rosa Streifen an der Jacke): Sprung Bild 8, 12 bis 14, 51 und 52, Sprungtritt etwa der letzte Luftframe.
+Sie sind je höchstens drei Logik-Ticks zu sehen. In `kette1` und `sprungtritt` hält das Video den Arm bzw. das Bein lange gestreckt (rund 30 Bilder); die Tabelle
+zeigt davon nur das Kontaktbild, die Haltebilder sind per `--ausser` weggelassen. `kette2` bis `kette4`, `gehen`, `getroffen_vorn`,
+`umgeworfen`, `liegen` und `aufstehen` sind noch Pixel und müssten im gemalten Stil nachbestellt werden.
+
 ## Nach der Bestellung
 
 Opus baut je Figur die Sprites, legt Kontaktbögen unter `docs/bilder/`

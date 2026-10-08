@@ -226,6 +226,111 @@ Offene Punkte:
   Clip können die Zyklusgrenzen um ein Bild von denen des Pixelmodus abweichen.
 - Weiche Quellen mit sehr breitem Übergang (mehr als `--kante` Pixel) verlangen eine größere `--kante`.
 
+## Gemalte Vela (HD-Clips im Spiel, 2026-10-08)
+
+Entscheidung des Nutzers (2026-10-08): Vela gilt im gemalten Stil. Fünf gemalte Grok-Clips ersetzen die Pixel-Clips derselben
+Handlung; alle übrigen Clips (`gehen`, `kette2` bis `kette4`, `getroffen_vorn`, `umgeworfen`, `liegen`, `aufstehen`) bleiben
+vorerst Pixel. Der gemischte Betrieb (jeder Clip mit seiner Art: LINEAR und Skala bei HD, NEAREST und Maßstab 1 bei Pixel)
+ist getestet. Die Quellvideos liegen nicht im Repo.
+
+Befehle (Repo-Wurzel, `U` = `godot --headless --path godot --script res://werkzeuge/video_umsetzer.gd --`, immer
+`--aus godot/grafik/vela_video --hd --hoehe 360`):
+
+| Clip | Video | Aufruf (zusätzlich) | Bilder | Dateien |
+|---|---|---|---|---|
+| `stand` | `v4.mp4` | `--ab 40 --bis 86 --zyklus 47` (das Werkzeug fand n = 47, Start 39, Güte 80 %: ein Atemzyklus) | 47 | 3,69 MB |
+| `kette1` | `vela_v_kette1_gemalt.mp4` | `--kuerzen nein --ab 63 --bis 114 --ausser 70-95 --faktor 0.16996 --ankerx-video 666 --setze kontakt=6,rueckzug=7,ruhe=24` | 26 | 1,95 MB |
+| `sprint` | `v3.mp4` | `--ab 63 --bis 78 --zyklus 16 --ereignis keine --ankerx mittel --schritt lauf --massstab-von kette1` | 16 | 1,26 MB |
+| `sprung` | `w1.mp4` | `--ankery unten --ereignis sprung --kuerzen nein --ab 47 --bis 142 --faktor 0.33023 --ankerx-video 576 --setze ruhe=95` | 96 | 7,05 MB |
+| `sprungtritt` | `w2.mp4` | `--ankery unten --ereignis sprung --kuerzen nein --ab 55 --bis 143 --ausser 56-60,62,70-99,114 --faktor 0.33023 --ankerx-video 576 --setze kontakt=8,rueckzug=12,ruhe=50` | 52 | 4,37 MB |
+
+Zusammen 18,3 MB (die Zwischenstände der Testläufe mit allen Bildern waren 46 MB). Was weggelassen wurde und warum:
+
+- `stand`: nur ein Atemzyklus (Start Videobild 40 bis 86), die Tabelle spielt ihn in Echtzeit (47 Bilder bei 24 Bildern/s = 118 Ticks)
+  als Schleife. Der Schließfehler liegt bei 142 % eines Bildschritts; im Spiel (Tick 61 bis 155, Naht bei Tick 119 auf 120)
+  ist der mittlere Helligkeitsunterschied zwischen aufeinanderfolgenden Ticks überall höchstens 1,4 Stufen, an der Naht
+  nicht größer als sonst: kein sichtbarer Sprung.
+- `sprint`: ein Doppelschritt aus 16 Bildern (Video 63 bis 78, Schließfehler 83 % eines Bildschritts; mit Video 62 bis 77 wären
+  es 24 %, aber Bild 62 ist unscharf und wurde vom Umsetzer als Anfang abgeschnitten). Die automatische Zyklussuche war unsicher
+  (Güte 49 %, n = 8); die Wahl n = 16 stammt vom Betrachten der Bilder (Kontaktbogen: Pose in Bild i und i + 16 gleich,
+  i + 8 gegenphasig). `schritt_px` = 93 Spielpixel je Doppelschritt: die Tabelle läuft nach der Strecke, die Füße rutschen nicht.
+- `kette1`: das Video beginnt erst zwei Bilder vor dem Ausholen-Ende (die Tabelle zeigt vorher nichts), der gestreckte Arm
+  ist nur mit je zwei Bildern am Anfang und Ende des Haltens da (`--ausser 70-95`). Weil der Clip nicht in der Kampfhaltung
+  beginnt, findet die Suche keine Ruhe und meldet „rueckwaerts“; `--setze ruhe=24` setzt sie von Hand und der Umsetzer macht
+  dann `rueckkehr=vorwaerts` (neu im Umsetzer). `--ankerx-video 666` ist die Fußmitte der Kampfhaltung im Video, nicht des
+  ersten Bildes, damit der Fuß im Spiel beim Wechsel stand ↔ kette1 nicht springt.
+- `sprung`: ohne die Wartezeit vor der Hocke (ab Videobild 47, die Kampfhaltung steht davor), bis zur aufgerichteten
+  Kampfhaltung (`ruhe`, Videobild 142). `--faktor 0.33023` und `--ankerx-video 576` halten Größe und Fußmitte der Kampfhaltung:
+  das erste Bild ist schon in der Hocke, der Maßstab dürfte nicht aus ihm kommen (sonst 0,449: Vela zu groß).
+- `sprungtritt`: die fünf Bilder mit Farbwechsel kurz vor dem Absprung (Videobild 56 bis 60: rötliches Haar, lila Handschuhe,
+  dunklere Jacke, ein verschmiertes Bild) sind entfernt, ohne dass die Bewegung ruckelt (Hocke Bild 55, danach gleich Luft,
+  24 Bilder/s). Ebenso zwei weitere Einzelbilder mit Farbfehler (62 olivgrünes Haar, 114 Regenbogenstreifen am Ärmel) und die
+  30 Haltebilder des gestreckten Beins (70 bis 99). Das Bild 66 mit olivgrünem Anflug an der Hose blieb, weil es das einzige
+  Zwischenbild der Streckung ist (ohne es springt das Bein in einem Bild).
+
+Abbildung Logik → Bild (`darstellung/vela_frames_tabelle.gd`):
+
+| Aktion | Clip | Zeitbezug |
+|---|---|---|
+| STAND | `stand` | Schleife in Echtzeit (118 Ticks) |
+| SPRINT | `sprint` | Schleife nach der zurückgelegten Strecke (`schritt_px` 93) |
+| SCHLAG, LEERSCHLAG Stufe 1 | `kette1` | uhr 1: Bild zwischen Ausholen-Ende und Kontakt; Trefferfenster `KETTE_AKTIV_VON` 2 bis `KETTE_AKTIV_BIS` 5: das Kontaktbild (steht im ersten aktiven Frame, hält bis zum letzten, damit auch im Trefferstopp); danach Rückzug bis zur Ruhe im letzten Tick (16) |
+| SPRUNG | `sprung` | uhr 1 Hocke, uhr 2 bis 21 Absprung bis Scheitel (Bild 29 auf dem Scheitelframe), 22 bis 41 bis zum letzten Luftbild; nach einem Sprungangriff H/T aus der Sprunguhr, die aus `vh` folgt |
+| LANDUNG | `sprung` | 6 Ticks vom Aufsetzbild (Bild 52) bis zur aufgerichteten Haltung (Bild 95) |
+| SPRUNGANGRIFF N, R | `sprungtritt` | uhr 1 bis 4: Absprungbild bis vor den Kontakt; Trefferfenster uhr 5 bis 28 (`KernWerte.SPRUNGANGRIFF`): das Kontaktbild (Bein voll gestreckt); danach Rückzug bis zum letzten Luftbild im letzten Luftframe (J+41, die Dauer folgt aus der Sprunguhr); bei spätem Angriff steht das Kontaktbild bis zur Landung |
+| LANDUNG nach SPRUNGANGRIFF N, R | `sprungtritt` | dieselbe Landung aus dem Tritt-Clip (`sprung_angriff` bleibt bis zum nächsten Sprung gesetzt) |
+| SPRUNGANGRIFF H, T | – | kein Clip, Platzhalter (siehe offene Punkte) |
+
+Der Sprung: Die Logik hebt die Figur (`h` aus `KernWerte`, Scheitel 51,25 px), das Bild zeigt nur die Haltung; der Anker
+liegt auf der untersten Figurzeile jedes Bildes (`--ankery unten`), der Schatten bleibt am Boden. Der Kern kennt den
+Sprungangriff (`SPRUNGANGRIFF`, Varianten N neutral, R Richtung, H hoch, T runter, Kampf 5.2), die Tabelle ruft den Clip
+deshalb für N und R. Der Kern wurde nicht angefasst.
+
+Anker und Skala: Der Fußpunkt (`fuss_fein`) liegt auf der Fußmitte der Kampfhaltung, `skala` rund 0,3944 (Figur 142 Spielpixel bei
+360 Dateizeilen); bei `sprung` und `sprungtritt` stammt der Maßstab (0,3302 Spielbildpixel je Videopixel) aus dem Startbild mit
+der Figur auf 45 % der Bildhöhe, `stand` hat 0,16937 und `kette1`/`sprint` 0,16996 (0,35 % Unterschied: die Figur ist im Stand ein
+halber Bildpixel kleiner, nicht sichtbar).
+
+Speicher: Dateien 18,3 MB (oben). Im Arbeitsspeicher hält der Abspieler je Bild das RGBA8-Bild und die Textur: `stand` 28 MB,
+`kette1` 23 MB, `sprint` 16 MB, `sprung` 106 MB, `sprungtritt` 83 MB, zusammen rund 256 MB, sobald alle fünf benutzt wurden
+(`clips_vergessen()` gibt sie frei). Der Sprung ist wegen der breiten, hohen Bilder (284 × 487) der größte Posten.
+
+Belege (Spielszene mit Gerüst-Bühne, Vela von der Logik getrieben; Eingabe `werkzeuge/hd_film/`): GIFs je Clip
+`docs/bilder/godot_hd_spiel_{stand,kette1,sprint,sprung,sprungtritt}.gif` (jeder zweite Tick, 30 Bilder/s = Echtzeit; Bild für
+Bild aus `foto.gd`, ausgeschnittene Streifen mit Tick-Nummern `…_streifen.png`) und der Vergleich Pixel-Puppe gegen
+gemalt auf derselben Szene `godot_hd_spiel_vergleich_arena.png` (oben Puppe links, gemalt rechts) und
+`godot_hd_spiel_vergleich_vorfuehrung_0300.png` (links Platzhalter, rechts gemalt im Sprung). Aufruf: `foto.gd -- --szene
+godot/werkzeuge/hd_film/szene.txt --eingabe godot/werkzeuge/hd_film/eingabe.txt --nach 20,21,… --aus <ordner>/f`, danach ffmpeg
+(`foto.gd` hat neu `--puppe`: die Pixel-Puppe statt der Clips).
+
+Beurteilung (ehrlich):
+
+- Größe: Vela ist im Spiel so hoch wie die Pixel-Puppe (142 Spielpixel plus Zopf), neben den Platzhalter-Gegnern (Kästen
+  114 × 130) passend. Es gibt noch keine Gegnergrafik; ein Stilbruch zu den Pixel-Gegnern lässt sich daher nicht beurteilen.
+  Gegen den Pixel-Hintergrund steht die gemalte Vela mit weichen Kanten und feinen Details deutlich anders (sie wirkt
+  „höher aufgelöst“ als alles um sie); das ist im Bild oben sichtbar und die erwartete Folge des gemischten Betriebs.
+- Kanten: sauber, kein Grünsaum, auch am Zopf; bei Maßstab 0,39 und LINEAR keine sichtbaren Treppen.
+- Zeit (an den Streifen mit 3 bis 4 Ticks Abstand und an Einzelbildern geprüft, die GIFs nicht Bild für Bild): Stand atmet
+  ruhig ohne Flimmern (jedes Bild rund 2,5 Ticks); Kette 1: schneller Auszug, Kontaktbild im Trefferfenster, weicher
+  Rückzug, der Übergang in den Stand springt nicht (der Fuß bleibt stehen); Sprint: keine Sprünge der Pose erkennbar,
+  die Füße gleiten nicht; Sprung: die Hocke ist nur einen Tick lang (Logik: uhr 1), danach folgt gleich das Streckungsbild mit
+  hochgerissenen Armen; Sprungtritt: das Bein streckt sich in den ein bis zwei Ticks vor dem Fenster und steht dann voll.
+- Posenwechsel: Aus dem Sprung-Clip (vor dem Angriff) in den Sprungtritt-Clip wechselt die Haltung hart (je nach Zeitpunkt
+  des Angriffs, Sprunguhr 2 bis 37), weil beide Clips unabhängig gemalt sind; die Logik lässt den Angriff in jedem Frame zu.
+- Farbfehler in den Quellen: einzelne Bilder in `sprung` und `sprungtritt` haben abweichende Farben (olivgrünes Haar,
+  dunkelgrüne Handschuhe, rosa Streifen an der Jacke), je höchstens drei Ticks sichtbar; Nachbestellung oder Retusche wäre
+  sauberer als das Weglassen (Einzelbilder wurden dort entfernt, wo es ohne Ruckeln ging).
+
+Offene Punkte:
+
+- SPRUNGANGRIFF H (hoch) und T (runter) haben keinen gemalten Clip und zeigen den Platzhalter; SPRINTSPRUNG ebenso.
+- `kette2` bis `kette4`, `gehen`, `getroffen_vorn`, `umgeworfen`, `liegen`, `aufstehen` sind noch Pixel (Stilbruch in Folgen
+  wie Kette 1 → 2: gemalt → Pixel; Stand → Gehen).
+- Arbeitsspeicher (rund 256 MB für die fünf Clips) wächst mit jedem weiteren HD-Clip; Textur ohne Bild halten oder kleinere
+  Dateien (`--hoehe 300`) wären Mittel. Die Basisauflösung des Spiels (siehe oben) bleibt der eigentliche Hebel.
+- Hocke und Absprung: die Hocke des Sprungs ist im Clip lang, in der Logik ein Tick; ein sichtbarer Anlauf bräuchte
+  Spielraum in der Logik (nicht Aufgabe der Darstellung).
+
 ## Stand
 
 Phase 0 bis 2 und 4 von Auftrag 6 erledigt; 74 von 74 Szenen bitgleich zur
