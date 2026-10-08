@@ -85,6 +85,7 @@ func _lauf() -> void:
 	welt.scale = Vector2(ZOOM, ZOOM)
 	_vp.add_child(welt)
 	_puppe = DarstellungVelaPuppe.new()
+	_puppe.asset_zu_bild = 1  # das Werkzeug zeichnet in Basispixeln (Zoom wirkt über `welt`)
 	_puppe.position = Vector2(float(FUSS_X) / ZOOM, float(FUSS_Y) / ZOOM)
 	welt.add_child(_puppe)
 	for i: int in 3:

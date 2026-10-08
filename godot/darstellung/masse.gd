@@ -16,14 +16,20 @@ class_name DarstellungMasse
 extends RefCounted
 
 # ===========================================================================
-# Darstellung bei doppelter Auflösung (E25; Auftrag 5, Phase 1, U1;
-# docs/grafik.md 9.10)
+# Darstellung bei vierfacher Auflösung (E25 Faktor 2, E28 Faktor 4; Auftrag 5,
+# Phase 1, U1; docs/grafik.md 9.10)
 # ===========================================================================
 
-## Bildpixel je Spielpixel: Das Fenster hat DARSTELLUNG · 384 × DARSTELLUNG · 224
-## Bildpixel (768 × 448), die Logik und alle Lagen der Darstellung rechnen in
-## Spielpixeln. Nur die Zeichenklasse (zeichner.gd) multipliziert damit.
-const DARSTELLUNG: int = 2
+## Bildpixel je Spielpixel: Das Spielbild hat DARSTELLUNG · 384 × DARSTELLUNG · 224
+## Bildpixel (E28: 1536 × 896; project.godot, Viewport), die Logik und alle Lagen der
+## Darstellung rechnen in Spielpixeln. Nur die Zeichenklasse (zeichner.gd) multipliziert
+## damit; Clips und Puppe sind für ASSET_BASIS vermessen und werden um ASSET_ZU_BILD vergrößert.
+const DARSTELLUNG: int = 4
+## Bildpixel je Spielpixel, in denen die Pixel-Grafiken (Puppe, Pixel-Clips, `clip.txt`, Gehtempo der Puppe) vermessen
+## sind: E25, 768 × 448. Wird nie geändert, solange diese Grafiken in ihrer Vermessung gelten.
+const ASSET_BASIS: int = 2
+## Vergrößerung der Puppe und der Clips gegenüber ihrer Vermessung (E28: 4 / 2 = 2, ganzzahlig, die Pixel bleiben scharf).
+const ASSET_ZU_BILD: int = DARSTELLUNG / ASSET_BASIS
 
 # ===========================================================================
 # Umrisse (Breite × Höhe mit Schatten, px)

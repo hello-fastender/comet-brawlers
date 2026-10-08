@@ -1,6 +1,6 @@
 ## Vorschau der HD-Clips von Vela (Umsetzer `video_umsetzer.gd --hd`): rendert einzelne Bilder mit dem Abspieler
 ## DarstellungVelaFrames auf grauem und weißem Grund, einmal in der Auflösung der Dateien (1 Dateipixel = 1 Bildschirmpixel)
-## und einmal so, wie das Spiel sie zeigt (Spielmaßstab, 1 Bildpixel; dann 2-fach vergrößert wie das Spielfenster).
+## und einmal so, wie das Spiel sie zeigt (Spielmaßstab: Basispixel · ASSET_ZU_BILD, E28 also 2 Bildschirmpixel je Basispixel).
 ## Optional daneben ein Pixel-Clip aus demselben Video zum Vergleich.
 ##
 ##   xvfb-run -a godot --path godot --rendering-driver opengl3 --script res://werkzeuge/hd_vorschau.gd -- \
@@ -11,13 +11,14 @@
 ##   --bilder <a,b,…>  1-basierte Bildnummern (Standard: drei gleichmäßig verteilte)
 ##   --rand            Randkontrolle: zusätzlich 8-fach vergrößerter Ausschnitt (nearest) der Kante auf weißem Grund
 ##
-## Zeilen: (1) HD in Dateiauflösung auf Grau und Weiß, (2) HD im Spielmaßstab ×2 auf Grau und Weiß, (3) der Pixel-Clip ×2.
+## Zeilen: (1) HD in Dateiauflösung auf Grau und Weiß, (2) HD im Spielmaßstab (wie im Spielbild 1536 × 896) auf Grau und Weiß, (3) der Pixel-Clip im Spielmaßstab.
 extends SceneTree
 
 const GRAU: Color = Color(0.5, 0.5, 0.5)
 const WEISS: Color = Color(1.0, 1.0, 1.0)
 const RAND_PX: int = 6
-const SPIEL_ZOOM: int = 2
+## Vergrößerung der Basispixel im Spielbild (E28)
+const SPIEL: int = DarstellungMasse.ASSET_ZU_BILD
 
 
 func _init() -> void:
@@ -69,15 +70,15 @@ func _lauf() -> void:
 	var z1: Array = []
 	for i: int in nr:
 		for grund: Color in [GRAU, WEISS]:
-			z1.append(await _zelle("hd_vorschau", i, grund, Vector2i(b + 2 * RAND_PX, h + 2 * RAND_PX), Vector2(float(RAND_PX), float(RAND_PX)) + (d["fuss"] as Vector2), 1.0 / float(d["skala"]), 1))
+			z1.append(await _zelle("hd_vorschau", i, grund, Vector2i(b + 2 * RAND_PX, h + 2 * RAND_PX), Vector2(float(RAND_PX), float(RAND_PX)) + (d["fuss"] as Vector2), 1.0 / float(d["skala"]), 1, 1))
 	zeilen.append(z1)
-	# Zeile 2: Spielmaßstab (Zelle in Spielbildpixeln, dann ×2 mit nearest)
-	var sb: int = int(d["breite"]) + 2 * RAND_PX
-	var sh: int = int(d["hoehe"]) + 2 * RAND_PX
+	# Zeile 2: Spielmaßstab (direkt in der Größe des Spielbilds gerendert, wie im Spiel)
+	var sb: int = (int(d["breite"]) + 2 * RAND_PX) * SPIEL
+	var sh: int = (int(d["hoehe"]) + 2 * RAND_PX) * SPIEL
 	var z2: Array = []
 	for i: int in nr:
 		for grund: Color in [GRAU, WEISS]:
-			var zi: Image = await _zelle("hd_vorschau", i, grund, Vector2i(sb, sh), Vector2(float(RAND_PX) + float(d["ankerx"]) + 0.5, float(RAND_PX) + float(d["ankery"]) + 1.0), 1.0, SPIEL_ZOOM)
+			var zi: Image = await _zelle("hd_vorschau", i, grund, Vector2i(sb, sh), Vector2(float(RAND_PX) + float(d["ankerx"]) + 0.5, float(RAND_PX) + float(d["ankery"]) + 1.0) * float(SPIEL), 1.0, 1, SPIEL)
 			z2.append(zi)
 	zeilen.append(z2)
 	if vergleich:
@@ -86,7 +87,7 @@ func _lauf() -> void:
 		var nv: int = int(dv["bilder"])
 		for i: int in nr:
 			for grund: Color in [GRAU, WEISS]:
-				z3.append(await _zelle("hd_vergleich", mini(i * nv / maxi(int(d["bilder"]), 1), nv - 1), grund, Vector2i(sb, sh), Vector2(float(RAND_PX) + float(dv["ankerx"]) + 0.5, float(RAND_PX) + float(dv["ankery"]) + 1.0), 1.0, SPIEL_ZOOM))
+				z3.append(await _zelle("hd_vergleich", mini(i * nv / maxi(int(d["bilder"]), 1), nv - 1), grund, Vector2i(sb, sh), Vector2(float(RAND_PX) + float(dv["ankerx"]) + 0.5, float(RAND_PX) + float(dv["ankery"]) + 1.0) * float(SPIEL), 1.0, 1, SPIEL))
 		zeilen.append(z3)
 	# zusammensetzen
 	var breite: int = 0
@@ -114,7 +115,7 @@ func _lauf() -> void:
 	blatt.save_png(aus)
 	print("Vorschau: %s %s, Bilder %s" % [aus, str(blatt.get_size()), str(nr)])
 	if arg.has("rand"):
-		var z: Image = await _zelle("hd_vorschau", nr[0], WEISS, Vector2i(b + 2 * RAND_PX, h + 2 * RAND_PX), Vector2(float(RAND_PX), float(RAND_PX)) + (d["fuss"] as Vector2), 1.0 / float(d["skala"]), 1)
+		var z: Image = await _zelle("hd_vorschau", nr[0], WEISS, Vector2i(b + 2 * RAND_PX, h + 2 * RAND_PX), Vector2(float(RAND_PX), float(RAND_PX)) + (d["fuss"] as Vector2), 1.0 / float(d["skala"]), 1, 1)
 		var ausschnitt: Image = z.get_region(Rect2i(RAND_PX + b / 8, RAND_PX + h / 20, 64, 56))
 		ausschnitt.resize(512, 448, Image.INTERPOLATE_NEAREST)
 		ausschnitt.save_png(aus.get_basename() + "_rand.png")
@@ -124,7 +125,8 @@ func _lauf() -> void:
 
 ## Ein Bild: Zelle `groesse` in Pixeln, Fußpunkt bei `fuss` (Pixel der Zelle), der Abspieler in einem Elternknoten mit dem
 ## Maßstab `skala` (1 = Spielmaßstab; 1 / skala des Clips = Dateiauflösung), danach mit `zoom` (nearest) vergrößert.
-func _zelle(clip: String, index: int, grund: Color, groesse: Vector2i, fuss: Vector2, skala: float, zoom: int) -> Image:
+## `asset`: Vergrößerung der Basispixel durch den Abspieler (1 = Dateiauflösung, SPIEL = wie im Spiel).
+func _zelle(clip: String, index: int, grund: Color, groesse: Vector2i, fuss: Vector2, skala: float, zoom: int, asset: int) -> Image:
 	var vp: SubViewport = SubViewport.new()
 	vp.size = groesse
 	vp.transparent_bg = false
@@ -140,6 +142,7 @@ func _zelle(clip: String, index: int, grund: Color, groesse: Vector2i, fuss: Vec
 	wurzel.position = fuss
 	vp.add_child(wurzel)
 	var v: DarstellungVelaFrames = DarstellungVelaFrames.new()
+	v.asset_zu_bild = asset
 	wurzel.add_child(v)
 	v.aus_clip_bild(clip, index, 1)
 	for _i: int in 4:

@@ -135,6 +135,7 @@ func _lauf() -> void:
 		for eintrag: Dictionary in e[2]:
 			var inhalt: Node2D = _zelle(welt, spalte, zeile, String(eintrag["text"]), bool(eintrag["treffer"]))
 			var p: DarstellungVelaPuppe = DarstellungVelaPuppe.new()
+			p.asset_zu_bild = 1  # das Werkzeug zeichnet in Basispixeln (Zoom wirkt über `welt`)
 			p.setze_blick(_blick)
 			p.setze_pose(eintrag["pose"])
 			inhalt.add_child(p)

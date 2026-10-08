@@ -4,7 +4,7 @@
 # Spieltasten: Pfeile = L R O U, Y oder Z = Angriff A, X = Sprung S.
 # Steuertasten (außerhalb der Logik, nie aufgezeichnet; Welt 10.4, 10.6,
 # 11.3): P Pause, F1 Debug-Anzeige, F2 Eingabeaufzeichnung, F3 Neustart mit
-# Seed + 1, N Einzelschritt in der Pause.
+# Seed + 1, N Einzelschritt in der Pause, F11 Vollbild (E28).
 #
 # T(f) ist der Tastenstand zu Beginn des Logikschritts (abfragen()). Ein
 # Druck, der zwischen zwei Abfragen beginnt und endet, zählt in der nächsten
@@ -29,13 +29,14 @@ const SPIELTASTEN: Dictionary = {
 	KEY_X: KernTasten.TASTE_S,
 }
 
-## Steuertasten außerhalb der Logik: "pause", "debug", "aufzeichnung", "neustart", "einzelschritt".
+## Steuertasten außerhalb der Logik: "pause", "debug", "aufzeichnung", "neustart", "einzelschritt", "vollbild".
 const STEUERTASTEN: Dictionary = {
 	KEY_P: "pause",
 	KEY_F1: "debug",
 	KEY_F2: "aufzeichnung",
 	KEY_F3: "neustart",
 	KEY_N: "einzelschritt",
+	KEY_F11: "vollbild",
 }
 
 ## je gehaltener Taste (Code) ihre Spieltaste

@@ -1,7 +1,7 @@
 # Zeichenklasse der Darstellung (E25; Auftrag 5, Phase 1, U1; docs/grafik.md
 # 9.10). Port von spiel/src/darstellung/zeichner.ts. Die Logik und alle Lagen
 # der Darstellung rechnen in Spielpixeln (384 × 224, bildX und bildY in
-# zeichnen.gd); das Fenster hat DARSTELLUNG-mal so viele Bildpixel (768 × 448).
+# zeichnen.gd); das Spielbild hat DARSTELLUNG-mal so viele Bildpixel (E28: 1536 × 896).
 # Jedes Zeichnen der Darstellung geht durch diese Klasse und gibt
 # Spielkoordinaten an.
 #
@@ -29,7 +29,7 @@ extends RefCounted
 
 ## Mitte eines Spielpixels: 1-px-Linien auf halben Koordinaten bleiben scharf.
 const PIXELMITTE: float = 0.5
-## Größe des Fensters in Bildpixeln (768 × 448).
+## Größe des Spielbilds in Bildpixeln (E28: 1536 × 896).
 const BILDPIXEL_BREITE: int = KernWerte.BILD_BREITE * DarstellungMasse.DARSTELLUNG
 const BILDPIXEL_HOEHE: int = KernWerte.BILD_HOEHE * DarstellungMasse.DARSTELLUNG
 ## Eckenzahl des Vielecks, das eine Ellipse ersetzt.

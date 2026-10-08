@@ -16,7 +16,7 @@
 #      wobei in jedem Schritt zusätzlich gezeichnet wird: zeichneBild, Debug,
 #      oberste Ebene auf ein echtes Node2D im SceneTree (dessen Canvas-Item),
 #      dazu queue_redraw.
-#  (b) Tastatur (K6) und Zeichner (Faktor 2), Schrift, Sitzung einzeln.
+#  (b) Tastatur (K6) und Zeichner (Faktor 4, E28), Auflösung, Schrift, Sitzung einzeln.
 #  (c) Das Zeichnen liest die Welt nur: Fingerabdruck des gesamten Weltzustands
 #      vor und nach dem Zeichnen gleich; Protokoll mit und ohne Zeichnen gleich;
 #      die zweiteilige Zeichnung ergibt dieselbe Befehlsfolge wie die ganze.
@@ -48,6 +48,7 @@ static func lauf() -> Dictionary:
 	var t: DarstellungTest = DarstellungTest.new()
 	t.tastatur()
 	t.zeichner()
+	t.aufloesung()
 	t.schrift()
 	t.sitzung()
 	t.vorfuehrung()
@@ -121,8 +122,9 @@ func tastatur() -> void:
 	s.runter(KEY_F2)
 	s.runter(KEY_F3)
 	s.runter(KEY_N)
+	s.runter(KEY_F11)
 	s.runter(KEY_P, false, true)
-	_gleich(gesehen, ["pause", "debug", "aufzeichnung", "neustart", "einzelschritt"], "Tastatur: Steuertasten")
+	_gleich(gesehen, ["pause", "debug", "aufzeichnung", "neustart", "einzelschritt", "vollbild"], "Tastatur: Steuertasten")
 	_gleich(s.abfragen(), 0, "Tastatur: Steuertasten gehören nicht zu T")
 	# mit Strg gedrückte Spieltaste wirkt nicht
 	s.runter(KEY_RIGHT, false, true)
@@ -145,28 +147,31 @@ func tastatur() -> void:
 
 
 # ===========================================================================
-# (b) Zeichner (Faktor 2)
+# (b) Zeichner (Faktor 4)
 # ===========================================================================
 
 func zeichner() -> void:
 	var rot: Color = Color(1, 0, 0, 1)
-	_gleich(DarstellungMasse.DARSTELLUNG, 2, "Faktor 2")
-	_gleich(DarstellungZeichner.BILDPIXEL_BREITE, 768, "Bildpixel breit")
-	_gleich(DarstellungZeichner.BILDPIXEL_HOEHE, 448, "Bildpixel hoch")
+	# d: Bildpixel je Spielpixel; alle Erwartungen unten sind Spielpixel · d (nichts hängt am Wert 2 oder 4)
+	var d: float = float(DarstellungMasse.DARSTELLUNG)
+	_gleich(DarstellungMasse.DARSTELLUNG, 4, "Faktor 4")
+	_gleich(DarstellungZeichner.BILDPIXEL_BREITE, 1536, "Bildpixel breit")
+	_gleich(DarstellungZeichner.BILDPIXEL_HOEHE, 896, "Bildpixel hoch")
+	_gleich(DarstellungMasse.ASSET_ZU_BILD * DarstellungMasse.ASSET_BASIS, DarstellungMasse.DARSTELLUNG, "Puppe und Clips: ganzzahlige Vergrößerung auf den Faktor")
 	var zn: DarstellungZeichner = DarstellungZeichner.new(null)
 	zn.aufzeichnen = true
 	zn.rechteck(10, 20, 5, 6, rot)
-	_gleich(zn.befehle[0]["rect"], Rect2(20, 40, 10, 12), "Rechteck in Bildpixeln")
+	_gleich(zn.befehle[0]["rect"], Rect2(10 * d, 20 * d, 5 * d, 6 * d), "Rechteck in Bildpixeln")
 	# Verschiebung (Bildschütteln) in Spielpixeln, sichern/zurueck
 	zn.leeren()
 	zn.sichern()
 	zn.verschieben(3, 4)
 	zn.rechteck(0, 0, 1, 1, rot)
-	_gleich(zn.befehle[0]["rect"], Rect2(6, 8, 2, 2), "Verschiebung 3/4 Spielpixel = 6/8 Bildpixel")
+	_gleich(zn.befehle[0]["rect"], Rect2(3 * d, 4 * d, d, d), "Verschiebung 3/4 Spielpixel in Bildpixeln")
 	zn.verschieben(1, 1)
 	zn.zurueck()
 	zn.rechteck(0, 0, 1, 1, rot)
-	_gleich(zn.befehle[1]["rect"], Rect2(0, 0, 2, 2), "zurueck stellt die Verschiebung her")
+	_gleich(zn.befehle[1]["rect"], Rect2(0, 0, d, d), "zurueck stellt die Verschiebung her")
 	# Deckkraft, auch gesichert
 	zn.leeren()
 	zn.sichern()
@@ -183,13 +188,13 @@ func zeichner() -> void:
 	_ok(is_equal_approx((zn.befehle[0]["farbe"] as Color).a, 0.2), "Alpha mal Deckkraft")
 	zn.beginne()
 	zn.leeren()
-	# Umriss: Linie von 1 Spielpixel um die Pixel (0,0) bis (10,10) = Bildpixel 0 bis 22
+	# Umriss: Linie von 1 Spielpixel um die Pixel (0,0) bis (10,10) = Bildpixel 0 bis 11 · d
 	zn.umriss(0, 0, 10, 10, rot)
 	var r: Array = []
 	for b: Dictionary in zn.befehle:
 		r.append(b["rect"])
-	_gleich(r, [Rect2(0, 0, 22, 2), Rect2(0, 20, 22, 2), Rect2(0, 2, 2, 18), Rect2(20, 2, 2, 18)], "Umriss als vier Rechtecke")
-	# Umriss mit Strichmuster [2, 2]: Striche von 4 Bildpixeln, Lücken von 4
+	_gleich(r, [Rect2(0, 0, 11 * d, d), Rect2(0, 10 * d, 11 * d, d), Rect2(0, d, d, 9 * d), Rect2(10 * d, d, d, 9 * d)], "Umriss als vier Rechtecke")
+	# Umriss mit Strichmuster [2, 2]: Striche von 2 Spielpixeln, Lücken von 2
 	zn.leeren()
 	zn.umriss(0, 0, 10, 10, rot, [2, 2])
 	var summe: float = 0.0
@@ -197,26 +202,26 @@ func zeichner() -> void:
 	for b: Dictionary in zn.befehle:
 		var q: Rect2 = b["rect"]
 		summe += maxf(q.size.x, q.size.y)
-		if maxf(q.size.x, q.size.y) > 4.0:
+		if maxf(q.size.x, q.size.y) > 2.0 * d:
 			kurz = false
-	_ok(kurz, "Umriss gestrichelt: Striche höchstens 4 Bildpixel lang")
+	_ok(kurz, "Umriss gestrichelt: Striche höchstens 2 Spielpixel lang")
 	_ok(zn.befehle.size() > 8, "Umriss gestrichelt: mehrere Striche")
-	_ok(summe >= 36.0 and summe <= 60.0, "Umriss gestrichelt: etwa die Hälfte der Länge (%s)" % summe)
+	_ok(summe >= 18.0 * d and summe <= 30.0 * d, "Umriss gestrichelt: etwa die Hälfte der Länge (%s)" % summe)
 	# Linie waagerecht durch die Pixel (0,0) und (9,0): Mitte des Pixels, Dicke 1 Spielpixel
 	zn.leeren()
 	zn.linie(0, 0, 9, 0, rot)
-	_gleich(zn.befehle[0]["rect"], Rect2(1, 0, 18, 2), "Linie waagerecht")
+	_gleich(zn.befehle[0]["rect"], Rect2(0.5 * d, 0, 9 * d, d), "Linie waagerecht")
 	zn.leeren()
 	zn.linie(3, 1, 3, 8, rot)
-	_gleich(zn.befehle[0]["rect"], Rect2(6, 3, 2, 14), "Linie senkrecht")
+	_gleich(zn.befehle[0]["rect"], Rect2(3 * d, 1.5 * d, d, 7 * d), "Linie senkrecht")
 	zn.leeren()
 	zn.linie(0, 0, 4, 3, rot)
 	_gleich(zn.befehle[0]["art"], "linie", "Linie schräg bleibt eine Linie")
-	_gleich(zn.befehle[0]["breite"], 2.0, "Linie schräg: Dicke 2 Bildpixel")
+	_gleich(zn.befehle[0]["breite"], d, "Linie schräg: Dicke 1 Spielpixel")
 	# Vieleck und Ellipse
 	zn.leeren()
 	zn.vieleck([Vector2(0, 0), Vector2(4, 0), Vector2(4, 3)], rot)
-	_gleich(zn.befehle[0]["punkte"], PackedVector2Array([Vector2(0, 0), Vector2(8, 0), Vector2(8, 6)]), "Vieleck in Bildpixeln")
+	_gleich(zn.befehle[0]["punkte"], PackedVector2Array([Vector2(0, 0), Vector2(4 * d, 0), Vector2(4 * d, 3 * d)]), "Vieleck in Bildpixeln")
 	zn.leeren()
 	zn.ellipse(10, 10, 5, 2, rot)
 	var pts: PackedVector2Array = zn.befehle[0]["punkte"]
@@ -226,7 +231,7 @@ func zeichner() -> void:
 	for p: Vector2 in pts:
 		rechts = maxf(rechts, p.x)
 		hoch = minf(hoch, p.y)
-	_ok(is_equal_approx(rechts, 30.0) and is_equal_approx(hoch, 16.0), "Ellipse: Halbachsen 10 und 4 Bildpixel um (20, 20)")
+	_ok(is_equal_approx(rechts, 15.0 * d) and is_equal_approx(hoch, 8.0 * d), "Ellipse: Halbachsen 5 und 2 Spielpixel um (10, 10)")
 	# Pixelellipse: eine Zeile je Lauf, Mitte der Zeilen
 	zn.leeren()
 	zn.pixelEllipse(10, 10, 6, 4, rot, 0.5)
@@ -237,15 +242,16 @@ func zeichner() -> void:
 	var w: int = zn.text(DarstellungSchrift.SCHRIFT_5X7, "A", 0, 0, rot)
 	_gleich(w, 5, "Text A: Breite")
 	_gleich(zn.befehle.size(), 12, "Text A: Läufe")
-	_gleich(zn.befehle[0]["rect"], Rect2(2, 0, 6, 2), "Text A: erste Zeile .###. = 3 Schriftpixel ab Spalte 1")
+	_gleich(zn.befehle[0]["rect"], Rect2(d, 0, 3 * d, d), "Text A: erste Zeile .###. = 3 Schriftpixel ab Spalte 1")
 	zn.leeren()
 	zn.text(DarstellungSchrift.SCHRIFT_5X7, "A", 4, 7, rot, 2)
-	_gleich(zn.befehle[0]["rect"], Rect2(4 * 2 + 2 * 2 * 1, 7 * 2, 12, 4), "Text A mit Faktor 2: Lauf 3 Schriftpixel = 6 Spielpixel = 12 Bildpixel")
-	# ganzzahlig: alle Kanten der Schrift liegen auf geraden Bildpixeln
+	_gleich(zn.befehle[0]["rect"], Rect2((4 + 2 * 1) * d, 7 * d, 6 * d, 2 * d), "Text A mit Faktor 2: Lauf 3 Schriftpixel = 6 Spielpixel")
+	# ganzzahlig: alle Kanten der Schrift liegen auf ganzen Spielpixeln (Vielfachen von d)
 	var gerade: bool = true
 	for b: Dictionary in zn.befehle:
 		var q: Rect2 = b["rect"]
-		if int(q.position.x) % 2 != 0 or int(q.position.y) % 2 != 0 or int(q.size.x) % 2 != 0 or int(q.size.y) % 2 != 0:
+		var di: int = DarstellungMasse.DARSTELLUNG
+		if int(q.position.x) % di != 0 or int(q.position.y) % di != 0 or int(q.size.x) % di != 0 or int(q.size.y) % di != 0:
 			gerade = false
 	_ok(gerade, "Text: Kanten auf ganzen Spielpixeln")
 	# gegen ein echtes CanvasItem: keine Aufzeichnung nötig, der Zähler zählt
@@ -256,6 +262,45 @@ func zeichner() -> void:
 	zc.vieleck([Vector2(0, 0), Vector2(4, 0), Vector2(4, 3)], rot)
 	_gleich(zc.zaehler, 3, "Zeichner auf einem CanvasItem: drei Befehle")
 	knoten.free()
+
+
+# ===========================================================================
+# (b) Auflösung 1536 × 896 (E28): Projekt, Vollbildtaste, Maßstab der Puppe
+# ===========================================================================
+
+func aufloesung() -> void:
+	var d: int = DarstellungMasse.DARSTELLUNG
+	_gleich(ProjectSettings.get_setting("display/window/size/viewport_width"), KernWerte.BILD_BREITE * d, "Projekt: Viewportbreite = Logikbreite · Faktor")
+	_gleich(ProjectSettings.get_setting("display/window/size/viewport_height"), KernWerte.BILD_HOEHE * d, "Projekt: Viewporthöhe = Logikhöhe · Faktor")
+	_gleich(ProjectSettings.get_setting("display/window/stretch/mode"), "viewport", "Projekt: Stretch viewport")
+	_gleich(ProjectSettings.get_setting("display/window/stretch/aspect"), "keep", "Projekt: Seitenverhältnis bleibt")
+	_gleich(ProjectSettings.get_setting("display/window/size/resizable"), true, "Projekt: Fenster frei skalierbar")
+	var fb: int = ProjectSettings.get_setting("display/window/size/window_width_override")
+	var fh: int = ProjectSettings.get_setting("display/window/size/window_height_override")
+	_ok(fb > 0 and fh > 0 and absi(fb * KernWerte.BILD_HOEHE - fh * KernWerte.BILD_BREITE) <= KernWerte.BILD_BREITE, "Projekt: Startfenster %d × %d hat das Seitenverhältnis des Spielbilds (±1 Pixel)" % [fb, fh])
+	_ok(fb <= 1366 and fh <= 768 - 21, "Projekt: Startfenster passt auf einen Schirm von 1366 × 768 (mit Leiste)")
+	_gleich(d, DarstellungMasse.ASSET_BASIS * DarstellungMasse.ASSET_ZU_BILD, "Faktor = Vermessung · Vergrößerung (ganzzahlig, Pixel bleiben scharf)")
+	# Vollbild (F11): nur die Anfrage der Sitzung, das Fenster schaltet der Knoten
+	var s: DarstellungSitzung = DarstellungSitzung.new(_stage("scheibe"), 3)
+	s.tastatur.runter(KEY_F11)
+	_ok(s.vollbild_anfrage, "F11: Vollbild-Anfrage gesetzt")
+	s.tastatur.runter(KEY_F11, true)
+	s.vollbild_anfrage = false
+	s.tastatur.runter(KEY_F11, true)
+	_ok(not s.vollbild_anfrage, "F11: Wiederholung durch das Betriebssystem wirkt nicht")
+	_gleich(s.welt.frame, 0, "F11: ändert die Logik nicht")
+	# Puppe: vergrößert sich selbst um ASSET_ZU_BILD, Werkzeuge setzen 1
+	var p: DarstellungVelaPuppe = DarstellungVelaPuppe.new()
+	p.aus_animation("stand", 1, 1)
+	_gleich(p.scale, Vector2(float(DarstellungMasse.ASSET_ZU_BILD), float(DarstellungMasse.ASSET_ZU_BILD)), "Puppe: Maßstab ASSET_ZU_BILD, Blick rechts")
+	p.aus_animation("stand", 1, -1)
+	_gleich(p.scale, Vector2(-float(DarstellungMasse.ASSET_ZU_BILD), float(DarstellungMasse.ASSET_ZU_BILD)), "Puppe: Blick links spiegelt")
+	p.free()
+	var q: DarstellungVelaPuppe = DarstellungVelaPuppe.new()
+	q.asset_zu_bild = 1
+	q.aus_animation("stand", 1, 1)
+	_gleich(q.scale, Vector2.ONE, "Puppe: Werkzeugmodus Maßstab 1")
+	q.free()
 
 
 # ===========================================================================

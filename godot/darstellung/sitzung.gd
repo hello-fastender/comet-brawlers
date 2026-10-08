@@ -72,6 +72,8 @@ var szene: Szene = null
 var tastatur: DarstellungTastatur = null
 ## Pause (außerhalb der Logik, Welt 10.4)
 var pause: bool = false
+## Vollbild-Anfrage (F11); der Spielknoten wechselt den Fensterzustand und setzt sie zurück
+var vollbild_anfrage: bool = false
 ## Debug-Anzeige (F1)
 var debug: bool = false
 ## Frame, ab dem die laufende Aufzeichnung (F2) markiert ist; null = keine
@@ -248,9 +250,11 @@ func nimmAufzeichnungen() -> Array:
 
 
 ## Steuertaste (Rückruf der Tastatur): "pause", "debug", "aufzeichnung",
-## "neustart" oder "einzelschritt".
+## "neustart", "einzelschritt" oder "vollbild" (nur die Anfrage; das Fenster schaltet der Knoten).
 func steuer(taste: String) -> void:
 	match taste:
+		"vollbild":
+			vollbild_anfrage = true
 		"pause":
 			pause = not pause
 		"debug":

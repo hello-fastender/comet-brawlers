@@ -2,7 +2,7 @@
 # Port von spiel/src/darstellung/zeichnen.ts (Fassung der Platzhalter mit
 # Rechtecken; die Sprite-Fassung entfällt, Sprites kommen als Puppe). Liest nur
 # die Welt; ändert sie nie. Alle Lagen in Spielpixeln; die Zeichenklasse
-# (zeichner.gd) bringt sie auf die Bildpixel (768 × 448; E25, Auftrag 5,
+# (zeichner.gd) bringt sie auf die Bildpixel (1536 × 896; E28, vorher E25, Auftrag 5,
 # docs/grafik.md 9.10).
 #
 # Bildschirmposition und Zeichenreihenfolge nach

@@ -46,7 +46,7 @@ const BEIN_V_VORN: Dictionary = {"OberschenkelV": 19, "UnterschenkelV": 20, "Fus
 # Gehen: Zyklus, Schritt, Standfuß in Weltkoordinaten ohne Rutschen
 # ---------------------------------------------------------------------------
 
-## Gehtempo der Logik in Bildpixeln je Tick: LAUF_X (Spielpixel, 16.16) · 2 (Darstellung).
+## Gehtempo der Logik in Basispixeln je Tick: LAUF_X (Spielpixel, 16.16) · ASSET_BASIS (2).
 const GEHEN_V: float = 3.5
 ## Zykluslänge in Ticks (zwei Schritte). Die Logik schleift LAUF über `uhr`, die Darstellung nimmt `uhr`
 ## modulo dieser Länge. Kürzer als die 48 Ticks des alten Entwurfs: Bei 3,5 px je Tick und

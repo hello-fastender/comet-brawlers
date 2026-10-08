@@ -3,7 +3,7 @@
 #   xvfb-run -a godot --path godot --rendering-driver opengl3 --script res://werkzeuge/foto.gd -- \
 #       --szene <datei> --eingabe <datei> --nach 300,600,900 --aus <ordnerPrefix> [--debug] [--seed N] [--puppe|--platzhalter]
 #
-# Lädt darstellung/spiel.tscn in einen SubViewport (768 × 448), lässt die
+# Lädt darstellung/spiel.tscn in einen SubViewport (1536 × 896), lässt die
 # Sitzung die Logikschritte laufen (ohne Echtzeit, ohne Takt) und speichert zu
 # jedem Wert in --nach das Bild der Viewport-Textur als PNG
 # <aus>_<n:04d>.png. Pfade relativ zum Repo-Wurzelverzeichnis (der Ordner über
@@ -13,7 +13,8 @@
 # (--headless) gibt es keine Bilder.
 extends SceneTree
 
-const BILD: Vector2i = Vector2i(768, 448)
+## Größe des Spielbilds in Bildpixeln (E28: 1536 × 896)
+const BILD: Vector2i = Vector2i(DarstellungZeichner.BILDPIXEL_BREITE, DarstellungZeichner.BILDPIXEL_HOEHE)
 
 
 func _initialize() -> void:

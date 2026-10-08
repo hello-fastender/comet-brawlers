@@ -21,12 +21,14 @@
 ## in der Pause nichts). Gleiche Folge von Frames ergibt gleiche Pose (nur 64-Bit-Zahlen).
 ##
 ## Einhängen in die Szene:
-## - Ursprung des Nodes = Fußpunkt der Figur in Bildpixeln (2×): `position` ist
-##   Spielposition × 2 (die Höhe `h` der Logik abziehen). Die Sohle der Standbeine liegt
+## - Ursprung des Nodes = Fußpunkt der Figur in Bildpixeln des Spielbilds (E28: 4×): `position` ist
+##   Spielposition · DARSTELLUNG (die Höhe `h` der Logik abziehen). Die Sohle der Standbeine liegt
 ##   in jeder Pose auf y = 0.
-## - Maßstab 1: ein Texturpixel ist ein Bildpixel. Nicht skalieren.
-## - Blick links spiegelt die ganze Puppe (`scale.x = -1`, setzt `aus_figur` selbst).
-## - Die Teile liegen auf ganzen Bildpixeln (Pixel-Snap der Positionen, nicht der Drehung,
+## - Die Puppe ist in Basispixeln (DarstellungMasse.ASSET_BASIS = 2) vermessen: alle Längen, Teile und das Gehtempo
+##   sind Basispixel, ein Texturpixel ist ein Basispixel. Der Node vergrößert sich selbst um ASSET_ZU_BILD
+##   (E28: 2), mit NEAREST-Filter bleiben die Pixel scharf. Nicht von außen skalieren.
+## - Blick links spiegelt die ganze Puppe (`scale.x` negativ, setzt `aus_figur` selbst).
+## - Die Teile liegen auf ganzen Basispixeln (Pixel-Snap der Positionen, nicht der Drehung,
 ##   RASTER), damit nichts flimmert.
 ## - Zeichenreihenfolge innerhalb der Puppe über `z_index` der Sprites, relativ zum Node
 ##   (0 bis EBENEN_BREITE - 1). Sortiert die Szene über `z_index`, muss der Abstand
@@ -149,6 +151,9 @@ var _zopf: Feder = Feder.new()
 var _kopf_feder: Feder = Feder.new()
 ## Winkel des Zopfs in Weltrichtung (Grad, vorwärts = +x) nach dem letzten Schritt
 var _zopf_ruhe_welt: float = 0.0
+## Vergrößerung gegenüber der Vermessung der Puppe. Im Spiel ASSET_ZU_BILD; Werkzeuge, die in Basispixeln zeichnen
+## (Kontaktbögen, Filme), setzen 1.
+var asset_zu_bild: int = DarstellungMasse.ASSET_ZU_BILD
 ## bone → Vector2 Skalierung der letzten Pose (Stauchung, Streckung)
 var _skala: Dictionary = {}
 
@@ -363,7 +368,7 @@ func aus_animation(anim: String, uhr: int, blick: int) -> void:
 func aus_figur(f: KernEntitaeten.Figur, welt: KernWelt) -> void:
 	var z: Dictionary = DarstellungVelaPosen.zuordnung(f, welt)
 	var frame: int = welt.frame if welt != null else _frame
-	var wx: float = float(f.x) / 65536.0 * float(DarstellungMasse.DARSTELLUNG)
+	var wx: float = float(f.x) / 65536.0 * float(DarstellungMasse.ASSET_BASIS)
 	schritt(z["animation"], z["uhr"], f.blick, frame, wx, f.stopp)
 
 
@@ -427,7 +432,7 @@ func _kopf_feder_neu() -> Feder:
 ## Blickrichtung setzen (1 rechts, -1 links); spiegelt die ganze Puppe.
 func setze_blick(blick: int) -> void:
 	_blick = -1 if blick < 0 else 1
-	scale.x = float(_blick) * float(_pose.get("breite", 1.0))
+	scale = Vector2(float(_blick) * float(_pose.get("breite", 1.0)), 1.0) * float(asset_zu_bild)
 
 
 func animation_name() -> String:
@@ -678,7 +683,7 @@ func _sohle_tief(g: Gelenk, w: float) -> float:
 ## Bones und Sprites nach `_welt` stellen.
 func _anwenden(p: Dictionary) -> void:
 	var ebenen: Dictionary = p.get("e", {})
-	scale.x = float(_blick) * float(_pose.get("breite", 1.0))
+	scale = Vector2(float(_blick) * float(_pose.get("breite", 1.0)), 1.0) * float(asset_zu_bild)
 	var skala: Dictionary = _skala
 	for b: String in BONES:
 		var bone: Bone2D = bones[b]

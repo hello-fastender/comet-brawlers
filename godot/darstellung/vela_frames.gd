@@ -8,9 +8,9 @@
 ##     oder PNG, Figur z. B. 360 Dateipixel hoch; Texturfilter LINEAR (ohne Mipmaps: schärfer), Sprite im Maßstab
 ##     `skala` · ASSET_ZU_BILD (`skala` = Basispixel je Dateipixel, z. B. 142 / 360).
 ##
-## Basispixel: Die Clips (Pixel wie HD) sind für ein Bild von 768 × 448 vermessen (ASSET_BASIS = 2 Bildpixel je
-## Spielpixel, E25); clip.txt (Größe, Anker, Schrittlänge, Skala) bleibt in diesen Einheiten gültig. Das Fenster hat
-## DARSTELLUNG Bildpixel je Spielpixel (E27: 4), der Sprite wird um ASSET_ZU_BILD = DARSTELLUNG / ASSET_BASIS vergrößert.
+## Basispixel: Die Clips (Pixel wie HD) sind für ein Bild von 768 × 448 vermessen (DarstellungMasse.ASSET_BASIS = 2 Bildpixel
+## je Spielpixel, E25); clip.txt (Größe, Anker, Schrittlänge, Skala) bleibt in diesen Einheiten gültig. Das Spielbild hat
+## DARSTELLUNG Bildpixel je Spielpixel (E28: 4), der Sprite wird um ASSET_ZU_BILD = DARSTELLUNG / ASSET_BASIS vergrößert.
 ##
 ## Ursprung des Nodes = Fußpunkt in Bildpixeln (wie bei der Puppe; Spiegelachse in der Mitte der Fußspalte,
 ## die Hauptsitzung setzt `position` aus DarstellungZeichnen.figurFuss(welt) + DARSTELLUNG / 2 Bildpixel nach rechts).
@@ -36,10 +36,8 @@ extends Node2D
 
 const ORDNER: String = "res://grafik/vela_video/"
 
-## Bildpixel je Spielpixel, in denen Clips und Puppe vermessen sind (E25: 768 × 448). clip.txt gilt in diesen Einheiten.
-const ASSET_BASIS: int = 2
-## Vergrößerung der Clips und der Puppe gegenüber ihrer Vermessung (E27: 4 / 2 = 2).
-const ASSET_ZU_BILD: int = DarstellungMasse.DARSTELLUNG / ASSET_BASIS
+## Vergrößerung der Clips gegenüber ihrer Vermessung (DarstellungMasse.ASSET_ZU_BILD: E28, 4 / 2 = 2).
+const ASSET_ZU_BILD: int = DarstellungMasse.ASSET_ZU_BILD
 
 ## Obergrenze des Texturspeichers aller geladenen Clips in MB (4 Byte je Pixel). Die fünf gemalten Clips brauchen
 ## nach dem Zuschnitt rund 60 MB (docs/godot.md, „Speicher“); die Obergrenze lässt Platz für weitere Vela-Clips.
@@ -74,6 +72,10 @@ static var nachladen: bool = false
 static var budget_bytes: int = SPEICHER_BUDGET_MB * 1048576
 ## So viele zuletzt benutzte Clips (außer dem gezeigten und dem angeforderten) bleiben beim Entladen unberührt.
 static var schutz_zuletzt: int = 2
+
+## Vergrößerung gegenüber der Vermessung der Clips. Im Spiel ASSET_ZU_BILD; Werkzeuge, die in Basispixeln zeichnen
+## (Kontaktbögen, Vorschau), setzen 1.
+var asset_zu_bild: int = ASSET_ZU_BILD
 
 var _sprite: Sprite2D = null
 var _clip: String = ""
@@ -460,7 +462,7 @@ func aus_clip_bild(clip: String, index: int, blick: int) -> bool:
 	# Beide werden um ASSET_ZU_BILD vergrößert. Die Textur ist zugeschnitten: ihr Versatz im Dateibild kommt dazu.
 	var weich: bool = bool(d["weich"])
 	_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR if weich else CanvasItem.TEXTURE_FILTER_NEAREST
-	var m: float = float(d["skala"]) * float(ASSET_ZU_BILD)
+	var m: float = float(d["skala"]) * float(asset_zu_bild)
 	_sprite.scale = Vector2(m, m)
 	_sprite.offset = (c["versatz"] as Array)[i] - (d["fuss"] as Vector2)
 	scale = Vector2(float(_blick), 1.0)

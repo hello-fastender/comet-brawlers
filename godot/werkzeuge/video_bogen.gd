@@ -132,6 +132,7 @@ func _zelle(welt: Node2D, ort: Vector2, d: Dictionary, clip: String, index: int,
 	_rechteck(welt, ort.x, fuss.y, b, ort.y + h - fuss.y, BODEN)
 	_rechteck(welt, ort.x, fuss.y - 0.5, b, 0.5, Color(0.9, 0.9, 0.9, 0.7))
 	var v: DarstellungVelaFrames = DarstellungVelaFrames.new()
+	v.asset_zu_bild = 1  # das Werkzeug zeichnet in Basispixeln (Zoom wirkt über `welt`)
 	v.position = fuss
 	welt.add_child(v)
 	v.aus_clip_bild(clip, index, _blick)
@@ -239,6 +240,7 @@ func _zyklus(clip: String, aus: String) -> void:
 	var welt: Node2D = vw[1]
 	DirAccess.make_dir_recursive_absolute(aus)
 	var v: DarstellungVelaFrames = DarstellungVelaFrames.new()
+	v.asset_zu_bild = 1  # das Werkzeug zeichnet in Basispixeln (Zoom wirkt über `welt`)
 	var fuss: Vector2 = Vector2(float(RAND) + float(d["ankerx"]) + 0.5, float(KOPF) + float(RAND) + float(d["ankery"]) + 1.0)
 	_rechteck(welt, 0, fuss.y, cb, ch + KOPF - fuss.y, BODEN)
 	_rechteck(welt, 0, fuss.y - 0.5, cb, 0.5, Color(0.9, 0.9, 0.9, 0.7))
@@ -298,6 +300,7 @@ func _ticks(clip: String, aus: String) -> void:
 	_rechteck(welt, 0, fuss.y, kb, kh + 14 - fuss.y + 4, BODEN)
 	_rechteck(welt, 0, fuss.y - 0.5, kb, 0.5, Color(0.9, 0.9, 0.9, 0.7))
 	var v: DarstellungVelaFrames = DarstellungVelaFrames.new()
+	v.asset_zu_bild = 1  # das Werkzeug zeichnet in Basispixeln (Zoom wirkt über `welt`)
 	v.position = fuss
 	welt.add_child(v)
 	# Zeitachse: ein Kästchen je Tick der Logik
@@ -384,7 +387,8 @@ func _schritt(f: KernEntitaeten.Figur, aktion: String, uhr: int, dx: float = 0.0
 func _folge_bauen(name: String) -> Array:
 	var aus: Array = []
 	var f: KernEntitaeten.Figur = KernEntitaeten.Figur.new()
-	var px: float = float(DarstellungMasse.DARSTELLUNG) / 65536.0
+	# Basispixel: das Werkzeug zeichnet die Clips in der Vermessung (asset_zu_bild = 1)
+	var px: float = float(DarstellungMasse.ASSET_BASIS) / 65536.0
 	for i: int in 6:
 		aus.append(_schritt(f, "STAND", i + 1))
 	match name:
@@ -477,6 +481,7 @@ func _folge(name: String, aus: String, jede: int) -> void:
 		welt.add_child(m)
 		marken.append(m)
 	var v: DarstellungVelaFrames = DarstellungVelaFrames.new()
+	v.asset_zu_bild = 1  # das Werkzeug zeichnet in Basispixeln (Zoom wirkt über `welt`)
 	welt.add_child(v)
 	var kaesten_y: float = float(h - zeit_h + 6)
 	var box: float = float(b - 8) / float(schritte.size())

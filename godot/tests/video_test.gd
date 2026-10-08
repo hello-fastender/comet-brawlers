@@ -1558,6 +1558,9 @@ func _szene() -> void:
 	var platzhalter: int = 0
 	var nie_beide: bool = true
 	var test_vor: Dictionary = {}
+	var lage_ok: bool = true
+	var abgeschnitten: int = 0
+	var erste_ab: String = ""
 	for _i in range(SCHRITTE):
 		sitzung.logikSchritt()
 		spiel.call("_puppeAktualisieren")
@@ -1573,12 +1576,27 @@ func _szene() -> void:
 			platzhalter += 1
 		if frames.visible:
 			test_vor[f.aktion] = true
+		if frames.visible:
+			# Lage (E28): Fußpunkt der Logik + ein halbes Spielpixel; die Textur liegt ganz im Spielbild (nichts abgeschnitten)
+			var ort: Vector2 = DarstellungZeichnen.figurFuss(sitzung.welt) + Vector2(float(DarstellungMasse.DARSTELLUNG) * 0.5, 0.0)
+			if frames.position != ort:
+				lage_ok = false
+			var sp: Sprite2D = frames.get_node("Bild")
+			var lokal: Rect2 = Rect2(sp.offset * sp.scale, sp.texture.get_size() * sp.scale)
+			var xs: Array[float] = [lokal.position.x * frames.scale.x, lokal.end.x * frames.scale.x]
+			var rechteck: Rect2 = Rect2(ort + Vector2(minf(xs[0], xs[1]), lokal.position.y), Vector2(absf(xs[1] - xs[0]), lokal.size.y))
+			if not Rect2(0, 0, DarstellungZeichner.BILDPIXEL_BREITE, DarstellungZeichner.BILDPIXEL_HOEHE).encloses(rechteck):
+				abgeschnitten += 1
+				if abgeschnitten == 1:
+					erste_ab = "Tick %d %s %s Rechteck %s" % [sitzung.welt.frame, f.aktion, frames.clip_name(), str(rechteck)]
 		if (spiel.get("figur_extern") as bool) != (frames.visible or puppe.visible):
 			nie_beide = false
 	_ok(video_gesehen > 0, "Szene: Video wurde gezeigt (%d von %d Schritten)" % [video_gesehen, SCHRITTE])
 	_ok(nur_video, "Szene: Video sichtbar genau dort, wo für die Aktion ein Clip da ist")
 	_ok(nie_beide, "Szene: nie Video und Puppe zugleich; figur_extern folgt der Quelle")
 	_ok(platzhalter > 0, "Szene: Aktionen ohne Clip und ohne Puppe zeigen den Platzhalter (%d Schritte)" % platzhalter)
+	_ok(lage_ok, "Szene: der Abspieler sitzt am Fußpunkt der Logik (· Faktor) plus ein halbes Spielpixel")
+	_ok(abgeschnitten == 0, "Szene: keine Textur des Abspielers ragt aus dem Spielbild (%d Ticks; %s)" % [abgeschnitten, erste_ab])
 	var ref: PackedStringArray = (ref_roh as String).split("\n")
 	var ki: int = VergleichHilfe.kopfIndex(ref)
 	var bis: int = ki + 1 + SCHRITTE

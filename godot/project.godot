@@ -9,9 +9,13 @@ config/features=PackedStringArray("4.7")
 
 [display]
 
-window/size/viewport_width=768
-window/size/viewport_height=448
+window/size/viewport_width=1536
+window/size/viewport_height=896
+window/size/window_width_override=1280
+window/size/window_height_override=747
+window/size/resizable=true
 window/stretch/mode="viewport"
+window/stretch/aspect="keep"
 
 [debug]
 

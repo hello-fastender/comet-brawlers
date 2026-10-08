@@ -10,7 +10,7 @@ const F = preload("res://darstellung/vela_frames.gd")
 const T = preload("res://darstellung/vela_frames_tabelle.gd")
 ## Die fünf gemalten Clips (HD) und ein paar Pixel-Clips.
 const HD: Array[String] = ["stand", "kette1", "sprint", "sprung", "sprungtritt"]
-const PIXEL: Array[String] = ["kette2", "kette3", "kette4"]
+const PIXEL: Array[String] = ["gehen", "kette2", "kette3", "kette4", "getroffen_vorn", "umgeworfen", "liegen", "aufstehen"]
 ## Zielwert (Auftrag E27): Texturspeicher der fünf gemalten Clips nach vollem Vorausladen höchstens 100 MB.
 const ZIEL_MB: int = 100
 ## Obergrenze für das Laden eines Bildes (µs): fängt grobe Rückschritte ab, ohne an der Rechengeschwindigkeit zu hängen.
@@ -88,6 +88,7 @@ func _kein_pixelverlust() -> void:
 		var umschliesst: int = 0
 		var format_ok: int = 0
 		var kleiner: int = 0
+		var rand_frei: int = 0
 		for i: int in n:
 			var datei: Image = F.bild_aus_datei(clip, i)
 			var tex: Image = (c["texturen"] as Array)[i].get_image()
@@ -97,6 +98,9 @@ func _kein_pixelverlust() -> void:
 				gleich += 1
 			if rahmen.encloses(datei.get_used_rect()) or datei.get_used_rect().size == Vector2i.ZERO:
 				umschliesst += 1
+			var benutzt: Rect2i = datei.get_used_rect()
+			if benutzt.position.x >= 1 and benutzt.position.y >= 1 and benutzt.end.x <= datei.get_width() - 1 and benutzt.end.y <= datei.get_height() - 1:
+				rand_frei += 1
 			if tex.get_format() == Image.FORMAT_RGBA8:
 				format_ok += 1
 			if tex.get_size() != datei.get_size():
@@ -104,6 +108,7 @@ func _kein_pixelverlust() -> void:
 		_gleich(gleich, n, "Pixel %s: Textur gleich dem Ausschnitt des Dateibildes (Bilder)" % clip)
 		_gleich(umschliesst, n, "Pixel %s: der Ausschnitt umschließt alle sichtbaren Pixel" % clip)
 		_gleich(format_ok, n, "Pixel %s: Texturen RGBA8" % clip)
+		_gleich(rand_frei, n, "Pixel %s: keine Figur berührt den Rand des Dateibildes (nichts abgeschnitten)" % clip)
 		if HD.has(clip):
 			_ok(kleiner > 0, "Pixel %s: der Zuschnitt spart bei mindestens einem Bild Speicher" % clip)
 	F.clips_vergessen()

@@ -5,8 +5,8 @@
 # zeichnet Hintergrund, alle Schatten und die Stücke bis zur Figur, Vorn die
 # Stücke nach der Figur, den Vordergrund, Blende, Anzeigeleiste, Debug-Anzeige
 # und die großen Texte. Zwischen den beiden Ebenen ist Platz für die Puppe der
-# Figur (puppeEinhaengen). Gezeichnet wird in Bildpixeln (768 × 448,
-# Faktor 2 gegenüber den Spielpixeln, E25) über DarstellungZeichner.
+# Figur (puppeEinhaengen). Gezeichnet wird in Bildpixeln (1536 × 896,
+# Faktor 4 gegenüber den Spielpixeln, E28) über DarstellungZeichner.
 #
 # Schleife: _physics_process (60 Ticks je Sekunde, höchstens 4 je Bild;
 # project.godot, E13) führt je Tick einen Logikschritt aus (sitzung.tick, nicht
@@ -16,7 +16,7 @@
 #
 # Tasten (docs/scheibe.md): Pfeile = L R O U, Y oder Z = A, X = S, P Pause,
 # N Einzelschritt in der Pause, F1 Debug, F2 Eingabeaufzeichnung (Datei nach
-# user://aufzeichnung_<seed>.txt), F3 Neustart mit Seed + 1.
+# user://aufzeichnung_<seed>.txt), F3 Neustart mit Seed + 1, F11 Vollbild.
 #
 # Kommandozeile (nach „--“):
 #   --platzhalter     Rechtecke statt Vela (weder Video-Clips noch Puppe)
@@ -267,7 +267,7 @@ func _puppeAktualisieren() -> void:
 		_frames.visible = video
 	if video or mit_puppe:
 		var fuss: Vector2 = DarstellungZeichnen.figurFuss(sitzung.welt)
-		# Spiegelachse in der Mitte der Spielpixelspalte (1 Bildpixel rechts vom Fußpunkt)
+		# Spiegelachse in der Mitte der Spielpixelspalte (ein halbes Spielpixel rechts vom Fußpunkt)
 		var ort: Vector2 = fuss + Vector2(DarstellungMasse.DARSTELLUNG * 0.5, 0.0)
 		var quelle: Node2D = _frames if video else _puppe
 		quelle.position = ort
@@ -295,6 +295,9 @@ func _process(_delta: float) -> void:
 		_hinweis_rest -= 1
 		if _hinweis_rest == 0:
 			_hinweis = ""
+	if sitzung.vollbild_anfrage:
+		sitzung.vollbild_anfrage = false
+		vollbildUmschalten()
 	_puppeAktualisieren()
 	if DarstellungVelaFrames.nachladen:
 		DarstellungVelaFrames.vorausladen_schritt(DarstellungVelaFrames.vorausladen_budget_us())
@@ -302,6 +305,14 @@ func _process(_delta: float) -> void:
 	_vorn.queue_redraw()
 	if _beenden and (_gezeichnet >= 1 or _bilder >= 5):
 		_ende()
+
+
+## F11: zwischen Fenster und Vollbild wechseln (das Spielbild bleibt 1536 × 896, Stretch viewport hält das Seitenverhältnis).
+func vollbildUmschalten() -> void:
+	if get_window() == null:
+		return
+	var vollbild: bool = get_window().mode == Window.MODE_FULLSCREEN or get_window().mode == Window.MODE_EXCLUSIVE_FULLSCREEN
+	get_window().mode = Window.MODE_WINDOWED if vollbild else Window.MODE_FULLSCREEN
 
 
 func _ende() -> void:
