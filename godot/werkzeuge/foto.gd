@@ -2,6 +2,7 @@
 #
 #   xvfb-run -a godot --path godot --rendering-driver opengl3 --script res://werkzeuge/foto.gd -- \
 #       --szene <datei> --eingabe <datei> --nach 300,600,900 --aus <ordnerPrefix> [--debug] [--seed N] [--puppe|--platzhalter]
+#       [--info <datei.csv>]
 #
 # Lädt darstellung/spiel.tscn in einen SubViewport (1536 × 896), lässt die
 # Sitzung die Logikschritte laufen (ohne Echtzeit, ohne Takt) und speichert zu
@@ -23,7 +24,7 @@ func _initialize() -> void:
 
 ## Argumente --name wert (und --debug) → Dictionary; Fehler im Schlüssel "fehler".
 func _argumente(argv: PackedStringArray) -> Dictionary:
-	var a: Dictionary = {"szene": "", "eingabe": "", "nach": "", "aus": "", "seed": "", "debug": false, "platzhalter": false, "puppe": false, "fehler": ""}
+	var a: Dictionary = {"szene": "", "eingabe": "", "nach": "", "aus": "", "seed": "", "info": "", "debug": false, "platzhalter": false, "puppe": false, "fehler": ""}
 	var i: int = 0
 	while i < argv.size():
 		var name: String = argv[i]
@@ -39,7 +40,7 @@ func _argumente(argv: PackedStringArray) -> Dictionary:
 			a["puppe"] = true
 			i += 1
 			continue
-		if not (name in ["--szene", "--eingabe", "--nach", "--aus", "--seed"]):
+		if not (name in ["--szene", "--eingabe", "--nach", "--aus", "--seed", "--info"]):
 			a["fehler"] = "unerwartetes Argument „%s“" % name
 			return a
 		if i + 1 >= argv.size():
@@ -55,7 +56,7 @@ func _lauf() -> void:
 	await process_frame
 	var a: Dictionary = _argumente(OS.get_cmdline_user_args())
 	if (a["fehler"] as String) != "" or (a["nach"] as String) == "" or (a["aus"] as String) == "":
-		printerr("Aufruf: foto.gd -- --szene <datei> --eingabe <datei> --nach 300,600 --aus <ordnerPrefix> [--debug] [--seed N]  %s" % a["fehler"])
+		printerr("Aufruf: foto.gd -- --szene <datei> --eingabe <datei> --nach 300,600 --aus <ordnerPrefix> [--debug] [--seed N] [--info <datei.csv>]  %s" % a["fehler"])
 		quit(1)
 		return
 	var stufen: Array[int] = []
@@ -97,6 +98,7 @@ func _lauf() -> void:
 	var aus: String = spiel_skript.call("absolut", a["aus"] as String)
 	DirAccess.make_dir_recursive_absolute(aus.get_base_dir())
 	var fehler: int = 0
+	var info: PackedStringArray = PackedStringArray(["frame,fuss_x,fuss_y,aktion,phase,uhr,blick,quelle,bild"])
 	for n in stufen:
 		while sitzung.welt.frame < n and not sitzung.amEnde():
 			sitzung.logikSchritt()
@@ -115,4 +117,32 @@ func _lauf() -> void:
 			fehler = 1
 			break
 		print("%s (Frame %d, %d × %d)" % [pfad, sitzung.welt.frame, bild.get_width(), bild.get_height()])
+		info.append(_infozeile(spiel, sitzung))
+	if (a["info"] as String) != "" and fehler == 0:
+		var ipfad: String = spiel_skript.call("absolut", a["info"] as String)
+		DirAccess.make_dir_recursive_absolute(ipfad.get_base_dir())
+		var datei: FileAccess = FileAccess.open(ipfad, FileAccess.WRITE)
+		if datei == null:
+			printerr("%s nicht schreibbar (Fehler %d)" % [ipfad, FileAccess.get_open_error()])
+			fehler = 1
+		else:
+			datei.store_string("\n".join(info) + "\n")
+			datei.close()
+			print("%s (%d Zeilen)" % [ipfad, info.size() - 1])
 	quit(fehler)
+
+
+## Eine Zeile für --info: Frame, Fußpunkt der Figur (Bildpixel), Aktion, Phase, Uhr, Blick, Quelle und Clipbild (1-basiert).
+func _infozeile(spiel: Node2D, sitzung: DarstellungSitzung) -> String:
+	var f: KernEntitaeten.Figur = sitzung.welt.figur
+	var fuss: Vector2 = DarstellungZeichnen.figurFuss(sitzung.welt)
+	var frames: Node2D = spiel.get("_frames")
+	var puppe: Node2D = spiel.get("_puppe")
+	var quelle: String = "platzhalter"
+	var nr: int = 0
+	if frames != null and frames.visible:
+		quelle = frames.call("clip_name")
+		nr = int(frames.call("bild_index")) + 1
+	elif puppe != null and puppe.visible:
+		quelle = "puppe"
+	return "%d,%.1f,%.1f,%s,%s,%d,%d,%s,%d" % [sitzung.welt.frame, fuss.x, fuss.y, f.aktion, f.phase, f.uhr, f.blick, quelle, nr]

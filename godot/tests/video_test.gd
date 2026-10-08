@@ -11,7 +11,9 @@ extends RefCounted
 const ORDNER: String = "res://grafik/vela_video/"
 const GEHEN: String = "_test_gehen"
 const KETTE: String = "_test_kette1"
-const SCHRITTE: int = 600
+## Schritte der Vorführung, die `_szene` mit Darstellung gegen die Referenz prüft (bis 800, damit der Spezialangriff 706 bis 769 als Aktion
+## ohne Clip und ohne Puppe dabei ist: Griff und Wurf haben seit der dritten Lieferung einen Clip).
+const SCHRITTE: int = 800
 ## Echte Clips (Grok-Videos): Name → Prüfparameter. min: Mindestzahl der Bilder; hoehe: erlaubte Figurhöhe im ersten Bild
 ## (Kampfhaltung = 142, ±1 wegen der Staubentfernung bzw. des Atems); ankerx: Anker x = Mitte der untersten 6 Zeilen
 ## des ersten Bildes (Fußmitte, nicht bei Schwerpunkt- und Übergangsanker).
@@ -81,7 +83,9 @@ func _alles() -> void:
 	_echte_clips()
 	_tabelle_neu()
 	_hd_clips_zuordnung()
+	_tabelle_griff_wurf()
 	_logik_szenen()
+	_logik_griff_wurf()
 	_gehen_clip()
 	_kette_clip()
 	_umsetzer_funktionen()
@@ -92,6 +96,7 @@ func _alles() -> void:
 	_hd_funktionen()
 	_hd_umsetzung()
 	_abdeckung()
+	_szene_griff_wurf()
 	_szene()
 	DarstellungVelaFrames.clips_vergessen()
 
@@ -565,6 +570,118 @@ func _hd_clips_zuordnung() -> void:
 	_gleich(T.bildindex("sprungtritt", 5, tt), kontakt, "HD sprungtritt: bildindex() zeigt im Trefferfenster das Kontaktbild")
 
 
+## Griff und Wurf (Kampf 8): Abbildung der Aktionsuhr auf die Bilder der Clips `griff` und `wurf` mit Stichproben an den Zeitpunkten des
+## Kerns (KernWerte): Der Griff schließt in uhr 1 (Kontaktbild), der Gegner wird in WURF_LOSLASSEN losgelassen (Bild `kontakt`), die
+## Figur ist bis WURF_GEBUNDEN_BIS gebunden (Kampfhaltung im letzten Frame). Der Kniestoß und die übrigen Aktionen haben keinen Clip.
+func _tabelle_griff_wurf() -> void:
+	var gd: Dictionary = _daten("griff")
+	var wd: Dictionary = _daten("wurf")
+	if gd.is_empty() or wd.is_empty():
+		_ok(false, "Griff und Wurf: die Clips griff und wurf fehlen")
+		return
+	# --- die Festlegungen der Tabelle liegen innerhalb der Zeiten des Kerns ---
+	_ok(T.GRIFF_KONTAKT_BIS >= 1 and T.GRIFF_KONTAKT_BIS < T.GRIFF_DAUER, "Griff: Kontaktfenster (uhr 1 bis %d) vor dem Ende des Zugs (uhr %d)" % [T.GRIFF_KONTAKT_BIS, T.GRIFF_DAUER])
+	_ok(T.GRIFF_DAUER < KernWerte.HALTEFRIST, "Griff: die Haltepose ist lange vor dem Losreißen (g+%d) erreicht (uhr %d)" % [KernWerte.HALTEFRIST + 1, T.GRIFF_DAUER])
+	_ok(T.WURF_HEBEN_UHR > 1 and T.WURF_HEBEN_UHR < KernWerte.WURF_LOSLASSEN, "Wurf: die Arme sind in uhr %d oben, vor dem Loslassen (uhr %d)" % [T.WURF_HEBEN_UHR, KernWerte.WURF_LOSLASSEN])
+	_gleich(KernWerte.WURF_LOSLASSEN, KernWerte.WURF_TRAGEN_BIS + 1, "Wurf: losgelassen im Frame nach dem Tragen (E+21, E+22)")
+	_ok(KernWerte.WURF_LOSLASSEN < KernWerte.WURF_GEBUNDEN_BIS, "Wurf: nach dem Loslassen bleibt Zeit bis zum Ende der Bindung (E+22 gegen E+%d)" % KernWerte.WURF_GEBUNDEN_BIS)
+	# --- Griff: Kontaktbild im Frame des Zugreifens, dann der Zug an die Brust, die Haltepose hält bis zum Losreißen ---
+	var g_kontakt: int = gd["kontakt"]
+	var g_ruhe: int = gd["ruhe"]
+	var gv: Array[int] = []
+	for u: int in range(1, KernWerte.HALTEFRIST + 2):
+		gv.append(T.griff(u, false, gd))
+	for u: int in range(1, T.GRIFF_KONTAKT_BIS + 1):
+		_gleich(gv[u - 1], g_kontakt, "Griff: uhr %d zeigt das Kontaktbild (Hände ausgestreckt; der Kern schließt den Griff in uhr 1)" % u)
+	_ok(gv[T.GRIFF_KONTAKT_BIS] >= int(gd["rueckzug"]) and gv[T.GRIFF_KONTAKT_BIS] < g_ruhe, "Griff: nach dem Kontaktfenster beginnt der Zug (Bild %d, Rückzug %d, Haltepose %d)" % [gv[T.GRIFF_KONTAKT_BIS], gd["rueckzug"], g_ruhe])
+	_gleich(gv[T.GRIFF_DAUER - 1], g_ruhe, "Griff: im Tick %d ist die Haltepose erreicht" % T.GRIFF_DAUER)
+	var g_mono: bool = true
+	var g_innen: bool = true
+	var g_halt: bool = true
+	for i: int in gv.size():
+		if i > 0 and gv[i] < gv[i - 1]:
+			g_mono = false
+		if gv[i] < g_kontakt or gv[i] > g_ruhe:
+			g_innen = false
+		if i + 1 >= T.GRIFF_DAUER and gv[i] != g_ruhe:
+			g_halt = false
+	_ok(g_mono, "Griff: die Bilder laufen vorwärts, kein Zurückspringen")
+	_ok(g_innen, "Griff: alle Bilder zwischen Kontaktbild und Haltepose")
+	_ok(g_halt, "Griff: die Haltepose hält von uhr %d bis zum Losreißen (uhr %d)" % [T.GRIFF_DAUER, KernWerte.HALTEFRIST + 1])
+	_gleich(T.griff(10 * KernWerte.HALTEFRIST, false, gd), g_ruhe, "Griff: weit nach der Haltefrist hält die Haltepose")
+	_gleich(T.griff(0, false, gd), T.griff(1, false, gd), "Griff: uhr 0 gilt wie uhr 1")
+	_ok(gv == T.verlauf("griff", KernWerte.HALTEFRIST + 1, gd), "Griff: bildindex und verlauf folgen derselben Abbildung (Kontaktbögen)")
+	var halten_ok: bool = true
+	for u: int in range(1, 6):
+		if T.griff(u, true, gd) != g_ruhe:
+			halten_ok = false
+	_ok(halten_ok, "Griff nach einem Kniestoß (knie_zahl > 0, uhr beginnt neu): die Haltepose steht sofort, es wird nicht noch einmal zugegriffen")
+	# --- Wurf: Ducken und Arme hoch, Schwung, Loslassen in E+22, Ausschwingen, Kampfhaltung in E+37 ---
+	var w_ev: Dictionary = wd["ereignis"]
+	var w_kontakt: int = wd["kontakt"]
+	var w_ruhe: int = wd["ruhe"]
+	var w_heben: int = w_ev["heben"]
+	var wv: Array[int] = T.verlauf("wurf", KernWerte.WURF_GEBUNDEN_BIS + 10, wd)
+	_gleich(wv[0], 0, "Wurf: uhr 1 zeigt das erste Bild (dieselbe Pose wie die Haltepose des Griffs)")
+	_gleich(wv[T.WURF_HEBEN_UHR - 1], w_heben, "Wurf: in uhr %d stehen die Arme über dem Kopf (Bild `heben`)" % T.WURF_HEBEN_UHR)
+	_gleich(wv[KernWerte.WURF_LOSLASSEN - 1], w_kontakt, "Wurf: im Frame des Loslassens (uhr %d = E+22) das Bild `kontakt`" % KernWerte.WURF_LOSLASSEN)
+	var nur_einmal: bool = true
+	for u: int in range(1, wv.size() + 1):
+		if (wv[u - 1] == w_kontakt) != (u == KernWerte.WURF_LOSLASSEN):
+			nur_einmal = false
+	_ok(nur_einmal, "Wurf: das Kontaktbild steht genau im Frame des Loslassens, sonst nie")
+	_ok(wv[KernWerte.WURF_TRAGEN_BIS - 1] < w_kontakt and wv[KernWerte.WURF_TRAGEN_BIS - 1] > w_heben, "Wurf: im letzten Tragframe (uhr %d) der Schwung vor dem Loslassen (Bild %d, Heben %d, Kontakt %d)" % [KernWerte.WURF_TRAGEN_BIS, wv[KernWerte.WURF_TRAGEN_BIS - 1], w_heben, w_kontakt])
+	_ok(wv[KernWerte.WURF_LOSLASSEN] == w_kontakt + 1 or wv[KernWerte.WURF_LOSLASSEN] <= int(wd["rueckzug"]), "Wurf: im Frame nach dem Loslassen beginnt das Ausschwingen (Bild %d)" % wv[KernWerte.WURF_LOSLASSEN])
+	var mitte: int = KernWerte.WURF_LOSLASSEN + (KernWerte.WURF_GEBUNDEN_BIS - KernWerte.WURF_LOSLASSEN) / 3
+	_gleich(wv[mitte - 1], int(wd["rueckzug"]), "Wurf: das Ausschwingen (Bild `rueckzug`, tiefe offene Hände) ist in uhr %d erreicht" % mitte)
+	_gleich(wv[KernWerte.WURF_GEBUNDEN_BIS - 1], w_ruhe, "Wurf: im letzten gebundenen Frame (uhr %d = E+37) ist die Kampfhaltung erreicht" % KernWerte.WURF_GEBUNDEN_BIS)
+	var w_mono: bool = true
+	var w_innen: bool = true
+	var w_halt: bool = true
+	for i: int in wv.size():
+		if i > 0 and wv[i] < wv[i - 1]:
+			w_mono = false
+		if wv[i] < 0 or wv[i] >= int(wd["bilder"]):
+			w_innen = false
+		if i + 1 >= KernWerte.WURF_GEBUNDEN_BIS and wv[i] != w_ruhe:
+			w_halt = false
+	_ok(w_mono, "Wurf: die Bilder laufen vorwärts, kein Zurückspringen")
+	_ok(w_innen, "Wurf: alle Indizes im Clip")
+	_ok(w_halt, "Wurf: ab E+%d (STAND in der Logik) hält die Kampfhaltung" % KernWerte.WURF_GEBUNDEN_BIS)
+	_gleich(T.wurf(0, wd), T.wurf(1, wd), "Wurf: uhr 0 gilt wie uhr 1")
+	_ok(wv == T.verlauf("wurf", KernWerte.WURF_GEBUNDEN_BIS + 10, wd), "Wurf: deterministisch")
+	# --- wahl: Clip, Bild, Blick, Rückfall ---
+	var fg: KernEntitaeten.Figur = _figur("GRIFF")
+	var wg: Dictionary = T.wahl(fg)
+	_gleich(wg.get("clip", ""), "griff", "Griff: Aktion GRIFF → Clip griff")
+	_gleich(T.clip_name("GRIFF", 0), "griff", "Griff: clip_name")
+	_gleich(T.bildindex_wahl(wg, gd), g_kontakt, "Griff: wahl(GRIFF, uhr 1) → Kontaktbild")
+	fg.uhr = KernWerte.HALTEFRIST + 1
+	_gleich(T.bildindex_wahl(T.wahl(fg), gd), g_ruhe, "Griff: wahl(GRIFF, uhr %d) → Haltepose" % fg.uhr)
+	fg.uhr = 1
+	fg.knie_zahl = 2
+	_gleich(T.bildindex_wahl(T.wahl(fg), gd), g_ruhe, "Griff: wahl(GRIFF nach zwei Kniestößen, uhr 1) → Haltepose")
+	for r: String in ["V", "R"]:
+		var fw: KernEntitaeten.Figur = _figur("WURF")
+		fw.phase = r
+		fw.wurf_richtung = r
+		fw.uhr = KernWerte.WURF_LOSLASSEN
+		var ww: Dictionary = T.wahl(fw)
+		_gleich(ww.get("clip", ""), "wurf", "Wurf %s: Aktion WURF → Clip wurf (beide Richtungen derselbe Clip)" % r)
+		_gleich(T.bildindex_wahl(ww, wd), w_kontakt, "Wurf %s: wahl(WURF, uhr %d) → Kontaktbild" % [r, KernWerte.WURF_LOSLASSEN])
+		for blick: int in [1, -1]:
+			fw.blick = blick
+			fw.bahn_richtung = blick if r == "V" else -blick
+			_gleich(T.wahl(fw)["blick"], blick, "Wurf %s: der Clip zeigt den Blick der Figur %d (nicht die Wurfrichtung)" % [r, blick])
+			fg.blick = blick
+			_gleich(T.wahl(fg)["blick"], blick, "Griff: der Clip zeigt den Blick der Figur %d" % blick)
+	_gleich(T.clip_name("WURF", 0), "wurf", "Wurf: clip_name")
+	# Aktionen ohne gemalten Clip (Puppe oder Platzhalter)
+	for a: String in ["KNIESTOSS", "SPEZIAL", "SPRINTANGRIFF", "SPRINTSPRUNG", "WAFFE", "AUFNEHMEN", "NEUEINSTIEG"]:
+		_ok(T.wahl(_figur(a)).is_empty() and T.clip_name(a, 1) == "", "Zuordnung: %s hat keinen gemalten Clip (Puppe oder Platzhalter)" % a)
+		_ok(not DarstellungVelaFrames.abgedeckt(_figur(a)), "abgedeckt: %s nicht abgedeckt" % a)
+
+
 func _tabelle_schlag() -> void:
 	_gleich([T.kette_dauer(1), T.kette_dauer(2), T.kette_dauer(3), T.kette_dauer(4)], [16, 16, 17, 25], "Tabelle: Dauern der Ketten 16, 16, 17, 25")
 	var mit_halt: Dictionary = _kunst(60, 8, 20, 50, "vorwaerts")
@@ -667,8 +784,9 @@ func _tabelle_clipdaten() -> void:
 	_gleich(T.clip_name("SCHLAG", 3), "kette3", "Aktion SCHLAG Stufe 3 → Clip kette3")
 	_gleich(T.clip_name("LEERSCHLAG", 1), "kette1", "Aktion LEERSCHLAG → Clip kette")
 	_gleich(T.clip_name("SPRUNGANGRIFF", 1), "", "Aktion SPRUNGANGRIFF → kein Clip vorgesehen")
-	for paar: Array in [["SPRINT", "sprint"], ["SPRUNG", "sprung"], ["LANDUNG", "sprung"], ["GETROFFEN", "getroffen_vorn"], ["UMGEWORFEN", "umgeworfen"], ["TOT", "umgeworfen"], ["LIEGEN", "liegen"], ["AUFSTEHEN", "aufstehen"]]:
+	for paar: Array in [["SPRINT", "sprint"], ["SPRUNG", "sprung"], ["LANDUNG", "sprung"], ["GETROFFEN", "getroffen_vorn"], ["UMGEWORFEN", "umgeworfen"], ["TOT", "umgeworfen"], ["LIEGEN", "liegen"], ["AUFSTEHEN", "aufstehen"], ["GRIFF", "griff"], ["WURF", "wurf"]]:
 		_gleich(T.clip_name(paar[0], 1), paar[1], "Aktion %s → Clip %s" % [paar[0], paar[1]])
+	_gleich(T.clip_name("KNIESTOSS", 1), "", "Aktion KNIESTOSS → kein Clip vorgesehen")
 	_gleich(T.stufe_aus_name("kette4"), 4, "Stufe aus dem Namen kette4")
 	_gleich(T.stufe_aus_name("_test_kette1"), 1, "Stufe aus dem Namen _test_kette1")
 	_gleich(T.stufe_aus_name("gehen"), 0, "gehen ist kein Schlagclip")
@@ -1052,7 +1170,7 @@ func _abdeckung() -> void:
 	f.aktion = "SPRUNGANGRIFF"
 	_ok(not DarstellungVelaFrames.abgedeckt(f), "abgedeckt: Aktion ohne Clip (SPRUNGANGRIFF) ist nicht abgedeckt")
 	# je Aktion genau dann abgedeckt, wenn der Clip geladen ist (TOT: umgeworfen bzw. ab der Ruhe liegen)
-	for paar: Array in [["SPRINT", "sprint"], ["SPRUNG", "sprung"], ["LANDUNG", "sprung"], ["GETROFFEN", "getroffen_vorn"], ["UMGEWORFEN", "umgeworfen"], ["TOT", "umgeworfen"], ["LIEGEN", "liegen"], ["AUFSTEHEN", "aufstehen"]]:
+	for paar: Array in [["SPRINT", "sprint"], ["SPRUNG", "sprung"], ["LANDUNG", "sprung"], ["GETROFFEN", "getroffen_vorn"], ["UMGEWORFEN", "umgeworfen"], ["TOT", "umgeworfen"], ["LIEGEN", "liegen"], ["AUFSTEHEN", "aufstehen"], ["GRIFF", "griff"], ["WURF", "wurf"]]:
 		f.aktion = paar[0]
 		f.phase = ""
 		_gleich(DarstellungVelaFrames.abgedeckt(f), not DarstellungVelaFrames.clip_laden(paar[1]).is_empty(), "abgedeckt: %s genau dann, wenn der Clip %s geladen ist" % [paar[0], paar[1]])
@@ -1060,6 +1178,10 @@ func _abdeckung() -> void:
 	f.phase = "R"
 	_gleich(DarstellungVelaFrames.abgedeckt(f), not DarstellungVelaFrames.clip_laden("liegen").is_empty(), "abgedeckt: TOT ab der Ruhe genau dann, wenn liegen geladen ist")
 	f.phase = ""
+	# Aktionen ohne gemalten Clip (Kniestoß, Spezialangriff, Sprintangriff, Waffe, Aufnehmen, Neueinstieg): nie abgedeckt, auch wenn alle Clips geladen sind
+	for ohne: String in ["KNIESTOSS", "SPEZIAL", "SPRINTANGRIFF", "SPRINTSPRUNG", "WAFFE", "AUFNEHMEN", "NEUEINSTIEG"]:
+		f.aktion = ohne
+		_ok(not DarstellungVelaFrames.abgedeckt(f), "abgedeckt: %s hat keinen Clip, ist nicht abgedeckt (Puppe oder Platzhalter)" % ohne)
 	f.aktion = "STAND"
 	_gleich(DarstellungVelaFrames.abgedeckt(f), not DarstellungVelaFrames.clip_laden("stand").is_empty(), "abgedeckt: STAND genau dann, wenn der Clip stand geladen ist")
 	f.aktion = "LAUF"
@@ -1196,11 +1318,26 @@ func _echte_clips() -> void:
 			_ok(int(d["ausholen"]) < int(d["kontakt"]) and int(d["kontakt"]) <= int(d["rueckzug"]) and int(d["rueckzug"]) < int(d["ruhe"]) and int(d["ruhe"]) < n, "griff: Ausholen < Zugreifen (Kontakt) ≤ Rückzug < Haltepose (Ruhe) < Bilderzahl")
 			_ok(vg[d["kontakt"]] - vg[0] >= 20, "griff: beim Zugreifen sind die Arme weit nach vorn gestreckt (%d gegen %d am Anfang)" % [vg[d["kontakt"]], vg[0]])
 			_ok(vg[d["ruhe"]] < vg[d["kontakt"]] - 10, "griff: in der Haltepose sind die Arme wieder angezogen (%d gegen %d)" % [vg[d["ruhe"]], vg[d["kontakt"]]])
+			_ok(int(d["ruhe"]) - int(d["rueckzug"]) >= 10, "griff: der Zug an die Brust (Rückzug %d bis Haltepose %d) hat genug Bilder für %d Ticks" % [d["rueckzug"], d["ruhe"], T.GRIFF_DAUER - T.GRIFF_KONTAKT_BIS])
+			# die Haltepose hält: die letzten Bilder des Clips (nach `ruhe`) sind dieselbe Pose (Silhouette gleich)
+			var hg: Array[int] = _liste(clip, "hoehe_sil")
+			var bg: Array[int] = _liste(clip, "breite_sil")
+			_ok(absi(hg[n - 1] - hg[d["ruhe"]]) <= 1 and absi(bg[n - 1] - bg[d["ruhe"]]) <= 2, "griff: nach der Haltepose ändert sich die Pose nicht mehr (Silhouette %d × %d gegen %d × %d)" % [bg[d["ruhe"]], hg[d["ruhe"]], bg[n - 1], hg[n - 1]])
 		elif clip == "wurf":
 			var heben: int = ev["heben"]
 			_ok(heben < int(d["kontakt"]) and int(d["kontakt"]) < int(d["rueckzug"]) and int(d["rueckzug"]) < int(d["ruhe"]) and int(d["ruhe"]) < n, "wurf: Heben (%d) < Wurf (Kontakt %d) < Rückzug (%d) < Ruhe (%d) < Bilderzahl" % [heben, d["kontakt"], d["rueckzug"], d["ruhe"]])
 			var hw: Array[int] = _liste(clip, "hoehe_sil")
 			_ok(hw[heben] >= hw[0] - 6, "wurf: beim Heben steht die Figur aufrecht (Silhouette %d gegen %d am Anfang)" % [hw[heben], hw[0]])
+			_ok(hw[heben] >= hw.max() - 6, "wurf: die Arme sind beim Heben am höchsten (Silhouette %d von %d)" % [hw[heben], hw.max()])
+			var vw: Array[int] = _liste(clip, "vorn")
+			_ok(vw[d["kontakt"]] >= vw.max() - 16 and vw[d["kontakt"]] - vw[0] >= 20, "wurf: im Wurf (Loslassen) ist die Figur nach vorn gelehnt (%d gegen %d am Anfang, größter Wert %d)" % [vw[d["kontakt"]], vw[0], vw.max()])
+			_ok(vw[d["ruhe"]] <= vw[0] + 6 and hw[d["ruhe"]] >= hw[0] - 4, "wurf: die Ruhe ist wieder die Kampfhaltung des Anfangs (vorn %d gegen %d, Höhe %d gegen %d)" % [vw[d["ruhe"]], vw[0], hw[d["ruhe"]], hw[0]])
+			# Der Wurf beginnt in der Pose, in der der Griff endet (Haltepose von `griff`): gleiche Höhe und Vorderkante der Silhouette
+			var gd2: Dictionary = _daten("griff")
+			if not gd2.is_empty():
+				var hg2: Array[int] = _liste("griff", "hoehe_sil")
+				var vg2: Array[int] = _liste("griff", "vorn")
+				_ok(absi(hw[0] - hg2[gd2["ruhe"]]) <= 3 and absi(vw[0] - vg2[gd2["ruhe"]]) <= 3, "wurf: das erste Bild ist die Haltepose des Griffs (Höhe %d gegen %d, Vorderkante %d gegen %d)" % [hw[0], hg2[gd2["ruhe"]], vw[0], vg2[gd2["ruhe"]]])
 		elif clip == "liegen":
 			_gleich(n, 1, "liegen: ein Standbild (ohne Staubkörner)")
 		elif clip == "aufstehen":
@@ -1322,7 +1459,8 @@ func _tabelle_neu() -> void:
 	var fl: KernEntitaeten.Figur = _figur("LANDUNG")
 	fl.uhr = 6
 	_gleich(T.bildindex_wahl(T.wahl(fl), sd), int(ev["ruhe"]), "Landung: wahl(LANDUNG, uhr 6) → aufgerichtet")
-	for a: String in ["SPRUNGANGRIFF", "SPRINTSPRUNG", "NEUEINSTIEG", "GRIFF", "SPEZIAL"]:
+	# GRIFF und WURF haben seit der dritten Lieferung (2026-10-08) einen Clip (`_tabelle_griff_wurf`); ohne Clip bleiben:
+	for a: String in ["SPRUNGANGRIFF", "SPRINTSPRUNG", "NEUEINSTIEG", "KNIESTOSS", "SPEZIAL"]:
 		_ok(T.wahl(_figur(a)).is_empty(), "Zuordnung: %s hat keinen Clip (Puppe oder Platzhalter)" % a)
 	# --- Getroffen: Auslenkung früh, Rückkehr bis uhr 27 ---
 	var ge: Dictionary = gv["ereignis"]
@@ -1567,6 +1705,209 @@ func _logik_szenen() -> void:
 		_ok(int(gesehen.get(k, 0)) > 0, "Szenen: %s kam mit dem Clip vor (%d Ticks)" % [k, int(gesehen.get(k, 0))])
 
 
+## Szenen mit Griff, Kniestoß und Wurf (Kampf 8): Szene, Eingabe, erwartete Zahl der Würfe und der Kniestöße (Aktion KNIESTOSS, uhr 1), kürzeste
+## Dauer eines Griffs in Ticks. T6_a: Griff in 22, Wurf vorwärts (Druck in 27, Loslassen in 49); T6_b dasselbe mit Blick links; T16_a: Griff und drei
+## Kniestöße (der dritte wirft um, kein Wurf); T16_b: Griff ohne Eingabe bis zum Losreißen (g+61) und ein zweiter Griff in 121 (im ersten
+## Laufframe); hd_film/griff (Belege): Griff, zwei Kniestöße, Griff gehalten, Wurf rückwärts.
+const GRIFF_SZENEN: Array = [
+	{"szene": "spiel/tests/szenen/T6_a.txt", "eingabe": "spiel/tests/eingaben/T6_a.txt", "wuerfe": 1, "knie": 0, "griff_min": 2},
+	{"szene": "spiel/tests/szenen/T6_b.txt", "eingabe": "spiel/tests/eingaben/T6_b.txt", "wuerfe": 1, "knie": 0, "griff_min": 2},
+	{"szene": "spiel/tests/szenen/T16_a.txt", "eingabe": "spiel/tests/eingaben/T16_a.txt", "wuerfe": 0, "knie": 3, "griff_min": 2},
+	{"szene": "spiel/tests/szenen/T16_b.txt", "eingabe": "spiel/tests/eingaben/T16_b.txt", "wuerfe": 0, "knie": 0, "griff_min": 60},
+	{"szene": "godot/werkzeuge/hd_film/griff_szene.txt", "eingabe": "godot/werkzeuge/hd_film/griff_eingabe.txt", "wuerfe": 1, "knie": 2, "griff_min": 8},
+]
+
+
+## Griff, Kniestoß und Wurf an der laufenden Logik: Je Tick wählt `wahl` den Clip und das Bild; an den Zeitpunkten des Kerns die
+## Stichproben: im Frame, in dem der Kern den Griff schließt (GRIFF, uhr 1, Gegner gehalten, davor LAUF), zeigt die Darstellung das Kontaktbild;
+## im Frame, in dem der Gegner losgelassen wird (sein h springt von 0 auf 59, WURF uhr 22), das Bild `kontakt`; im letzten gebundenen Frame
+## (uhr 37) die Kampfhaltung; der Kniestoß hat keinen Clip.
+func _logik_griff_wurf() -> void:
+	var gd: Dictionary = _daten("griff")
+	var wd: Dictionary = _daten("wurf")
+	if gd.is_empty() or wd.is_empty():
+		_ok(false, "Griff und Wurf an der Logik: die Clips fehlen")
+		return
+	var skript: GDScript = load("res://darstellung/spiel.gd")
+	for eintrag: Dictionary in GRIFF_SZENEN:
+		var name: String = String(eintrag["szene"]).get_file().get_basename()
+		var spiel: Node2D = _spiel(skript, PackedStringArray(["--szene", eintrag["szene"], "--eingabe", eintrag["eingabe"]]))
+		var sitzung: DarstellungSitzung = spiel.get("sitzung")
+		if sitzung == null:
+			_ok(false, "Szene %s: gestartet" % name)
+			spiel.free()
+			continue
+		var gut: bool = true
+		var zugriffe: int = 0
+		var zugriff_ok: bool = true
+		var zug_ok: bool = true
+		var halten_ok: bool = true
+		var griff_ticks: int = 0
+		var knie_ticks: int = 0
+		var knie_aktionen: int = 0
+		var knie_ohne_clip: bool = true
+		var wuerfe: int = 0
+		var los_ok: bool = true
+		var wurf_vor_ok: bool = true
+		var wurf_nach_ok: bool = true
+		var wurf_ende_n: int = 0
+		var wurf_ende_ok: bool = true
+		var stand_danach_ok: bool = true
+		var vorher: String = ""
+		var letzter_bild: int = -1
+		var losgelassen: bool = false
+		var nach_wurf: bool = false
+		var schritte: int = 0
+		while schritte < 400 and not sitzung.amEnde():
+			sitzung.logikSchritt()
+			schritte += 1
+			var welt: KernWelt = sitzung.welt
+			var f: KernEntitaeten.Figur = welt.figur
+			var w: Dictionary = T.wahl(f, welt)
+			if nach_wurf:
+				nach_wurf = false
+				if f.aktion != "STAND" or String(w.get("clip", "")) != "stand":
+					stand_danach_ok = false
+			if f.aktion == "GRIFF":
+				griff_ticks += 1
+				var i: int = T.bildindex_wahl(w, gd)
+				if String(w.get("clip", "")) != "griff" or i < 0 or i >= int(gd["bilder"]) or int(w["blick"]) != f.blick:
+					gut = false
+				if f.knie_zahl == 0 and f.uhr == 1:
+					# der Kern hat den Griff in diesem Frame geschlossen (am Ende eines LAUF-Frames): Kontaktbild
+					zugriffe += 1
+					# (der Griff schließt am Ende eines LAUF-Frames; beginnt der Lauf im selben Frame, war der Frame davor STAND)
+					if not (vorher in ["LAUF", "STAND"]) or KernFigurGriff.gehaltener(welt) == null or i != int(gd["kontakt"]):
+						zugriff_ok = false
+					letzter_bild = i
+				elif f.knie_zahl == 0:
+					if i < letzter_bild:
+						zug_ok = false
+					letzter_bild = i
+					if f.uhr >= T.GRIFF_DAUER and i != int(gd["ruhe"]):
+						halten_ok = false
+				elif i != int(gd["ruhe"]):
+					# zurück aus dem Kniestoß: der Griff besteht, die Haltepose steht von Anfang an
+					halten_ok = false
+			elif f.aktion == "KNIESTOSS":
+				knie_ticks += 1
+				if f.uhr == 1:
+					knie_aktionen += 1
+				if not w.is_empty() or DarstellungVelaFrames.abgedeckt(f, welt):
+					knie_ohne_clip = false
+			elif f.aktion == "WURF":
+				var i2: int = T.bildindex_wahl(w, wd)
+				if String(w.get("clip", "")) != "wurf" or i2 < 0 or i2 >= int(wd["bilder"]) or int(w["blick"]) != f.blick:
+					gut = false
+				if f.uhr == 1:
+					losgelassen = false
+					wuerfe += 1
+				var gw: KernEntitaeten.Gegner = KernEntitaeten.gegnerVon(welt, f.wurf_ziel)
+				var oben: bool = gw != null and KernFestkomma.ganz(gw.h) > 0
+				if oben and not losgelassen:
+					# der Kern lässt den Gegner los: 59 px hoch in E+22
+					losgelassen = true
+					if f.uhr != KernWerte.WURF_LOSLASSEN or i2 != int(wd["kontakt"]) or KernFestkomma.ganz(gw.h) != KernWerte.WURF_LOSLASS_HOEHE:
+						los_ok = false
+				if not losgelassen and i2 >= int(wd["kontakt"]):
+					wurf_vor_ok = false
+				if losgelassen and f.uhr > KernWerte.WURF_LOSLASSEN and i2 <= int(wd["kontakt"]):
+					wurf_nach_ok = false
+				if f.uhr == KernWerte.WURF_GEBUNDEN_BIS:
+					wurf_ende_n += 1
+					nach_wurf = true
+					if i2 != int(wd["ruhe"]):
+						wurf_ende_ok = false
+			vorher = f.aktion
+		_ok(gut, "Szene %s: Griff und Wurf: Clip griff bzw. wurf, Bildindizes im Clip, Blick der Figur" % name)
+		_ok(zugriffe >= 1 and zugriff_ok, "Szene %s: Griff: im Frame, in dem der Kern greift (uhr 1, Gegner gehalten), steht das Kontaktbild (%d Griffe)" % [name, zugriffe])
+		_ok(zug_ok, "Szene %s: Griff: die Bilder laufen vorwärts, kein Zurückspringen" % name)
+		_ok(halten_ok, "Szene %s: Griff: ab uhr %d und nach einem Kniestoß steht die Haltepose" % [name, T.GRIFF_DAUER])
+		_ok(griff_ticks >= int(eintrag["griff_min"]), "Szene %s: Griff dauerte mindestens %d Ticks (%d)" % [name, eintrag["griff_min"], griff_ticks])
+		_gleich(wuerfe, int(eintrag["wuerfe"]), "Szene %s: Zahl der Würfe" % name)
+		_gleich(knie_aktionen, int(eintrag["knie"]), "Szene %s: Zahl der Kniestöße" % name)
+		_ok(knie_ohne_clip, "Szene %s: Kniestoß (%d Ticks) hat keinen Clip: Platzhalter" % [name, knie_ticks])
+		if wuerfe > 0:
+			_ok(los_ok and losgelassen, "Szene %s: Wurf: im Frame des Loslassens (Gegner 59 px hoch, uhr %d) steht das Bild `kontakt`" % [name, KernWerte.WURF_LOSLASSEN])
+			_ok(wurf_vor_ok, "Szene %s: Wurf: vor dem Loslassen nie das Kontaktbild" % name)
+			_ok(wurf_nach_ok, "Szene %s: Wurf: nach dem Loslassen nie ein Bild vor dem Kontakt (das Ausschwingen beginnt)" % name)
+			_gleich(wurf_ende_n, wuerfe, "Szene %s: Wurf: jeder Wurf erreicht den letzten gebundenen Frame (uhr %d)" % [name, KernWerte.WURF_GEBUNDEN_BIS])
+			_ok(wurf_ende_ok, "Szene %s: Wurf: im letzten gebundenen Frame die Kampfhaltung" % name)
+			_ok(stand_danach_ok, "Szene %s: Wurf: danach STAND mit dem Clip stand" % name)
+		spiel.free()
+
+
+## Quellen in der Szene bei Griff, Kniestoß und Wurf (Video vor Puppe vor Platzhalter): GRIFF und WURF zeigen den Clip (Bild wie
+## `wahl`), der Kniestoß den Platzhalter (die Puppe deckt ihn nicht ab); fehlen die Clips griff und wurf, bleibt es bei den Platzhaltern,
+## während STAND und LAUF ihre Clips behalten.
+func _szene_griff_wurf() -> void:
+	var skript: GDScript = load("res://darstellung/spiel.gd")
+	var gd: Dictionary = _daten("griff")
+	var wd: Dictionary = _daten("wurf")
+	if gd.is_empty() or wd.is_empty():
+		_ok(false, "Quellen bei Griff und Wurf: die Clips fehlen")
+		return
+	for lauf: int in range(2):
+		DarstellungVelaFrames.clips_vergessen()
+		if lauf == 1:
+			DarstellungVelaFrames.clip_registrieren("griff", "res://gibt_es_nicht/griff/")
+			DarstellungVelaFrames.clip_registrieren("wurf", "res://gibt_es_nicht/wurf/")
+		var tag: String = "mit Clips" if lauf == 0 else "ohne die Clips griff und wurf"
+		for eintrag: Dictionary in [GRIFF_SZENEN[4], GRIFF_SZENEN[0]]:
+			var name: String = String(eintrag["szene"]).get_file().get_basename()
+			var spiel: Node2D = _spiel(skript, PackedStringArray(["--szene", eintrag["szene"], "--eingabe", eintrag["eingabe"]]))
+			var sitzung: DarstellungSitzung = spiel.get("sitzung")
+			var frames: Node2D = spiel.get("_frames")
+			var puppe: Node2D = spiel.get("_puppe")
+			if sitzung == null or frames == null or puppe == null:
+				_ok(false, "Szene %s (%s): gestartet, Quellen eingehängt" % [name, tag])
+				spiel.free()
+				continue
+			var quelle_ok: bool = true
+			var bild_ok: bool = true
+			var frei_ok: bool = true
+			var clips_n: int = 0
+			var platzhalter_n: int = 0
+			var stand_n: int = 0
+			for _i in range(140):
+				sitzung.logikSchritt()
+				spiel.call("_puppeAktualisieren")
+				var f: KernEntitaeten.Figur = sitzung.welt.figur
+				var extern: bool = spiel.get("figur_extern")
+				var mit_clip: bool = f.aktion in ["GRIFF", "WURF"]
+				var ohne_clip: bool = f.aktion in ["KNIESTOSS", "SPEZIAL"]
+				if mit_clip and lauf == 0:
+					clips_n += 1
+					var w: Dictionary = T.wahl(f, sitzung.welt)
+					var d: Dictionary = gd if f.aktion == "GRIFF" else wd
+					if not frames.visible or puppe.visible or not extern or frames.clip_name() != String(w["clip"]):
+						quelle_ok = false
+					elif frames.bild_index() != T.bildindex_wahl(w, d):
+						bild_ok = false
+				elif (mit_clip and lauf == 1) or ohne_clip:
+					platzhalter_n += 1
+					# weder Video noch Puppe: die Platzhalterfigur (Rechteck) zeichnet den Körper
+					if frames.visible or puppe.visible or extern:
+						frei_ok = false
+				elif f.aktion in ["STAND", "LAUF"]:
+					stand_n += 1
+					if not frames.visible or puppe.visible:
+						quelle_ok = false
+			_ok(quelle_ok, "Szene %s (%s): Griff und Wurf zeigen den Clip, STAND und LAUF ihre Clips, nie Video und Puppe zugleich" % [name, tag])
+			_ok(bild_ok, "Szene %s (%s): das gezeigte Bild folgt der Tabelle (wahl, bildindex_wahl)" % [name, tag])
+			_ok(frei_ok, "Szene %s (%s): Kniestoß, Spezialangriff und fehlende Clips zeigen den Platzhalter, nicht Video und nicht Puppe" % [name, tag])
+			if lauf == 0:
+				_ok(clips_n >= KernWerte.WURF_GEBUNDEN_BIS, "Szene %s (%s): Griff- und Wurfticks mit Clip (%d)" % [name, tag, clips_n])
+			# Platzhalter: bei fehlenden Clips in jedem Griff und Wurf, sonst nur im Kniestoß (hd_film/griff hat zwei)
+			if lauf == 1 or int(eintrag["knie"]) > 0:
+				_ok(platzhalter_n > 0, "Szene %s (%s): Ticks mit Platzhalter (%d)" % [name, tag, platzhalter_n])
+			else:
+				_gleich(platzhalter_n, 0, "Szene %s (%s): ohne Kniestoß kein Platzhalter" % [name, tag])
+			_ok(stand_n > 0, "Szene %s (%s): Ticks in STAND und LAUF (%d)" % [name, tag, stand_n])
+			spiel.free()
+	DarstellungVelaFrames.clips_vergessen()
+
+
 # ---------------------------------------------------------------------------
 # Quellenreihenfolge in der Szene: Video, sonst Puppe, sonst Platzhalter; Protokoll bleibt gleich
 # ---------------------------------------------------------------------------
@@ -1662,7 +2003,7 @@ func _szene() -> void:
 	spiel3.free()
 	# 4. ohne Clips (Rückfall): Puppe, wo sie abdeckt
 	DarstellungVelaFrames.clips_vergessen()
-	for n: String in ["stand", "gehen", "kette1", "kette2", "kette3", "kette4", "sprint", "sprung", "getroffen_vorn", "umgeworfen", "liegen", "aufstehen"]:
+	for n: String in ["stand", "gehen", "kette1", "kette2", "kette3", "kette4", "sprint", "sprung", "sprungtritt", "getroffen_vorn", "umgeworfen", "liegen", "aufstehen", "griff", "wurf"]:
 		DarstellungVelaFrames.clip_registrieren(n, "res://gibt_es_nicht/%s/" % n)
 	var spiel4: Node2D = _spiel(skript, sz)
 	var s4: DarstellungSitzung = spiel4.get("sitzung")

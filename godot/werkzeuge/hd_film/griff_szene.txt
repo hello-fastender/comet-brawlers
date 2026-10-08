@@ -1,0 +1,6 @@
+# Szene für die Belege von Griff, Kniestoß und Wurf der gemalten Vela (docs/godot.md, „Gemalte Vela“, Belege; werkzeuge/vela_belege.sh).
+# Bühne scheibe ab Spielstart, Welle 1, 2 und 9 aus; Figur und eine Puppe (Platzhalter) wie in Kampf 12, T6 und T16 (Abstand 60 px).
+szene name=hd_film_griff endframe=140 seed=1 buehne=scheibe
+pruefstart welle.1=aus welle.2=aus welle.9=aus rang.fest
+figur x=150 z=170 blick=R lp=72
+gegner slot=1 typ=Puppe rolle=leicht x=210 z=170 lp=60

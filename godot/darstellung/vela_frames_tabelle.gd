@@ -31,7 +31,18 @@
 ##                                  liegen          das Liegebild
 ##   LIEGEN                         liegen          hält das Bild
 ##   AUFSTEHEN                      aufstehen       uhr 1 bis 26 gleichmäßig über den Clip bis zur Kampfhaltung
-##   SPRUNGANGRIFF H und T (hoch, runter), SPRINTSPRUNG, NEUEINSTIEG und alle übrigen: kein Clip (Puppe, sonst Platzhalter).
+##   GRIFF                          griff           griff: der Kern schließt den Griff am Ende eines LAUF-Frames und setzt in demselben
+##                                                   Frame GRIFF (uhr 1): das Kontaktbild (Hände voll ausgestreckt) steht in uhr 1 bis
+##                                                   GRIFF_KONTAKT_BIS, dann ziehen die Arme den Gegner an die Brust bis zur Haltepose
+##                                                   (`ruhe` des Clips) in uhr GRIFF_DAUER; die Pose hält, solange der Griff dauert (Losreißen
+##                                                   in g+61). Nach einem Kniestoß beginnt GRIFF mit uhr 1 neu (knie_zahl > 0): dann steht
+##                                                   die Haltepose sofort, es wird nicht noch einmal zugegriffen
+##   WURF (V und R)                 wurf            wurf: uhr 1 bis WURF_LOSLASSEN − 1 (Gegner in der Haltelage, Tragen bis E+21) Ducken, Arme
+##                                                   hoch (Bild `heben` in uhr WURF_HEBEN_UHR), Schwung; Loslassen im Frame WURF_LOSLASSEN
+##                                                   (22, der Gegner steigt auf 59 px): das Bild `kontakt`; danach Ausschwingen (Bild
+##                                                   `rueckzug`) und Rückkehr in die Kampfhaltung (`ruhe`) bis uhr WURF_GEBUNDEN_BIS (37)
+##   KNIESTOSS, SPEZIAL, SPRINTANGRIFF, SPRINTSPRUNG, WAFFE, AUFNEHMEN, NEUEINSTIEG, SPRUNGANGRIFF H und T (hoch, runter) und alle
+##   übrigen: kein Clip (Puppe, sonst Platzhalter).
 ## UMGEWORFEN, TOT, LIEGEN und AUFSTEHEN zeigen den Clip so gespiegelt, dass der Flug in `bahn_richtung` geht (der Clip
 ## fliegt nach links, Blick des Clips nach rechts): Blick = −bahn_richtung (G1-12, G7-10).
 ##
@@ -145,7 +156,8 @@ static func clip_lesen(text: String) -> Dictionary:
 # ---------------------------------------------------------------------------
 
 ## Name des Clips zur Aktion der Figur („“ = keiner vorgesehen). Kettenstufe 1 bis 4 nur bei SCHLAG/LEERSCHLAG, `variante`
-## (N, R, H, T) nur bei SPRUNGANGRIFF. TOT nennt `umgeworfen`; ab der Ruhe zeigt `wahl` das Liegebild.
+## (N, R, H, T) nur bei SPRUNGANGRIFF. TOT nennt `umgeworfen`; ab der Ruhe zeigt `wahl` das Liegebild. KNIESTOSS, SPEZIAL und die
+## übrigen Aktionen ohne gemalten Clip nennen keinen („“).
 static func clip_name(aktion: String, stufe: int, variante: String = "") -> String:
 	match aktion:
 		"STAND":
@@ -168,6 +180,10 @@ static func clip_name(aktion: String, stufe: int, variante: String = "") -> Stri
 			return "liegen"
 		"AUFSTEHEN":
 			return "aufstehen"
+		"GRIFF":
+			return "griff"
+		"WURF":
+			return "wurf"
 	return ""
 
 
@@ -464,15 +480,71 @@ static func aufstehen(u: int, d: Dictionary) -> int:
 	return (uu - 1) * ruhe / (KernWerte.FIGUR_AUFSTEHEN_DAUER - 1)
 
 
+## Griff (Kampf 8.1, 8.3): eigene Darstellungsfestlegung (keine Spielmechanik, die Zeiten des Kerns bleiben maßgeblich). Der Kern
+## schließt den Griff am Ende eines LAUF-Frames und beginnt in diesem Frame die Aktion GRIFF (uhr 1) mit dem Gegner schon in der
+## Haltelage; vor uhr 1 gibt es keinen Anlauf, den die Darstellung zeigen könnte (der Clip beginnt mit dem Ausholen, das
+## deshalb entfällt). Das Kontaktbild (Hände voll ausgestreckt) steht in uhr 1 bis GRIFF_KONTAKT_BIS (2: der früheste Frame, in dem
+## ein Druck wirken kann, ist der zweite), danach ziehen die Arme den Gegner an die Brust (Rückzug bis `ruhe`, die Haltepose),
+## im Tick GRIFF_DAUER ist sie erreicht; sie hält, solange der Griff dauert (höchstens bis g+61).
+const GRIFF_KONTAKT_BIS: int = 2
+const GRIFF_DAUER: int = 12
+
+
+## Griff: Aktionsuhr u (Beginn 1 im Frame des Zugreifens) → Bild des Clips `griff`. `halten`: Der Griff besteht schon (Rückkehr aus
+## dem Kniestoß, `knie_zahl` > 0, die Aktion beginnt dann mit uhr 1 neu): die Haltepose steht von der ersten Uhr an.
+static func griff(u: int, halten: bool, d: Dictionary) -> int:
+	var bilder: int = int(d["bilder"])
+	if halten:
+		return clampi(int(d["ruhe"]), 0, bilder - 1)
+	return clampi(_ablauf(u, 1, GRIFF_KONTAKT_BIS, GRIFF_DAUER, d), 0, bilder - 1)
+
+
+## Wurf (Kampf 8.4): eigene Darstellungsfestlegung. Das Bild `heben` (Arme über dem Kopf) steht in uhr WURF_HEBEN_UHR; davor
+## beginnt der Clip mit derselben Pose wie die Haltepose des Griffs und ducken sich die Figur (erste Bilder, in wenigen Ticks), danach
+## folgt der Schwung bis zum Loslassen.
+const WURF_HEBEN_UHR: int = 12
+
+
+## Wurf: Aktionsuhr u (Beginn 1 in E+1, 1 bis WURF_GEBUNDEN_BIS) → Bild des Clips `wurf`. Zeiten aus KernWerte:
+##   uhr 1 bis WURF_LOSLASSEN − 1 (Tragen, der Gegner steht in der Haltelage): vom ersten Bild über `heben` (uhr WURF_HEBEN_UHR) bis
+##     vor das Loslassen,
+##   uhr WURF_LOSLASSEN (E+22, der Gegner wird in 59 px Höhe losgelassen): das Bild `kontakt`,
+##   danach das Ausschwingen mit tiefen Händen bis `rueckzug` im ersten Drittel der übrigen Ticks, dann die Rückkehr in die Kampfhaltung
+##     (`ruhe`), die im letzten gebundenen Frame (E+37) erreicht ist; ab E+38 ist die Figur in STAND.
+## Beide Wurfrichtungen (V vorwärts, R rückwärts über die Figur) zeigen denselben Clip (Schwung nach vorn).
+static func wurf(u: int, d: Dictionary) -> int:
+	var bilder: int = int(d["bilder"])
+	var ev: Dictionary = d["ereignis"]
+	var ruhe: int = clampi(int(d["ruhe"]), 1, bilder - 1)
+	var kontakt: int = clampi(int(d["kontakt"]), 1, ruhe)
+	var heben: int = clampi(int(ev.get("heben", kontakt * 3 / 4)), 0, kontakt)
+	var rueck: int = clampi(int(d.get("rueckzug", kontakt)), kontakt, ruhe)
+	var los: int = KernWerte.WURF_LOSLASSEN
+	var ende: int = KernWerte.WURF_GEBUNDEN_BIS
+	var uu: int = clampi(u, 1, ende)
+	if uu < WURF_HEBEN_UHR:
+		return (uu - 1) * heben / (WURF_HEBEN_UHR - 1)
+	if uu <= los:
+		return heben + (uu - WURF_HEBEN_UHR) * (kontakt - heben) / (los - WURF_HEBEN_UHR)
+	var mitte: int = los + (ende - los) / 3
+	if uu <= mitte:
+		return kontakt + (uu - los) * (rueck - kontakt) / (mitte - los)
+	return rueck + (uu - mitte) * (ruhe - rueck) / (ende - mitte)
+
+
 ## Bildindex für einen Clip nach Name und Aktionsuhr (Schlagclips: Name mit „kette“ und Stufe 1 bis 4; sprung: Sprunguhr;
-## getroffen_vorn, aufstehen: Aktionsuhr; liegen hält das erste Bild; sonst Schleife, bei `schleife=pingpong` hin und her).
-## Flug und Landung brauchen mehr als die Uhr: `flug`, `landung`.
+## getroffen_vorn, aufstehen, wurf: Aktionsuhr; griff: frischer Griff; liegen hält das erste Bild; sonst Schleife, bei
+## `schleife=pingpong` hin und her). Flug und Landung brauchen mehr als die Uhr: `flug`, `landung`.
 static func bildindex(name: String, uhr: int, d: Dictionary) -> int:
 	var stufe: int = stufe_aus_name(name)
 	var bilder: int = int(d["bilder"])
 	var i: int = 0
 	if stufe > 0:
 		i = schlag(uhr, stufe, d)
+	elif name == "griff":
+		i = griff(uhr, false, d)
+	elif name == "wurf":
+		i = wurf(uhr, d)
 	elif name == "sprung":
 		i = sprung(uhr, d)
 	elif name == "sprungtritt":
@@ -519,8 +591,9 @@ static func angreifer_vorn(f: KernEntitaeten.Figur, welt: KernWelt) -> bool:
 
 
 ## Zuordnung Zustand der Figur → Clip und Zeitgrößen. Rückgabe ({} = kein Clip vorgesehen, Puppe oder Platzhalter):
-##   clip, art (schleife, sprint, schlag, sprung, landung, treffer, flug, liegen, aufstehen), uhr, stufe (Schlag),
-##   sprint_n, bahn_frame, bahn_boden, stillstand, blick (1 oder −1: Blick, mit dem der Clip gezeigt wird).
+##   clip, art (schleife, sprint, schlag, sprung, tritt, landung, treffer, flug, liegen, aufstehen, griff, wurf), uhr, stufe (Schlag),
+##   sprint_n, bahn_frame, bahn_boden, stillstand, halten (Griff nach einem Kniestoß), blick (1 oder −1: Blick, mit dem der
+##   Clip gezeigt wird).
 static func wahl(f: KernEntitaeten.Figur, welt: KernWelt = null) -> Dictionary:
 	var u: int = maxi(f.uhr, 1)
 	var flugblick: int = -f.bahn_richtung if f.bahn_richtung != 0 else -f.blick
@@ -559,6 +632,11 @@ static func wahl(f: KernEntitaeten.Figur, welt: KernWelt = null) -> Dictionary:
 			return {"clip": "liegen", "art": "liegen", "uhr": u, "blick": flugblick}
 		"AUFSTEHEN":
 			return {"clip": "aufstehen", "art": "aufstehen", "uhr": u, "blick": flugblick}
+		"GRIFF":
+			# nach einem Kniestoß (knie_zahl > 0) beginnt GRIFF mit uhr 1 neu: der Griff besteht schon, es gibt kein Zugreifen mehr
+			return {"clip": "griff", "art": "griff", "uhr": u, "halten": f.knie_zahl > 0, "blick": f.blick}
+		"WURF":
+			return {"clip": "wurf", "art": "wurf", "uhr": u, "blick": f.blick}
 	return {}
 
 
@@ -576,6 +654,10 @@ static func bildindex_wahl(w: Dictionary, d: Dictionary) -> int:
 			i = tritt(int(w["uhr"]), int(w["sprung_uhr"]), int(w["von"]), int(w["bis"]), d)
 		"flug":
 			i = flug(int(w["uhr"]), int(w["bahn_frame"]), int(w["bahn_boden"]), int(w["stillstand"]), d)
+		"griff":
+			i = griff(int(w["uhr"]), bool(w["halten"]), d)
+		"wurf":
+			i = wurf(int(w["uhr"]), d)
 		_:
 			i = bildindex(name, int(w["uhr"]), d)
 	return clampi(i, 0, bilder - 1)

@@ -1,0 +1,9 @@
+# Eingabe zu griff_szene.txt (Format Kampf 11.1: von,bis,tasten)
+# seed=1
+# Laufen nach rechts, Griff in 22 (Griff am Ende des Laufframes 21; wie T16)
+10,21,R
+# Kniestoß 1 (Druck in 23), Kniestoß 2 (Druck in 41 = K+18), danach wieder Griff (gehalten ab K+23 = 64)
+23,23,A
+41,41,A
+# Wurf rückwärts über die Figur (A mit L bei Blick rechts), Druck in 70
+70,70,AL
