@@ -119,6 +119,8 @@ const HD_HOEHE_STANDARD: int = 360
 const HD_ARBEIT_PROZENT: int = 150
 const WEICH_REST: int = 30
 const WEICH_ALPHA_MIN: int = 8
+## HD-Leinwand: Rand in HD-Pixeln um den Zuschnitt des Spielclips (weiche Ränder dünner Teile liegen außerhalb der harten Silhouette).
+const HD_LEINWAND_RAND: int = 6
 ## Abstand von |Figurfarbe − Schlüsselfarbe|, ab dem sich ein Randpixel entmischen lässt (sonst nur die Grün-Dominanz).
 const WEICH_ENTMISCHEN_MIN: int = 60
 ## Despill im Band um die Kante (Modus gruen): Grün höchstens so viel Prozent des größeren der Kanäle Rot und Blau.
@@ -1596,8 +1598,11 @@ static func hd_bilder(figuren: Array, versatz: Array, gitter: Dictionary, inv_hd
 	var imin: int = gitter["imin"]
 	var jmin: int = gitter["jmin"]
 	var s2: float = float(inv16) / float(inv_hd16)
-	var ow: int = ceili(float(ob) * s2)
-	var ohd: int = ceili(float(oh) * s2)
+	# Die Leinwand ragt HD_LEINWAND_RAND HD-Pixel über den Zuschnitt des Spielclips hinaus: der weiche Rand dünner Teile
+	# (Haarsträhnen im Wirbel) reicht über die harte Silhouette hinaus und würde sonst an der Leinwandkante abgeschnitten.
+	var pad: int = HD_LEINWAND_RAND
+	var ow: int = ceili(float(ob) * s2) + 2 * pad
+	var ohd: int = ceili(float(oh) * s2) + 2 * pad
 	var roh: Array = []
 	var bx0: int = ow
 	var by0: int = ohd
@@ -1605,8 +1610,8 @@ static func hd_bilder(figuren: Array, versatz: Array, gitter: Dictionary, inv_hd
 	var by1: int = -1
 	for j: int in figuren.size():
 		var v: Vector2i = versatz[j]
-		var xl16: int = xa16 + (((2 * (imin + x0 - v.x) - 1) * inv16) >> 1)
-		var yt16: int = yb16 + (jmin + y0 - v.y) * inv16
+		var xl16: int = xa16 + (((2 * (imin + x0 - v.x) - 1) * inv16) >> 1) - pad * inv_hd16
+		var yt16: int = yb16 + (jmin + y0 - v.y) * inv16 - pad * inv_hd16
 		var f: PackedByteArray = herunter_weich(figuren[j]["wa"], figuren[j]["wf"], bw, bh, xl16, yt16, inv_hd16, ow, ohd)
 		roh.append(f)
 		for y: int in ohd:
@@ -1637,7 +1642,7 @@ static func hd_bilder(figuren: Array, versatz: Array, gitter: Dictionary, inv_hd
 			c.append_array(f.slice((y * ow + cx0) * 4, (y * ow + cx1 + 1) * 4))
 		farbrand(c, cw, ch, rand)
 		bilder.append(c)
-	var fuss: Vector2 = Vector2((float(ank.x) + 0.5) * s2 - float(cx0), (float(ank.y) + 1.0) * s2 - float(cy0))
+	var fuss: Vector2 = Vector2((float(ank.x) + 0.5) * s2 + float(pad) - float(cx0), (float(ank.y) + 1.0) * s2 + float(pad) - float(cy0))
 	return {"bilder": bilder, "breite": cw, "hoehe": ch, "fuss": fuss, "anker": Vector2i(roundi(fuss.x - 0.5), roundi(fuss.y - 1.0)), "skala": 1.0 / s2}
 
 

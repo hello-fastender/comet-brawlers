@@ -39,16 +39,18 @@ const ORDNER: String = "res://grafik/vela_video/"
 ## Vergrößerung der Clips gegenüber ihrer Vermessung (DarstellungMasse.ASSET_ZU_BILD: E28, 4 / 2 = 2).
 const ASSET_ZU_BILD: int = DarstellungMasse.ASSET_ZU_BILD
 
-## Obergrenze des Texturspeichers aller geladenen Clips in MB (4 Byte je Pixel). Die fünf gemalten Clips brauchen
-## nach dem Zuschnitt rund 60 MB (docs/godot.md, „Speicher“); die Obergrenze lässt Platz für weitere Vela-Clips.
-const SPEICHER_BUDGET_MB: int = 128
+## Obergrenze des Texturspeichers aller geladenen Clips in MB (4 Byte je Pixel). Alle fünfzehn gemalten Vela-Clips brauchen
+## nach dem Zuschnitt rund 209 MB (docs/godot.md, „Speicher“, Stand 2026-10-08); die Obergrenze lässt sie alle zugleich
+## im Speicher, damit nie ein Clip mitten im Spiel fehlt (Rückfall auf die Puppe wäre ein sichtbarer Stilbruch). Für weitere
+## Figuren reicht das nicht: dort müssen Texturen komprimiert oder nur die Clips der Bühne geladen werden.
+const SPEICHER_BUDGET_MB: int = 256
 ## Zeitbudget (µs) eines Aufrufs von vorausladen_schritt im Leerlauf und bei vorgemerkten Clips.
 const VORAUS_LEERLAUF_US: int = 3000
 const VORAUS_BEDARF_US: int = 6000
 ## Reihenfolge des Vorausladens (wahrscheinlichste Clips zuerst).
 const VORAUS_REIHE: Array[String] = [
 	"stand", "gehen", "kette1", "sprint", "sprung", "sprungtritt", "kette2", "kette3", "kette4",
-	"getroffen_vorn", "umgeworfen", "liegen", "aufstehen",
+	"getroffen_vorn", "umgeworfen", "liegen", "aufstehen", "griff", "wurf",
 ]
 
 ## Geladene Clips: Name → {"daten": Dictionary, "ordner": String, "texturen": Array[Texture2D] (null = noch nicht

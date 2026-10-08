@@ -16,24 +16,29 @@ const SCHRITTE: int = 600
 ## (Kampfhaltung = 142, ±1 wegen der Staubentfernung bzw. des Atems); ankerx: Anker x = Mitte der untersten 6 Zeilen
 ## des ersten Bildes (Fußmitte, nicht bei Schwerpunkt- und Übergangsanker).
 ## hd: gemalter Clip (Umsetzer --hd, clip.txt weich=1, WebP mit weicher Kante; Entscheidung des Nutzers 2026-10-08), sonst
-## Pixel-Clip. Bei HD-Clips ist `hoehe` die Figurhöhe im ersten Bild in Spielbildpixeln (Dateipixel · skala), `massstab` der
+## Pixel-Clip; seit der zweiten Lieferung am 2026-10-08 sind alle echten Clips gemalt (Pixel-Clips gibt es nur noch als
+## `_test_*` aus der Puppe). `fussmitte`: der Fußpunkt (`--ankerx-video`) liegt auf der Mitte zwischen den Stiefeln der
+## Kampfhaltung im ersten Bild (nur Clips, die in der Kampfhaltung beginnen). Bei HD-Clips ist `hoehe` die Figurhöhe im ersten Bild in Spielbildpixeln (Dateipixel · skala), `massstab` der
 ## Spielbildpixel je Videopixel (Clips mit dem Sprung-Startbild: Figur nur 45 % der Bildhöhe, deshalb 0,330). `ankerx`: false
 ## bei HD-Clips, die nicht in der Kampfhaltung beginnen (kette1 beginnt am Ende des Ausholens, sprung und sprungtritt in der
 ## Hocke, Wartezeit abgeschnitten): ihr Anker (`--ankerx-video`, Fußmitte der Haltung im Video) liegt nicht unter dem ersten
 ## Bild, sondern nur innerhalb der Figur des ersten Bildes (geprüft).
 const ECHTE: Dictionary = {
-	"stand": {"min": 30, "hoehe": [141, 144], "ankerx": true, "hd": true},
+	"stand": {"min": 30, "hoehe": [141, 144], "ankerx": false, "fussmitte": true, "hd": true},
+	"gehen": {"min": 20, "hoehe": [], "ankerx": false, "hd": true},
 	"kette1": {"min": 20, "hoehe": [139, 144], "ankerx": false, "hd": true},
-	"kette2": {"min": 30, "hoehe": [142, 142], "ankerx": true},
-	"kette3": {"min": 30, "hoehe": [142, 142], "ankerx": true},
-	"kette4": {"min": 30, "hoehe": [142, 142], "ankerx": true},
+	"kette2": {"min": 30, "hoehe": [], "ankerx": false, "hd": true},
+	"kette3": {"min": 20, "hoehe": [], "ankerx": false, "hd": true},
+	"kette4": {"min": 60, "hoehe": [], "ankerx": false, "hd": true},
 	"sprint": {"min": 16, "hoehe": [], "ankerx": false, "hd": true},
 	"sprung": {"min": 60, "hoehe": [], "ankerx": false, "hd": true, "massstab": 0.3302},
 	"sprungtritt": {"min": 40, "hoehe": [], "ankerx": false, "hd": true, "massstab": 0.3302},
-	"getroffen_vorn": {"min": 60, "hoehe": [142, 142], "ankerx": true},
-	"umgeworfen": {"min": 60, "hoehe": [141, 142], "ankerx": false},
-	"liegen": {"min": 1, "hoehe": [], "ankerx": false},
-	"aufstehen": {"min": 60, "hoehe": [], "ankerx": false},
+	"getroffen_vorn": {"min": 40, "hoehe": [140, 144], "ankerx": false, "fussmitte": true, "hd": true},
+	"umgeworfen": {"min": 50, "hoehe": [140, 144], "ankerx": false, "fussmitte": true, "hd": true},
+	"liegen": {"min": 1, "hoehe": [], "ankerx": false, "hd": true},
+	"aufstehen": {"min": 60, "hoehe": [], "ankerx": false, "hd": true},
+	"griff": {"min": 30, "hoehe": [], "ankerx": false, "hd": true},
+	"wurf": {"min": 80, "hoehe": [], "ankerx": false, "hd": true},
 }
 ## Maßstab (clip.txt, Spielbildpixel je Videopixel) aller echten Clips: dieselbe Größe der Figur, 0,3 % Spielraum.
 const MASSSTAB: float = 0.1694
@@ -142,13 +147,13 @@ func _liste(clip: String, schluessel: String) -> Array[int]:
 # Ergebnisse des Umsetzers an den Testclips
 # ---------------------------------------------------------------------------
 
-func _clips(clip: String, min_n: int = 20, hoehe_ok: Array = [142, 142], ankerx_pruefen: bool = true, hd: bool = false) -> void:
+func _clips(clip: String, min_n: int = 20, hoehe_ok: Array = [142, 142], ankerx_pruefen: bool = true, hd: bool = false, fussmitte: bool = false) -> void:
 	var d: Dictionary = _daten(clip)
 	_ok(not d.is_empty(), "%s: clip.txt lesbar" % clip)
 	if d.is_empty():
 		return
 	if hd:
-		_clips_hd(clip, d, min_n, hoehe_ok, ankerx_pruefen)
+		_clips_hd(clip, d, min_n, hoehe_ok, ankerx_pruefen, fussmitte)
 		return
 	var n: int = d["bilder"]
 	_ok(n >= min_n, "%s: mindestens %d Bilder (%d)" % [clip, min_n, n])
@@ -217,7 +222,7 @@ func _clips(clip: String, min_n: int = 20, hoehe_ok: Array = [142, 142], ankerx_
 
 ## Ergebnisse des Umsetzers im HD-Modus an einem echten Clip: WebP mit weicher Kante, volle Farben, Skala, Anker, Zuschnitt.
 ## Die Figurhöhe des ersten Bildes steht in Spielbildpixeln (Dateipixel · skala), der Fußpunkt (`fuss`) in Dateipixeln.
-func _clips_hd(clip: String, d: Dictionary, min_n: int, hoehe_ok: Array, ankerx_pruefen: bool) -> void:
+func _clips_hd(clip: String, d: Dictionary, min_n: int, hoehe_ok: Array, ankerx_pruefen: bool, fussmitte: bool = false) -> void:
 	var n: int = d["bilder"]
 	_ok(n >= min_n, "%s: mindestens %d Bilder (%d)" % [clip, min_n, n])
 	_ok(bool(d["weich"]), "%s: clip.txt weich=1 (HD-Clip)" % clip)
@@ -260,11 +265,11 @@ func _clips_hd(clip: String, d: Dictionary, min_n: int, hoehe_ok: Array, ankerx_
 	_ok(groesse_ok, "%s: alle Bilder gleich groß (%d x %d)" % [clip, breite, hoehe])
 	_ok(halb > 0, "%s: weiche Kante (Alpha-Zwischenwerte vorhanden, %d)" % [clip, halb])
 	_ok(farben.size() > 64, "%s: volle Farben, nicht auf 64 reduziert (%d, abgebrochen bei 5000)" % [clip, farben.size()])
-	# Zuschnitt: Vereinigung aller Figuren (Alpha ab 128) plus 2 px Rand, weicher Rand darf bis zu 2 px hineinragen
+	# Zuschnitt: Vereinigung aller sichtbaren Pixel (Alpha > 0) plus 2 px Rand; gemessen ab Alpha 128 liegt der Rand bis zu 6 px innen (weicher Rand)
 	var rand: Array[int] = [x0, y0, breite - 1 - x1, hoehe - 1 - y1]
 	var rand_ok: bool = true
 	for r: int in rand:
-		if r < 2 or r > 4:
+		if r < 2 or r > 6:
 			rand_ok = false
 	_ok(rand_ok, "%s: Zuschnitt = Vereinigung aller Figuren plus 2 px (Rand links, oben, rechts, unten: %s)" % [clip, str(rand)])
 	var b1: Image = _bild(clip, 1)
@@ -290,6 +295,18 @@ func _clips_hd(clip: String, d: Dictionary, min_n: int, hoehe_ok: Array, ankerx_
 	else:
 		var r1: Rect2i = _alpha_rahmen(b1, 128)
 		_ok(fuss.x >= float(r1.position.x) and fuss.x <= float(r1.end.x), "%s: Fußpunkt x liegt innerhalb der Figur des ersten Bildes (%.1f in %d bis %d)" % [clip, fuss.x, r1.position.x, r1.end.x])
+	if fussmitte:
+		# Mitte zwischen den Stiefeln: Mitte des Rahmens der untersten 60 Dateizeilen (beide Stiefel; der Rahmen liegt wegen der
+		# Stiefelform bis etwa 8 Dateipixel neben der Mitte der Stiefelmitten)
+		var fx0: int = breite
+		var fx1: int = -1
+		for y: int in range(maxi(z[1] - 60, 0), z[1] + 1):
+			for x: int in breite:
+				if px1[(y * breite + x) * 4 + 3] >= 128:
+					fx0 = mini(fx0, x)
+					fx1 = maxi(fx1, x)
+		var mitte: float = float(fx0 + fx1) / 2.0 + 0.5
+		_ok(absf(fuss.x - mitte) <= 8.0, "%s: Fußpunkt x = Mitte zwischen den Stiefeln im ersten Bild (%.1f gegen %.1f)" % [clip, fuss.x, mitte])
 	_ok(fuss.x > 0.0 and fuss.x < float(breite) and fuss.y > 0.0 and fuss.y <= float(hoehe), "%s: Anker im Bild" % clip)
 	# Umrechnung in Spielbildpixel (clip_lesen): Größe und Anker stimmen mit Skala überein
 	_ok(absi(int(d["breite"]) - roundi(float(breite) * skala)) <= 1 and absi(int(d["hoehe"]) - roundi(float(hoehe) * skala)) <= 1, "%s: Größe in Spielbildpixeln = Dateigröße · Skala" % clip)
@@ -1075,7 +1092,7 @@ func _echte_clips() -> void:
 	for clip: String in ECHTE:
 		var sp: Dictionary = ECHTE[clip]
 		var hd: bool = bool(sp.get("hd", false))
-		_clips(clip, int(sp["min"]), sp["hoehe"], bool(sp["ankerx"]), hd)
+		_clips(clip, int(sp["min"]), sp["hoehe"], bool(sp["ankerx"]), hd, bool(sp.get("fussmitte", false)))
 		var d: Dictionary = _daten(clip)
 		if d.is_empty():
 			continue
@@ -1165,6 +1182,25 @@ func _echte_clips() -> void:
 				tiefst = mini(tiefst, lu[i])
 			_ok(lu[ev["aufprall"]] <= tiefst + 3 and lu[int(ev["aufprall"]) - 1] > tiefst + 3, "umgeworfen: der Aufprall ist das erste Bild am Boden (Luft %d, davor %d, tiefster Stand %d)" % [lu[ev["aufprall"]], lu[int(ev["aufprall"]) - 1], tiefst])
 			_ok(lu[int(ev["aufprall"]) - 1] - lu[ev["aufprall"]] >= 6, "umgeworfen: beim Aufprall fällt die Körperunterkante deutlich (%d px)" % (lu[int(ev["aufprall"]) - 1] - lu[ev["aufprall"]]))
+		elif clip == "gehen":
+			_gleich(int(d["zyklus_bilder"]), n, "gehen: der ganze Clip ist ein Doppelschritt (Zyklus)")
+			var mittel3: int = 0
+			for i: int in range(1, n):
+				mittel3 += _diff(clip, i, i + 1)
+			mittel3 /= n - 1
+			_ok(_diff(clip, n, 1) <= 2 * mittel3, "gehen: die Schleife schließt (Unterschied letztes zum ersten Bild %d, mittlerer Bildschritt %d)" % [_diff(clip, n, 1), mittel3])
+			_ok(int(d["schritt_px"]) >= 40 and int(d["schritt_px"]) <= 120, "gehen: Schrittlänge %d Bildpixel plausibel" % d["schritt_px"])
+			_ok(T.zyklus_ticks("gehen", d) >= T.GEHEN_TICKS_MIN and T.zyklus_ticks("gehen", d) <= T.GEHEN_TICKS_MAX, "gehen: Ticks je Doppelschritt im erlaubten Bereich (%d)" % T.zyklus_ticks("gehen", d))
+		elif clip == "griff":
+			var vg: Array[int] = _liste(clip, "vorn")
+			_ok(int(d["ausholen"]) < int(d["kontakt"]) and int(d["kontakt"]) <= int(d["rueckzug"]) and int(d["rueckzug"]) < int(d["ruhe"]) and int(d["ruhe"]) < n, "griff: Ausholen < Zugreifen (Kontakt) ≤ Rückzug < Haltepose (Ruhe) < Bilderzahl")
+			_ok(vg[d["kontakt"]] - vg[0] >= 20, "griff: beim Zugreifen sind die Arme weit nach vorn gestreckt (%d gegen %d am Anfang)" % [vg[d["kontakt"]], vg[0]])
+			_ok(vg[d["ruhe"]] < vg[d["kontakt"]] - 10, "griff: in der Haltepose sind die Arme wieder angezogen (%d gegen %d)" % [vg[d["ruhe"]], vg[d["kontakt"]]])
+		elif clip == "wurf":
+			var heben: int = ev["heben"]
+			_ok(heben < int(d["kontakt"]) and int(d["kontakt"]) < int(d["rueckzug"]) and int(d["rueckzug"]) < int(d["ruhe"]) and int(d["ruhe"]) < n, "wurf: Heben (%d) < Wurf (Kontakt %d) < Rückzug (%d) < Ruhe (%d) < Bilderzahl" % [heben, d["kontakt"], d["rueckzug"], d["ruhe"]])
+			var hw: Array[int] = _liste(clip, "hoehe_sil")
+			_ok(hw[heben] >= hw[0] - 6, "wurf: beim Heben steht die Figur aufrecht (Silhouette %d gegen %d am Anfang)" % [hw[heben], hw[0]])
 		elif clip == "liegen":
 			_gleich(n, 1, "liegen: ein Standbild (ohne Staubkörner)")
 		elif clip == "aufstehen":
@@ -1175,10 +1211,18 @@ func _echte_clips() -> void:
 	if not dl.is_empty() and not da.is_empty():
 		var bl: Image = _bild("liegen", 1)
 		var ba: Image = _bild("aufstehen", 1)
-		var zl: Array[int] = _zeilen(bl)
-		var za: Array[int] = _zeilen(ba)
-		_gleich(int(dl["ankery"]) - zl[1], int(da["ankery"]) - za[1], "liegen/aufstehen: Bodenlinie gleich weit unter der untersten Zeile")
-		_ok(absi((zl[1] - zl[0]) - (za[1] - za[0])) <= 2, "liegen/aufstehen: erstes Bild von aufstehen gleich hoch wie das Liegebild")
+		var hdl: bool = bool(dl["weich"]) and bool(da["weich"])
+		var zl: Array[int] = _zeilen_ab(bl, 128) if hdl else _zeilen(bl)
+		var za: Array[int] = _zeilen_ab(ba, 128) if hdl else _zeilen(ba)
+		if hdl:
+			# Dateipixel: Abstand des Fußpunkts unter der untersten Figurzeile und Höhe der Figur im ersten Bild (±5 Dateipixel = 2 Spielpixel)
+			var fl2: Vector2 = dl["fuss"]
+			var fa2: Vector2 = da["fuss"]
+			_ok(absf((fl2.y - float(zl[1] + 1)) - (fa2.y - float(za[1] + 1))) <= 1.5, "liegen/aufstehen: Bodenlinie gleich weit unter der untersten Zeile (%.1f, %.1f)" % [fl2.y - float(zl[1] + 1), fa2.y - float(za[1] + 1)])
+			_ok(absi((zl[1] - zl[0]) - (za[1] - za[0])) <= 5, "liegen/aufstehen: erstes Bild von aufstehen gleich hoch wie das Liegebild (%d, %d Dateizeilen)" % [zl[1] - zl[0] + 1, za[1] - za[0] + 1])
+		else:
+			_gleich(int(dl["ankery"]) - zl[1], int(da["ankery"]) - za[1], "liegen/aufstehen: Bodenlinie gleich weit unter der untersten Zeile")
+			_ok(absi((zl[1] - zl[0]) - (za[1] - za[0])) <= 2, "liegen/aufstehen: erstes Bild von aufstehen gleich hoch wie das Liegebild")
 
 
 # ---------------------------------------------------------------------------

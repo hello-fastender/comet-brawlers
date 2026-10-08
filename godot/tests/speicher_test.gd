@@ -8,11 +8,14 @@ extends RefCounted
 
 const F = preload("res://darstellung/vela_frames.gd")
 const T = preload("res://darstellung/vela_frames_tabelle.gd")
-## Die fünf gemalten Clips (HD) und ein paar Pixel-Clips.
+## Die fünf gemalten Clips der ersten Lieferung (Zielwert unten) und alle fünfzehn gemalten Vela-Clips.
 const HD: Array[String] = ["stand", "kette1", "sprint", "sprung", "sprungtritt"]
-const PIXEL: Array[String] = ["gehen", "kette2", "kette3", "kette4", "getroffen_vorn", "umgeworfen", "liegen", "aufstehen"]
+const ALLE: Array[String] = ["stand", "gehen", "kette1", "kette2", "kette3", "kette4", "sprint", "sprung", "sprungtritt",
+	"getroffen_vorn", "umgeworfen", "liegen", "aufstehen", "griff", "wurf"]
 ## Zielwert (Auftrag E27): Texturspeicher der fünf gemalten Clips nach vollem Vorausladen höchstens 100 MB.
 const ZIEL_MB: int = 100
+## Alle fünfzehn Clips zusammen (2026-10-08: rund 209 MB): höchstens so viel, und sie passen alle ins Budget.
+const ALLE_MB: int = 230
 ## Obergrenze für das Laden eines Bildes (µs): fängt grobe Rückschritte ab, ohne an der Rechengeschwindigkeit zu hängen.
 const BILD_US_MAX: int = 250000
 
@@ -75,9 +78,9 @@ func _nach_bedarf() -> void:
 
 
 ## Der Zuschnitt verliert kein sichtbares Pixel: Textur = Ausschnitt des Dateibildes (Byte für Byte), und alles außerhalb
-## des Ausschnitts ist im Dateibild durchsichtig (Alpha 0). Für alle Bilder der gemalten und einiger Pixel-Clips.
+## des Ausschnitts ist im Dateibild durchsichtig (Alpha 0). Für alle Bilder aller gemalten Clips.
 func _kein_pixelverlust() -> void:
-	for clip: String in HD + PIXEL:
+	for clip: String in ALLE:
 		F.clips_vergessen()
 		var c: Dictionary = F.clip_laden(clip)
 		_ok(not c.is_empty(), "Pixel %s: Clip lesbar" % clip)
@@ -109,8 +112,7 @@ func _kein_pixelverlust() -> void:
 		_gleich(umschliesst, n, "Pixel %s: der Ausschnitt umschließt alle sichtbaren Pixel" % clip)
 		_gleich(format_ok, n, "Pixel %s: Texturen RGBA8" % clip)
 		_gleich(rand_frei, n, "Pixel %s: keine Figur berührt den Rand des Dateibildes (nichts abgeschnitten)" % clip)
-		if HD.has(clip):
-			_ok(kleiner > 0, "Pixel %s: der Zuschnitt spart bei mindestens einem Bild Speicher" % clip)
+		_ok(kleiner > 0, "Pixel %s: der Zuschnitt spart bei mindestens einem Bild Speicher" % clip)
 	F.clips_vergessen()
 
 
@@ -278,4 +280,14 @@ func _ziel() -> void:
 	_ok(F.speicher_bytes() < roh, "Ziel: Zuschnitt spart gegenüber dem vollen Rechteck (%.1f von %.1f MB)" % [mb, float(roh) / 1048576.0])
 	F.budget_bytes = F.SPEICHER_BUDGET_MB * 1048576
 	_ok(F.speicher_bytes() <= F.budget_bytes, "Ziel: die fünf gemalten Clips passen ins Budget von %d MB" % F.SPEICHER_BUDGET_MB)
+	# alle fünfzehn Clips
+	F.clips_vergessen()
+	F.budget_bytes = 1 << 40
+	for clip: String in ALLE:
+		F.clip_laden(clip)
+	var mb_alle: float = float(F.speicher_bytes()) / 1048576.0
+	print("Speicher aller fünfzehn gemalten Clips: %.1f MB" % mb_alle)
+	_ok(mb_alle <= float(ALLE_MB), "Ziel: alle fünfzehn gemalten Clips brauchen %.1f MB Texturen (höchstens %d MB)" % [mb_alle, ALLE_MB])
+	F.budget_bytes = F.SPEICHER_BUDGET_MB * 1048576
+	_ok(F.speicher_bytes() <= F.budget_bytes, "Ziel: alle fünfzehn gemalten Clips passen ins Budget von %d MB (%.1f MB)" % [F.SPEICHER_BUDGET_MB, mb_alle])
 	F.clips_vergessen()
