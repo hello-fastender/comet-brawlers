@@ -1013,3 +1013,303 @@ sie richtet sich auf und steht in der Kampfhaltung.
 ENDE: Das letzte Bild gleicht dem ersten Bild (Kampfhaltung, gleiche Größe und
 gleicher Ort im Bild).
 ```
+
+## sprungangriff_hoch (vela_v_sprungangriff_hoch.mp4, 3,0 s)
+
+```text
+STARTBILD: Das beigefügte erste Bild zeigt die Heldin Vela vor einem einfarbigen
+grünen Hintergrund (leuchtendes Chroma-Key-Grün, genau der Farbton des Startbilds, etwa RGB 25, 212, 32).
+Das Video beginnt exakt mit diesem Bild (gleiche Pose, gleiche Größe, gleicher
+Ort im Bild, gleicher grüner Hintergrund) und der Hintergrund bleibt in
+JEDEM einzelnen Bild bis zum letzten Bild genau dieses Grün. Kein schwarzes
+Bild am Anfang, kein Einblenden, kein Überblenden, kein Farbverlauf, keine
+Vignette, kein Rauschen, keine Textur im Hintergrund.
+
+FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
+Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
+Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
+Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
+nichts hinzufügen. Auf Jacke, Ärmeln und Schultern gibt es keine Abzeichen,
+Sterne, Logos oder Aufnäher. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
+weichen Farbverläufen und Cel-Shading, exakt wie im Startbild. Kein
+Stilwechsel während des Videos, keine Pixelkanten, kein Realismus, keine
+3D-Optik. Die dunkle Kontur um die Figur bleibt in jedem Bild gleich dick und
+rundum geschlossen. Nichts an der Figur wird grün. Auf Jacke, Ärmeln und
+Schultern gibt es keine Abzeichen, Sterne, Logos oder Aufnäher.
+
+BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
+Schwenk, kein Wackeln, kein Neigen). Die Kamera schaut waagrecht auf Vela. Vela
+steht auf der Stelle und bleibt an ihrem Platz in der Bildmitte (mit Ausnahme
+der Bewegungen, die unten verlangt werden). Die ganze Figur ist in jedem Bild
+vollständig zu sehen, auch Stiefel, Fäuste und Zopfspitze. Vela nimmt im Startbild 60 Prozent der Bildhöhe ein und wird nie größer als 65 Prozent; zwischen Kopf (bei Sprüngen und Tritten:
+höchster Punkt) und oberem Bildrand bleiben mindestens 15 Prozent Platz, seitlich
+mindestens 20 Prozent.
+
+VERBOTEN (nirgends im Video): Boden, Bodenlinie, Schatten (auch kein weicher
+Schatten unter den Füßen), Staub, Rauch, Funken, Blitze, Strahlen, Wischlinien,
+Geschwindigkeitslinien, Schweißtropfen, Sterne, Kreise, Treffereffekte, Bewegungsunschärfe, Tiefenunschärfe, Glühen, Lichthöfe,
+Gegner, Waffen (außer wo verlangt), zweite Personen, Schrift, Zahlen, Logos,
+Wasserzeichen, Untertitel, Rahmen, Musik, Ton.
+
+ABLAUF: Genau EINE Handlung, genau EIN Durchlauf, keine Wiederholung. Das
+Video endet mit der Pose, die im Prompt unter ENDE genannt ist, und Vela
+bewegt sich in der letzten Sekunde nicht mehr.
+
+STARTBILD FÜR DIESEN CLIP: `vela_k_kampfhaltung_gemalt_sprung.png` (Vela nur 45 %
+der Bildhöhe groß, Füße bei 88 % der Höhe, 43 % Platz über dem Kopf).
+ABWEICHUNG VOM VORSPANN: Hier ist Vela im Startbild kleiner und steht tief im
+Bild, damit die Luftbewegung Platz hat. Die Größe ändert sich im ganzen Video
+nicht. Der Kopf kommt höchstens bis auf 15 Prozent an den oberen Bildrand,
+nie weiter, und ist in jedem Bild ganz zu sehen.
+HANDLUNG: Sprung mit einem steil nach oben geführten Haken (Aufwärtshaken in der
+Luft). Die Füße heben sich nur etwa eine halbe Körperhöhe vom Boden. 0,0 bis 0,5
+s: still in der Kampfhaltung. 0,5 bis 0,8 s: tiefe Hocke. 0,8 bis 1,0 s:
+Absprung, der Körper streckt sich. 1,0 bis 1,3 s: im Aufstieg schlägt sie mit der
+vorderen (linken) Faust steil nach oben, der Arm zeigt am Ende fast senkrecht
+nach oben, der Oberkörper ist gestreckt, die Beine hängen leicht angewinkelt. 1,3
+bis 1,6 s: sie hält den hochgestreckten Arm am höchsten Punkt. 1,6 bis 2,0 s:
+Fallpose, die Arme sinken, die Knie sind leicht gebeugt. 2,0 bis 2,3 s: Landung
+in der Hocke, beide Füße am Boden. 2,3 bis 3,0 s: sie richtet sich auf und steht
+in der Kampfhaltung. Keine Funken, keine Blitze, keine Strahlen am Arm.
+ENDE: Das letzte Bild gleicht dem ersten Bild (Kampfhaltung, gleiche Größe und
+gleicher Ort im Bild).
+```
+
+## sprungangriff_runter (vela_v_sprungangriff_runter.mp4, 3,0 s)
+
+```text
+STARTBILD: Das beigefügte erste Bild zeigt die Heldin Vela vor einem einfarbigen
+grünen Hintergrund (leuchtendes Chroma-Key-Grün, genau der Farbton des Startbilds, etwa RGB 25, 212, 32).
+Das Video beginnt exakt mit diesem Bild (gleiche Pose, gleiche Größe, gleicher
+Ort im Bild, gleicher grüner Hintergrund) und der Hintergrund bleibt in
+JEDEM einzelnen Bild bis zum letzten Bild genau dieses Grün. Kein schwarzes
+Bild am Anfang, kein Einblenden, kein Überblenden, kein Farbverlauf, keine
+Vignette, kein Rauschen, keine Textur im Hintergrund.
+
+FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
+Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
+Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
+Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
+nichts hinzufügen. Auf Jacke, Ärmeln und Schultern gibt es keine Abzeichen,
+Sterne, Logos oder Aufnäher. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
+weichen Farbverläufen und Cel-Shading, exakt wie im Startbild. Kein
+Stilwechsel während des Videos, keine Pixelkanten, kein Realismus, keine
+3D-Optik. Die dunkle Kontur um die Figur bleibt in jedem Bild gleich dick und
+rundum geschlossen. Nichts an der Figur wird grün. Auf Jacke, Ärmeln und
+Schultern gibt es keine Abzeichen, Sterne, Logos oder Aufnäher.
+
+BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
+Schwenk, kein Wackeln, kein Neigen). Die Kamera schaut waagrecht auf Vela. Vela
+steht auf der Stelle und bleibt an ihrem Platz in der Bildmitte (mit Ausnahme
+der Bewegungen, die unten verlangt werden). Die ganze Figur ist in jedem Bild
+vollständig zu sehen, auch Stiefel, Fäuste und Zopfspitze. Vela nimmt im Startbild 60 Prozent der Bildhöhe ein und wird nie größer als 65 Prozent; zwischen Kopf (bei Sprüngen und Tritten:
+höchster Punkt) und oberem Bildrand bleiben mindestens 15 Prozent Platz, seitlich
+mindestens 20 Prozent.
+
+VERBOTEN (nirgends im Video): Boden, Bodenlinie, Schatten (auch kein weicher
+Schatten unter den Füßen), Staub, Rauch, Funken, Blitze, Strahlen, Wischlinien,
+Geschwindigkeitslinien, Schweißtropfen, Sterne, Kreise, Treffereffekte, Bewegungsunschärfe, Tiefenunschärfe, Glühen, Lichthöfe,
+Gegner, Waffen (außer wo verlangt), zweite Personen, Schrift, Zahlen, Logos,
+Wasserzeichen, Untertitel, Rahmen, Musik, Ton.
+
+ABLAUF: Genau EINE Handlung, genau EIN Durchlauf, keine Wiederholung. Das
+Video endet mit der Pose, die im Prompt unter ENDE genannt ist, und Vela
+bewegt sich in der letzten Sekunde nicht mehr.
+
+STARTBILD FÜR DIESEN CLIP: `vela_k_kampfhaltung_gemalt_sprung.png` (Vela nur 45 %
+der Bildhöhe groß, Füße bei 88 % der Höhe, 43 % Platz über dem Kopf).
+ABWEICHUNG VOM VORSPANN: Hier ist Vela im Startbild kleiner und steht tief im
+Bild, damit die Luftbewegung Platz hat. Die Größe ändert sich im ganzen Video
+nicht. Der Kopf kommt höchstens bis auf 15 Prozent an den oberen Bildrand,
+nie weiter, und ist in jedem Bild ganz zu sehen.
+HANDLUNG: Sprung mit einem Sturztritt schräg nach unten (beide Füße voran).
+Die Füße heben sich nur etwa eine halbe Körperhöhe vom Boden. 0,0 bis 0,5 s: still
+in der Kampfhaltung. 0,5 bis 0,8 s: tiefe Hocke. 0,8 bis 1,0 s: Absprung. 1,0 bis
+1,3 s: im Aufstieg zieht sie beide Knie an die Brust, die Fäuste bleiben vor der
+Brust. 1,3 bis 1,6 s: am höchsten Punkt lehnt sie den Oberkörper leicht zurück und
+stößt beide Beine gestreckt schräg nach vorn-unten (rechts unten), die Füße zeigen
+nach vorn-unten. 1,6 bis 2,0 s: sie fällt mit den gestreckten Beinen voran. 2,0 bis
+2,3 s: Landung in der Hocke, beide Füße am Boden. 2,3 bis 3,0 s: sie richtet sich
+auf und steht in der Kampfhaltung. Keine Funken, keine Staubwolke bei der Landung.
+ENDE: Das letzte Bild gleicht dem ersten Bild (Kampfhaltung, gleiche Größe und
+gleicher Ort im Bild).
+```
+
+## sprintangriff (vela_v_sprintangriff.mp4, 3,0 s)
+
+```text
+STARTBILD: Das beigefügte erste Bild zeigt die Heldin Vela vor einem einfarbigen
+grünen Hintergrund (leuchtendes Chroma-Key-Grün, genau der Farbton des Startbilds, etwa RGB 25, 212, 32).
+Das Video beginnt exakt mit diesem Bild (gleiche Pose, gleiche Größe, gleicher
+Ort im Bild, gleicher grüner Hintergrund) und der Hintergrund bleibt in
+JEDEM einzelnen Bild bis zum letzten Bild genau dieses Grün. Kein schwarzes
+Bild am Anfang, kein Einblenden, kein Überblenden, kein Farbverlauf, keine
+Vignette, kein Rauschen, keine Textur im Hintergrund.
+
+FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
+Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
+Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
+Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
+nichts hinzufügen. Auf Jacke, Ärmeln und Schultern gibt es keine Abzeichen,
+Sterne, Logos oder Aufnäher. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
+weichen Farbverläufen und Cel-Shading, exakt wie im Startbild. Kein
+Stilwechsel während des Videos, keine Pixelkanten, kein Realismus, keine
+3D-Optik. Die dunkle Kontur um die Figur bleibt in jedem Bild gleich dick und
+rundum geschlossen. Nichts an der Figur wird grün. Auf Jacke, Ärmeln und
+Schultern gibt es keine Abzeichen, Sterne, Logos oder Aufnäher.
+
+BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
+Schwenk, kein Wackeln, kein Neigen). Die Kamera schaut waagrecht auf Vela. Vela
+steht auf der Stelle und bleibt an ihrem Platz in der Bildmitte (mit Ausnahme
+der Bewegungen, die unten verlangt werden). Die ganze Figur ist in jedem Bild
+vollständig zu sehen, auch Stiefel, Fäuste und Zopfspitze. Vela nimmt im Startbild 60 Prozent der Bildhöhe ein und wird nie größer als 65 Prozent; zwischen Kopf (bei Sprüngen und Tritten:
+höchster Punkt) und oberem Bildrand bleiben mindestens 15 Prozent Platz, seitlich
+mindestens 20 Prozent.
+
+VERBOTEN (nirgends im Video): Boden, Bodenlinie, Schatten (auch kein weicher
+Schatten unter den Füßen), Staub, Rauch, Funken, Blitze, Strahlen, Wischlinien,
+Geschwindigkeitslinien, Schweißtropfen, Sterne, Kreise, Treffereffekte, Bewegungsunschärfe, Tiefenunschärfe, Glühen, Lichthöfe,
+Gegner, Waffen (außer wo verlangt), zweite Personen, Schrift, Zahlen, Logos,
+Wasserzeichen, Untertitel, Rahmen, Musik, Ton.
+
+ABLAUF: Genau EINE Handlung, genau EIN Durchlauf, keine Wiederholung. Das
+Video endet mit der Pose, die im Prompt unter ENDE genannt ist, und Vela
+bewegt sich in der letzten Sekunde nicht mehr.
+
+HANDLUNG: Vela rennt und wirft sich in einen rutschenden Tritt (Grätsche). Sie bleibt
+dabei an derselben Stelle im Bild (die Rutschbewegung zeichnet das Spiel). 0,0 bis
+0,4 s: Drehung aus der Kampfhaltung in die strenge Seitenansicht von rechts (Profil,
+Blick nach rechts). 0,4 bis 0,8 s: sie rennt auf der Stelle (Oberkörper leicht nach
+vorn geneigt, Arme im Gegentakt, ein Doppelschritt). 0,8 bis 1,0 s: sie lehnt sich
+zurück und wirft sich nach hinten-unten, das vordere Bein schnellt waagrecht nach
+vorn, das hintere Bein knickt unter dem Körper ein, eine Hand stützt sich am Boden
+ab. 1,0 bis 1,8 s: sie hält die Rutschpose (Oberkörper schräg zurückgelehnt, das
+vordere Bein voll gestreckt knapp über dem Boden, Fuß nach vorn). 1,8 bis 2,3 s:
+sie zieht das Bein an und kommt auf die Füße. 2,3 bis 3,0 s: sie steht in der
+Kampfhaltung (Dreiviertelansicht nach rechts wie im Startbild). Kein Staub, keine
+Rutschspur, keine Funken, kein Schatten.
+ENDE: Das letzte Bild gleicht dem ersten Bild (Kampfhaltung).
+```
+
+## sprintsprung (vela_v_sprintsprung.mp4, 3,0 s)
+
+```text
+STARTBILD: Das beigefügte erste Bild zeigt die Heldin Vela vor einem einfarbigen
+grünen Hintergrund (leuchtendes Chroma-Key-Grün, genau der Farbton des Startbilds, etwa RGB 25, 212, 32).
+Das Video beginnt exakt mit diesem Bild (gleiche Pose, gleiche Größe, gleicher
+Ort im Bild, gleicher grüner Hintergrund) und der Hintergrund bleibt in
+JEDEM einzelnen Bild bis zum letzten Bild genau dieses Grün. Kein schwarzes
+Bild am Anfang, kein Einblenden, kein Überblenden, kein Farbverlauf, keine
+Vignette, kein Rauschen, keine Textur im Hintergrund.
+
+FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
+Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
+Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
+Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
+nichts hinzufügen. Auf Jacke, Ärmeln und Schultern gibt es keine Abzeichen,
+Sterne, Logos oder Aufnäher. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
+weichen Farbverläufen und Cel-Shading, exakt wie im Startbild. Kein
+Stilwechsel während des Videos, keine Pixelkanten, kein Realismus, keine
+3D-Optik. Die dunkle Kontur um die Figur bleibt in jedem Bild gleich dick und
+rundum geschlossen. Nichts an der Figur wird grün. Auf Jacke, Ärmeln und
+Schultern gibt es keine Abzeichen, Sterne, Logos oder Aufnäher.
+
+BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
+Schwenk, kein Wackeln, kein Neigen). Die Kamera schaut waagrecht auf Vela. Vela
+steht auf der Stelle und bleibt an ihrem Platz in der Bildmitte (mit Ausnahme
+der Bewegungen, die unten verlangt werden). Die ganze Figur ist in jedem Bild
+vollständig zu sehen, auch Stiefel, Fäuste und Zopfspitze. Vela nimmt im Startbild 60 Prozent der Bildhöhe ein und wird nie größer als 65 Prozent; zwischen Kopf (bei Sprüngen und Tritten:
+höchster Punkt) und oberem Bildrand bleiben mindestens 15 Prozent Platz, seitlich
+mindestens 20 Prozent.
+
+VERBOTEN (nirgends im Video): Boden, Bodenlinie, Schatten (auch kein weicher
+Schatten unter den Füßen), Staub, Rauch, Funken, Blitze, Strahlen, Wischlinien,
+Geschwindigkeitslinien, Schweißtropfen, Sterne, Kreise, Treffereffekte, Bewegungsunschärfe, Tiefenunschärfe, Glühen, Lichthöfe,
+Gegner, Waffen (außer wo verlangt), zweite Personen, Schrift, Zahlen, Logos,
+Wasserzeichen, Untertitel, Rahmen, Musik, Ton.
+
+ABLAUF: Genau EINE Handlung, genau EIN Durchlauf, keine Wiederholung. Das
+Video endet mit der Pose, die im Prompt unter ENDE genannt ist, und Vela
+bewegt sich in der letzten Sekunde nicht mehr.
+
+STARTBILD FÜR DIESEN CLIP: `vela_k_kampfhaltung_gemalt_sprung.png` (Vela nur 45 %
+der Bildhöhe groß, Füße bei 88 % der Höhe, 43 % Platz über dem Kopf).
+ABWEICHUNG VOM VORSPANN: Hier ist Vela im Startbild kleiner und steht tief im
+Bild, damit die Luftbewegung Platz hat. Die Größe ändert sich im ganzen Video
+nicht. Der Kopf kommt höchstens bis auf 15 Prozent an den oberen Bildrand,
+nie weiter, und ist in jedem Bild ganz zu sehen.
+HANDLUNG: Vela rennt und springt im Lauf weit nach vorn. Sie bleibt dabei an
+derselben Stelle im Bild (die Vorwärtsbewegung zeichnet das Spiel); die Füße heben
+sich nur etwa eine halbe Körperhöhe vom Boden. 0,0 bis 0,4 s: Drehung aus der
+Kampfhaltung in die strenge Seitenansicht von rechts (Profil, Blick nach rechts).
+0,4 bis 1,0 s: sie rennt auf der Stelle (Oberkörper 15 Grad nach vorn, Arme im
+Gegentakt). 1,0 bis 1,2 s: Absprung aus dem Lauf, ein Bein stößt ab, das andere Knie
+geht hoch. 1,2 bis 1,9 s: Flugphase: der Körper liegt leicht nach vorn geneigt, beide
+Knie sind angezogen, die Arme schwingen nach vorn. 1,9 bis 2,2 s: Landung in der
+Hocke, ein Fuß vor dem anderen. 2,2 bis 3,0 s: sie richtet sich auf und steht in
+der Kampfhaltung (Dreiviertelansicht nach rechts wie im Startbild).
+ENDE: Das letzte Bild gleicht dem ersten Bild (Kampfhaltung, gleiche Größe und
+gleicher Ort im Bild).
+```
+
+## sprintsprung_angriff (vela_v_sprintsprung_angriff.mp4, 3,0 s)
+
+```text
+STARTBILD: Das beigefügte erste Bild zeigt die Heldin Vela vor einem einfarbigen
+grünen Hintergrund (leuchtendes Chroma-Key-Grün, genau der Farbton des Startbilds, etwa RGB 25, 212, 32).
+Das Video beginnt exakt mit diesem Bild (gleiche Pose, gleiche Größe, gleicher
+Ort im Bild, gleicher grüner Hintergrund) und der Hintergrund bleibt in
+JEDEM einzelnen Bild bis zum letzten Bild genau dieses Grün. Kein schwarzes
+Bild am Anfang, kein Einblenden, kein Überblenden, kein Farbverlauf, keine
+Vignette, kein Rauschen, keine Textur im Hintergrund.
+
+FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
+Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
+Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
+Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
+nichts hinzufügen. Auf Jacke, Ärmeln und Schultern gibt es keine Abzeichen,
+Sterne, Logos oder Aufnäher. Stil: gemalte, hochauflösende 2D-Spielfigur mit sauberer dunkler Kontur,
+weichen Farbverläufen und Cel-Shading, exakt wie im Startbild. Kein
+Stilwechsel während des Videos, keine Pixelkanten, kein Realismus, keine
+3D-Optik. Die dunkle Kontur um die Figur bleibt in jedem Bild gleich dick und
+rundum geschlossen. Nichts an der Figur wird grün. Auf Jacke, Ärmeln und
+Schultern gibt es keine Abzeichen, Sterne, Logos oder Aufnäher.
+
+BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
+Schwenk, kein Wackeln, kein Neigen). Die Kamera schaut waagrecht auf Vela. Vela
+steht auf der Stelle und bleibt an ihrem Platz in der Bildmitte (mit Ausnahme
+der Bewegungen, die unten verlangt werden). Die ganze Figur ist in jedem Bild
+vollständig zu sehen, auch Stiefel, Fäuste und Zopfspitze. Vela nimmt im Startbild 60 Prozent der Bildhöhe ein und wird nie größer als 65 Prozent; zwischen Kopf (bei Sprüngen und Tritten:
+höchster Punkt) und oberem Bildrand bleiben mindestens 15 Prozent Platz, seitlich
+mindestens 20 Prozent.
+
+VERBOTEN (nirgends im Video): Boden, Bodenlinie, Schatten (auch kein weicher
+Schatten unter den Füßen), Staub, Rauch, Funken, Blitze, Strahlen, Wischlinien,
+Geschwindigkeitslinien, Schweißtropfen, Sterne, Kreise, Treffereffekte, Bewegungsunschärfe, Tiefenunschärfe, Glühen, Lichthöfe,
+Gegner, Waffen (außer wo verlangt), zweite Personen, Schrift, Zahlen, Logos,
+Wasserzeichen, Untertitel, Rahmen, Musik, Ton.
+
+ABLAUF: Genau EINE Handlung, genau EIN Durchlauf, keine Wiederholung. Das
+Video endet mit der Pose, die im Prompt unter ENDE genannt ist, und Vela
+bewegt sich in der letzten Sekunde nicht mehr.
+
+STARTBILD FÜR DIESEN CLIP: `vela_k_kampfhaltung_gemalt_sprung.png` (Vela nur 45 %
+der Bildhöhe groß, Füße bei 88 % der Höhe, 43 % Platz über dem Kopf).
+ABWEICHUNG VOM VORSPANN: Hier ist Vela im Startbild kleiner und steht tief im
+Bild, damit die Luftbewegung Platz hat. Die Größe ändert sich im ganzen Video
+nicht. Der Kopf kommt höchstens bis auf 15 Prozent an den oberen Bildrand,
+nie weiter, und ist in jedem Bild ganz zu sehen.
+HANDLUNG: Vela rennt, springt im Lauf weit nach vorn und tritt im Flug (langer
+Flugtritt in der Seitenansicht). Sie bleibt dabei an derselben Stelle im Bild; die
+Füße heben sich nur etwa eine halbe Körperhöhe vom Boden. 0,0 bis 0,4 s: Drehung
+aus der Kampfhaltung ins Profil (Blick nach rechts). 0,4 bis 1,0 s: sie rennt auf
+der Stelle. 1,0 bis 1,2 s: Absprung aus dem Lauf. 1,2 bis 1,5 s: sie zieht das
+hintere Bein an. 1,5 bis 1,9 s: Flugtritt: der Oberkörper lehnt waagrecht nach
+hinten, das vordere Bein ist gestreckt und waagrecht nach vorn (rechts) ausgestreckt,
+das andere Bein ist angezogen, die Arme sind seitlich ausgebreitet. 1,9 bis 2,2 s:
+Landung in der Hocke. 2,2 bis 3,0 s: sie richtet sich auf und steht in der
+Kampfhaltung (Dreiviertelansicht nach rechts wie im Startbild). Keine Funken, keine
+Staubwolke, keine Wischlinien.
+ENDE: Das letzte Bild gleicht dem ersten Bild (Kampfhaltung, gleiche Größe und
+gleicher Ort im Bild).
+```
