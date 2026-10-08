@@ -369,11 +369,9 @@ Durchlauf.
    (1024 × 1024, Vela in Kampfhaltung auf reinem Grün, Figur 60 % der
    Bildhöhe, 22 % Platz darüber, 18 % darunter; passt zum Videoformat 1:1). Für `aufstehen` ein
    anderes Startbild, siehe dort.
-2. **Zweites Referenzbild:** `spiel/grafik/quelle/fremd/vela/vela_t_teile.png`
-   (Teileblatt: Jacke, Haare, Handschuhe; nur zur Kontrolle der Kleidung).
-3. Seitenverhältnis des Videos **1:1** (quadratisch), mindestens 720 Pixel.
+2. Seitenverhältnis des Videos **1:1** (quadratisch), mindestens 720 Pixel.
    24 Bilder je Sekunde, ohne Ton.
-4. Dateiname `vela_v_<clip>.mp4`. Hochladen im Chat mit „Videos für Vela nach
+3. Dateiname `vela_v_<clip>.mp4`. Hochladen im Chat mit „Videos für Vela nach
    Auftrag 6, Fassung 2“. Nimmt der Chat kein MP4 an: GIF, WebP oder ZIP der
    Einzelbilder.
 
@@ -391,9 +389,8 @@ Vignette, kein Rauschen, keine Textur im Hintergrund.
 FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
-Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Das zweite beigefügte
-Bild (Teileblatt) zeigt Kleidung und Haare genau; nichts davon ändern, nichts
-hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
+Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
+nichts hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
 im Startbild.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein

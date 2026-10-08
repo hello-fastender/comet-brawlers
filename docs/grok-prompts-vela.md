@@ -1,5 +1,5 @@
 # Fertige Grok-Prompts für Vela (Fassung 2)
-Jeder Abschnitt ist ein vollständiger Prompt zum Einfügen (Vorspann + Handlung). Startbild: `spiel/grafik/quelle/fremd/vela/vela_k_kampfhaltung_gruen_quadrat.png`, zweites Bild: `vela_t_teile.png`, Format 1:1, 24 B/s. Quelle und Begründung: `docs/grafik-bestellung.md`, Abschnitt „Vela als Video“.
+Jeder Abschnitt ist ein vollständiger Prompt zum Einfügen (Vorspann + Handlung). Einziges Bild: das Startbild `spiel/grafik/quelle/fremd/vela/vela_k_kampfhaltung_gruen_quadrat.png`, Format 1:1, 24 B/s. Quelle und Begründung: `docs/grafik-bestellung.md`, Abschnitt „Vela als Video“.
 
 ## stand (vela_v_stand.mp4, Länge 3,0 s, Schleife)
 
@@ -15,9 +15,8 @@ Vignette, kein Rauschen, keine Textur im Hintergrund.
 FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
-Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Das zweite beigefügte
-Bild (Teileblatt) zeigt Kleidung und Haare genau; nichts davon ändern, nichts
-hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
+Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
+nichts hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
 im Startbild.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
@@ -62,9 +61,8 @@ Vignette, kein Rauschen, keine Textur im Hintergrund.
 FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
-Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Das zweite beigefügte
-Bild (Teileblatt) zeigt Kleidung und Haare genau; nichts davon ändern, nichts
-hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
+Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
+nichts hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
 im Startbild.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
@@ -116,9 +114,8 @@ Vignette, kein Rauschen, keine Textur im Hintergrund.
 FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
-Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Das zweite beigefügte
-Bild (Teileblatt) zeigt Kleidung und Haare genau; nichts davon ändern, nichts
-hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
+Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
+nichts hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
 im Startbild.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
@@ -165,9 +162,8 @@ Vignette, kein Rauschen, keine Textur im Hintergrund.
 FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
-Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Das zweite beigefügte
-Bild (Teileblatt) zeigt Kleidung und Haare genau; nichts davon ändern, nichts
-hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
+Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
+nichts hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
 im Startbild.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
@@ -214,9 +210,8 @@ Vignette, kein Rauschen, keine Textur im Hintergrund.
 FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
-Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Das zweite beigefügte
-Bild (Teileblatt) zeigt Kleidung und Haare genau; nichts davon ändern, nichts
-hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
+Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
+nichts hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
 im Startbild.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
@@ -263,9 +258,8 @@ Vignette, kein Rauschen, keine Textur im Hintergrund.
 FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
-Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Das zweite beigefügte
-Bild (Teileblatt) zeigt Kleidung und Haare genau; nichts davon ändern, nichts
-hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
+Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
+nichts hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
 im Startbild.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
@@ -312,9 +306,8 @@ Vignette, kein Rauschen, keine Textur im Hintergrund.
 FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
-Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Das zweite beigefügte
-Bild (Teileblatt) zeigt Kleidung und Haare genau; nichts davon ändern, nichts
-hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
+Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
+nichts hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
 im Startbild.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
@@ -363,9 +356,8 @@ Vignette, kein Rauschen, keine Textur im Hintergrund.
 FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
-Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Das zweite beigefügte
-Bild (Teileblatt) zeigt Kleidung und Haare genau; nichts davon ändern, nichts
-hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
+Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
+nichts hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
 im Startbild.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
@@ -413,9 +405,8 @@ Vignette, kein Rauschen, keine Textur im Hintergrund.
 FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
-Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Das zweite beigefügte
-Bild (Teileblatt) zeigt Kleidung und Haare genau; nichts davon ändern, nichts
-hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
+Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
+nichts hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
 im Startbild.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
@@ -461,9 +452,8 @@ Vignette, kein Rauschen, keine Textur im Hintergrund.
 FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
-Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Das zweite beigefügte
-Bild (Teileblatt) zeigt Kleidung und Haare genau; nichts davon ändern, nichts
-hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
+Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
+nichts hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
 im Startbild.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
@@ -507,9 +497,8 @@ Vignette, kein Rauschen, keine Textur im Hintergrund.
 FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
-Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Das zweite beigefügte
-Bild (Teileblatt) zeigt Kleidung und Haare genau; nichts davon ändern, nichts
-hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
+Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
+nichts hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
 im Startbild.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
@@ -559,9 +548,8 @@ Vignette, kein Rauschen, keine Textur im Hintergrund.
 FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
-Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Das zweite beigefügte
-Bild (Teileblatt) zeigt Kleidung und Haare genau; nichts davon ändern, nichts
-hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
+Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
+nichts hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
 im Startbild.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
@@ -610,9 +598,8 @@ Vignette, kein Rauschen, keine Textur im Hintergrund.
 FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
-Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Das zweite beigefügte
-Bild (Teileblatt) zeigt Kleidung und Haare genau; nichts davon ändern, nichts
-hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
+Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
+nichts hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
 im Startbild.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
@@ -657,9 +644,8 @@ Vignette, kein Rauschen, keine Textur im Hintergrund.
 FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
-Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Das zweite beigefügte
-Bild (Teileblatt) zeigt Kleidung und Haare genau; nichts davon ändern, nichts
-hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
+Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
+nichts hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
 im Startbild.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
@@ -703,9 +689,8 @@ Vignette, kein Rauschen, keine Textur im Hintergrund.
 FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
-Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Das zweite beigefügte
-Bild (Teileblatt) zeigt Kleidung und Haare genau; nichts davon ändern, nichts
-hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
+Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
+nichts hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
 im Startbild.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
@@ -751,9 +736,8 @@ Vignette, kein Rauschen, keine Textur im Hintergrund.
 FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
-Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Das zweite beigefügte
-Bild (Teileblatt) zeigt Kleidung und Haare genau; nichts davon ändern, nichts
-hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
+Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
+nichts hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
 im Startbild.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
@@ -798,9 +782,8 @@ Vignette, kein Rauschen, keine Textur im Hintergrund.
 FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
-Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Das zweite beigefügte
-Bild (Teileblatt) zeigt Kleidung und Haare genau; nichts davon ändern, nichts
-hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
+Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
+nichts hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
 im Startbild.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
@@ -846,9 +829,8 @@ Vignette, kein Rauschen, keine Textur im Hintergrund.
 FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
-Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Das zweite beigefügte
-Bild (Teileblatt) zeigt Kleidung und Haare genau; nichts davon ändern, nichts
-hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
+Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
+nichts hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
 im Startbild.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
@@ -891,9 +873,8 @@ Vignette, kein Rauschen, keine Textur im Hintergrund.
 FIGUR: Vela bleibt in jedem Bild dieselbe Figur wie im Startbild: gleiche
 Gesichtszüge, gleiches rotbraunes Haar mit hohem Pferdeschwanz, gleiche blaue
 Jacke mit orangem Querstreifen und goldenen Nähten, dunkles Top, dunkelblaue
-Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Das zweite beigefügte
-Bild (Teileblatt) zeigt Kleidung und Haare genau; nichts davon ändern, nichts
-hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
+Hose, schwarze Schnürstiefel, graublaue Stahlhandschuhe. Nichts davon ändern,
+nichts hinzufügen. Stil: Pixelgrafik eines Arcade-Prügelspiels, harte Pixelkanten, wie
 im Startbild.
 
 BILD: Quadratisches Bild. Feste Kamera ohne jede Bewegung (kein Zoom, kein
