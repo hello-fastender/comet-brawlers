@@ -796,77 +796,52 @@ Wenn ein Punkt nicht stimmt: den Clip erneut erzeugen (zwei bis drei Versuche
 sind normal) und den besten nehmen. Ein Fehler in einem Abschnitt ist nicht
 schlimm, das Werkzeug schneidet den guten Abschnitt aus.
 
-### Stand der Clips auf schwarzem Grund (2026-10-07)
+### Stand der Clips, gemalt (2026-10-08, fünfzehn Clips)
 
-Die elf Clips `stand`, `kette1` bis `kette4`, `sprint`, `sprung`, `getroffen_vorn`, `umgeworfen`, `liegen` und
-`aufstehen` unter `godot/grafik/vela_video/` stammen aus echten Grok-Videos (944 × 944, 24 Bilder/s) mit **schwarzem**
-Hintergrund (Randfarbe 0, 0, 0; Grok hat das Grün der Bestellung nicht eingehalten). Schwarz geht ebenso: Der Umsetzer
-fällt von selbst auf den Modus `ecke` zurück, mit `--tol 6 --loch 2` bleiben auch Top (etwa 15, 18, 30), Hose
-(20, 30, 70) und Stiefel (40, 40, 48) Figur; vom Rand unerreichbare dunkle Flächen werden gefüllt. Die PNG-Bilder schreibt
-der Umsetzer jetzt mit Palette (Index 0 durchsichtig, tRNS): etwa ein Drittel der Größe. Befehle (Videos nicht im Repo;
-`R` = Videoordner, immer `--tol 6 --loch 2`):
+Entscheidung des Nutzers (E27): Vela gilt im gemalten Stil (Vorbild Streets of Rage 4). Alle fünfzehn Clips unter
+`godot/grafik/vela_video/` sind gemalte Grok-Videos (944² bzw. 960², 24 Bilder/s, grüner Grund), umgesetzt mit
+`video_umsetzer.gd --hd --hoehe 360` (verlustfreies WebP, weiche Kante). Die früheren Pixel-Clips auf **schwarzem** Grund
+(erste Lieferung vom 2026-10-07, nur im Git-Verlauf) sind ersetzt. Die Befehle je Clip stehen in
+`godot/werkzeuge/vela_hd_clips.sh` (einzige Quelle; Quellvideos liegen nicht im Repo), die Beschreibung in `docs/godot.md`,
+Abschnitt „Gemalte Vela“.
 
-| Clip | Video | Zusätze zum Aufruf |
-|---|---|---|
-| `stand` | 1 | `--ab 3 --bis 36 --faktor 0.16949 --zyklus 34` (ein Atemzyklus, 34 Bilder) |
-| `kette1` | 2 | `--bis 96` |
-| `kette2` | 3 | `--ausser 19-24,27-30 --bis 70` (Scheinschlag davor und Funken weg) |
-| `kette3` | 4 | `--ausser 31-35 --ereignis hoch --bis 112 --setze rueckzug=74` (Funken weg) |
-| `kette4` | 5 | `--ausser 52-53 --bis 125 --setze kontakt1=18` (Funken am Fuß weg, erstes Fenster) |
-| `sprint` | 6 | `--ab 119 --bis 134 --faktor 0.16961 --ereignis keine --ankerx mittel --zyklus 16 --schritt lauf` |
-| `sprung` | 7 | `--ankery unten --ereignis sprung --kuerzen ja --bis 137 --ausser 49-54 --setze absprung=41` |
-| `getroffen_vorn` | 8 | `--ereignis treffer --kuerzen ja --bis 137 --setze kontakt=17` |
-| `umgeworfen` | 10 (gleich 9) | `--bis 120 --ankery unten --staub 65 --ereignis flug --kuerzen ja --faktor 0.16935` |
-| `liegen` | 10 | `--ab 188 --bis 188 --ereignis keine --ankery unten --ankerx-video 483.3 --faktor 0.16935` |
-| `aufstehen` | 10 | `--ab 188 --bis 270 --ereignis aufstehen --ankery unten --ankerx uebergang --ankerx-video 483.3 --faktor 0.16935` |
+| Clip | Quellvideo (Grok) | Bilder | Größe (Dateipixel) | Dateien (MB) |
+|---|---|---|---|---|
+| `stand` | `v4` (Atmen) | 47 | 204 × 368 | 3,6 |
+| `gehen` | `v6` (Profil, ein Doppelschritt aus 25 Bildern) | 25 | 274 × 377 | 1,9 |
+| `kette1` | `vela_v_kette1_gemalt` | 26 | 301 × 369 | 1,9 |
+| `kette2` | `v7` | 38 | 337 × 370 | 2,8 |
+| `kette3` | `v8` (Aufwärtshaken) | 26 | 326 × 372 | 2,0 |
+| `kette4` | `v9` (Jab, Drehung, Tritt; zwei Trefferfenster) | 69 | 372 × 381 | 4,7 |
+| `sprint` | `v3` (ein Doppelschritt aus 16 Bildern) | 16 | 336 × 370 | 1,2 |
+| `sprung` | `w1` (Sprung-Startbild, Figur 45 %) | 96 | 284 × 488 | 6,9 |
+| `sprungtritt` | `w2` (Sprung-Startbild) | 52 | 386 × 516 | 4,2 |
+| `getroffen_vorn` | `v12` | 50 | 320 × 369 | 4,0 |
+| `umgeworfen` | `v10` (12 s, mit Aufstehen; `v11` ist der gleiche Anfang) | 59 | 410 × 369 | 4,1 |
+| `liegen` | `v10` (ein Standbild) | 1 | 397 × 145 | 0,1 |
+| `aufstehen` | `v10` | 81 | 396 × 349 | 4,5 |
+| `griff` | `v13` (Zugreifen, dann Haltepose) | 34 | 318 × 371 | 2,6 |
+| `wurf` | `v14` (Heben, Wurf, Ausschwingen) | 89 | 345 × 398 | 6,6 |
 
-Video 9 und Video 10 sind bis Bild 100 gleich (Höhenverlauf der Silhouette bildgleich bis auf 1 Pixel); Video 10 ist die
-Fortsetzung, deshalb kommen `umgeworfen`, `liegen` und `aufstehen` aus Video 10 und teilen ein Koordinatensystem
-(`--ankerx-video`). Maßstab (clip.txt `massstab`) aller Clips 0,1690 bis 0,1696 Spielbildpixel je Videopixel (0,4 %
-Spielraum, die Kampfhaltung ist in jedem Clip 142 Pixel hoch, im Clip `umgeworfen` 141 wegen der Staubentfernung).
+Zusammen 54 MB Dateien, 209 MB Texturen im Arbeitsspeicher nach dem Zuschnitt. Fußpunkt (Anker) aller Clips außer `sprint`:
+die Mitte zwischen den Stiefeln der Kampfhaltung (`--ankerx-video 488.2` bei 944-Pixel-Videos, 479 bei den 960-Pixel-Videos von
+Sprung und Sprungtritt); vorher stand Vela auf dem vorderen Stiefel und im Spielbild etwa 16 Spielpixel links vom Schatten.
 
-Was Grok falsch gemacht hat (Wünsche für Nachbestellungen):
+Was in den gelieferten Videos nicht stimmt (Wünsche für Nachbestellungen, nach Gewicht):
 
-- **Sprung:** Vela springt am Scheitel aus dem Bild: die Fäuste der Streckung und die Zopfspitze der Hocke im Sprung sind
-  am oberen Bildrand abgeschnitten. Die sechs Bilder mit abgeschnittenen Fäusten (Video 49 bis 54) fehlen im Clip; die
-  Zopfspitze bleibt in etwa 30 Bildern am Scheitel flach abgeschnitten. Nachbestellung: Vela kleiner oder tiefer im Bild,
-  mit mehr Luft über dem Kopf, Sprung nur halb so hoch.
-- **Kette 2:** erst ein Scheinschlag (Jab), dann der eigentliche Schlag mit Funken; die Rückkehr endet in einer entspannten
-  Haltung mit hängenden Armen statt in der Kampfhaltung (der Clip spielt deshalb rückwärts zurück, `rueckkehr=rueckwaerts`).
-- **Kette 3 und 4, Kette 2:** Funkenstrahlen (Bilder 27 bis 30, 31 bis 35, 52 bis 53) werden von der Inselentfernung nicht
-  erfasst, weil sie an der Faust hängen; die Bilder sind per `--ausser` weggelassen.
-- **Umgeworfen:** Staubkörner am Boden ab dem Aufprall (grau, 3 Pixel groß); `--staub 65` entfernt die meisten, ein paar
-  dunkle Flecken bleiben in den ersten acht Bildern nach dem Aufprall (`liegen` ist sauber). Aufprall und Hocke haben
-  im Video eine andere Zeitleiste als die Logik (Flug 2,5 s statt 0,77 s), die Tabelle wählt Bilder aus.
-- **Aufstehen:** endet in einer frontalen Kampfhaltung (Fäuste vor der Brust, Füße schulterbreit), nicht in der
-  Dreiviertelansicht des Startbilds.
-- **Stand:** die Atembewegung ist nur 1 Pixel; die Bilder flimmern von Bild zu Bild um etwa 10 % der Pixel (neu gemalt).
+- **Sprung und Sprungtritt:** einzelne Bilder wechseln die Farbe (olivgrünes Haar, dunkelgrüne oder lila Handschuhe, rosa
+  Streifen an der Jacke). Beim Sprungtritt sind die schlimmsten Bilder weggelassen (Video 56 bis 60, 62, 114), im Sprung bleiben
+  einige. Je höchstens drei Logik-Ticks sichtbar.
+- **Aufstehen:** endet im Profil mit beiden Fäusten am Kinn und breitem Stand, nicht in der Dreiviertelansicht der
+  Kampfhaltung des Startbilds; beim Wechsel in `stand` springt die Pose um ein Bild. Im Video liegt ein weicher dunkelgrüner
+  Bodenschatten unter Vela, der beim Freistellen entfällt.
+- **Kette 3:** ein runder oranger Fleck auf dem Oberarm (der Streifen der Jacke, von vorn gesehen) in den Bildern der Hocke.
+- **Griff, Wurf, Getroffen:** die offenen Hände haben gespreizte, krallenartige Finger; im Spiel kaum zu sehen.
+- **Zeiten:** Grok liefert fast immer 6 Sekunden Video, auch wenn der Prompt 3 oder 4 verlangt; die Haltebilder
+  (gestreckter Arm oder Bein, Liegen) lässt das Werkzeug weg. Die Hocke vor dem Sprung ist im Clip lang, in der Logik ein Tick.
 
-Zuordnung Aktion → Clip und Zeiten: Kopf von `godot/darstellung/vela_frames_tabelle.gd`. Prüfbilder:
-`docs/bilder/godot_video_neue_clips.png`, `godot_video_ketten_stand.png` (Kontaktbögen auf grünem Grund) und die GIFs
-`godot_video_sprung.gif`, `_getroffen.gif`, `_umgeworfen_aufstehen.gif`, `_sprint.gif`, `_stand.gif`, `_kette2.gif`, `_kette3.gif`, `_kette4.gif`
-(Logik-Ticks mit dem Abspieler; jedes zweite Tick-Bild, GIF-Verzögerung auf 1/100 s gerundet: etwa 10 % schneller als in Echtzeit).
-
-### Stand der Clips, gemalt (2026-10-08)
-
-Entscheidung des Nutzers: Vela gilt im gemalten Stil (Vorbild Streets of Rage 4). Fünf gemalte Grok-Clips (944² bzw. 960²,
-24 Bilder/s, grüner Grund) ersetzen die Pixel-Clips derselben Handlung; alle anderen Clips bleiben vorerst Pixel (gemischter
-Betrieb). Umgesetzt mit `video_umsetzer.gd --hd --hoehe 360` (verlustfreies WebP, weiche Kante); Befehle und Zuordnung in
-`docs/godot.md`, Abschnitt „Gemalte Vela (HD-Clips im Spiel)“.
-
-| Clip | Video | Bilder | Größe | Dateien | Stand |
-|---|---|---|---|---|---|
-| `stand` | `v4` | 47 | 203 × 368 | 3,7 MB | ein Atemzyklus, schließt; ersetzt den Pixel-Clip |
-| `kette1` | `vela_v_kette1_gemalt` | 26 | 301 × 368 | 1,9 MB | ab Ausholen-Ende, ohne Haltebilder; ersetzt den Pixel-Clip |
-| `sprint` | `v3` | 16 | 336 × 370 | 1,3 MB | ein Doppelschritt (Video 63 bis 78); ersetzt den Pixel-Clip |
-| `sprung` | `w1` | 96 | 284 × 487 | 7,0 MB | Sprung-Startbild (Figur 45 % der Bildhöhe); ersetzt den Pixel-Clip |
-| `sprungtritt` | `w2` | 52 | 385 × 516 | 4,4 MB | neu; Sprungangriff N und R; Farbwechsel-Bilder 56 bis 60 und 62 fehlen |
-
-Nachbestellwünsche: In `sprung` und `sprungtritt` wechseln einzelne Bilder die Farbe (olivgrünes Haar, dunkelgrüne oder
-lila Handschuhe, rosa Streifen an der Jacke): Sprung Bild 8, 12 bis 14, 51 und 52, Sprungtritt etwa der letzte Luftframe.
-Sie sind je höchstens drei Logik-Ticks zu sehen. In `kette1` und `sprungtritt` hält das Video den Arm bzw. das Bein lange gestreckt (rund 30 Bilder); die Tabelle
-zeigt davon nur das Kontaktbild, die Haltebilder sind per `--ausser` weggelassen. `kette2` bis `kette4`, `gehen`, `getroffen_vorn`,
-`umgeworfen`, `liegen` und `aufstehen` sind noch Pixel und müssten im gemalten Stil nachbestellt werden.
+Noch ohne gemalten Clip (Platzhalter oder Puppe): Sprungangriff H und T (hoch, runter), Sprintsprung, Kniestoß, Spezial,
+getroffen von hinten, Waffe, Aufnehmen, Neueinstieg. Prompts: `docs/grok-prompts-vela-gemalt.md`.
 
 ## Nach der Bestellung
 
