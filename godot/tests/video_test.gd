@@ -755,6 +755,7 @@ func _hd_umsetzung() -> void:
 	_gleich(v.scale, Vector2(-1.0, 1.0), "HD-Abspieler: Blick links spiegelt")
 	_ok(v.aktuelles_bild().get_data() == bilder[HD_BILDER - 1].get_data(), "HD-Abspieler: zeigt unverändert das Dateibild")
 	v.free()
+	_hd_gemischt()
 	DarstellungVelaFrames.clips_vergessen()
 	# Aufräumen
 	for ordner: String in ["hdtest", "pixtest"]:
@@ -766,6 +767,41 @@ func _hd_umsetzung() -> void:
 	DirAccess.remove_absolute(aus)
 	DirAccess.remove_absolute(video)
 	DirAccess.remove_absolute(temp)
+
+
+## Im Spiel gemischt: HD-Clip als „stand“, Pixelclip als „gehen“ (nur im Speicher). Jeder Clip wird mit seiner Art gezeigt.
+func _hd_gemischt() -> void:
+	DarstellungVelaFrames._clips["stand"] = DarstellungVelaFrames.clip_laden("_hd_test")
+	DarstellungVelaFrames._clips["gehen"] = DarstellungVelaFrames.clip_laden("_hd_pixel")
+	var skript: GDScript = load("res://darstellung/spiel.gd")
+	var spiel: Node2D = _spiel(skript, PackedStringArray(["--szene", "spiel/tests/szenen/vorfuehrung.txt", "--eingabe", "spiel/tests/eingaben/vorfuehrung.txt"]))
+	var sitzung: DarstellungSitzung = spiel.get("sitzung")
+	_ok(sitzung != null, "HD gemischt: Spiel gestartet")
+	if sitzung == null:
+		spiel.free()
+		return
+	var frames: DarstellungVelaFrames = spiel.get("_frames")
+	var sprite: Sprite2D = frames.get_node("Bild")
+	var hd_gesehen: int = 0
+	var pixel_gesehen: int = 0
+	var arten_ok: bool = true
+	var skala: float = float(DarstellungVelaFrames.clip_daten("_hd_test")["skala"])
+	for _i in range(SCHRITTE):
+		sitzung.logikSchritt()
+		spiel.call("_puppeAktualisieren")
+		if not frames.visible:
+			continue
+		if frames.clip_name() == "stand":
+			hd_gesehen += 1
+			if sprite.texture_filter != CanvasItem.TEXTURE_FILTER_LINEAR or not is_equal_approx(sprite.scale.x, skala):
+				arten_ok = false
+		elif frames.clip_name() == "gehen":
+			pixel_gesehen += 1
+			if sprite.texture_filter != CanvasItem.TEXTURE_FILTER_NEAREST or sprite.scale != Vector2.ONE:
+				arten_ok = false
+	_ok(hd_gesehen > 0 and pixel_gesehen > 0, "HD gemischt: beide Arten kamen im Spiel vor (HD %d, Pixel %d Ticks)" % [hd_gesehen, pixel_gesehen])
+	_ok(arten_ok, "HD gemischt: HD-Clip mit LINEAR und Skala, Pixelclip mit NEAREST und Maßstab 1, auch im Wechsel")
+	spiel.free()
 
 
 ## Umschließendes Rechteck der Pixel mit Alpha ab `schwelle`.

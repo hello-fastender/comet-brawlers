@@ -1,7 +1,10 @@
 extends SceneTree
 ## Video-Umsetzer: macht aus einem kurzen Video von Vela (Grok, Weg „Vela als Video“,
-## docs/grafik-bestellung.md) eine Bildfolge für das Spiel (Pixelkunst, 142 Bildpixel hohe Figur,
-## höchstens 64 Farben, harte Kante) samt `clip.txt` mit den erkannten Zyklus- und Ereignisdaten.
+## docs/grafik-bestellung.md) eine Bildfolge für das Spiel samt `clip.txt` mit den erkannten Zyklus- und
+## Ereignisdaten. Zwei Modi:
+##   Pixelmodus (Standard): Pixelkunst, 142 Bildpixel hohe Figur, höchstens 64 Farben, harte Kante, PNG mit Palette.
+##   HD-Modus (`--hd`): gemalter Look wie Streets of Rage 4: glatte, weiche Kante, volle Farben (RGBA 8 Bit), Figur
+##     bis 600 Zeilen hoch (Standard 360), verlustfreies WebP (oder PNG). Siehe „HD-Modus“ unten und docs/godot.md.
 ## Die Zuordnung der Bilder zur Aktionsuhr der Logik macht DarstellungVelaFramesTabelle.
 ##
 ## Aufruf (Repo-Wurzel; Pfade ab Repo-Wurzel oder absolut):
@@ -11,6 +14,17 @@ extends SceneTree
 ##       [--kuerzen ja|nein|auto] [--behalte] [--tol <n>] [--loch <n>] [--fleck <n>] [--staub <n>] [--ab <n>] [--bis <n>]
 ##       [--faktor <massstab>|--massstab-von <clip>] [--ankerx fest|schwerpunkt|uebergang] [--ankery fest|unten]
 ##       [--schwerpunkt-ab <n>] [--setze name=n,...] [--schleife pingpong]
+##       [--hd [--spielhoehe 142] [--arbeit 150] [--kante <n>] [--format webp|png]]
+##
+##   --hd                 HD-Modus (siehe unten). Mit --hd gilt --hoehe als Höhe in Bildern des Clips (Standard 360, bis 600).
+##   --spielhoehe <n>     nur --hd: Höhe der Figur im Spiel in Bildpixeln der Logik (Standard 142). Zyklus, Ereignisse, Anker und
+##                        Schrittlänge werden in diesem Maßstab gemessen, genau wie im Pixelmodus; der Sprite wird im Spiel
+##                        um `skala` = Spielhöhe / Höhe verkleinert (clip.txt), die Figur ist so groß wie die Pixel-Figur.
+##   --arbeit <p>         nur --hd: Arbeitsauflösung, Figur im Arbeitsbild in Prozent der --hoehe (Standard 150, 100 bis 400;
+##                        nie über der Auflösung der Quelle). Höher = glättere Kante, aber langsamer und mehr Speicher.
+##   --kante <n>          nur --hd: Breite des weichen Übergangs in Arbeitspixeln beiderseits der harten Kante (Standard
+##                        Figurhöhe im Arbeitsbild / 150, zwischen 2 und 6).
+##   --format webp|png    nur --hd: Bilddateien (Standard webp, verlustfrei, rund ein Viertel kleiner als PNG).
 ##
 ##   --video <datei>      mp4, webm, gif oder webp (alles, was ffmpeg liest)
 ##   --name <clip>        Name des Clips (a-z, 0-9, _), Ordner <aus>/<clip>/ (gehen, stand, kette1 …)
@@ -76,6 +90,24 @@ extends SceneTree
 ##  5. Palette: Medianschnitt (umsetzer.gd) über alle Bilder gemeinsam, 63 Farben + durchsichtig.
 ##  6. Zyklus (Bildpaare i, i+n) und Ereignisse (Ausholen, Kontakt, Ruhe) in clip.txt.
 ## Alles deterministisch: Ganzzahlen (Festkomma 16.16 beim Verkleinern), feste Reihenfolgen.
+##
+## HD-Modus (`--hd`), Unterschiede zum Pixelmodus (Schritte 2, 4, 5 und 9; alles andere ist gleich):
+##  - Arbeitsauflösung: Figur etwa 1,5 × --hoehe hoch statt 2 × 142 (aber nie über der Quelle). Fleckgröße, Lochgröße und
+##    Staubfenster wachsen mit der Figur, damit Löcher füllen, Insel- und Staubentfernung wirken wie im Pixelmodus.
+##  - Harte Maske (wie bisher, nach Löchern, Staub und Inseln) dient nur noch für Rahmen, Anker, Kennzahlen, Zyklus und
+##    Ereignisse. Diese Analyse läuft im Spielmaßstab (--spielhoehe, 142), also mit denselben Zahlen wie im Pixelmodus
+##    (schritt_px, vorn, luft … stehen in Spielbildpixeln); eine Palette wird dafür nicht angewendet (Farben im Original).
+##  - Freistellen mit weicher Kante (`weich_freistellen`): Nur in einem Band von --kante Pixeln beiderseits der harten
+##    Kante wird der Alpha aus Grün-Dominanz und Entmischung (Schlüsselfarbe – Figurfarbe der Nachbarn) berechnet, die
+##    Farbe entmischt (Mischung C = α · F + (1 − α) · K nach F aufgelöst; bei kleinem α zählt die Figurfarbe der Nachbarn)
+##    und der Grünstich (Despill) entfernt. Weit innen ist Alpha 255, weit außen 0.
+##  - Verkleinern: vormultiplizierte Farben (Box-Filter, bei Vergrößerung bilinear), jedes Bild auf dasselbe Gitter und mit
+##    derselben Verschiebung wie im Spielmaßstab; danach Zuschnitt auf die Vereinigung aller Figuren plus 2 Pixel und ein
+##    Farbrand (Farbe der Nachbarn unter Alpha 0, sonst mischt lineare Texturfilterung Schwarz in die Kante).
+##  - Ausgabe: RGBA 8 Bit, verlustfreies WebP (Godot-Bordmittel, `Image.load_webp_from_buffer` liest es ohne Import) oder PNG.
+##    Keine Palette, `farben=0`. clip.txt: `weich=1`, `format`, `skala` (Spielbildpixel je Clipbildpixel), `spielhoehe`,
+##    `hoehe` (Figur in Clipbildpixeln), `groesse`/`anker`/`fuss_fein` in Clipbildpixeln, `massstab` wie im Pixelmodus
+##    (Spielbildpixel je Videopixel, also gleich für denselben Clip im Pixelmodus; `--massstab-von` und `--faktor` gehen).
 
 const AUS_STANDARD: String = "godot/grafik/vela_video"
 const ZIELHOEHE_STANDARD: int = 142
@@ -88,6 +120,8 @@ const WEICH_REST: int = 30
 const WEICH_ALPHA_MIN: int = 8
 ## Abstand von |Figurfarbe − Schlüsselfarbe|, ab dem sich ein Randpixel entmischen lässt (sonst nur die Grün-Dominanz).
 const WEICH_ENTMISCHEN_MIN: int = 60
+## Despill im Band um die Kante (Modus gruen): Grün höchstens so viel Prozent des größeren der Kanäle Rot und Blau.
+const WEICH_DESPILL: int = 92
 ## Farben ohne „durchsichtig“ (64 Farben insgesamt, E25).
 const HOECHST_FARBEN: int = 63
 ## Figur in der Arbeitsauflösung: Vielfaches der Zielhöhe.
@@ -486,6 +520,10 @@ func _lauf() -> void:
 	for fig: Dictionary in behalten:
 		beschnitten.append(int(fig["beschnitten"]))
 		finale.append(herunter(fig["maske"], fig["farbe"], bw, bh, gitter))
+		if hd and int(fig["nr"]) != int(ref["nr"]):
+			# Speicher: die harte Maske und ihre Farbe werden nur noch für das erste Bild gebraucht (HD-Maßstab)
+			fig["maske"] = PackedByteArray()
+			fig["farbe"] = PackedByteArray()
 	var gb: int = int(gitter["breite"])
 	var gh: int = int(gitter["hoehe"])
 	# Kennzahlen je Bild im Gitter und Anker je Bild (Inhaltspunkt, der auf dem Fußpunkt der Logik liegt)
@@ -1327,7 +1365,14 @@ static func weich_freistellen(d: PackedByteArray, farbe: PackedByteArray, w: int
 		elif a > 247:
 			a = 255
 		alpha[p] = a
-		if a == 0 or a == 255:
+		if a == 0:
+			continue
+		if a == 255:
+			# deckend im Band: restliches Grün (Mischung unter 15 %) etwas stärker begrenzen als im Kern (nur Modus gruen)
+			if modus == "gruen" and tiefe[p] > 0:
+				var mx: int = maxi(farbe[i3], farbe[i3 + 2]) * WEICH_DESPILL / 100
+				if farbe[i3 + 1] > mx:
+					aus_f[i3 + 1] = mx
 			continue
 		# Farbe: C = α F + (1 − α) K nach F auflösen
 		var ur: int = clampi((cr * 255 - (255 - a) * key.x) / a, 0, 255)
@@ -1338,7 +1383,7 @@ static func weich_freistellen(d: PackedByteArray, farbe: PackedByteArray, w: int
 		var mg: int = (fg * (255 - t) + ug * t) / 255
 		var mb: int = (fb * (255 - t) + ub * t) / 255
 		if modus == "gruen":
-			mg = mini(mg, maxi(mr, mb))
+			mg = mini(mg, maxi(mr, mb) * WEICH_DESPILL / 100)
 		aus_f[i3] = mr
 		aus_f[i3 + 1] = mg
 		aus_f[i3 + 2] = mb
