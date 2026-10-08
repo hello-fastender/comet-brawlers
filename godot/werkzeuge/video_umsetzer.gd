@@ -79,6 +79,15 @@ extends SceneTree
 
 const AUS_STANDARD: String = "godot/grafik/vela_video"
 const ZIELHOEHE_STANDARD: int = 142
+## HD-Modus (--hd): Standardhöhe der Figur in Clipbildpixeln, Arbeitsauflösung in Prozent der Zielhöhe (Figur im Arbeitsbild),
+## Breite des weichen Übergangs (Arbeitspixel; Standard aus der Figurhöhe, siehe kante_standard), Farbabstand, bis zu dem ein
+## Randpixel noch als Mischung aus Figurfarbe und Schlüsselfarbe gilt (WEICH_REST), Alpha unter WEICH_ALPHA_MIN (von 255) fällt weg.
+const HD_HOEHE_STANDARD: int = 360
+const HD_ARBEIT_PROZENT: int = 150
+const WEICH_REST: int = 30
+const WEICH_ALPHA_MIN: int = 8
+## Abstand von |Figurfarbe − Schlüsselfarbe|, ab dem sich ein Randpixel entmischen lässt (sonst nur die Grün-Dominanz).
+const WEICH_ENTMISCHEN_MIN: int = 60
 ## Farben ohne „durchsichtig“ (64 Farben insgesamt, E25).
 const HOECHST_FARBEN: int = 63
 ## Figur in der Arbeitsauflösung: Vielfaches der Zielhöhe.
@@ -235,9 +244,23 @@ func _lauf() -> void:
 		if t.size() == 2:
 			setze[t[0]] = int(t[1])
 	var faktor_vorgabe: float = float(arg.get("faktor", "0"))
-	var ziel_hoehe: int = int(arg.get("hoehe", str(ZIELHOEHE_STANDARD)))
+	var hd: bool = arg.has("hd")
+	var ziel_hoehe: int = int(arg.get("hoehe", str(HD_HOEHE_STANDARD if hd else ZIELHOEHE_STANDARD)))
 	if ziel_hoehe < 16 or ziel_hoehe > 600:
 		_fehler("--hoehe außerhalb 16 bis 600")
+		return
+	# Höhe der Figur im Spiel (Bildpixel der Logik) und damit des Analyseclips: im Pixelmodus gleich --hoehe
+	var spiel_hoehe: int = int(arg.get("spielhoehe", str(ZIELHOEHE_STANDARD))) if hd else ziel_hoehe
+	if spiel_hoehe < 16 or spiel_hoehe > ziel_hoehe:
+		_fehler("--spielhoehe außerhalb 16 bis --hoehe")
+		return
+	var arbeit_prozent: int = int(arg.get("arbeit", str(HD_ARBEIT_PROZENT))) if hd else ARBEIT * 100
+	if arbeit_prozent < 100 or arbeit_prozent > 400:
+		_fehler("--arbeit außerhalb 100 bis 400 (Prozent der Zielhöhe)")
+		return
+	var bild_format: String = String(arg.get("format", "png")) if hd else "png"
+	if bild_format != "png" and bild_format != "webp":
+		_fehler("--format: png oder webp")
 		return
 	_behalte = arg.has("behalte")
 	var video_pfad: String = absolut(video)
@@ -295,7 +318,7 @@ func _lauf() -> void:
 		_fehler("keine Figur im Sondenbild gefunden (Schlüsselfarbe (%d, %d, %d), Modus %s)" % [key0.x, key0.y, key0.z, modus])
 		return
 	# Arbeitsauflösung: Figur etwa ARBEIT × Zielhöhe hoch (nie über der Auflösung der Quelle)
-	var arbeit_h: int = mini(int(info["hoehe"]), roundi(float(sonde_h) * float(ARBEIT * ziel_hoehe) / float(sonde_rahmen.size.y)))
+	var arbeit_h: int = mini(int(info["hoehe"]), roundi(float(sonde_h) * float(arbeit_prozent * ziel_hoehe) / 100.0 / float(sonde_rahmen.size.y)))
 	arbeit_h = maxi(arbeit_h, 64)
 	var arbeit_w: int = maxi(16, roundi(float(info["breite"]) * float(arbeit_h) / float(info["hoehe"])))
 	print("Sondenbild: Figur %d Zeilen hoch bei %d, Arbeitsauflösung %d x %d, Schlüssel (%d, %d, %d) %s" % [sonde_rahmen.size.y, sonde_h, arbeit_w, arbeit_h, key0.x, key0.y, key0.z, modus])
@@ -372,13 +395,29 @@ func _lauf() -> void:
 	print("Zuschnitt (Arbeitsauflösung): %s" % str(rahmen))
 
 	# --- 4. Feinarbeit: freistellen je Bild ----------------------------------------------------
+	# Größe der Figur im Arbeitsbild gegenüber dem Pixelmodus (Prozent): Flecken, Löcher und Staubfenster wachsen mit.
+	var skala_p: int = 100
+	var kante: int = 0
+	if hd:
+		var arbeit_fig: float = float(sonde_rahmen.size.y) * float(arbeit_h) / float(sonde_h)
+		skala_p = maxi(100, roundi(arbeit_fig * 100.0 / float(ARBEIT * ZIELHOEHE_STANDARD)))
+		kante = int(arg.get("kante", "0"))
+		if kante <= 0:
+			kante = kante_standard(arbeit_fig)
+		if not arg.has("fleck"):
+			fleck = maxi(FLECK_MIN, FLECK_MIN * skala_p * skala_p / 10000)
+		print("HD: Figur im Arbeitsbild %.0f Zeilen (%d %% des Pixelmodus), Übergang %d px, Ziel %d Zeilen (Spiel %d)" % [arbeit_fig, skala_p, kante, ziel_hoehe, spiel_hoehe])
 	var bilder: Array = []
 	for i: int in range(s_von, s_bis + 1):
 		var b: Image = bild_laden(_temp.path_join("w_%04d.png" % (i + 1)))
 		var bd: PackedByteArray = b.get_data()
 		var k: Vector3i = keys[i]
 		var ausschnitt: PackedByteArray = zuschneiden_rgb(bd, arbeit_w, rahmen)
-		var fig: Dictionary = freistellen(ausschnitt, rahmen.size.x, rahmen.size.y, k, modus, tol, loch, fleck, staub)
+		var fig: Dictionary = freistellen(ausschnitt, rahmen.size.x, rahmen.size.y, k, modus, tol, loch, fleck, staub, skala_p)
+		if hd:
+			var wr: Dictionary = weich_freistellen(ausschnitt, fig["farbe"], rahmen.size.x, rahmen.size.y, k, modus, fig["maske"], kante, tol)
+			fig["wa"] = wr["alpha"]
+			fig["wf"] = wr["farbe"]
 		fig["nr"] = i
 		# Berührt die Figur den Rand des Videos? (Grok schneidet sie dann ab)
 		var rm: PackedByteArray = fig["maske"]
@@ -438,7 +477,7 @@ func _lauf() -> void:
 		if rf.size.y > 0:
 			gitter = gitter_fuer(ref["maske"], bw, bh, rf, 1.0 / fa)
 	else:
-		gitter = gitter_bestimmen(ref["maske"], bw, bh, ziel_hoehe)
+		gitter = gitter_bestimmen(ref["maske"], bw, bh, spiel_hoehe)
 	if gitter.is_empty():
 		_fehler("erstes Bild ohne Figur")
 		return
@@ -509,8 +548,12 @@ func _lauf() -> void:
 		schwerp_liste.append(roundi(float(int(k["schw16"]) - int(kz[0]["schw16"])) / 16.0))
 
 	# --- 7. Palette über alle Bilder ---------------------------------------------------------------
-	var pal: Dictionary = palette_anwenden(ausgabe)
-	print("Palette: %d Farben aus %d Zwischenstufen" % [pal["farben"], pal["klassen"]])
+	var pal: Dictionary = {"farben": 0, "klassen": 0, "palette": []}
+	if hd:
+		print("Palette: keine (HD, RGBA 8 Bit)")
+	else:
+		pal = palette_anwenden(ausgabe)
+		print("Palette: %d Farben aus %d Zwischenstufen" % [pal["farben"], pal["klassen"]])
 
 	# --- 8. Zyklus und Ereignisse --------------------------------------------------------------
 	var sigs: Array = []
@@ -560,6 +603,17 @@ func _lauf() -> void:
 	print("Zyklus: %s (Kandidaten %s, Güte %d %%, Schluss %d %% eines Bildschritts); Ereignisse: %s; Schritt: %s" % [str({"n": zyk["n"], "start": zyk["start"], "fehler": zyk["fehler"]}), str(zyk["kandidaten"]), zyk["guete"], zyk["schluss"], str(ereignisse), str(schritt)])
 	print("Weitere Ereignisse (%s, 0-basiert): %s" % [ereignis, str(andere)])
 
+	# --- 8b. HD: Bilder weich auf das HD-Gitter bringen ---------------------------------------------------------
+	var hd_ergebnis: Dictionary = {}
+	if hd:
+		var inv_hd16: int = 0
+		if faktor_vorgabe > 0.0:
+			inv_hd16 = roundi(float(gitter["inv16"]) * float(spiel_hoehe) / float(ziel_hoehe))
+		else:
+			inv_hd16 = int(gitter_bestimmen(ref["maske"], bw, bh, ziel_hoehe)["inv16"])
+		hd_ergebnis = hd_bilder(behalten.slice(gekuerzt), versatz.slice(gekuerzt), gitter, inv_hd16, x0, y0, ob, oh, ank, bw, bh)
+		print("HD-Bilder: %d x %d Clipbildpixel, Skala %.5f Spielbildpixel je Clipbildpixel (%.1f s)" % [hd_ergebnis["breite"], hd_ergebnis["hoehe"], hd_ergebnis["skala"], _sek(t0)])
+
 	# --- 9. schreiben --------------------------------------------------------------------------------
 	var ziel: String = aus_ordner.path_join(name)
 	DirAccess.make_dir_recursive_absolute(ziel)
@@ -568,10 +622,18 @@ func _lauf() -> void:
 		if n.begins_with("f_") or n == "clip.txt":
 			alt.remove(n)
 	var pal_liste: Array = pal["palette"]
+	var bytes_summe: int = 0
 	for i: int in ausgabe.size():
-		var datei_png: FileAccess = FileAccess.open(ziel.path_join("f_%04d.png" % (i + 1)), FileAccess.WRITE)
-		datei_png.store_buffer(png_palette(ausgabe[i], ob, oh, pal_liste))
+		var datei_png: FileAccess = FileAccess.open(ziel.path_join("f_%04d.%s" % [i + 1, bild_format]), FileAccess.WRITE)
+		var roh: PackedByteArray
+		if hd:
+			roh = hd_datei(hd_ergebnis["bilder"][i], int(hd_ergebnis["breite"]), int(hd_ergebnis["hoehe"]), bild_format)
+		else:
+			roh = png_palette(ausgabe[i], ob, oh, pal_liste)
+		bytes_summe += roh.size()
+		datei_png.store_buffer(roh)
 		datei_png.close()
+	print("Bilddateien: %d Bytes, im Mittel %d Bytes je Bild" % [bytes_summe, bytes_summe / maxi(ausgabe.size(), 1)])
 	var text: PackedStringArray = PackedStringArray()
 	text.append("# Clip %s, erzeugt von werkzeuge/video_umsetzer.gd (nicht von Hand ändern). Bilder 1-basiert wie f_0001.png." % name)
 	text.append("version=1")
@@ -586,8 +648,20 @@ func _lauf() -> void:
 	text.append("ab=%d" % ab)
 	text.append("bis=%d" % bis)
 	text.append("bilder=%d" % ausgabe.size())
-	text.append("groesse=%d,%d" % [ob, oh])
-	text.append("anker=%d,%d" % [ank.x, ank.y])
+	if hd:
+		text.append("weich=1")
+		text.append("format=" + bild_format)
+		text.append("groesse=%d,%d" % [hd_ergebnis["breite"], hd_ergebnis["hoehe"]])
+		text.append("anker=%d,%d" % [hd_ergebnis["anker"].x, hd_ergebnis["anker"].y])
+		var ff: Vector2 = hd_ergebnis["fuss"]
+		text.append("fuss_fein=%.3f,%.3f" % [ff.x, ff.y])
+		text.append("skala=%.6f" % float(hd_ergebnis["skala"]))
+		text.append("spielhoehe=%d" % spiel_hoehe)
+		text.append("arbeit_prozent=%d" % arbeit_prozent)
+		text.append("kante=%d" % kante)
+	else:
+		text.append("groesse=%d,%d" % [ob, oh])
+		text.append("anker=%d,%d" % [ank.x, ank.y])
 	text.append("hoehe=%d" % ziel_hoehe)
 	text.append("massstab=%.5f" % (float(gitter["faktor"]) * float(arbeit_h) / float(info["hoehe"])))
 	text.append("farben=%d" % int(pal["farben"]))
@@ -838,7 +912,9 @@ static func maske_rahmen(m: PackedByteArray, w: int, h: int) -> Rect2i:
 
 ## Stellt ein RGB-Bild (w × h) frei. Rückgabe: maske (1 = Figur), farbe (RGB, an Kanten entmischt),
 ## schaerfe (1000 · Kantenpixel / (Kantenpixel + weiche Pixel)).
-static func freistellen(d: PackedByteArray, w: int, h: int, key: Vector3i, modus: String, tol: int = TOL_ECKE, loch: int = LOCH_TOL, fleck: int = FLECK_MIN, staub: int = 0) -> Dictionary:
+## `skala_p`: Größe der Figur im Arbeitsbild in Prozent gegenüber dem Pixelmodus (100); Löcher (LOCH_MIN) und Staubfenster
+## (STAUB_RADIUS) wachsen mit (nur HD-Modus).
+static func freistellen(d: PackedByteArray, w: int, h: int, key: Vector3i, modus: String, tol: int = TOL_ECKE, loch: int = LOCH_TOL, fleck: int = FLECK_MIN, staub: int = 0, skala_p: int = 100) -> Dictionary:
 	var n: int = w * h
 	var alpha: PackedByteArray = PackedByteArray()
 	alpha.resize(n)
@@ -883,9 +959,9 @@ static func freistellen(d: PackedByteArray, w: int, h: int, key: Vector3i, modus
 				maske[p] = 1
 			if a > 32 and a < 224:
 				weich += 1
-	_loecher_fuellen(maske, alpha, d, w, h, key, loch)
+	_loecher_fuellen(maske, alpha, d, w, h, key, loch, LOCH_MIN * skala_p * skala_p / 10000)
 	if staub > 0:
-		_staub_entfernen(maske, d, w, h, staub)
+		_staub_entfernen(maske, d, w, h, staub, STAUB_RADIUS * skala_p / 100)
 	_inseln_entfernen(maske, w, h, fleck)
 	var rand: int = 0
 	for y: int in h:
@@ -902,7 +978,7 @@ static func freistellen(d: PackedByteArray, w: int, h: int, key: Vector3i, modus
 ## Vom Rand aus (4er-Nachbarschaft) unerreichbare Flächen ohne Figur: Figur, wenn klein (Rauschen) oder
 ## im Mittel weiter als LOCH_TOL von der Schlüsselfarbe entfernt (dunkle Kleidung). Echte Lücken zwischen
 ## Arm und Rumpf zeigen die Schlüsselfarbe selbst und bleiben durchsichtig.
-static func _loecher_fuellen(maske: PackedByteArray, alpha: PackedByteArray, d: PackedByteArray, w: int, h: int, key: Vector3i, loch: int = LOCH_TOL) -> void:
+static func _loecher_fuellen(maske: PackedByteArray, alpha: PackedByteArray, d: PackedByteArray, w: int, h: int, key: Vector3i, loch: int = LOCH_TOL, loch_min: int = LOCH_MIN) -> void:
 	var n: int = w * h
 	var aussen: PackedByteArray = PackedByteArray()
 	aussen.resize(n)
@@ -972,14 +1048,14 @@ static func _loecher_fuellen(maske: PackedByteArray, alpha: PackedByteArray, d: 
 			if py < h - 1 and maske[p + w] == 0 and aussen[p + w] == 0:
 				aussen[p + w] = 2
 				liste.append(p + w)
-		if liste.size() < LOCH_MIN or summe / liste.size() > loch:
+		if liste.size() < loch_min or summe / liste.size() > loch:
 			for p: int in liste:
 				maske[p] = 1
 				alpha[p] = 255
 
 
 ## Entfernt dunkle, einzeln liegende Figurpixel (Staub): siehe STAUB_DUNKEL. Rechnet mit einem Summenbild der Maske.
-static func _staub_entfernen(maske: PackedByteArray, d: PackedByteArray, w: int, h: int, prozent: int) -> void:
+static func _staub_entfernen(maske: PackedByteArray, d: PackedByteArray, w: int, h: int, prozent: int, radius: int = STAUB_RADIUS) -> void:
 	var sb: PackedInt32Array = PackedInt32Array()
 	sb.resize((w + 1) * (h + 1))
 	for y: int in h:
@@ -987,7 +1063,7 @@ static func _staub_entfernen(maske: PackedByteArray, d: PackedByteArray, w: int,
 		for x: int in w:
 			zeile += maske[y * w + x]
 			sb[(y + 1) * (w + 1) + x + 1] = sb[y * (w + 1) + x + 1] + zeile
-	var fenster: int = (2 * STAUB_RADIUS + 1) * (2 * STAUB_RADIUS + 1)
+	var fenster: int = (2 * radius + 1) * (2 * radius + 1)
 	var weg: PackedInt32Array = PackedInt32Array()
 	for y: int in h:
 		for x: int in w:
@@ -999,10 +1075,10 @@ static func _staub_entfernen(maske: PackedByteArray, d: PackedByteArray, w: int,
 			var farbig: int = hell - mini(d[q], mini(d[q + 1], d[q + 2]))
 			if hell > STAUB_DUNKEL and not (hell <= STAUB_GRAU and farbig <= STAUB_FARBIG):
 				continue
-			var xa: int = maxi(x - STAUB_RADIUS, 0)
-			var xb: int = mini(x + STAUB_RADIUS + 1, w)
-			var ya: int = maxi(y - STAUB_RADIUS, 0)
-			var yb: int = mini(y + STAUB_RADIUS + 1, h)
+			var xa: int = maxi(x - radius, 0)
+			var xb: int = mini(x + radius + 1, w)
+			var ya: int = maxi(y - radius, 0)
+			var yb: int = mini(y + radius + 1, h)
 			var summe: int = sb[yb * (w + 1) + xb] - sb[ya * (w + 1) + xb] - sb[yb * (w + 1) + xa] + sb[ya * (w + 1) + xa]
 			if summe * 100 < prozent * fenster:
 				weg.append(p)
@@ -1114,6 +1190,409 @@ static func median_int(a: Array[int]) -> int:
 	if b.is_empty():
 		return 0
 	return b[b.size() / 2]
+
+
+# ===========================================================================
+# HD-Modus (--hd): weicher Alpha, Entmischen der Kante, Verkleinern mit vormultiplizierten Farben
+# ===========================================================================
+
+## Breite des weichen Übergangs in Arbeitspixeln nach der Figurhöhe im Arbeitsbild: 1/150, zwischen 2 und 6.
+static func kante_standard(figur_hoehe: float) -> int:
+	return clampi(roundi(figur_hoehe / 150.0), 2, 6)
+
+
+## Weicher Alpha und entmischte Farbe je Arbeitspixel (RGB `d`, w × h) für den HD-Modus. `maske` ist die harte Maske
+## von `freistellen` (nach Löchern, Staub und Inseln), `farbe` ihre Farbe (Grünstich im Kern entfernt).
+##  - Weit innen (mehr als `kante` Pixel von der Maskenkante) ist Alpha 255 und die Farbe die von `freistellen`; weit
+##    außen ist Alpha 0. Nur das Band von `kante` Pixeln beiderseits der Maskenkante wird weich gemacht, so kehren
+##    entfernte Inseln und Staub nicht zurück.
+##  - Figurfarbe F je Bandpixel: Mittel der schon bekannten Nachbarn (von innen nach außen geschichtet, 8er-Nachbarschaft),
+##    also die Farbe der Figur in der Nähe. Alpha aus der Grün-Dominanz (g − max(r, b)) im Vergleich zur Schlüsselfarbe;
+##    ist F weit genug von der Schlüsselfarbe entfernt und liegt das Pixel (bis auf WEICH_REST Stufen) auf der Strecke
+##    Schlüsselfarbe–F, gilt stattdessen der Entmischungsanteil (Projektion auf diese Strecke): so wird auch blaue oder rote
+##    Kleidung am Rand nicht zu dick. Im Modus ecke entscheidet der Abstand zur Schlüsselfarbe.
+##  - Farbe: Mischung C = α · F + (1 − α) · K wird nach F aufgelöst; bei kleinem Alpha (unter 40 bis 140 von 255) zählt die
+##    Farbe der Nachbarn statt der verrauschten Auflösung; im Modus gruen wird zuletzt Grün auf max(r, b) begrenzt.
+## Rückgabe: alpha (0 bis 255), farbe (RGB, gerade, nicht vormultipliziert; nur wo alpha > 0 von Belang).
+static func weich_freistellen(d: PackedByteArray, farbe: PackedByteArray, w: int, h: int, key: Vector3i, modus: String, maske: PackedByteArray, kante: int, tol: int) -> Dictionary:
+	var n: int = w * h
+	# Abstand zur Kante der Maske: +k innen, −k außen (1 = unmittelbar an der Kante), 0 = weiter als `kante` entfernt
+	var tiefe: PackedInt32Array = PackedInt32Array()
+	tiefe.resize(n)
+	var innen: Array = [PackedInt32Array()]
+	var aussen: Array = [PackedInt32Array()]
+	for y: int in h:
+		var z: int = y * w
+		for x: int in w:
+			var p: int = z + x
+			var m: int = maske[p]
+			if (x > 0 and maske[p - 1] != m) or (x < w - 1 and maske[p + 1] != m) or (y > 0 and maske[p - w] != m) or (y < h - 1 and maske[p + w] != m):
+				if m != 0:
+					tiefe[p] = 1
+					(innen[0] as PackedInt32Array).append(p)
+				else:
+					tiefe[p] = -1
+					(aussen[0] as PackedInt32Array).append(p)
+	for k: int in range(2, kante + 1):
+		for art: int in 2:
+			var vor: PackedInt32Array = (innen if art == 0 else aussen)[k - 2]
+			var neu: PackedInt32Array = PackedInt32Array()
+			var m: int = 1 if art == 0 else 0
+			var wert: int = k if art == 0 else -k
+			for p: int in vor:
+				var px: int = p % w
+				var py: int = p / w
+				for dy: int in range(maxi(py - 1, 0), mini(py + 2, h)):
+					for dx: int in range(maxi(px - 1, 0), mini(px + 2, w)):
+						var q: int = dy * w + dx
+						if tiefe[q] == 0 and maske[q] == m:
+							tiefe[q] = wert
+							neu.append(q)
+			(innen if art == 0 else aussen).append(neu)
+	var alpha: PackedByteArray = PackedByteArray()
+	alpha.resize(n)
+	var bekannt: PackedByteArray = PackedByteArray()
+	bekannt.resize(n)
+	for p: int in n:
+		if maske[p] != 0:
+			alpha[p] = 255
+			if tiefe[p] == 0:
+				bekannt[p] = 1
+	var nah: PackedByteArray = farbe.duplicate()
+	var aus_f: PackedByteArray = farbe.duplicate()
+	# Reihenfolge: innen von tief nach flach, dann außen von nah nach fern
+	var ordnung: PackedInt32Array = PackedInt32Array()
+	for k: int in range(innen.size() - 1, -1, -1):
+		ordnung.append_array(innen[k])
+	for k: int in aussen.size():
+		ordnung.append_array(aussen[k])
+	var ek: int = key.y - maxi(key.x, key.z)
+	var rest2: int = WEICH_REST * WEICH_REST
+	var min2: int = WEICH_ENTMISCHEN_MIN * WEICH_ENTMISCHEN_MIN
+	for p: int in ordnung:
+		var i3: int = p * 3
+		var cr: int = d[i3]
+		var cg: int = d[i3 + 1]
+		var cb: int = d[i3 + 2]
+		var px: int = p % w
+		var py: int = p / w
+		var sr: int = 0
+		var sg: int = 0
+		var sb: int = 0
+		var zn: int = 0
+		for dy: int in range(maxi(py - 1, 0), mini(py + 2, h)):
+			for dx: int in range(maxi(px - 1, 0), mini(px + 2, w)):
+				var q: int = dy * w + dx
+				if bekannt[q] != 0:
+					sr += nah[q * 3]
+					sg += nah[q * 3 + 1]
+					sb += nah[q * 3 + 2]
+					zn += 1
+		var hat_f: bool = zn > 0
+		var fr: int = (sr + zn / 2) / zn if hat_f else int(farbe[i3])
+		var fg: int = (sg + zn / 2) / zn if hat_f else int(farbe[i3 + 1])
+		var fb: int = (sb + zn / 2) / zn if hat_f else int(farbe[i3 + 2])
+		nah[i3] = fr
+		nah[i3 + 1] = fg
+		nah[i3 + 2] = fb
+		if hat_f:
+			bekannt[p] = 1
+		# Alpha: Grün-Dominanz (gruen) oder Abstand zur Schlüsselfarbe (ecke)
+		var a: int = 255
+		if modus == "gruen":
+			a = clampi(255 * (ek - (cg - maxi(cr, cb))) / maxi(ek, 1), 0, 255)
+		else:
+			a = mini(255, maxi(absi(cr - key.x), maxi(absi(cg - key.y), absi(cb - key.z))) * 255 / maxi(2 * tol, 1))
+		# Entmischen: Lage des Pixels auf der Strecke Schlüsselfarbe–Figurfarbe
+		if hat_f and (a < 255 or modus != "gruen"):
+			var fkx: int = fr - key.x
+			var fky: int = fg - key.y
+			var fkz: int = fb - key.z
+			var nn: int = fkx * fkx + fky * fky + fkz * fkz
+			if nn >= min2:
+				var ckx: int = cr - key.x
+				var cky: int = cg - key.y
+				var ckz: int = cb - key.z
+				var au: int = clampi(255 * (ckx * fkx + cky * fky + ckz * fkz) / nn, 0, 255)
+				var ex: int = ckx - fkx * au / 255
+				var ey: int = cky - fky * au / 255
+				var ez: int = ckz - fkz * au / 255
+				if ex * ex + ey * ey + ez * ez <= rest2:
+					a = au
+		if a < WEICH_ALPHA_MIN:
+			a = 0
+		elif a > 247:
+			a = 255
+		alpha[p] = a
+		if a == 0 or a == 255:
+			continue
+		# Farbe: C = α F + (1 − α) K nach F auflösen
+		var ur: int = clampi((cr * 255 - (255 - a) * key.x) / a, 0, 255)
+		var ug: int = clampi((cg * 255 - (255 - a) * key.y) / a, 0, 255)
+		var ub: int = clampi((cb * 255 - (255 - a) * key.z) / a, 0, 255)
+		var t: int = clampi((a - 40) * 255 / 100, 0, 255) if hat_f else 255
+		var mr: int = (fr * (255 - t) + ur * t) / 255
+		var mg: int = (fg * (255 - t) + ug * t) / 255
+		var mb: int = (fb * (255 - t) + ub * t) / 255
+		if modus == "gruen":
+			mg = mini(mg, maxi(mr, mb))
+		aus_f[i3] = mr
+		aus_f[i3 + 1] = mg
+		aus_f[i3 + 2] = mb
+	return {"alpha": alpha, "farbe": aus_f}
+
+
+## Gewichtstabelle einer Achse für das Verkleinern: je Ausgabeindex o das Quellfenster ab `erst[o]` mit `zahl[o]` Gewichten
+## (16.16, ab `ab[o]` in `gew`). Fenster der Ausgabe o: [start16 + o · inv16, start16 + (o + 1) · inv16) in Quellpixeln.
+## inv16 ≥ 1 (Verkleinern): Box (Überdeckung, Summe inv16); sonst Dreieck (bilinear) um die Fenstermitte, Summe 65536.
+## Quellindizes außerhalb 0 bis n_quelle − 1 fehlen (zählen als durchsichtig); `nenner` ist die volle Gewichtssumme.
+static func _achse(start16: int, inv16: int, n_aus: int, n_quelle: int) -> Dictionary:
+	var erst: PackedInt32Array = PackedInt32Array()
+	var zahl: PackedInt32Array = PackedInt32Array()
+	var ab: PackedInt32Array = PackedInt32Array()
+	var gew: PackedInt32Array = PackedInt32Array()
+	var box: bool = inv16 >= 65536
+	for o: int in n_aus:
+		var a: int = start16 + o * inv16
+		var b: int = a + inv16
+		var q0: int = 0
+		var q1: int = -1
+		if box:
+			q0 = a >> 16
+			q1 = (b - 1) >> 16
+		else:
+			var c: int = (a + b) >> 1
+			q0 = (c - 98304) >> 16
+			q1 = (c + 98304) >> 16
+		var erster: int = -1
+		var zaehler: int = 0
+		ab.append(gew.size())
+		for q: int in range(q0, q1 + 1):
+			if q < 0 or q >= n_quelle:
+				continue
+			var wq: int = 0
+			if box:
+				wq = mini(b, (q + 1) << 16) - maxi(a, q << 16)
+			else:
+				var c2: int = (a + b) >> 1
+				wq = maxi(0, 65536 - absi(c2 - ((q << 16) + 32768)))
+			if wq <= 0:
+				continue
+			if erster < 0:
+				erster = q
+			# lückenlos ab dem ersten Index
+			while erster + zaehler < q:
+				gew.append(0)
+				zaehler += 1
+			gew.append(wq)
+			zaehler += 1
+		erst.append(maxi(erster, 0))
+		zahl.append(zaehler)
+	return {"erst": erst, "zahl": zahl, "ab": ab, "gew": gew, "nenner": inv16 if box else 65536}
+
+
+## Verkleinert Alpha `wa` und gerade Farbe `wf` (RGB; w × h Arbeitspixel) auf ein Gitter von ow × oh Pixeln, dessen linke
+## obere Ecke bei (x16, y16) (Arbeitspixel, 16.16) liegt und dessen Zellen inv16 (16.16) Arbeitspixel breit sind. Vormultipliziert:
+## Farbe = Σ Gewicht · Alpha · Farbe / Σ Gewicht · Alpha, Alpha = Σ Gewicht · Alpha / Σ Gewicht, so blutet an den Kanten weder
+## die Schlüsselfarbe noch Schwarz hinein. Rückgabe RGBA8 (gerade, ow · oh · 4 Bytes); wo Alpha 0 ist, ist die Farbe 0.
+static func herunter_weich(wa: PackedByteArray, wf: PackedByteArray, w: int, h: int, x16: int, y16: int, inv16: int, ow: int, oh: int) -> PackedByteArray:
+	var ax: Dictionary = _achse(x16, inv16, ow, w)
+	var ay: Dictionary = _achse(y16, inv16, oh, h)
+	var x_erst: PackedInt32Array = ax["erst"]
+	var x_zahl: PackedInt32Array = ax["zahl"]
+	var x_ab: PackedInt32Array = ax["ab"]
+	var x_gew: PackedInt32Array = ax["gew"]
+	var y_erst: PackedInt32Array = ay["erst"]
+	var y_zahl: PackedInt32Array = ay["zahl"]
+	var y_ab: PackedInt32Array = ay["ab"]
+	var y_gew: PackedInt32Array = ay["gew"]
+	var nenner: int = int(ax["nenner"]) * int(ay["nenner"])
+	# Spalten mit Inhalt je Quellzeile (schnelles Überspringen leerer Fenster)
+	var zlo: PackedInt32Array = PackedInt32Array()
+	var zhi: PackedInt32Array = PackedInt32Array()
+	zlo.resize(h)
+	zhi.resize(h)
+	for y: int in h:
+		var lo: int = w
+		var hi: int = -1
+		var z: int = y * w
+		for x: int in w:
+			if wa[z + x] != 0:
+				if x < lo:
+					lo = x
+				hi = x
+		zlo[y] = lo
+		zhi[y] = hi
+	var aus: PackedByteArray = PackedByteArray()
+	aus.resize(ow * oh * 4)
+	for oy: int in oh:
+		var yq0: int = y_erst[oy]
+		var yn: int = y_zahl[oy]
+		var yo: int = y_ab[oy]
+		var lo2: int = w
+		var hi2: int = -1
+		for k: int in yn:
+			var qy: int = yq0 + k
+			if y_gew[yo + k] != 0 and zhi[qy] >= 0:
+				lo2 = mini(lo2, zlo[qy])
+				hi2 = maxi(hi2, zhi[qy])
+		if hi2 < 0:
+			continue
+		for ox: int in ow:
+			var xq0: int = x_erst[ox]
+			var xn: int = x_zahl[ox]
+			if xq0 + xn - 1 < lo2 or xq0 > hi2:
+				continue
+			var xo: int = x_ab[ox]
+			var sa: int = 0
+			var sr: int = 0
+			var sg: int = 0
+			var sb: int = 0
+			for ky: int in yn:
+				var wy: int = y_gew[yo + ky]
+				if wy == 0:
+					continue
+				var z: int = (yq0 + ky) * w + xq0
+				for kx: int in xn:
+					var a: int = wa[z + kx]
+					if a == 0:
+						continue
+					var wg: int = wy * x_gew[xo + kx] * a
+					var c: int = (z + kx) * 3
+					sa += wg
+					sr += wg * wf[c]
+					sg += wg * wf[c + 1]
+					sb += wg * wf[c + 2]
+			if sa == 0:
+				continue
+			var al: int = (sa + nenner / 2) / nenner
+			if al == 0:
+				continue
+			var o: int = (oy * ow + ox) * 4
+			aus[o] = mini((sr + sa / 2) / sa, 255)
+			aus[o + 1] = mini((sg + sa / 2) / sa, 255)
+			aus[o + 2] = mini((sb + sa / 2) / sa, 255)
+			aus[o + 3] = mini(al, 255)
+	return aus
+
+
+## Farbrand: durchsichtige Pixel (Alpha 0) bis `radius` Pixel neben der Figur bekommen die mittlere Farbe ihrer Nachbarn
+## (Alpha bleibt 0). Bei linearer Texturfilterung mischt die Grafikkarte sonst das Schwarz der leeren Pixel in die Kante.
+static func farbrand(f: PackedByteArray, b: int, h: int, radius: int) -> void:
+	var n: int = b * h
+	var gef: PackedByteArray = PackedByteArray()
+	gef.resize(n)
+	var front: PackedInt32Array = PackedInt32Array()
+	for p: int in n:
+		if f[p * 4 + 3] != 0:
+			gef[p] = 1
+	for p: int in n:
+		if gef[p] == 0:
+			continue
+		var x: int = p % b
+		var y: int = p / b
+		if (x > 0 and gef[p - 1] == 0) or (x < b - 1 and gef[p + 1] == 0) or (y > 0 and gef[p - b] == 0) or (y < h - 1 and gef[p + b] == 0):
+			front.append(p)
+	for _r: int in radius:
+		var neu: PackedInt32Array = PackedInt32Array()
+		for p: int in front:
+			var px: int = p % b
+			var py: int = p / b
+			for dy: int in range(maxi(py - 1, 0), mini(py + 2, h)):
+				for dx: int in range(maxi(px - 1, 0), mini(px + 2, b)):
+					var q: int = dy * b + dx
+					if gef[q] == 0:
+						gef[q] = 2
+						neu.append(q)
+		for q: int in neu:
+			var qx: int = q % b
+			var qy: int = q / b
+			var sr: int = 0
+			var sg: int = 0
+			var sb: int = 0
+			var zn: int = 0
+			for dy: int in range(maxi(qy - 1, 0), mini(qy + 2, h)):
+				for dx: int in range(maxi(qx - 1, 0), mini(qx + 2, b)):
+					var s: int = dy * b + dx
+					if gef[s] == 1:
+						sr += f[s * 4]
+						sg += f[s * 4 + 1]
+						sb += f[s * 4 + 2]
+						zn += 1
+			if zn > 0:
+				f[q * 4] = (sr + zn / 2) / zn
+				f[q * 4 + 1] = (sg + zn / 2) / zn
+				f[q * 4 + 2] = (sb + zn / 2) / zn
+		for q: int in neu:
+			gef[q] = 1
+		front = neu
+
+
+## HD-Bilder eines Clips: bringt Alpha und Farbe jedes Bildes (`figuren`, mit "wa" und "wf" im Zuschnitt bw × bh des
+## Arbeitsbildes) auf ein HD-Gitter, das mit dem Spielgitter (`gitter`, Zellen inv16) fluchtet: jede Zelle des Spielgitters
+## entspricht s2 = inv16 / inv_hd16 HD-Pixeln. Jedes Bild bekommt dieselbe Verschiebung wie im Pixelmodus (`versatz`, in
+## Spielzellen), so liegen Anker und Bewegung genau wie im Pixelclip. Danach Zuschnitt auf die Vereinigung aller Figuren
+## plus 2 Pixel und Farbrand. x0, y0, ob, oh, ank: Zuschnitt und Anker des Spielclips (Spielzellen).
+## Rückgabe: bilder (RGBA8), breite, hoehe (HD-Pixel), fuss (Fußpunkt als Pixelposition, genau), anker (Ganzzahlen), skala
+## (Spielbildpixel je HD-Pixel).
+static func hd_bilder(figuren: Array, versatz: Array, gitter: Dictionary, inv_hd16: int, x0: int, y0: int, ob: int, oh: int, ank: Vector2i, bw: int, bh: int) -> Dictionary:
+	var inv16: int = gitter["inv16"]
+	var xa16: int = gitter["xa16"]
+	var yb16: int = gitter["yb16"]
+	var imin: int = gitter["imin"]
+	var jmin: int = gitter["jmin"]
+	var s2: float = float(inv16) / float(inv_hd16)
+	var ow: int = ceili(float(ob) * s2)
+	var ohd: int = ceili(float(oh) * s2)
+	var roh: Array = []
+	var bx0: int = ow
+	var by0: int = ohd
+	var bx1: int = -1
+	var by1: int = -1
+	for j: int in figuren.size():
+		var v: Vector2i = versatz[j]
+		var xl16: int = xa16 + (((2 * (imin + x0 - v.x) - 1) * inv16) >> 1)
+		var yt16: int = yb16 + (jmin + y0 - v.y) * inv16
+		var f: PackedByteArray = herunter_weich(figuren[j]["wa"], figuren[j]["wf"], bw, bh, xl16, yt16, inv_hd16, ow, ohd)
+		roh.append(f)
+		for y: int in ohd:
+			var z: int = y * ow
+			for x: int in ow:
+				if f[(z + x) * 4 + 3] != 0:
+					if x < bx0:
+						bx0 = x
+					if x > bx1:
+						bx1 = x
+					if y < by0:
+						by0 = y
+					if y > by1:
+						by1 = y
+	if bx1 < 0:
+		return {"bilder": roh, "breite": ow, "hoehe": ohd, "fuss": Vector2.ZERO, "anker": Vector2i.ZERO, "skala": 1.0 / s2}
+	var rand: int = 2
+	var cx0: int = maxi(bx0 - rand, 0)
+	var cy0: int = maxi(by0 - rand, 0)
+	var cx1: int = mini(bx1 + rand, ow - 1)
+	var cy1: int = mini(by1 + rand, ohd - 1)
+	var cw: int = cx1 - cx0 + 1
+	var ch: int = cy1 - cy0 + 1
+	var bilder: Array = []
+	for f: PackedByteArray in roh:
+		var c: PackedByteArray = PackedByteArray()
+		for y: int in range(cy0, cy1 + 1):
+			c.append_array(f.slice((y * ow + cx0) * 4, (y * ow + cx1 + 1) * 4))
+		farbrand(c, cw, ch, rand)
+		bilder.append(c)
+	var fuss: Vector2 = Vector2((float(ank.x) + 0.5) * s2 - float(cx0), (float(ank.y) + 1.0) * s2 - float(cy0))
+	return {"bilder": bilder, "breite": cw, "hoehe": ch, "fuss": fuss, "anker": Vector2i(roundi(fuss.x - 0.5), roundi(fuss.y - 1.0)), "skala": 1.0 / s2}
+
+
+## Bilddatei eines HD-Bildes (RGBA8, gerade): PNG oder verlustfreies WebP, mit den Bordmitteln von Godot.
+static func hd_datei(f: PackedByteArray, b: int, h: int, format: String) -> PackedByteArray:
+	var img: Image = Image.create_from_data(b, h, false, Image.FORMAT_RGBA8, f)
+	if format == "webp":
+		return img.save_webp_to_buffer(false, 1.0)
+	return img.save_png_to_buffer()
 
 
 # ===========================================================================
