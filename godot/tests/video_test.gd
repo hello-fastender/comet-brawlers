@@ -15,14 +15,21 @@ const SCHRITTE: int = 600
 ## Echte Clips (Grok-Videos): Name → Prüfparameter. min: Mindestzahl der Bilder; hoehe: erlaubte Figurhöhe im ersten Bild
 ## (Kampfhaltung = 142, ±1 wegen der Staubentfernung bzw. des Atems); ankerx: Anker x = Mitte der untersten 6 Zeilen
 ## des ersten Bildes (Fußmitte, nicht bei Schwerpunkt- und Übergangsanker).
+## hd: gemalter Clip (Umsetzer --hd, clip.txt weich=1, WebP mit weicher Kante; Entscheidung des Nutzers 2026-10-08), sonst
+## Pixel-Clip. Bei HD-Clips ist `hoehe` die Figurhöhe im ersten Bild in Spielbildpixeln (Dateipixel · skala), `massstab` der
+## Spielbildpixel je Videopixel (Clips mit dem Sprung-Startbild: Figur nur 45 % der Bildhöhe, deshalb 0,330). `ankerx`: false
+## bei HD-Clips, die nicht in der Kampfhaltung beginnen (kette1 beginnt am Ende des Ausholens, sprung und sprungtritt in der
+## Hocke, Wartezeit abgeschnitten): ihr Anker (`--ankerx-video`, Fußmitte der Haltung im Video) liegt nicht unter dem ersten
+## Bild, sondern nur innerhalb der Figur des ersten Bildes (geprüft).
 const ECHTE: Dictionary = {
-	"stand": {"min": 30, "hoehe": [142, 143], "ankerx": true},
-	"kette1": {"min": 30, "hoehe": [142, 142], "ankerx": true},
+	"stand": {"min": 30, "hoehe": [141, 144], "ankerx": true, "hd": true},
+	"kette1": {"min": 20, "hoehe": [139, 144], "ankerx": false, "hd": true},
 	"kette2": {"min": 30, "hoehe": [142, 142], "ankerx": true},
 	"kette3": {"min": 30, "hoehe": [142, 142], "ankerx": true},
 	"kette4": {"min": 30, "hoehe": [142, 142], "ankerx": true},
-	"sprint": {"min": 16, "hoehe": [], "ankerx": false},
-	"sprung": {"min": 60, "hoehe": [142, 142], "ankerx": true},
+	"sprint": {"min": 16, "hoehe": [], "ankerx": false, "hd": true},
+	"sprung": {"min": 60, "hoehe": [], "ankerx": false, "hd": true, "massstab": 0.3302},
+	"sprungtritt": {"min": 40, "hoehe": [], "ankerx": false, "hd": true, "massstab": 0.3302},
 	"getroffen_vorn": {"min": 60, "hoehe": [142, 142], "ankerx": true},
 	"umgeworfen": {"min": 60, "hoehe": [141, 142], "ankerx": false},
 	"liegen": {"min": 1, "hoehe": [], "ankerx": false},
@@ -31,6 +38,8 @@ const ECHTE: Dictionary = {
 ## Maßstab (clip.txt, Spielbildpixel je Videopixel) aller echten Clips: dieselbe Größe der Figur, 0,3 % Spielraum.
 const MASSSTAB: float = 0.1694
 const MASSSTAB_TOL: float = 0.0006
+## HD-Clips: Figur im Spiel gleich hoch wie die Pixel-Figur (Spielbildpixel), Spielraum für Atem und Rundung
+const SPIELHOEHE: float = 142.0
 ## Raster der Bildunterschriften des Umsetzers (video_umsetzer.gd SIG)
 const SIG: int = 24
 const T = preload("res://darstellung/vela_frames_tabelle.gd")
@@ -66,6 +75,7 @@ func _alles() -> void:
 	_clips(KETTE)
 	_echte_clips()
 	_tabelle_neu()
+	_hd_clips_zuordnung()
 	_logik_szenen()
 	_gehen_clip()
 	_kette_clip()
@@ -86,10 +96,15 @@ func _alles() -> void:
 # ---------------------------------------------------------------------------
 
 func _bild(clip: String, nr: int) -> Image:
-	var bytes: PackedByteArray = FileAccess.get_file_as_bytes(ORDNER + clip + "/f_%04d.png" % nr)
 	var b: Image = Image.new()
-	if bytes.is_empty() or b.load_png_from_buffer(bytes) != OK:
-		return null
+	var bytes: PackedByteArray = FileAccess.get_file_as_bytes(ORDNER + clip + "/f_%04d.webp" % nr)
+	if not bytes.is_empty():
+		if b.load_webp_from_buffer(bytes) != OK:
+			return null
+	else:
+		bytes = FileAccess.get_file_as_bytes(ORDNER + clip + "/f_%04d.png" % nr)
+		if bytes.is_empty() or b.load_png_from_buffer(bytes) != OK:
+			return null
 	b.convert(Image.FORMAT_RGBA8)
 	return b
 
@@ -127,10 +142,13 @@ func _liste(clip: String, schluessel: String) -> Array[int]:
 # Ergebnisse des Umsetzers an den Testclips
 # ---------------------------------------------------------------------------
 
-func _clips(clip: String, min_n: int = 20, hoehe_ok: Array = [142, 142], ankerx_pruefen: bool = true) -> void:
+func _clips(clip: String, min_n: int = 20, hoehe_ok: Array = [142, 142], ankerx_pruefen: bool = true, hd: bool = false) -> void:
 	var d: Dictionary = _daten(clip)
 	_ok(not d.is_empty(), "%s: clip.txt lesbar" % clip)
 	if d.is_empty():
+		return
+	if hd:
+		_clips_hd(clip, d, min_n, hoehe_ok, ankerx_pruefen)
 		return
 	var n: int = d["bilder"]
 	_ok(n >= min_n, "%s: mindestens %d Bilder (%d)" % [clip, min_n, n])
@@ -195,6 +213,92 @@ func _clips(clip: String, min_n: int = 20, hoehe_ok: Array = [142, 142], ankerx_
 					y0 = mini(y0, y)
 					y1 = maxi(y1, y)
 	_gleich([x0, y0, breite - 1 - x1, hoehe - 1 - y1], [2, 2, 2, 2], "%s: Zuschnitt = Vereinigung aller Figuren plus 2 px" % clip)
+
+
+## Ergebnisse des Umsetzers im HD-Modus an einem echten Clip: WebP mit weicher Kante, volle Farben, Skala, Anker, Zuschnitt.
+## Die Figurhöhe des ersten Bildes steht in Spielbildpixeln (Dateipixel · skala), der Fußpunkt (`fuss`) in Dateipixeln.
+func _clips_hd(clip: String, d: Dictionary, min_n: int, hoehe_ok: Array, ankerx_pruefen: bool) -> void:
+	var n: int = d["bilder"]
+	_ok(n >= min_n, "%s: mindestens %d Bilder (%d)" % [clip, min_n, n])
+	_ok(bool(d["weich"]), "%s: clip.txt weich=1 (HD-Clip)" % clip)
+	_gleich(d["format"], "webp", "%s: Bilder als verlustfreies WebP" % clip)
+	_gleich(int(d["farben"]), 0, "%s: HD ohne Palette (farben=0)" % clip)
+	var skala: float = d["skala"]
+	_ok(skala > 0.3 and skala < 0.5, "%s: Skala %.4f (Spielbildpixel je Dateipixel, Figur 142 / 360)" % [clip, skala])
+	var breite: int = d["bild_breite"]
+	var hoehe: int = d["bild_hoehe"]
+	var farben: Dictionary = {}
+	var halb: int = 0
+	var groesse_ok: bool = true
+	var fehlt: bool = false
+	var x0: int = breite
+	var y0: int = hoehe
+	var x1: int = -1
+	var y1: int = -1
+	for i: int in range(1, n + 1):
+		var b: Image = _bild(clip, i)
+		if b == null:
+			fehlt = true
+			continue
+		if b.get_width() != breite or b.get_height() != hoehe:
+			groesse_ok = false
+		var px: PackedByteArray = b.get_data()
+		for y: int in hoehe:
+			for x: int in breite:
+				var a: int = px[(y * breite + x) * 4 + 3]
+				if a != 0 and a != 255:
+					halb += 1
+				if a == 255 and farben.size() < 5000:
+					var o: int = (y * breite + x) * 4
+					farben[(px[o] << 16) | (px[o + 1] << 8) | px[o + 2]] = true
+				if a >= 128:
+					x0 = mini(x0, x)
+					x1 = maxi(x1, x)
+					y0 = mini(y0, y)
+					y1 = maxi(y1, y)
+	_ok(not fehlt, "%s: alle Bilder f_0001 bis f_%04d vorhanden" % [clip, n])
+	_ok(groesse_ok, "%s: alle Bilder gleich groß (%d x %d)" % [clip, breite, hoehe])
+	_ok(halb > 0, "%s: weiche Kante (Alpha-Zwischenwerte vorhanden, %d)" % [clip, halb])
+	_ok(farben.size() > 64, "%s: volle Farben, nicht auf 64 reduziert (%d, abgebrochen bei 5000)" % [clip, farben.size()])
+	# Zuschnitt: Vereinigung aller Figuren (Alpha ab 128) plus 2 px Rand, weicher Rand darf bis zu 2 px hineinragen
+	var rand: Array[int] = [x0, y0, breite - 1 - x1, hoehe - 1 - y1]
+	var rand_ok: bool = true
+	for r: int in rand:
+		if r < 2 or r > 4:
+			rand_ok = false
+	_ok(rand_ok, "%s: Zuschnitt = Vereinigung aller Figuren plus 2 px (Rand links, oben, rechts, unten: %s)" % [clip, str(rand)])
+	var b1: Image = _bild(clip, 1)
+	if b1 == null:
+		return
+	var z: Array[int] = _zeilen_ab(b1, 128)
+	var fuss: Vector2 = d["fuss"]
+	if not hoehe_ok.is_empty():
+		var hh: float = float(z[1] - z[0] + 1) * skala
+		_ok(hh >= float(hoehe_ok[0]) and hh <= float(hoehe_ok[1]), "%s: Figur im ersten Bild %d bis %d Spielbildpixel hoch (%.1f)" % [clip, hoehe_ok[0], hoehe_ok[1], hh])
+	# Anker: Fußpunkt (Dateipixel) liegt unter der untersten Figurzeile des ersten Bildes (±1,5 Dateipixel)
+	_ok(absf(fuss.y - float(z[1] + 1)) <= 1.5, "%s: Fußpunkt y = Unterkante der Figur im ersten Bild (%.2f gegen %d)" % [clip, fuss.y, z[1] + 1])
+	var xmin: int = breite
+	var xmax: int = -1
+	var px1: PackedByteArray = b1.get_data()
+	for y: int in range(maxi(z[1] - 14, 0), z[1] + 1):
+		for x: int in breite:
+			if px1[(y * breite + x) * 4 + 3] >= 128:
+				xmin = mini(xmin, x)
+				xmax = maxi(xmax, x)
+	if ankerx_pruefen:
+		_ok(absf(fuss.x - (float(xmin + xmax) / 2.0 + 0.5)) <= 3.0, "%s: Fußpunkt x = Mitte der Füße im ersten Bild (%.2f gegen %.2f)" % [clip, fuss.x, float(xmin + xmax) / 2.0 + 0.5])
+	else:
+		var r1: Rect2i = _alpha_rahmen(b1, 128)
+		_ok(fuss.x >= float(r1.position.x) and fuss.x <= float(r1.end.x), "%s: Fußpunkt x liegt innerhalb der Figur des ersten Bildes (%.1f in %d bis %d)" % [clip, fuss.x, r1.position.x, r1.end.x])
+	_ok(fuss.x > 0.0 and fuss.x < float(breite) and fuss.y > 0.0 and fuss.y <= float(hoehe), "%s: Anker im Bild" % clip)
+	# Umrechnung in Spielbildpixel (clip_lesen): Größe und Anker stimmen mit Skala überein
+	_ok(absi(int(d["breite"]) - roundi(float(breite) * skala)) <= 1 and absi(int(d["hoehe"]) - roundi(float(hoehe) * skala)) <= 1, "%s: Größe in Spielbildpixeln = Dateigröße · Skala" % clip)
+
+
+## Zeilen mit Alpha ab `schwelle`: [oberste, unterste]; leer: [−1, −1].
+func _zeilen_ab(b: Image, schwelle: int) -> Array[int]:
+	var r: Rect2i = _alpha_rahmen(b, schwelle)
+	return [r.position.y, r.position.y + r.size.y - 1]
 
 
 func _gehen_clip() -> void:
@@ -346,11 +450,109 @@ func _kunst(bilder: int, ausholen: int, kontakt: int, ruhe: int, rueck: String) 
 	return {"bilder": bilder, "ausholen": ausholen, "kontakt": kontakt, "ruhe": ruhe, "rueckkehr": rueck, "zyklus_start": 3, "zyklus_bilder": 10, "zyklus_ticks": 0, "fps": 24}
 
 
+## Abbildung der gemalten (HD-)Clips auf die Zeiten der Logik: stand (Echtzeitschleife), sprungtritt (Sprungangriff N und R).
+## kette1, sprint und sprung laufen über die allgemeinen Prüfungen (_tabelle_schlag, _tabelle_neu).
+func _hd_clips_zuordnung() -> void:
+	var st: Dictionary = _daten("stand")
+	var tt: Dictionary = _daten("sprungtritt")
+	if st.is_empty() or tt.is_empty():
+		_ok(false, "HD-Zuordnung: die Clips stand und sprungtritt fehlen")
+		return
+	# --- stand: ein Atemzyklus in Echtzeit, nahtlos ---
+	var n: int = st["zyklus_bilder"]
+	var ticks: int = T.zyklus_ticks("stand", st)
+	var ver: Array[int] = T.verlauf("stand", 3 * ticks, st)
+	var s_ok: bool = true
+	var benutzt: Dictionary = {}
+	for u: int in ticks:
+		benutzt[ver[u]] = true
+		if u > 0 and ver[u] < ver[u - 1]:
+			s_ok = false
+		if ver[u] != ver[u + ticks] or ver[u] != ver[u + 2 * ticks]:
+			s_ok = false
+	_ok(s_ok, "HD stand: ein Zyklus über %d Ticks, danach von vorn, Bilder laufen vorwärts" % ticks)
+	_gleich(benutzt.size(), n, "HD stand: alle %d Zyklusbilder kommen im Zyklus vor" % n)
+	_ok(ticks >= 100 and ticks <= 140, "HD stand: Atemzyklus in Echtzeit (%d Ticks = %.1f s)" % [ticks, float(ticks) / 60.0])
+	# --- sprungtritt: Sprungangriff N und R ---
+	var ev: Dictionary = tt["ereignis"]
+	var absprung: int = ev["absprung"]
+	var aufsetzen: int = ev["aufsetzen"]
+	var kontakt: int = tt["kontakt"]
+	var rueck: int = tt["rueckzug"]
+	for v: String in ["N", "R"]:
+		var wv: Dictionary = KernWerte.SPRUNGANGRIFF[v]
+		var von: int = wv["aktiv_von"]
+		var bis: int = wv["aktiv_bis"]
+		_ok(T.tritt_variante(v), "HD sprungtritt: Variante %s hat den Clip" % v)
+		# A in der Sprunguhr J+1 (Angriff am Anfang) bis J+37 (Angriff spät, kürzer als das Trefferfenster)
+		for j1: int in [2, 10, 21, 30, 38]:
+			var dauer: int = KernWerte.SPRUNG_AUFSETZEN - j1
+			var tag: String = "HD sprungtritt %s, Sprunguhr %d in uhr 1" % [v, j1]
+			var lauf: Array[int] = []
+			for u: int in range(1, dauer + 6):
+				lauf.append(T.tritt(u, j1 + u - 1, von, bis, tt))
+			var innen: bool = true
+			var mono: bool = true
+			for i: int in lauf.size():
+				if lauf[i] < absprung or lauf[i] > aufsetzen - 1:
+					innen = false
+				if i > 0 and lauf[i] < lauf[i - 1]:
+					mono = false
+			_ok(innen, "%s: alle Bilder zwischen Absprung und letztem Luftbild" % tag)
+			_ok(mono, "%s: die Bilder laufen vorwärts, kein Zurückspringen" % tag)
+			var vor_ok: bool = true
+			for u: int in range(1, mini(von, dauer + 1)):
+				if lauf[u - 1] < absprung or lauf[u - 1] >= kontakt:
+					vor_ok = false
+			_ok(vor_ok, "%s: uhr 1 bis %d zeigt Bilder vom Absprung bis vor den Kontakt" % [tag, von - 1])
+			for u: int in range(von, mini(bis, dauer) + 1):
+				_gleich(lauf[u - 1], kontakt, "%s: Trefferfenster uhr %d zeigt das Kontaktbild" % [tag, u])
+			if dauer > bis:
+				_ok(lauf[bis] >= rueck, "%s: nach dem Fenster beginnt der Rückzug (Bild %d, Rückzug %d)" % [tag, lauf[bis], rueck])
+				_gleich(lauf[dauer - 1], aufsetzen - 1, "%s: im letzten Luftframe (uhr %d) steht das letzte Luftbild" % [tag, dauer])
+				# (nach dem letzten Luftframe wechselt die Logik zu LANDUNG; die Zeit darüber hinaus gilt nur hier, ohne Logik)
+				_gleich(lauf[dauer + 4], lauf[dauer - 1], "%s: über das Ende der Aktion hinaus hält das letzte Bild" % tag)
+	# wahl: Zustand der Figur → Clip, Bild; H und T haben keinen Clip, Landung nach dem Tritt kommt aus dem Tritt-Clip
+	_gleich(T.clip_name("SPRUNGANGRIFF", 1, "N"), "sprungtritt", "HD sprungtritt: Aktion SPRUNGANGRIFF (N) → Clip sprungtritt")
+	_gleich(T.clip_name("SPRUNGANGRIFF", 1, "R"), "sprungtritt", "HD sprungtritt: Aktion SPRUNGANGRIFF (R) → Clip sprungtritt")
+	for v: String in ["H", "T", ""]:
+		_gleich(T.clip_name("SPRUNGANGRIFF", 1, v), "", "HD sprungtritt: SPRUNGANGRIFF (%s) → kein Clip (Platzhalter)" % v)
+		var fh: KernEntitaeten.Figur = _figur("SPRUNGANGRIFF")
+		fh.sprung_variante = v
+		_ok(T.wahl(fh).is_empty() and not DarstellungVelaFrames.abgedeckt(fh), "HD sprungtritt: SPRUNGANGRIFF (%s) nicht abgedeckt" % v)
+	var fa: KernEntitaeten.Figur = _figur("SPRUNGANGRIFF")
+	fa.sprung_variante = "R"
+	fa.sprung_angriff = true
+	fa.uhr = 5
+	fa.vh = KernWerte.SPRUNG_VH_START - 6 * KernWerte.SPRUNG_SCHWERKRAFT
+	var wa: Dictionary = T.wahl(fa)
+	_gleich(wa.get("clip", ""), "sprungtritt", "HD sprungtritt: wahl(SPRUNGANGRIFF R) → Clip sprungtritt")
+	_gleich(T.bildindex_wahl(wa, tt), kontakt, "HD sprungtritt: wahl(SPRUNGANGRIFF R, uhr 5 = aktiv_von) → Kontaktbild")
+	_gleich(wa["sprung_uhr"], 7, "HD sprungtritt: Sprunguhr aus vh (6 Luftframes nach dem Absprung → 7)")
+	_ok(DarstellungVelaFrames.abgedeckt(fa), "HD sprungtritt: SPRUNGANGRIFF (R) ist abgedeckt")
+	fa.uhr = KernWerte.SPRUNGANGRIFF["R"]["aktiv_bis"] + 1
+	_ok(T.bildindex_wahl(T.wahl(fa), tt) >= rueck, "HD sprungtritt: ab uhr aktiv_bis + 1 läuft der Rückzug")
+	var fl: KernEntitaeten.Figur = _figur("LANDUNG")
+	fl.sprung_variante = "N"
+	fl.sprung_angriff = true
+	_gleich(T.wahl(fl)["clip"], "sprungtritt", "HD sprungtritt: Landung nach dem Sprungangriff N aus dem Tritt-Clip")
+	_gleich(T.bildindex_wahl(T.wahl(fl), tt), aufsetzen, "HD sprungtritt: Landung uhr 1 zeigt das Aufsetzbild")
+	fl.uhr = KernWerte.LANDUNG_DAUER
+	_gleich(T.bildindex_wahl(T.wahl(fl), tt), int(ev["ruhe"]), "HD sprungtritt: Landung uhr 6 zeigt das aufgerichtete Bild")
+	fl.sprung_variante = "H"
+	_gleich(T.wahl(fl)["clip"], "sprung", "HD sprungtritt: Landung nach dem Sprungangriff H aus dem Sprung-Clip")
+	fl.sprung_variante = "N"
+	fl.sprung_angriff = false
+	_gleich(T.wahl(fl)["clip"], "sprung", "HD sprungtritt: Landung ohne Sprungangriff aus dem Sprung-Clip")
+	# Kontaktbögen und Tests ohne Logik: bildindex() des Clips = Sprungangriff N
+	_gleich(T.bildindex("sprungtritt", 5, tt), kontakt, "HD sprungtritt: bildindex() zeigt im Trefferfenster das Kontaktbild")
+
+
 func _tabelle_schlag() -> void:
 	_gleich([T.kette_dauer(1), T.kette_dauer(2), T.kette_dauer(3), T.kette_dauer(4)], [16, 16, 17, 25], "Tabelle: Dauern der Ketten 16, 16, 17, 25")
 	var mit_halt: Dictionary = _kunst(60, 8, 20, 50, "vorwaerts")
 	mit_halt["rueckzug"] = 40
-	var daten: Array = [_kunst(60, 8, 20, 50, "vorwaerts"), _kunst(60, 8, 20, 50, "rueckwaerts"), mit_halt, _daten(KETTE)]
+	var daten: Array = [_kunst(60, 8, 20, 50, "vorwaerts"), _kunst(60, 8, 20, 50, "rueckwaerts"), mit_halt, _daten(KETTE), _daten("kette1")]
 	for di: int in daten.size():
 		var d: Dictionary = daten[di]
 		if d.is_empty():
@@ -868,11 +1070,13 @@ func _diff(clip: String, a: int, b: int) -> int:
 func _echte_clips() -> void:
 	for clip: String in ECHTE:
 		var sp: Dictionary = ECHTE[clip]
-		_clips(clip, int(sp["min"]), sp["hoehe"], bool(sp["ankerx"]))
+		var hd: bool = bool(sp.get("hd", false))
+		_clips(clip, int(sp["min"]), sp["hoehe"], bool(sp["ankerx"]), hd)
 		var d: Dictionary = _daten(clip)
 		if d.is_empty():
 			continue
-		_ok(absf(float(d["massstab"]) - MASSSTAB) <= MASSSTAB_TOL, "%s: Maßstab %.5f gleich bei allen echten Clips (%.4f ± %.4f)" % [clip, d["massstab"], MASSSTAB, MASSSTAB_TOL])
+		var soll_massstab: float = float(sp.get("massstab", MASSSTAB))
+		_ok(absf(float(d["massstab"]) - soll_massstab) <= MASSSTAB_TOL, "%s: Maßstab %.5f gleich bei allen echten Clips (%.4f ± %.4f)" % [clip, d["massstab"], soll_massstab, MASSSTAB_TOL])
 		_ok(int(d["farben"]) <= 63, "%s: höchstens 64 Farben mit durchsichtig" % clip)
 		var n: int = d["bilder"]
 		var ev: Dictionary = d["ereignis"]
@@ -890,8 +1094,11 @@ func _echte_clips() -> void:
 			if clip == "kette4":
 				_ok(int(d["kontakt1"]) > 0 and int(d["kontakt1"]) < kt, "kette4: erstes Trefferfenster (%d) liegt vor dem Tritt (%d)" % [d["kontakt1"], kt])
 			var vorn: Array[int] = _liste(clip, "vorn")
+			# HD-Clip kette1: das Video beginnt erst am Ende des Ausholens (die Wartezeit und der Anfang des Ausholens sind
+			# abgeschnitten, Datei sparen); Bezug ist dann das Ausholen-Ende statt des ersten Bildes
+			var bezug: int = vorn[a] if bool(d["weich"]) else vorn[0]
 			if clip != "kette3":
-				_ok(vorn[kt] - vorn[0] >= 25, "%s: im Kontakt ist die Figur weit nach vorn gestreckt (%d gegen %d)" % [clip, vorn[kt], vorn[0]])
+				_ok(vorn[kt] - bezug >= 25, "%s: im Kontakt ist die Figur weit nach vorn gestreckt (%d gegen %d)" % [clip, vorn[kt], bezug])
 		elif clip == "stand":
 			_gleich(int(d["fps"]), 24, "stand: Quelle 24 Bilder/s")
 			_gleich(int(d["zyklus_bilder"]), n, "stand: der ganze Clip ist der Zyklus")
@@ -900,7 +1107,7 @@ func _echte_clips() -> void:
 				mittel += _diff(clip, i, i + 1)
 			mittel /= n - 1
 			_ok(_diff(clip, n, 1) <= 4 * mittel, "stand: die Schleife schließt (Unterschied letztes zum ersten Bild %d, mittlerer Bildschritt %d)" % [_diff(clip, n, 1), mittel])
-			_gleich(T.zyklus_ticks("stand", d), 85, "stand: 34 Bilder bei 24 Bildern/s in 85 Ticks")
+			_gleich(T.zyklus_ticks("stand", d), (n * 60 + 12) / 24, "stand: %d Bilder bei 24 Bildern/s in Echtzeit (%d Ticks)" % [n, (n * 60 + 12) / 24])
 		elif clip == "sprint":
 			_gleich(int(d["zyklus_bilder"]), 16, "sprint: Doppelschritt aus 16 Bildern")
 			var mittel2: int = 0
@@ -921,7 +1128,25 @@ func _echte_clips() -> void:
 			_ok(ab <= erste_luft and erste_luft - ab <= 4, "sprung: das Absprungbild (Strecken, Arme hoch) liegt höchstens 4 Bilder vor dem ersten Luftbild (%d, erstes Luftbild %d)" % [ab, erste_luft])
 			_ok(luft[sch] >= luft.max() - 6, "sprung: das Scheitelbild gehört zum höchsten Abschnitt (%d von %d)" % [luft[sch], luft.max()])
 			_ok(luft[au] <= 1 and luft[au - 1] > 1, "sprung: das Aufsetzbild ist das erste am Boden (%d, davor %d)" % [luft[au], luft[au - 1]])
-			_ok(String(d["rueckkehr"]) == "vorwaerts" and int(ev["ruhe"]) < n, "sprung: der Clip reicht bis zur Kampfhaltung (Ruhe %d von %d)" % [ev["ruhe"], n])
+			# der HD-Clip beginnt in der Hocke (Wartezeit abgeschnitten): `rueckkehr` im Kopf bezieht sich auf das erste Bild und gilt
+			# nicht; die Ruhe (Kampfhaltung) ist daran zu erkennen, dass die Silhouette wieder fast so hoch ist wie im Stand
+			var hs: Array[int] = _liste(clip, "hoehe_sil")
+			_ok(int(ev["ruhe"]) < n and hs[ev["ruhe"]] >= 138, "sprung: der Clip reicht bis zur Kampfhaltung (Ruhe %d von %d, Silhouette %d)" % [ev["ruhe"], n, hs[ev["ruhe"]]])
+		elif clip == "sprungtritt":
+			var luft2: Array[int] = _liste(clip, "luft")
+			var vorn2: Array[int] = _liste(clip, "vorn")
+			var ab2: int = ev["absprung"]
+			var au2: int = ev["aufsetzen"]
+			var kt2: int = d["kontakt"]
+			var rz2: int = d["rueckzug"]
+			_ok(int(ev["hocke"]) < ab2 and ab2 < kt2 and kt2 <= rz2 and rz2 < au2 and au2 < int(ev["tief"]) and int(ev["tief"]) <= int(ev["ruhe"]), "sprungtritt: Hocke < Absprung < Kontakt ≤ Rückzug < Aufsetzen < Tief ≤ Ruhe")
+			_ok(luft2[ab2] >= 2 and luft2[ab2 - 1] < 2, "sprungtritt: das Absprungbild ist das erste in der Luft (%d, davor %d)" % [luft2[ab2], luft2[ab2 - 1]])
+			_ok(vorn2[kt2] >= vorn2.max() - 4 and vorn2[kt2] - vorn2[0] >= 40, "sprungtritt: im Kontaktbild ist das Bein voll nach vorn gestreckt (%d gegen %d in der Haltung, größter Wert %d)" % [vorn2[kt2], vorn2[0], vorn2.max()])
+			_ok(vorn2[ab2] < vorn2[kt2] - 40, "sprungtritt: im Absprungbild ist das Bein noch nicht gestreckt (%d)" % vorn2[ab2])
+			_ok(vorn2[rz2] >= vorn2.max() - 4 and vorn2[rz2 + 1] < vorn2[rz2], "sprungtritt: Rückzug = letztes Bild der vollen Streckung (%d, danach %d)" % [vorn2[rz2], vorn2[rz2 + 1]])
+			_ok(luft2[au2] <= 1 and luft2[au2 - 1] > 1, "sprungtritt: das Aufsetzbild ist das erste am Boden (%d, davor %d)" % [luft2[au2], luft2[au2 - 1]])
+			var hs2: Array[int] = _liste(clip, "hoehe_sil")
+			_ok(int(ev["ruhe"]) < n and hs2[ev["ruhe"]] >= 138, "sprungtritt: der Clip reicht bis zur Kampfhaltung (Ruhe %d von %d, Silhouette %d)" % [ev["ruhe"], n, hs2[ev["ruhe"]]])
 		elif clip == "getroffen_vorn":
 			var br: Array[int] = _liste(clip, "breite_sil")
 			_ok(int(ev["start"]) < int(ev["kontakt"]) and int(ev["kontakt"]) < int(ev["rueckzug"]) and int(ev["rueckzug"]) < int(ev["ruhe"]), "getroffen_vorn: Start < Auslenkung < Rückzug < Ruhe")
@@ -1245,6 +1470,7 @@ func _logik_szenen() -> void:
 		var aufprall_ok: bool = true
 		var auf_ende_ok: bool = true
 		var blick_ok: bool = true
+		var tritt_ok: bool = true
 		while schritte < 800 and not sitzung.amEnde():
 			sitzung.logikSchritt()
 			schritte += 1
@@ -1271,6 +1497,12 @@ func _logik_szenen() -> void:
 				aufprall_ok = false
 			if f.aktion == "AUFSTEHEN" and f.uhr == KernWerte.FIGUR_AUFSTEHEN_DAUER and i != int(d["ereignis"]["ruhe"]):
 				auf_ende_ok = false
+			if f.aktion == "SPRUNGANGRIFF" and cn == "sprungtritt":
+				var fenster: Dictionary = KernWerte.SPRUNGANGRIFF[f.sprung_variante]
+				if f.uhr >= int(fenster["aktiv_von"]) and f.uhr <= int(fenster["aktiv_bis"]) and i != int(d["kontakt"]):
+					tritt_ok = false
+				if f.uhr < int(fenster["aktiv_von"]) and i >= int(d["kontakt"]):
+					tritt_ok = false
 			if f.aktion in ["UMGEWORFEN", "LIEGEN", "AUFSTEHEN", "TOT"] and int(w["blick"]) != -f.bahn_richtung:
 				blick_ok = false
 			letzte_clip = cn
@@ -1279,10 +1511,11 @@ func _logik_szenen() -> void:
 		_ok(aufprall_ok, "Szene %s: Umgeworfen: Aufprall genau im Bodenkontaktframe, davor nie" % sn)
 		_ok(auf_ende_ok, "Szene %s: Aufstehen: im letzten Frame die Kampfhaltung" % sn)
 		_ok(blick_ok, "Szene %s: Flugrichtung bestimmt die Spiegelung" % sn)
+		_ok(tritt_ok, "Szene %s: Sprungangriff: Kontaktbild im Trefferfenster, davor nie" % sn)
 		if sn == "T7_a" or sn == "T9_c":
 			_ok(kontakt_gesehen, "Szene %s: Bodenkontakt kam vor" % sn)
 		spiel.free()
-	for k: String in ["SPRINT:sprint", "SPRUNG:sprung", "LANDUNG:sprung", "GETROFFEN:getroffen_vorn", "UMGEWORFEN:umgeworfen", "LIEGEN:liegen", "AUFSTEHEN:aufstehen", "TOT:umgeworfen"]:
+	for k: String in ["SPRINT:sprint", "SPRUNG:sprung", "LANDUNG:sprung", "SPRUNGANGRIFF:sprungtritt", "LANDUNG:sprungtritt", "GETROFFEN:getroffen_vorn", "UMGEWORFEN:umgeworfen", "LIEGEN:liegen", "AUFSTEHEN:aufstehen", "TOT:umgeworfen"]:
 		_ok(int(gesehen.get(k, 0)) > 0, "Szenen: %s kam mit dem Clip vor (%d Ticks)" % [k, int(gesehen.get(k, 0))])
 
 

@@ -68,7 +68,8 @@ extends SceneTree
 ##   --ankery fest        Standard: Bodenlinie des ersten Bildes. --ankery unten: die unterste Figurzeile jedes Bildes liegt
 ##                        auf dem Anker (Sprung, Flug, Liegen: die Höhe liefert die Logik).
 ##   --setze n=b,...      Ereignisse von Hand setzen (Name=Bildnummer 1-basiert), überschreibt die Erkennung; steht im
-##                        clip.txt unter `setze=`.
+##                        clip.txt unter `setze=`. Eine gesetzte `ruhe` nach dem Kontakt macht `rueckkehr=vorwaerts` (für Clips,
+##                        die nicht in der Kampfhaltung beginnen: kette1 ab Ausholen-Ende, sprung, sprungtritt).
 ##   --schritt lauf       Schrittlänge für das Sprinten (Beinspreizung) statt für das Gehen (Fußband).
 ##   --schleife pingpong  Schleife hin und her (Zyklus vorwärts, dann rückwärts), wenn kein Zyklus schließt.
 ##   --kuerzen ja|nein|auto  Wartezeit vor dem Schlag abschneiden (auto: Clips, deren Name „kette“ enthält)
@@ -635,6 +636,11 @@ func _lauf() -> void:
 			ereignisse[k] = int(setze[k]) - 1
 			if andere.has(k):
 				andere[k] = int(setze[k]) - 1
+			# Beginnt der Clip nicht in der Kampfhaltung (Wartezeit und Anfang des Ausholens abgeschnitten), findet die Suche
+			# keine Ruhe, die dem ersten Bild gleicht, und meldet „rueckwaerts“. Eine von Hand gesetzte Ruhe nach dem Kontakt
+			# heißt: der Clip kehrt vorwärts in die Kampfhaltung zurück.
+			if k == "ruhe" and int(setze[k]) - 1 > int(ereignisse["kontakt"]):
+				ereignisse["rueckkehr"] = "vorwaerts"
 		else:
 			andere[k] = int(setze[k]) - 1
 	var schritt: Dictionary = schrittlaenge(ausgabe, ob, oh, ank.y, int(zyk["start"]), int(zyk["n"]), String(arg.get("schritt", "gehen")) == "lauf")

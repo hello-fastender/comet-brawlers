@@ -13,10 +13,16 @@
 ##   STAND                          stand           Schleife (Echtzeit), bei `schleife=pingpong` hin und her
 ##   LAUF                           gehen           Schleife, Dauer aus der Schrittlänge (zyklus_ticks)
 ##   SPRINT                         sprint          Schleife nach der zurückgelegten Strecke (sprint_bild): kein Rutschen
+##                                                   (HD: ein Doppelschritt aus 16 Bildern)
 ##   SCHLAG, LEERSCHLAG             kette1 … 4      schlag (Kette 4 mit zwei Fenstern, wenn der Clip `kontakt1` hat)
 ##   SPRUNG                         sprung          sprung: uhr 1 Hocke; 2 bis 21 Absprung bis Scheitel; 22 bis 41 bis zum
 ##                                                   letzten Luftbild; (nach einem Sprungangriff aus vh rückgerechnet)
 ##   LANDUNG                        sprung          landung: Aufsetzen bis Aufrichten über LANDUNG_DAUER (6) Ticks
+##                                  (sprungtritt    nach einem Sprungangriff N oder R: dieselbe Landung aus dem Clip sprungtritt)
+##   SPRUNGANGRIFF (N, R)           sprungtritt     tritt: Absprungbild bis vor den Kontakt in uhr 1 bis aktiv_von − 1, das Kontakt-
+##                                                   bild (Tritt voll gestreckt) im Trefferfenster aktiv_von bis aktiv_bis (KernWerte.
+##                                                   SPRUNGANGRIFF, 5 bis 28 ab A), danach der Rückzug bis zum letzten Luftbild, das im
+##                                                   letzten Luftframe steht (die Dauer folgt aus der Sprunguhr, Landung J+42)
 ##   GETROFFEN                      getroffen_vorn  treffer: Auslenkung früh (uhr 3 bis 6), Rückkehr bis uhr 27;
 ##                                                   nur wenn der Angreifer vorn steht (G1-11), sonst Puppe/Platzhalter
 ##   UMGEWORFEN                     umgeworfen      flug: Stillstand uhr 1 bis 9, Flug nach bahn_frame, Aufprall im
@@ -25,7 +31,7 @@
 ##                                  liegen          das Liegebild
 ##   LIEGEN                         liegen          hält das Bild
 ##   AUFSTEHEN                      aufstehen       uhr 1 bis 26 gleichmäßig über den Clip bis zur Kampfhaltung
-##   SPRUNGANGRIFF, SPRINTSPRUNG, NEUEINSTIEG und alle übrigen: kein Clip (Puppe, sonst Platzhalter).
+##   SPRUNGANGRIFF H und T (hoch, runter), SPRINTSPRUNG, NEUEINSTIEG und alle übrigen: kein Clip (Puppe, sonst Platzhalter).
 ## UMGEWORFEN, TOT, LIEGEN und AUFSTEHEN zeigen den Clip so gespiegelt, dass der Flug in `bahn_richtung` geht (der Clip
 ## fliegt nach links, Blick des Clips nach rechts): Blick = −bahn_richtung (G1-12, G7-10).
 ##
@@ -138,9 +144,9 @@ static func clip_lesen(text: String) -> Dictionary:
 # Aktion → Clip
 # ---------------------------------------------------------------------------
 
-## Name des Clips zur Aktion der Figur („“ = keiner vorgesehen). Kettenstufe 1 bis 4 nur bei SCHLAG/LEERSCHLAG. TOT nennt
-## `umgeworfen`; ab der Ruhe zeigt `wahl` das Liegebild.
-static func clip_name(aktion: String, stufe: int) -> String:
+## Name des Clips zur Aktion der Figur („“ = keiner vorgesehen). Kettenstufe 1 bis 4 nur bei SCHLAG/LEERSCHLAG, `variante`
+## (N, R, H, T) nur bei SPRUNGANGRIFF. TOT nennt `umgeworfen`; ab der Ruhe zeigt `wahl` das Liegebild.
+static func clip_name(aktion: String, stufe: int, variante: String = "") -> String:
 	match aktion:
 		"STAND":
 			return "stand"
@@ -152,6 +158,8 @@ static func clip_name(aktion: String, stufe: int) -> String:
 			return "sprint"
 		"SPRUNG", "LANDUNG":
 			return "sprung"
+		"SPRUNGANGRIFF":
+			return "sprungtritt" if tritt_variante(variante) else ""
 		"GETROFFEN":
 			return "getroffen_vorn"
 		"UMGEWORFEN", "TOT":
@@ -363,6 +371,34 @@ static func sprung_uhr(uhr: int, vh: int, nach_angriff: bool) -> int:
 	return clampi((KernWerte.SPRUNG_VH_START - vh) / KernWerte.SPRUNG_SCHWERKRAFT + 1, 1, KernWerte.SPRUNG_LETZTER_LUFTFRAME)
 
 
+## Zeigt der Clip `sprungtritt` diese Variante des Sprungangriffs (Kampf 5.2)? N (neutral) und R (Richtung) sind waagerechte
+## Tritte mit dem Bein nach vorn; H (hoch, Aufwärtsschlag) und T (runter) haben keinen passenden Clip.
+static func tritt_variante(variante: String) -> bool:
+	return variante == "N" or variante == "R"
+
+
+## Sprungangriff N/R: Aktionsuhr u (Beginn 1 in A+1) → Bild des Clips `sprungtritt`. `j` ist die Sprunguhr (aus vh, siehe
+## sprung_uhr), `von`/`bis` das Trefferfenster (KernWerte.SPRUNGANGRIFF[v]["aktiv_von"], ["aktiv_bis"]). Davor die Bilder vom
+## Absprung bis vor den Kontakt (Tritt voll gestreckt), im Fenster das Kontaktbild, danach vom Rückzug bis zum letzten Luftbild,
+## das im letzten Luftframe (J+41) steht. Die Aktion dauert bis zur Landung: Dauer = SPRUNG_AUFSETZEN − Sprunguhr in uhr 1, nie
+## kürzer als bis + 1 (Angriff spät im Sprung: der Tritt steht dann bis zur Landung).
+static func tritt(u: int, j: int, von: int, bis: int, d: Dictionary) -> int:
+	var bilder: int = int(d["bilder"])
+	var ev: Dictionary = d["ereignis"]
+	var absprung: int = clampi(int(ev.get("absprung", 0)), 0, bilder - 1)
+	var aufsetzen: int = clampi(int(ev.get("aufsetzen", bilder - 1)), absprung + 1, bilder - 1)
+	var kontakt: int = clampi(int(d["kontakt"]), absprung, aufsetzen - 1)
+	var dd: Dictionary = d.duplicate()
+	dd["ausholen"] = absprung
+	dd["kontakt"] = kontakt
+	dd["rueckzug"] = clampi(int(d.get("rueckzug", kontakt)), kontakt, aufsetzen - 1)
+	dd["ruhe"] = aufsetzen - 1
+	dd["rueckkehr"] = "vorwaerts"
+	var j1: int = j - (maxi(u, 1) - 1)
+	var dauer: int = maxi(KernWerte.SPRUNG_AUFSETZEN - j1, bis + 1)
+	return _ablauf(u, von, bis, dauer, dd)
+
+
 ## Landung: Landeuhr u (1 bis LANDUNG_DAUER, Aufsetzen in J+42) → Bild vom Aufsetzen bis zum Aufrichten (`ruhe`).
 static func landung(u: int, d: Dictionary) -> int:
 	var bilder: int = int(d["bilder"])
@@ -439,6 +475,10 @@ static func bildindex(name: String, uhr: int, d: Dictionary) -> int:
 		i = schlag(uhr, stufe, d)
 	elif name == "sprung":
 		i = sprung(uhr, d)
+	elif name == "sprungtritt":
+		# Kontaktbögen: Sprungangriff N, A = J+1 (Sprunguhr in uhr 1 ist 2)
+		var w: Dictionary = KernWerte.SPRUNGANGRIFF["N"]
+		i = tritt(uhr, uhr + 1, int(w["aktiv_von"]), int(w["aktiv_bis"]), d)
 	elif name == "getroffen_vorn":
 		i = treffer(uhr, d)
 	elif name == "aufstehen":
@@ -496,8 +536,15 @@ static func wahl(f: KernEntitaeten.Figur, welt: KernWelt = null) -> Dictionary:
 			return {"clip": "kette%d" % stufe, "art": "schlag", "uhr": DarstellungVelaPosen.kette_uhr(f), "stufe": stufe, "blick": f.blick}
 		"SPRUNG":
 			return {"clip": "sprung", "art": "sprung", "uhr": sprung_uhr(u, f.vh, f.sprung_angriff), "blick": f.blick}
+		"SPRUNGANGRIFF":
+			if not tritt_variante(f.sprung_variante):
+				return {}
+			var wf: Dictionary = KernWerte.SPRUNGANGRIFF[f.sprung_variante]
+			return {"clip": "sprungtritt", "art": "tritt", "uhr": u, "sprung_uhr": sprung_uhr(u, f.vh, true), "von": int(wf["aktiv_von"]), "bis": int(wf["aktiv_bis"]), "blick": f.blick}
 		"LANDUNG":
-			return {"clip": "sprung", "art": "landung", "uhr": u, "blick": f.blick}
+			# nach einem Sprungangriff N oder R landet die Figur aus dem Tritt (sprung_angriff bleibt bis zum nächsten Sprung)
+			var lclip: String = "sprungtritt" if f.sprung_angriff and tritt_variante(f.sprung_variante) else "sprung"
+			return {"clip": lclip, "art": "landung", "uhr": u, "blick": f.blick}
 		"GETROFFEN":
 			if not angreifer_vorn(f, welt):
 				return {}
@@ -525,6 +572,8 @@ static func bildindex_wahl(w: Dictionary, d: Dictionary) -> int:
 			i = sprint_bild(int(w["sprint_n"]), d)
 		"landung":
 			i = landung(int(w["uhr"]), d)
+		"tritt":
+			i = tritt(int(w["uhr"]), int(w["sprung_uhr"]), int(w["von"]), int(w["bis"]), d)
 		"flug":
 			i = flug(int(w["uhr"]), int(w["bahn_frame"]), int(w["bahn_boden"]), int(w["stillstand"]), d)
 		_:
