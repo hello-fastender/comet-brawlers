@@ -15,7 +15,8 @@
 #   <clip> ...     nur diese Clips umsetzen (Standard: alle, in der Reihenfolge unten); verschiedene Clips dürfen in
 #                  verschiedenen Aufrufen zugleich laufen, derselbe Clip nicht zweimal
 #
-# Fußpunkt: Alle Clips außer sprint (Mittelwert der Silhouette) sitzen auf der Mitte zwischen den Stiefeln der Kampfhaltung,
+# Fußpunkt: Alle Clips außer sprint und gehen (`--ankerx mittel`: Mittelwert der Silhouette) und aufstehen (`--ankerx uebergang`: von der
+# Lage im Liegen zur Fußmitte am Ende) sitzen auf der Mitte zwischen den Stiefeln der Kampfhaltung,
 # `--ankerx-video` in Pixeln des Videos: 488.2 bei den 944-Pixel-Videos (vorderer Stiefel 666, hinterer 316), 479 bei den
 # 960-Pixel-Videos von Sprung und Sprungtritt (Startbild mit 45 %; Stiefel 574,5 und 383). Mit dem vorderen Stiefel als Anker
 # (Voreinstellung des Umsetzers bei der Kampfhaltung) stand Vela im Spielbild etwa 16 Spielpixel links vom Schatten.
