@@ -1,0 +1,3 @@
+# Eingabe zu treffer_szene.txt (Format Kampf 11.1: von,bis,tasten)
+# seed=1
+# keine Taste: die Figur steht und wird getroffen

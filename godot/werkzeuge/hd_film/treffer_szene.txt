@@ -1,0 +1,10 @@
+# Szene für die Belege von Getroffen, Umgeworfen, Liegen und Aufstehen der gemalten Vela (docs/godot.md, „Gemalte Vela“, Belege;
+# werkzeuge/vela_belege.sh). Bühne scheibe ab Spielstart, Welle 1, 2 und 9 aus; eine Puppe (Platzhalter) steht vor der Figur und
+# schlägt zweimal zu, wie in Kampf 12, T7: Treffer in 19 (Getroffen, Angreifer vorn), Treffer mit Umwerfen in 100 (Flug nach links,
+# Bodenkontakt in 146, Liegen ab 154, Aufstehen ab 195, Stand ab 221).
+szene name=hd_film_treffer endframe=240 seed=1 buehne=scheibe
+pruefstart welle.1=aus welle.2=aus welle.9=aus rang.fest
+figur x=200 z=170 blick=R lp=72
+gegner slot=1 typ=Puppe rolle=leicht x=246 z=170 lp=40
+pruefangriff slot=1 von=19 bis=19 schaden=5 umwerfen=nein
+pruefangriff slot=1 von=100 bis=100 schaden=5 umwerfen=ja

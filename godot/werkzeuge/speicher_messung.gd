@@ -1,6 +1,7 @@
 ## Messung des Arbeitsspeichers und der Ladezeiten der Video-Clips (E27, Teil A). Gibt Zeilen aus, schreibt nichts.
 ##
-##   Clips nacheinander ganz laden (Speicher und Zeit je Clip):
+##   Alle fünfzehn gemalten Clips nacheinander ganz laden (Bilder, Dateien, Texturspeicher und Zeit je Clip, dann die Summe und der Teilwert der
+##   ersten fünf Clips):
 ##     godot --headless --path godot --script res://werkzeuge/speicher_messung.gd -- --modus clips
 ##     xvfb-run -a godot --path godot --rendering-driver opengl3 --script res://werkzeuge/speicher_messung.gd -- --modus clips
 ##   Das Spiel laufen lassen (Nachladen im Leerlauf, Zeit je Bild, Zeitpunkt, an dem jeder Clip bereit ist):
@@ -14,7 +15,8 @@
 ## für echte Rechner, soweit deren CPU ähnlich schnell ist.
 extends SceneTree
 
-const CLIPS: Array[String] = ["stand", "sprint", "kette1", "sprung", "sprungtritt"]
+## Die fünf Clips der ersten Lieferung (Teilwert der Messung) und danach alle übrigen aus der Ladereihe des Abspielers.
+const ERSTE_FUENF: Array[String] = ["stand", "sprint", "kette1", "sprung", "sprungtritt"]
 
 
 func _init() -> void:
@@ -62,21 +64,50 @@ func _lauf() -> void:
 	quit(0)
 
 
+## Größe der Bilddateien eines Clips in Byte (ohne clip.txt).
+static func dateien_bytes(clip: String) -> int:
+	var ordner: String = DarstellungVelaFrames.ORDNER + clip + "/"
+	var summe: int = 0
+	for datei: String in DirAccess.get_files_at(ordner):
+		if datei.begins_with("f_"):
+			var f: FileAccess = FileAccess.open(ordner + datei, FileAccess.READ)
+			if f != null:
+				summe += f.get_length()
+	return summe
+
+
 func _clips() -> void:
 	DarstellungVelaFrames.budget_bytes = 1 << 40
+	var clips: Array[String] = []
+	for clip: String in ERSTE_FUENF:
+		clips.append(clip)
+	for clip: String in DarstellungVelaFrames.VORAUS_REIHE:
+		if not clips.has(clip):
+			clips.append(clip)
 	var summe_us: int = 0
-	for clip: String in CLIPS:
+	var summe_bilder: int = 0
+	var summe_dateien: int = 0
+	var fuenf_bytes: int = 0
+	var fuenf_dateien: int = 0
+	for clip: String in clips:
 		var t0: int = Time.get_ticks_usec()
 		var c: Dictionary = DarstellungVelaFrames.clip_laden(clip)
 		var us: int = Time.get_ticks_usec() - t0
 		await process_frame
 		var z: Dictionary = DarstellungVelaFrames.ladezeiten[clip]
 		var n: int = (c["texturen"] as Array).size()
+		var dateien: int = dateien_bytes(clip)
 		summe_us += us
-		print("%s: %d Bilder %dx%d, %.1f MB, laden %.1f ms (%.2f ms je Bild, größtes %.2f ms) | %s" % [
-			clip, n, int(c["daten"]["bild_breite"]), int(c["daten"]["bild_hoehe"]),
+		summe_bilder += n
+		summe_dateien += dateien
+		if ERSTE_FUENF.has(clip):
+			fuenf_bytes += int(c["bytes"])
+			fuenf_dateien += dateien
+		print("%s: %d Bilder %dx%d, Dateien %.2f MB, Texturen %.1f MB, laden %.1f ms (%.2f ms je Bild, größtes %.2f ms) | %s" % [
+			clip, n, int(c["daten"]["bild_breite"]), int(c["daten"]["bild_hoehe"]), float(dateien) / 1.0e6,
 			float(c["bytes"]) / 1048576.0, us / 1000.0, us / 1000.0 / n, int(z["max_us"]) / 1000.0, zaehler()])
-	print("Alle fünf: %.1f ms, %s" % [summe_us / 1000.0, zaehler()])
+	print("Alle %d Clips (%d Bilder): Dateien %.1f MB (dezimal), %.1f ms, %s" % [clips.size(), summe_bilder, float(summe_dateien) / 1.0e6, summe_us / 1000.0, zaehler()])
+	print("Davon die ersten fünf (%s): Dateien %.1f MB, Texturen %.1f MB" % [", ".join(ERSTE_FUENF), float(fuenf_dateien) / 1.0e6, float(fuenf_bytes) / 1048576.0])
 	DarstellungVelaFrames.clips_vergessen()
 	await process_frame
 	print("Nach clips_vergessen: %s" % zaehler())
