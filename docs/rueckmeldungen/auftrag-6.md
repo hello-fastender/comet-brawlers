@@ -1,81 +1,115 @@
-# Rückmeldung Arbeitssitzung (Claude Sonnet 5.5), Auftrag 6, 2026-10-03
+# Rückmeldung Arbeitssitzung (Claude Sonnet 5.5), Auftrag 6, 2026-10-08
 
-Stand: **Zwischenstand an Haltepunkt 2** (Phase 0, 1 und 2 fertig, Freigabe zu
-Haltepunkt 1 am 2026-10-03). Phase 3 und 4 folgen nach der Freigabe zu
-Haltepunkt 2; diese Datei wird dann fertiggestellt.
+Stand: **fertig**. Phase 0 bis 4 erledigt. Die Vela-Puppe aus Phase 2 wurde auf
+Wunsch des Nutzers durch gemalte Videoclips (Grok, Umsetzung mit eigenem
+Werkzeug) ersetzt, soweit Clips vorliegen. Die Abnahme der 60 Bilder je Sekunde
+im Fenster steht noch aus (Abschnitt „Abnahme“).
 
 ## Commits
 Erster Commit auf `main`: `3526453` (Godot-Projekt, Festkomma, Zufall, Werte,
-Tasten, Entitäten, Ereignisse). Letzter Commit dieses Stands: siehe `git log`
-(Commit „Rückmeldung Auftrag 6, Zwischenstand Haltepunkt 1“). Alle Commits
-direkt auf `main`, keine Branches, kein Pull Request. Workflow
-`Godot-Tests`: grün ab Commit `7d485d4` (Lauf 10, Ergebnis `success`); die
-frühen Zwischenstände waren grün, weil `alle.gd` dort nur ein Rauchtest war.
+Tasten, Entitäten, Ereignisse). Letzter Commit vor dieser Rückmeldung:
+`708cff3` („Belege und Dokumentation der gemalten Vela (HD) im Spiel“); danach
+nur noch der Commit dieser Datei. Alle Commits direkt auf `main` (91 im
+Repository), keine Branches, kein Pull Request. Workflow `Godot-Tests`: grün
+(Lauf 43 auf `708cff3`, Ergebnis `success`; die Läufe seit Phase 1 sind alle
+grün).
 
 ## Godot-Version und Umgebung
-Godot 4.7.2.stable.official (`--headless --version` gibt
-`4.7.2.stable.official.ed1daf0bf` aus), Linux x86_64 im Claude-Container,
-`GODOT_VERSION` im Workflow ebenfalls 4.7.2. Laufzeit des Testlaufs
-(`alle.gd`, 362 Prüfungen einschließlich aller 74 Szenen und Determinismus):
-etwa 9 bis 10 s lokal; die 74 Szenen allein 8,6 s. Frischer Klon von GitHub
-mit `--import` und `alle.gd`: grün.
+Godot 4.7.2.stable.official (`4.7.2.stable.official.ed1daf0bf`), Linux x86_64
+im Claude-Container (4 Kerne), `GODOT_VERSION` im Workflow ebenfalls 4.7.2.
+Testlauf `alle.gd`: 3925 Prüfungen in etwa 38 s lokal (davon die 74 Szenen etwa
+12 s); frischer Klon von GitHub mit `--import` und `alle.gd`: grün. Zusätzlich
+gebraucht: ffmpeg 6.1.1 (nur für das Video-Werkzeug und seinen Test, ohne
+ffmpeg wird dieser Teil übersprungen) und Xvfb für Bildschirmfotos.
 
 ## Port
 | Ordner | Dateien | Zeilen |
 |---|---|---|
-| `godot/kern/` (ohne `werte.gd` etwa 10 400) | 35 | 11 472 |
+| `godot/kern/` | 35 | 11 472 |
 | `godot/pruef/` | 5 | 917 |
-| `godot/tests/` | 3 | 918 |
-| `godot/darstellung/` | 0 (nur leere `spiel.tscn`) | 0 |
-| `godot/werkzeuge/` | 0 | 0 |
+| `godot/tests/` | 8 | 3 981 |
+| `godot/darstellung/` | 12 | 4 788 |
+| `godot/werkzeuge/` | 9 | 4 417 |
 
 Zum Vergleich: der TypeScript-Kern hat 12 272 Zeilen. Konstanten in
-`werte.gd`: 495 (alle Namen aus `werte.ts`; `werte.gd` ist aus `werte.ts`
-mechanisch erzeugt, Festkommawerte `ausDezimal`/`ausBruch` sind einmal
-ausgerechnet und als Rohwert eingetragen, der Aufruf steht als Kommentar
-dahinter). Die Portregeln, nach denen die Module entstanden, stehen in
-`godot/PORTREGELN.md`.
+`werte.gd`: 495 (alle Namen aus `werte.ts`, mechanisch erzeugt). Die Portregeln
+stehen in `godot/PORTREGELN.md`. Grafik: `godot/grafik/vela/` (Teile der
+Puppe, 120 KB) und `godot/grafik/vela_video/` (Clips, 25 MB, darunter die fünf
+gemalten Clips mit 18,3 MB).
 
-Vorgehen: Fundament (Festkomma, Zufall, Werte, Tasten, Entitäten, Ereignisse,
-Welt) von der Hauptsitzung; die übrigen Module von zehn Unteragenten
-parallel, je Datei genau ein Schreiber; Zusammenführung und Abnahme durch die
-Hauptsitzung.
+Vorgehen Phase 1: Fundament von der Hauptsitzung, die übrigen Module von zehn
+Unteragenten parallel (je Datei genau ein Schreiber), Abnahme durch die
+Hauptsitzung. Danach Darstellung, Puppe und Video-Werkzeuge je mit einem
+Schreiber je Datei.
 
-## Abnahme (Haltepunkt 1)
+## Abnahme
 Szenen bitgleich: **74 von 74**; keine abweichende Szene.
-Grundlagentests: Festkomma, Zufall, Tasten, Eingabeparser, Stage-Parser
-(beide Stages), Protokollformat, Reinheit des Kerns: grün (insgesamt 362
-Prüfungen mit den Szenen und dem Determinismustest).
-Determinismus: ja (T1 zweimal, gleiche MD5; die Szenenläufe erzeugen
-zusätzlich die Referenz-MD5 aus `PRUEFSUMMEN.md5`).
-Leistung: Vorführung headless noch nicht gemessen (Phase 3); alle 74 Szenen in
-8,6 s.
+Grundlagentests: grün (Festkomma, Zufall, Tasten, Eingabeparser, Stage-Parser,
+Protokollformat, Reinheit des Kerns, Darstellung, Vela-Puppe, Video-Werkzeuge
+und Clips: insgesamt 3925 Prüfungen mit den Szenen und dem Determinismustest).
+Determinismus: ja (T1 zweimal, gleiche MD5).
+Leistung: Vorführung (1500 Ticks, mit Protokollschreiben) headless **1,7 bis
+1,9 s** bei warmem Zwischenspeicher (der allererste Lauf in einem frisch
+gestarteten Container brauchte 12,4 s, das ist der kalte Start); die Protokolle
+sind gleich der Referenz (MD5 `9a4742d5…`/`54015535…`). Fenster 60 Bilder je
+Sekunde: **vom Nutzer nicht bestätigt**. Der Nutzer hat die Szene bisher nur in
+Bildern und GIFs gesehen, nicht in einem Fenster. Die Darstellung liest die Welt
+nur, die Logik ist die Uhr (60 Hz, höchstens 4 Schritte je Bild).
 
-## Darstellung (Phase 2)
+## Darstellung
 Platzhalter: **fertig** (Rechtecke, Schatten, Hintergrundbänder, Anzeigeleiste,
-Debug F1, Pause P, Einzelschritt N, Aufzeichnung F2, Neustart F3,
-Tastenbelegung wie `docs/scheibe.md`, Spielschleife in `_physics_process`
-mit 60 Hz und höchstens 4 Schritten je Bild, Sitzungsklasse ohne Nodes,
-Zeichner mit Faktor 2). Vela-Puppe: **Stand, Gehen (12 Bilder zu je 4 Frames)
-und Kette 1 bis 4** aus den Teilen von `vela_t_teile.png` (13 Teile, 64 Farben,
-Maßstab 142 px), als `Skeleton2D` mit 16 Bones; alle anderen Aktionen zeichnet
-weiter der Platzhalter. Bilder: `docs/bilder/godot_szene_0300/0600/0900/1200/1500.png`
-(Platzhalter), `godot_vela_szene_*.png` (mit Puppe), `godot_kontakt_vela.png`
-(Kontaktbogen). Tests: `darstellung_test.gd` (121 Prüfungen), `vela_test.gd`
-(2129), `puppe_protokoll_test.gd` (Vorführung 600 Schritte mit Darstellung und
-Puppe: Protokoll bitgleich zur Referenz). `alle.gd`: 2616 Prüfungen grün.
+Debug F1, Pause P, Einzelschritt N, Aufzeichnung F2, Neustart F3, Tasten wie
+`docs/scheibe.md`).
+
+Vela (der Weg hat sich dreimal geändert, Entscheidungen des Nutzers):
+1. **Puppe** aus den Teilen von `vela_t_teile.png` (Skeleton2D, 16 Bones, Stand,
+   Gehen, Kette 1 bis 4): vom Nutzer als nicht flüssig und nicht natürlich
+   abgelehnt (Ziel: Streets of Rage 4). Der Code bleibt als zweite Quelle
+   hinter den Videos (Option `--puppe`), die Puppe wird vorerst nicht
+   weiterentwickelt.
+2. **Pixelvideos:** Grok erzeugt je Handlung ein Video, `video_umsetzer.gd`
+   macht daraus freigestellte Bildfolgen (Hintergrund entfernen, Größe
+   normieren, Palette ≤ 64 Farben, Zyklus und Ereignisse erkennen), `vela_frames.gd`
+   spielt sie nach der Logikuhr ab. Zehn Clips (stand, gehen, kette1 bis 4,
+   sprint, sprung, getroffen_vorn, umgeworfen mit liegen, aufstehen).
+3. **Gemalt (HD), gilt seit 2026-10-08:** gleiches Verfahren mit Modus `--hd`
+   (weiche Kante, Entmischen gegen den grünen Grund, RGBA 8 Bit, WebP
+   verlustfrei, 360 Zeilen hoch, im Spiel mit linearem Filter auf Spielgröße
+   142 skaliert). Gemalt sind jetzt **stand, kette1, sprint, sprung und
+   sprungtritt** (Sprungangriff N und R); die anderen Clips bleiben Pixel, der
+   gemischte Betrieb ist getestet. Die Quellvideos liegen nicht im Repo; die
+   Befehle je Clip stehen in `docs/godot.md` („Gemalte Vela“) und `docs/grafik-bestellung.md`.
+
+Bilder (`docs/bilder/`): `godot_szene_*` (Platzhalter), `godot_vela_szene_*`
+und `godot_kontakt_vela*` (Puppe), `godot_video_*` (Pixelclips),
+`godot_hd_test.png`, `godot_hd_{kette1,stand,sprint,sprung,sprungtritt}_gemalt.png`
+(Clips auf Grau und Weiß) und `godot_hd_spiel_*` (die fünf gemalten Clips im
+Spiel, GIFs, Streifen, Vergleich Puppe gegen gemalt).
+
+Werkzeuge: `video_umsetzer.gd` (Befehl und Optionen im Kopfkommentar, Abschnitt
+„Video-Umsetzer“ in `docs/godot.md`), `hd_vorschau.gd`, `video_bogen.gd`,
+`film.gd` (GIFs), `kontakt.gd`, `foto.gd`, `umsetzer.gd` (Puppenteile).
+Die Prompts für Grok (Vorspann, Handlung je Clip, grünes Startbild, gemalter
+Stil) stehen in `docs/grafik-bestellung.md` und als einfügbare Texte in
+`docs/grok-prompts-vela-gemalt.md` (Pixelfassung: `docs/grok-prompts-vela.md`).
+
+Beurteilung der gemalten Clips im Spiel (Streifen und Einzelbilder angesehen,
+GIFs nicht Bild für Bild):
+- Größe gleich der Puppe (142 Pixel), Kanten sauber, kein Grünsaum.
+- Stand atmet ohne Flimmern, Schleifennaht ohne sichtbaren Sprung; Übergang
+  kette1 → stand und Sprint ohne Sprünge der Pose.
+- Sprungtritt: Kontaktbild liegt im Trefferfenster der Logik (Uhr 5 bis 28).
+- **Mängel:** einzelne Bilder in sprung und sprungtritt mit Farbfehlern der
+  Quelle (olivgrünes Haar, lila Handschuhe, rosa Streifen), je höchstens etwa
+  drei Ticks; Wechsel von Sprung in Sprungtritt mitten in der Luft ist ein
+  harter Posenwechsel (zwei getrennt gemalte Clips); die Hocke vor dem Sprung
+  dauert in der Logik einen Tick, im Clip ist sie lang.
 
 Abweichungen der Darstellung (nur Godot): Bildschirmfotos brauchen
 `xvfb-run -a godot --path godot --rendering-driver opengl3 --script
 res://werkzeuge/foto.gd` (unter `--headless` gibt es kein Rendering; das
 Projekt nutzt `gl_compatibility`). Die Platzhalterbilder sind nicht
-pixelgleich zur Canvas-Fassung (Dreiecke und Ellipsen als Fächer ohne
-Glättung, 4/4-Strichmuster), optisch gleich. Die Gehpose rutscht ca. 25 %
-(Kompromiss der Schrittweite); die Posen sind von Hand gesetzte
-Winkeltabellen (15°-Stufen), die Drehbilder der Kette 4 stauchen/spiegeln den
-Körper, weil das Teileblatt keinen Hinterkopf hat (Nachbestellung nötig, wenn
-eine Rückenansicht gewünscht wird); der gestreckte Ärmel ist am Ellbogen
-geteilt, der angewinkelte Ärmel (`aermel_angewinkelt`) ist ungenutzt.
+pixelgleich zur Canvas-Fassung, optisch gleich.
 
 ## Befunde zur TypeScript-Fassung (Verhalten ohne Spezifikation, mögliche Fehler)
 Der Port blieb überall bitgleich zur Referenz. Beobachtungen der Port-Agenten,
@@ -106,6 +140,10 @@ zur Nachpflege durch den Orchestrator (keine davon ändert ein Protokoll):
 9. `werte.ts` Kommentar zu `rang.ts`: „Q1“-Division als Lücke von Kampf 2.4,
    umgesetzt mit `divGanz`.
 
+Neu aus der Darstellung (Logik, keine Protokolländerung): die Hocke des Sprungs
+dauert in der Logik einen Tick (Sprunguhr 1). Ein sichtbarer Anlauf bräuchte
+Spielraum in der Logik; das ist eine Frage des Spielgefühls, nicht des Ports.
+
 ## Abweichungen und Lücken (nur Godot)
 - **Fehlerbehandlung**: `throw` der TypeScript-Fassung wird zu `push_error`
   mit demselben Text und einem unauffälligen Rückgabewert; GDScript kann
@@ -114,34 +152,62 @@ zur Nachpflege durch den Orchestrator (keine davon ändert ein Protokoll):
   deshalb in Godot nicht.
 - **Konstanten mit Objekten** (`BAHNEN`, `BOSS_BAHNEN`, `FLAECHE_AS/AN/KP`,
   `GEH_SCHRITT_*` als Tempo): GDScript hat keine Objektkonstanten; es sind
-  Funktionen, die bei jedem Aufruf frische Objekte liefern (`KernBahn.bahnDaten`
-  usw.). Dictionary-Konstanten stehen in `werte.gd`.
-- **`Number(...)`/Dezimaltext** in `fest.*`-Werten (`festZahl`,
-  `liegedauerZiehen`): nur ganze Zahlen werden erkannt (das Wort `float` ist im
-  Kern verboten). Die Szenen setzen nur Ganzzahlen.
-- **Regulärer Ausdruck, Leerraum und `trim`** von JavaScript (inklusive NBSP,
-  U+2000 bis U+200A, U+3000, BOM) sind in `KernStage` nachgebildet; `eingabe.gd`
-  und `szene.gd` benutzen sie.
+  Funktionen, die bei jedem Aufruf frische Objekte liefern. Dictionary-
+  Konstanten stehen in `werte.gd`.
+- **`Number(...)`/Dezimaltext** in `fest.*`-Werten: nur ganze Zahlen werden
+  erkannt (das Wort `float` ist im Kern verboten). Die Szenen setzen nur
+  Ganzzahlen.
+- **Regulärer Ausdruck, Leerraum und `trim`** von JavaScript sind in
+  `KernStage` nachgebildet.
 - **`produktGroesser`** nutzt 64 Bit statt BigInt; die Faktoren der Aufrufer
-  liegen unter 2^31.
-- **`Infinity`** in `nah_gehen` ist `1 << 60`.
-- **Stabiles Sortieren** (`kameraY`, `wellenAnlegen`, `wellenPruefen`,
-  `erscheinendeGegner`): eigener Einfügesort, weil `Array.sort` in GDScript
+  liegen unter 2^31. **`Infinity`** in `nah_gehen` ist `1 << 60`.
+- **Stabiles Sortieren**: eigener Einfügesort, weil `Array.sort` in GDScript
   nicht stabil ist.
-- **Zyklische Klassenverweise** (`KernWelt` ↔ Module) übersetzen in 4.7.2
-  ohne Probleme; einzelne Funktionen der Reaktion und der Figur nehmen
-  `welt: KernWelt`, `ereignisse.gd`/`entitaeten.gd` nehmen `Object`.
-- **`.uid`-Dateien** von Godot 4.4+ liegen im Repo (empfohlen); `.godot/` ist
-  ignoriert.
-- Die Kommandozeile des Prüflaufs löst relative Pfade ab dem Repo-Wurzel
-  auf (`spiel/tests/szenen/…`), nicht ab `spiel/`.
+- **Zyklische Klassenverweise** übersetzen in 4.7.2 ohne Probleme.
+- **`.uid`-Dateien** liegen im Repo; `.godot/` ist ignoriert.
+- Die Kommandozeile des Prüflaufs löst relative Pfade ab der Repo-Wurzel auf.
+- **Testverzeichnisse im Repo:** `godot/grafik/vela_video/_test_gehen` und
+  `_test_kette1` (je etwa 0,6 MB) sind Reste früher Versuche und werden vom
+  Spiel nicht benutzt; sie können gelöscht werden.
+- **Quellvideos** von Grok liegen nicht im Repo (Größe, Rechte unklar). Für ein
+  Neuerzeugen eines Clips braucht man das Video und den Befehl aus
+  `docs/godot.md`.
 
 ## Was nicht erledigt wurde und warum
-Phase 2 bis 4 (Darstellung, Vela-Puppe, Abnahme, `docs/godot.md`,
-Nacharbeit an `erkenntnisse.md`/`scheibe.md`): warten auf die Freigabe an
-Haltepunkt 1.
+- **Fenster mit 60 Bildern je Sekunde** vom Nutzer bestätigen (Phase 3): noch
+  nicht geschehen, der Nutzer arbeitet in der Vorschau, nicht im Fenster.
+- **Gemalte Clips für die übrigen Handlungen:** gehen, kette2 bis kette4,
+  getroffen_vorn, getroffen_hinten, umgeworfen, liegen, aufstehen, Griff,
+  Kniestoß, Wurf, Spezial, Waffe, Aufnehmen, Sprungangriff H und T, Sprintsprung.
+  Sie stehen als Prompts bereit (`docs/grok-prompts-vela-gemalt.md`), der Nutzer
+  erzeugt die Videos in Grok. Bis dahin Pixelclips oder Platzhalter, mit
+  sichtbaren Stilbrüchen (zum Beispiel Kette 1 → 2, Stand → Gehen).
+- **Spielauflösung:** Fenster 768 × 448. Ein HD-Clip wird dort auf etwa 0,39
+  verkleinert und gewinnt weiche Kanten und volle Farben, aber keine Schärfe.
+  Für echtes HD müsste die Basisauflösung angehoben werden (Vorschlag:
+  Viewport 1536 × 896, Faktor 4, `--spielhoehe 284` im Umsetzer). Hintergründe
+  und Gegner sind noch Platzhalter und müssten im gemalten Stil entstehen.
+- **Arbeitsspeicher:** der Abspieler hält je Bild das Bild und die Textur; die
+  fünf gemalten Clips brauchen zusammen etwa 256 MB (sprung allein 106 MB). Mit
+  allen Clips wird das zu viel; Abhilfe: nur die Textur halten, Clips bei
+  Bedarf laden und entladen, kleinere Höhe (`--hoehe 300`).
+- **Farbfehler in den Quellen** (sprung, sprungtritt): nur teilweise entfernt;
+  Retusche oder Nachbestellung wäre besser.
+- **PixelLab** (Dienst für Pixelfiguren mit Animation per Skelett) und
+  **Blender/Spine** wurden geprüft und zurückgestellt: `api.pixellab.ai` und
+  `download.blender.org` sind aus dem Container nicht erreichbar, und der
+  Nutzer wollte ohne Handarbeit arbeiten.
+- Ton, Export, Grafik der übrigen Figuren (Gegner, Hintergründe): wie im Auftrag
+  nicht vorgesehen.
 
 ## Fragen an den Nutzer
-Keine offenen Fragen zu Phase 1. Zu Phase 2: die Zuordnung Aktion → Animation
-für Vela entnehme ich `docs/grafik.md`, Abschnitt 3 und 9.3; melde mich, falls
-dort Lücken sind.
+1. Soll die Spielauflösung auf 1536 × 896 angehoben werden, und sollen
+   Gegner und Hintergründe ebenfalls im gemalten Stil entstehen (Auftrag für
+   Grok oder eine eigene Bestellung)?
+2. Läuft das Spiel bei dir im Fenster mit 60 Bildern je Sekunde
+   (`godot --path godot`, Godot 4.7.2 nötig)? Bitte kurz bestätigen oder die
+   Anzahl der Bilder melden.
+3. Die übrigen Clips: bitte nach den Prompts in `docs/grok-prompts-vela-gemalt.md`
+   erzeugen; Reihenfolge nach Häufigkeit: gehen, kette2 bis kette4,
+   getroffen_vorn, umgeworfen, aufstehen, dann Griff, Wurf, Spezial.
+4. Sollen die Reste `_test_gehen` und `_test_kette1` gelöscht werden?
