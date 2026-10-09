@@ -25,7 +25,8 @@ godot/
                        Vela-Puppe (vela_puppe.gd, vela_posen.gd; Rückfall), Vela aus Video-Clips (vela_frames.gd mit Laden nach
                        Bedarf und Speicherbudget, vela_frames_tabelle.gd: Aktion und Uhr → Clip und Bild)
   werkzeuge/           foto.gd (Bildschirmfotos), kontakt.gd (Kontaktbögen), umsetzer.gd (Teileblatt → Teile),
-                       film.gd (Einzelbilder der Puppe), video_umsetzer.gd und video_bogen.gd (Videos → Clips, Prüfbögen),
+                       film.gd (Einzelbilder der Puppe), vorlage.gd (Bewegungsvorlagen für Groks Videobearbeitung, Versuch),
+                       video_umsetzer.gd und video_bogen.gd (Videos → Clips, Prüfbögen),
                        vela_hd_clips.sh (alle fünfzehn Clips aus den Videos umsetzen), vela_belege.sh (Bildstreifen und GIFs im Spiel,
                        mit den Szenen unter hd_film/), hd_vorschau.gd, speicher_messung.gd und leistung.gd (Messungen)
   tests/               alle.gd (Testlauf), vergleich.gd (Fehlersuche), Testmodule (darstellung_test, vela_test, vela_qa,
@@ -57,6 +58,7 @@ Godot laden (Cloud-Sitzung; Befehl und Version stehen in `AGENTS.md`), dann:
 | `godot --headless --path godot --script res://werkzeuge/leistung.gd -- --modus logik` | Zeit je Logikschritt und Zeichenbefehle je Bild; `--modus bild` unter Xvfb: Zeit je gerendertem Bild (Software-Rendering, siehe „Auflösung und Leistung“) |
 | `godot --headless --path godot --script res://werkzeuge/video_umsetzer.gd -- --video <datei> --name <clip> [--hd]` | Video von Vela in eine Bildfolge umsetzen (Pixelmodus oder HD-Modus), siehe „Video-Umsetzer“ |
 | `xvfb-run -a godot --path godot --rendering-driver opengl3 --script res://werkzeuge/hd_vorschau.gd -- --ordner <clip> --aus docs/bilder/godot_hd_test.png` | Vorschau eines HD-Clips auf Grau und Weiß |
+| `xvfb-run -a godot --path godot --rendering-driver opengl3 --script res://werkzeuge/vorlage.gd -- --aus <ordner> --was kette1\|kniestoss [--weich 1.5] [--behalte] [--posen]` | Versuch „Bewegungsvorlage“: die Vela-Puppe (Posen des Spiels, für den Kniestoß neue Posen nur im Werkzeug) als Video `vela_vorlage_<was>.mp4` auf dem Grün des Startbilds, 960 × 960, 24 B/s, natürliches Tempo; Grok soll es per Videobearbeitung „malen“ und dabei Bewegung und Zeitpunkte behalten (`--posen`: nur die Schlüsselposen als PNG) |
 
 Das GitHub-Workflow `.github/workflows/godot-tests.yml` lädt Godot 4.7.2,
 importiert das Projekt und führt `alle.gd` bei jedem Push auf `main` und
