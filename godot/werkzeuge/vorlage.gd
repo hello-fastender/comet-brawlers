@@ -4,12 +4,17 @@
 ## „malen“ und dabei Bewegung und Zeitpunkte behalten (Bearbeiten statt neu erfinden).
 ##
 ##   xvfb-run -a godot --path godot --rendering-driver opengl3 --script res://werkzeuge/vorlage.gd \
-##       -- --aus <ordner> --was kette1|kniestoss [--weich 1.5] [--behalte] [--posen]
+##       -- --aus <ordner> --was kette1|kniestoss [--basis] [--glatt xbr|hqx|lanczos|blur] [--weich 1.5] [--behalte] [--posen]
 ##
 ##   --aus <ordner>  Ausgabeordner (absolut oder ab Repo-Wurzel); darin `vela_vorlage_<was>.mp4`. Nicht ins Repo.
 ##   --was           kette1 (Probe: Posen der Tabelle), kniestoss (neu, nur hier, keine Spielpose)
-##   --weich <σ>     Weichzeichner (ffmpeg gblur) gegen die harten Pixelblöcke der Teile (Standard 1.5, 0 = aus)
+##   --basis         in Basispixeln rendern (212 × 212, Zoom 1) und erst danach vergrößern, statt die Pixelblöcke
+##                   der Teile vierfach aufzublasen; die Vergrößerung wählt --glatt
+##   --glatt         Vergrößerung von 212 auf 960 mit --basis: xbr (Standard, Pixelkunst-Filter, glatte Kanten),
+##                   hqx, lanczos (weich) oder blur (ohne --basis: harte Blöcke und Weichzeichner)
+##   --weich <σ>     zusätzlicher Weichzeichner (ffmpeg gblur) danach (Standard bei blur 1.5, sonst 0)
 ##   --behalte       Einzelbilder im Unterordner `bilder_<was>` behalten
+##   --zusatz <text> Anhang am Namen der Videodatei (z. B. _glatt), damit alte Fassungen bleiben
 ##   --posen         nur die Schlüsselposen als `p_<name>.png` schreiben (zum Einrichten der Posen, kein Video)
 ##
 ## Bildaufbau wie das gemalte Startbild (1024 × 1024, Figur 60 % der Höhe, Fußpunkt bei y = 839), hier
@@ -26,11 +31,20 @@ const FPS: int = 24
 ## Ticks der Logik je Sekunde (Atmen im Stand läuft in Ticks).
 const TICKS: float = 60.0
 
+## Rendergröße, Zoom und Fußpunkt (mit --basis: Basispixel, 212 × 212; Figur ebenfalls 60 % hoch)
+const BASIS_SEITE: int = 212
+const BASIS_FUSS: Vector2 = Vector2(106, 174)
+
 var _aus: String = ""
 var _was: String = "kette1"
 var _weich: float = 1.5
 var _behalte: bool = false
 var _nur_posen: bool = false
+var _seite: int = SEITE
+var _zoom: float = ZOOM
+var _fuss: Vector2 = Vector2(FUSS_X, FUSS_Y)
+var _glatt: String = "blur"
+var _zusatz: String = ""
 var _vp: SubViewport = null
 var _puppe: DarstellungVelaPuppe = null
 var _nr: int = 0
@@ -60,9 +74,15 @@ func _lauf() -> void:
 	var arg: Dictionary = _argumente()
 	_aus = String(arg.get("aus", ""))
 	_was = String(arg.get("was", "kette1"))
-	_weich = float(arg.get("weich", "1.5"))
 	_behalte = arg.has("behalte")
 	_nur_posen = arg.has("posen")
+	_zusatz = String(arg.get("zusatz", ""))
+	if arg.has("basis"):
+		_seite = BASIS_SEITE
+		_zoom = 1.0
+		_fuss = BASIS_FUSS
+		_glatt = String(arg.get("glatt", "xbr"))
+	_weich = float(arg.get("weich", "1.5" if _glatt == "blur" else "0"))
 	if _aus == "":
 		printerr("--aus <ordner> fehlt")
 		quit(1)
@@ -71,7 +91,7 @@ func _lauf() -> void:
 		_aus = ProjectSettings.globalize_path("res://").path_join("..").path_join(_aus).simplify_path()
 	DirAccess.make_dir_recursive_absolute(_aus)
 	_vp = SubViewport.new()
-	_vp.size = Vector2i(SEITE, SEITE)
+	_vp.size = Vector2i(_seite, _seite)
 	_vp.transparent_bg = false
 	_vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	root.add_child(_vp)
@@ -80,11 +100,11 @@ func _lauf() -> void:
 	grund.size = _vp.size
 	_vp.add_child(grund)
 	var welt: Node2D = Node2D.new()
-	welt.scale = Vector2(ZOOM, ZOOM)
+	welt.scale = Vector2(_zoom, _zoom)
 	_vp.add_child(welt)
 	_puppe = DarstellungVelaPuppe.new()
 	_puppe.asset_zu_bild = 1  # das Werkzeug zeichnet in Basispixeln (Zoom wirkt über `welt`)
-	_puppe.position = Vector2(FUSS_X, FUSS_Y) / ZOOM
+	_puppe.position = _fuss / _zoom
 	welt.add_child(_puppe)
 	for i: int in 3:
 		await process_frame
@@ -109,10 +129,9 @@ func _video(was: String) -> bool:
 	_ordner = _aus.path_join("bilder_" + was)
 	DirAccess.make_dir_recursive_absolute(_ordner)
 	await _spiele(schritte)
-	var video: String = _aus.path_join("vela_vorlage_%s.mp4" % was)
-	var filter: String = ("gblur=sigma=%s," % str(_weich)) if _weich > 0.0 else ""
+	var video: String = _aus.path_join("vela_vorlage_%s%s.mp4" % [was, _zusatz])
 	var args: PackedStringArray = ["-y", "-loglevel", "error", "-framerate", str(FPS), "-i", _ordner.path_join("f%04d.png"),
-		"-vf", filter + "format=yuv420p", "-c:v", "libx264", "-crf", "14", "-preset", "medium", "-pix_fmt", "yuv420p", video]
+		"-vf", _filter() + "format=yuv420p", "-c:v", "libx264", "-crf", "14", "-preset", "medium", "-pix_fmt", "yuv420p", video]
 	var ausgabe: Array = []
 	var code: int = OS.execute("ffmpeg", args, ausgabe, true)
 	if code != 0:
@@ -125,6 +144,22 @@ func _video(was: String) -> bool:
 		DirAccess.remove_absolute(_ordner)
 	print("Video: %s (%d Bilder, %.2f s)" % [video, _nr, float(_nr) / float(FPS)])
 	return true
+
+
+## ffmpeg-Filterkette von der Rendergröße auf 960 × 960 (mit Komma am Ende, wenn nicht leer).
+func _filter() -> String:
+	var kette: String = ""
+	if _seite != SEITE:
+		match _glatt:
+			"xbr":
+				kette = "xbr=4,scale=%d:%d:flags=lanczos," % [SEITE, SEITE]
+			"hqx":
+				kette = "hqx=4,scale=%d:%d:flags=lanczos," % [SEITE, SEITE]
+			_:
+				kette = "scale=%d:%d:flags=lanczos," % [SEITE, SEITE]
+	if _weich > 0.0:
+		kette += "gblur=sigma=%s," % str(_weich)
+	return kette
 
 
 ## Rendert die Absicht `p` und speichert das Bild (Name leer: laufende Nummer f0001.png, …).
