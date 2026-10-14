@@ -19,6 +19,8 @@
 ##   --drehung <grad>  Figur um die Hochachse drehen, falls das Modell nicht nach +Z (glTF-Vorne) schaut
 ##   --umriss <px>     Dicke der Umrisslinie in Bildpixeln (2)
 ##   --schatten <0..1> Stärke der Farbstufen, 0 = ganz flach (1)
+##   --saettigung <f>  Farbsättigung (1 = unverändert), --kontrast <f> (1), --rim <0..1> heller Randstrahl (0)
+##   --textur <px>     Texturen auf diese Kantenlänge verkleinern und Mip-Stufen erzeugen (2048); Tripo liefert bis 8192
 ##
 ## Die Figur steht mit den Füßen bei 88 % der Bildhöhe, mittig. Das Bild hat durchsichtigen Grund.
 extends SceneTree
@@ -32,6 +34,9 @@ uniform sampler2D albedo_tex : source_color, filter_linear_mipmap, repeat_enable
 uniform vec4 albedo_color : source_color = vec4(1.0);
 uniform bool hat_textur = false;
 uniform float schatten = 1.0;
+uniform float saettigung = 1.0;
+uniform float kontrast = 1.0;
+uniform float rim = 0.0;
 uniform vec3 licht_richtung = vec3(-0.35, 0.55, 0.75);
 
 void fragment() {
@@ -39,9 +44,15 @@ void fragment() {
 	if (hat_textur) {
 		c *= texture(albedo_tex, UV).rgb;
 	}
+	float grau = dot(c, vec3(0.299, 0.587, 0.114));
+	c = mix(vec3(grau), c, saettigung);
+	c = clamp((c - 0.5) * kontrast + 0.5, 0.0, 1.0);
 	float d = dot(normalize(NORMAL), normalize(licht_richtung));
-	float stufe = d > 0.25 ? 1.0 : (d > -0.2 ? 0.86 : 0.72);
-	ALBEDO = c * mix(1.0, stufe, schatten);
+	float stufe = d > 0.25 ? 1.0 : (d > -0.2 ? 0.8 : 0.6);
+	c *= mix(1.0, stufe, schatten);
+	float rand = pow(1.0 - clamp(dot(normalize(NORMAL), normalize(VIEW)), 0.0, 1.0), 3.0);
+	c += rand * rim * vec3(0.55, 0.65, 0.9);
+	ALBEDO = c;
 }
 """
 
@@ -67,6 +78,11 @@ var _blick: int = 1
 var _drehung: float = 0.0
 var _umriss_px: float = 2.0
 var _schatten: float = 1.0
+var _saettigung: float = 1.0
+var _kontrast: float = 1.0
+var _rim: float = 0.0
+var _textur_max: int = 2048
+var _texturen: Dictionary = {}
 var _vp: SubViewport = null
 var _kamera: Camera3D = null
 var _figur: Node3D = null
@@ -109,6 +125,10 @@ func _lauf() -> void:
 	_drehung = float(arg.get("drehung", "0"))
 	_umriss_px = float(arg.get("umriss", "2"))
 	_schatten = float(arg.get("schatten", "1"))
+	_saettigung = float(arg.get("saettigung", "1"))
+	_kontrast = float(arg.get("kontrast", "1"))
+	_rim = float(arg.get("rim", "0"))
+	_textur_max = int(arg.get("textur", "2048"))
 	if arg.has("erzeuge-test"):
 		_testfigur_schreiben(_pfad(String(arg["erzeuge-test"])))
 		quit(0)
@@ -288,15 +308,39 @@ func _materialien(n: Node3D) -> void:
 			var m: ShaderMaterial = ShaderMaterial.new()
 			m.shader = fs
 			m.set_shader_parameter("schatten", _schatten)
+			m.set_shader_parameter("saettigung", _saettigung)
+			m.set_shader_parameter("kontrast", _kontrast)
+			m.set_shader_parameter("rim", _rim)
 			if alt is BaseMaterial3D:
 				var b: BaseMaterial3D = alt as BaseMaterial3D
 				m.set_shader_parameter("albedo_color", b.albedo_color)
 				if b.albedo_texture != null:
-					m.set_shader_parameter("albedo_tex", b.albedo_texture)
+					m.set_shader_parameter("albedo_tex", _verkleinert(b.albedo_texture))
 					m.set_shader_parameter("hat_textur", true)
 			if _umriss_px > 0.0:
 				m.next_pass = umriss
 			mi.set_surface_override_material(s, m)
+
+
+## Textur auf höchstens `_textur_max` Pixel Kantenlänge bringen und Mip-Stufen erzeugen (gegen Flimmern beim
+## Verkleinern; Tripo liefert 8192 × 8192, im Spiel reichen 2048).
+func _verkleinert(tex: Texture2D) -> Texture2D:
+	var id: int = tex.get_instance_id()
+	if _texturen.has(id):
+		return _texturen[id] as Texture2D
+	var img: Image = tex.get_image()
+	if img == null:
+		return tex
+	if img.is_compressed():
+		img.decompress()
+	var gr: int = maxi(img.get_width(), img.get_height())
+	if _textur_max > 0 and gr > _textur_max:
+		var f: float = float(_textur_max) / float(gr)
+		img.resize(maxi(1, roundi(float(img.get_width()) * f)), maxi(1, roundi(float(img.get_height()) * f)), Image.INTERPOLATE_LANCZOS)
+	img.generate_mipmaps()
+	var neu: ImageTexture = ImageTexture.create_from_image(img)
+	_texturen[id] = neu
+	return neu
 
 
 ## Kamera für eine Ansicht: orthografisch, Füße bei FUSS_ANTEIL der Bildhöhe, mittig über der Figur.
