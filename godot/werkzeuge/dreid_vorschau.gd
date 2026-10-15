@@ -23,6 +23,7 @@
 ##   --textur <px>     Texturen auf diese Kantenlänge verkleinern und Mip-Stufen erzeugen (2048); Tripo liefert bis 8192
 ##   --faust <grad>    Finger beider Hände um diesen Winkel einrollen (Tripo-Animationen lassen die Finger offen);
 ##                     --faustachse x|y|z und --faustzeichen 1|-1 wählen Achse und Richtung des Einrollens
+##   --mitte           bei --anim die Hüfte waagrecht auf ihrer Ruheposition halten (nimmt Versatz und Wurzelbewegung heraus)
 ##   --blick-auf <knochen>  Kamera auf diesen Knochen richten (mit großem --hoehe für Nahaufnahmen, z. B. mixamorig_RightHand)
 ##   --pose <name>     Mixamo-Skelett in eine Probepose bringen (kampf, schlag, tritt), um die Verformung zu prüfen;
 ##                     Richtungen in Weltachsen (Figur blickt nach +Z, ihre linke Seite ist +X), Knochen zeigen auf ihr Ziel
@@ -145,6 +146,8 @@ var _schatten: float = 1.0
 var _saettigung: float = 1.0
 var _kontrast: float = 1.0
 var _rim: float = 0.0
+var _mitte: bool = false
+var _hueft_ruhe: Vector3 = Vector3.ZERO
 var _faust: float = 0.0
 var _faust_achse: String = "z"
 var _faust_zeichen: float = 1.0
@@ -197,6 +200,7 @@ func _lauf() -> void:
 	_kontrast = float(arg.get("kontrast", "1"))
 	_rim = float(arg.get("rim", "0"))
 	_textur_max = int(arg.get("textur", "2048"))
+	_mitte = arg.has("mitte")
 	_faust = float(arg.get("faust", "0"))
 	_faust_achse = String(arg.get("faustachse", "z"))
 	_faust_zeichen = float(arg.get("faustzeichen", "1"))
@@ -340,6 +344,9 @@ func _aufbauen() -> void:
 	root.add_child(_vp)
 	_vp.add_child(_figur)
 	_box = _masse(_figur)
+	var sk0: Skeleton3D = _skelett()
+	if sk0 != null and sk0.find_bone("mixamorig_Hips") >= 0:
+		_hueft_ruhe = (sk0.global_transform * sk0.get_bone_global_pose(sk0.find_bone("mixamorig_Hips"))).origin
 	_einheit = _box.size.y / _hoehe_px
 	_materialien(_figur)
 	_kamera = Camera3D.new()
@@ -478,6 +485,12 @@ func _animation(name: String, fps: int, bilder: int) -> void:
 	_kamera_setzen("seite")
 	for i: int in n:
 		ap.seek(float(i) / float(fps), true)
+		if _mitte and _skelett() != null:
+			var sk1: Skeleton3D = _skelett()
+			var hb: int = sk1.find_bone("mixamorig_Hips")
+			if hb >= 0:
+				var g: Vector3 = (sk1.global_transform * sk1.get_bone_global_pose(hb)).origin - _figur.position
+				_figur.position = Vector3(_hueft_ruhe.x - g.x, 0.0, _hueft_ruhe.z - g.z)
 		if _faust != 0.0 and _skelett() != null:
 			ap.advance(0.0)
 			_faeuste(_skelett())
