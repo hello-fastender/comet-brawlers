@@ -11,7 +11,8 @@
 ##   --aus <ordner>    Ausgabeordner (absolut oder ab Repo-Wurzel). Nicht ins Repo legen.
 ##   --info            nur ausgeben: Knoten, Netze, Knochen, Animationen mit Länge, Maße der Figur (kein Bild)
 ##   --ansichten       Ruhepose von vorn, Seite, hinten und schräg als ansicht_<name>.png
-##   --anim <name>     Einzelbilder f0001.png … der Animation, von der Seite; --anim liste gibt die Namen aus
+##   --anim <name>     Einzelbilder f0001.png … der Animation, von der Seite; --anim liste gibt die Namen aus;
+##                     statt des Namens geht auch die Nummer in der Liste (0 …) oder der Anfang des Namens
 ##   --fps, --bilder   Bilder je Sekunde (24) und Anzahl (Standard: ganze Länge)
 ##   --hoehe <px>      Höhe der Figur im Bild; die gemalte Vela ist im Spiel 284 Pixel hoch (1536 × 896)
 ##   --seite <px>      Kantenlänge des quadratischen Bilds (512)
@@ -473,6 +474,15 @@ func _animation(name: String, fps: int, bilder: int) -> void:
 		printerr("kein AnimationPlayer in der Figur")
 		return
 	var ap: AnimationPlayer = spieler[0] as AnimationPlayer
+	# Tripo nennt KI-Animationen nach dem Prompt (lang, mit Leerzeichen am Ende): auch Nummer oder Anfang des Namens zulassen.
+	var namen: PackedStringArray = ap.get_animation_list()
+	if name.is_valid_int() and int(name) >= 0 and int(name) < namen.size():
+		name = namen[int(name)]
+	elif name != "liste" and not ap.has_animation(name):
+		for a: String in namen:
+			if a.begins_with(name):
+				name = a
+				break
 	if name == "liste" or not ap.has_animation(name):
 		print("Animationen:")
 		for a: StringName in ap.get_animation_list():
