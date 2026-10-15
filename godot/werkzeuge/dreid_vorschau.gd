@@ -7,7 +7,7 @@
 ##       [--hoehe 284] [--seite 512] [--blick 1] [--drehung 0] [--umriss 2] [--schatten 1]
 ##   ... --erzeuge-test <datei.glb>     schreibt die Testfigur als GLB (zum Prüfen dieses Werkzeugs)
 ##
-##   --glb <datei>     die Figur; ohne: Testfigur aus Kapseln (Licht, Umriss und Kamera prüfen)
+##   --glb <datei>     die Figur (.glb oder .fbx); ohne: Testfigur aus Kapseln (Licht, Umriss und Kamera prüfen)
 ##   --aus <ordner>    Ausgabeordner (absolut oder ab Repo-Wurzel). Nicht ins Repo legen.
 ##   --info            nur ausgeben: Knoten, Netze, Knochen, Animationen mit Länge, Maße der Figur (kein Bild)
 ##   --ansichten       Ruhepose von vorn, Seite, hinten und schräg als ansicht_<name>.png
@@ -238,8 +238,14 @@ func _lade(glb: String) -> Node3D:
 		print("keine --glb: Testfigur")
 		return _testfigur()
 	var datei: String = _pfad(glb)
-	var doc: GLTFDocument = GLTFDocument.new()
-	var state: GLTFState = GLTFState.new()
+	var doc: GLTFDocument = null
+	var state: GLTFState = null
+	if datei.to_lower().ends_with(".fbx"):
+		doc = FBXDocument.new()
+		state = FBXState.new()
+	else:
+		doc = GLTFDocument.new()
+		state = GLTFState.new()
 	var fehler: int = doc.append_from_file(datei, state)
 	if fehler != OK:
 		printerr("GLB nicht lesbar (Fehler %d): %s" % [fehler, datei])
