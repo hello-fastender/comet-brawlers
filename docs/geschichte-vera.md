@@ -22,14 +22,18 @@ vereisen. In Berlin, Istanbul, Rom, Madrid und Paris wachsen Nester, und
 jedes hält ein Sänger zusammen. Europa schaltet alle Sender ab und wird
 still. Vera kennt das Lied besser als jeder andere Mensch. Mit
 Armschienen aus Straßenbahnbremsen zieht sie von Nest zu Nest und bringt
-einen Sänger nach dem anderen zum Schweigen. Gegen sie steht ihr
-Mitschüler Linus, der das Lied zu lange gehört hat und jetzt die
-Gesungenen anführt, Menschen, die den Orriniden folgen. Als Paris fällt,
-löst sich der Grundton vom Kometen, die Stimme, nach der alle Nester
-singen, und landet dort, wo die Antwort herkam: im Gymnasium Stein. Singt
-er am 21. Dezember um 5:47 Uhr, wenn der Komet der Sonne am nächsten ist,
-schlüpfen die Keime unter allen Städten. Vera hat die längste Nacht des
-Jahres, um im selben Physiksaal zurückzunehmen, was sie gerufen hat.
+einen Sänger nach dem anderen zum Schweigen. Seit Berlin hat sie den
+Rücklauf. Stirbt sie, wacht sie wieder in dem Augenblick auf, in dem sie
+zuletzt aufgewacht ist, und nur sie weiß, wie es beim letzten Mal
+ausging. Gegen sie steht ihr Mitschüler Linus, der das Lied zu lange
+gehört hat und jetzt die Gesungenen anführt, Menschen, die den Orriniden
+folgen. Als Paris fällt, löst sich der Grundton vom Kometen, die Stimme,
+nach der alle Nester singen, und landet dort, wo die Antwort herkam: im
+Gymnasium Stein. Singt er am 21. Dezember um 5:47 Uhr, wenn der Komet
+der Sonne am nächsten ist, schlüpfen die Keime unter allen Städten. Den
+Rücklauf hat Vera in Paris verloren. Sie hat die längste Nacht des
+Jahres und einen Versuch, um im selben Physiksaal zurückzunehmen, was
+sie gerufen hat.
 
 ## 2. Form
 
@@ -43,13 +47,31 @@ Jahres, um im selben Physiksaal zurückzunehmen, was sie gerufen hat.
 - Vera kommt in fast jeder Aussage vor, spricht selbst aber erst im
   letzten Kapitel. Jede Stadt erzählt eine andere Vera und gibt ihr einen
   anderen Namen.
+- Den Rücklauf (Abschnitt 4.3) erzählt keiner direkt. Die Zeugen haben
+  nur den Durchgang erlebt, der geblieben ist, und beschreiben, was sie
+  gesehen haben: eine junge Frau, die ohne zu fragen an den richtigen
+  Spind geht, einen Namen richtig ausspricht, den ihr keiner gesagt hat,
+  und weiß, vor welchen Tunneln der Lokführer pfeifen muss. Erst Rin
+  (Kapitel VIII) und Vera (Kapitel X) sprechen ihn aus. Beim zweiten
+  Lesen versteht man fast jede Aussage anders.
 - Jede Stadt bringt den Menschen eine Lehre über die Orriniden
-  (Abschnitt 4.3). Die Lehren bauen aufeinander auf und geben der Reise
+  (Abschnitt 4.4). Die Lehren bauen aufeinander auf und geben der Reise
   die Richtung: Erst lernen die Menschen, sich zu verstecken, dann, sich
   zu wehren, am Ende, die Orriniden zum Gehen zu bringen.
 - Zwischen den Kapiteln stehen Briefe von Veras Mutter aus Stein. Ohne
   Funk schrieb Europa mit Bleistift, und Stein ist die Stadt der
   Bleistifte.
+- Anregungen: Die Form kommt von *World War Z* (Max Brooks, 2006), die
+  Schleife von *Edge of Tomorrow* (2014, Regie Doug Liman, nach dem
+  Roman *All You Need Is Kill* von Hiroshi Sakurazaka). Angelehnt sind
+  das Lernen durch Sterben; eine Heldin, die alles schon erlebt hat,
+  während die anderen sie erst kennenlernen; ihr Gesicht auf Plakaten;
+  ein General, der ihr nicht glaubt und sie einsperren lässt; eine
+  Offensive als Ablenkung; der Verlust der Schleife vor dem letzten
+  Kampf. Eigen sind Lied, Kassette und Zurückspulen statt Blut, der
+  Schlaf als Anker und alle Figuren. Auch der Film führt nach Paris,
+  dort aber unter den Louvre. Namen und Sätze aus dem Film kommen nicht
+  vor.
 
 ## 3. Kometenkrieg. Eine Chronik in Stimmen
 
@@ -68,10 +90,14 @@ richtig. Ich habe sie aufgehoben.
 
 Fast jeder, mit dem ich sprach, kam irgendwann auf eine junge Frau mit
 Armschienen. In Berlin hieß sie die Fränkin. In Istanbul Eldivenli Kız,
-das Mädchen mit den Handschuhen. In Madrid la rubia, die Blonde. Neun
-Jahre lang hat sie jede Anfrage abgelehnt, meine auch. Im zehnten Jahr
-kam eine Postkarte, mit Bleistift geschrieben. Ein Ort, ein Datum, eine
-Uhrzeit: Gymnasium Stein, Physiksaal, 21. Dezember, 5:47 Uhr.
+das Mädchen mit den Handschuhen. In Madrid la rubia, die Blonde. Viele
+sagten, sie habe gewusst, was als Nächstes passiert. Jedes Mal. Ich
+hielt das lange für das, was man über jemanden erzählt, den man von
+Plakaten kennt.
+
+Neun Jahre lang hat sie jede Anfrage abgelehnt, meine auch. Im zehnten
+Jahr kam eine Postkarte, mit Bleistift geschrieben. Ein Ort, ein Datum,
+eine Uhrzeit: Gymnasium Stein, Physiksaal, 21. Dezember, 5:47 Uhr.
 
 Dort endet dieses Buch. Es beginnt zwei Türen weiter, fünf Monate vor dem
 Krieg.
@@ -117,12 +143,15 @@ die Jackentasche gesteckt. Die Kassette hab ich nie wiedergesehen.
 
 **Wie war Vera damals?**
 
-Ruhig. Die hat nie viel geredet, die hat gemessen. Judo seit der
-Grundschule, im Verein hier in Stein, und dazu Boxen in Nürnberg, weil
-ihr das Judo, hat sie mir mal gesagt, zu höflich war. Der Linus war das
-Gegenteil. Der hat in einer Doppelstunde mehr geredet als die Vera im
-ganzen Schuljahr. Die zwei waren das Seminar. Die anderen zwölf haben ihre
-Note gemacht.
+Ruhig. Die hat nie viel geredet, die hat gemessen. Am 3. März ist sie
+dageblieben, bis der Hausmeister zugesperrt hat, und hat gezählt, wie oft
+das Lied von vorn anfängt. Dreiundzwanzigmal. Am nächsten Morgen standen
+die Uhrzeiten an der Tafel, untereinander, auf die Sekunde. Judo seit
+der Grundschule, im Verein hier in Stein, und dazu Boxen in Nürnberg,
+weil ihr das Judo, hat sie mir mal gesagt, zu höflich war. Der Linus war
+das Gegenteil. Der hat in einer Doppelstunde mehr geredet als die Vera
+im ganzen Schuljahr. Die zwei waren das Seminar. Die anderen zwölf haben
+ihre Note gemacht.
 
 **Am 21. März ist etwas gesendet worden.**
 
@@ -223,9 +252,9 @@ weil so ein Ding auf dem Gleis stand. Weißt du, wie eine
 Magnetschienenbremse geht? Zwischen den Rädern hängen Elektromagnete. Bei
 Gefahrbremsung fallen die aufs Gleis und saugen sich fest. Das Ding stand
 drauf. Das Ding ist geplatzt, von innen. Die Kleine hat das gesehen und
-ist zehn Kilometer zu uns gelaufen, weil sie wusste, dass wir die Teile
-im Lager haben. Physik-Leistungskurs, oder wie das bei denen in Bayern
-heißt.
+ist zehn Kilometer zu uns gelaufen, weil sie sich gedacht hat, dass wir
+die Teile im Lager haben. Physik-Leistungskurs, oder wie das bei denen
+in Bayern heißt.
 
 **Was haben Sie gebaut?**
 
@@ -239,6 +268,38 @@ Die Handschuhe hat sie sich aus unserem Fundsachenregal genommen.
 Fahrradhandschuhe, Finger abgeschnitten. Und die Jacke war meine.
 Kobaltblau, die hab ich dreißig Jahre auf der MZ getragen. Die Kleine
 hatte nur noch ein Top an, und am Alex waren minus zwölf. Im August.
+
+**Wo hat sie in der Woche geschlafen?**
+
+Bei uns, im Pausenraum. Da steht 'ne Pritsche für die Nachtschicht. Vom
+Dreizehnten bis zum Neunzehnten hat se da gepennt, in meiner Jacke, die
+Schienen neben sich auf'm Boden. Gefahren is keine Bahn mehr. Ich bin
+trotzdem jeden Morgen um vier rein, achtunddreißig Jahre Frühschicht,
+dit kriegste nich mehr raus. Um halb fünf hab ich ihr 'n Kaffee
+hingestellt, vom Campingkocher. Strom war ja weg.
+
+Am Neunzehnten, halb fünf, steh ick da mit dem Becher, und die schreit.
+Im Schlaf. Nich wie bei 'nem Albtraum. Erst keine Luft, dann alles auf
+einmal. So kommste hoch, wenn de im Müggelsee zu lange unten warst. Dann
+sitzt se kerzengerade. Hält sich die rechte Hand. Die war immer noch
+eingewickelt, die Knöchel sind die ganze Woche nich zugegangen.
+
+Steht se auf, fragt nüscht, geht an mir vorbei in die Umkleide. Vierzig
+Spinde. Die macht genau den von der Gerda auf, hinten links. Nich den
+mit der Beule. Die Gerda war seit zwei Jahren in Rente, in ihrem Spind
+lag nur noch Panzertape, weil keiner wusste, wohin damit. Nimmt drei
+Rollen raus und macht die Tür wieder zu.
+
+**Hatten Sie ihr den Spind gezeigt?**
+
+Nie. Ick hab gefragt: Woher weißte dit? Sagt se: „Von Ihnen.“
+
+*[Sie nimmt einen Schraubenschlüssel von der Werkbank und legt ihn
+wieder hin.]*
+
+Hab ick nich. Ick weiß, was ick gesagt hab und was nich. Die hat mich
+angeguckt, als hätt ick was vergessen. Den Kaffee hat se im Stehen
+getrunken, in einem Zug, und um fünf war se weg.
 
 **Der orange Streifen?**
 
@@ -257,10 +318,10 @@ zurückgewollt.
 schaltet er sein Telefon aus und legt es mit dem Display nach unten auf
 den Tisch. „Gewohnheit“, sagt er.*
 
-Am 14. August stand sie im Krisenstab. Ein Mädchen in einer viel zu
-großen Motorradjacke, Bremsmagnete an den Armen, ein Kofferradio unterm
-Arm. Bis heute weiß keiner, wer sie reingelassen hat. Sie hat das Radio
-auf den Tisch gestellt, zwischen die Stadtpläne, und eine Kassette
+Am 14. August stand die Fränkin im Krisenstab. Ein Mädchen in einer
+viel zu großen Motorradjacke, Bremsmagnete an den Armen, ein Kofferradio
+unterm Arm. Bis heute weiß keiner, wer sie reingelassen hat. Sie hat das
+Radio auf den Tisch gestellt, zwischen die Stadtpläne, und eine Kassette
 eingelegt. Elf Minuten. Zwanzig Leute haben zugehört, und keiner hat was
 gesagt, weil keiner wusste, was das soll. Dann hat sie die Kassette
 rausgenommen und das Radio auf unsere Frequenz gedreht. Das Hauptprogramm
@@ -281,20 +342,44 @@ Kugel saß, ist nicht mitgegangen.
 **Am 19. August sind Sie mit ihr hinauf.**
 
 Ich kenne den Turm. Jede Tür, jede Leitung. Die Aufzüge gingen nicht,
-also Nottreppe, mit vierzig Polizisten. Ab der Hälfte war das
-Treppenhaus voller Eis, und im Eis standen die Dinger, eins auf jedem
-Absatz, wie Wachen. Die Polizisten sind stecken geblieben. Ich bin mit
-ihr weiter bis unter die Kugel, und da hab ich gesagt, ich kann nicht
-mehr. Sie hat genickt und weiter die Stufen gezählt. Laut. Ich hab sie
-noch lange zählen hören.
+also Nottreppe, mit vierzig Polizisten. Sie hat von der ersten Stufe an
+laut gezählt, und die Polizisten haben gelacht, bis ungefähr
+dreihundert. Ab der Hälfte war das Treppenhaus voller Eis, und im Eis
+standen die Dinger, eins auf jedem Absatz, wie Wachen. Die Polizisten
+sind stecken geblieben.
 
-Oben ist das Café, das sich dreht. Es hat sich gedreht, als sie reinkam.
-Der Strom war seit fünf Tagen weg.
+Von da an ist sie vorgegangen, nicht ich. Ich hab die Pläne im Kopf, und
+im Eis stimmte keiner mehr. Türen zugefroren, Absätze zu, wir mussten
+durch Kabelschächte, in denen ich seit Jahren nicht mehr war. Sie ist
+kein einziges Mal stehen geblieben, um zu schauen, wo es weitergeht. Ich
+schon. Ich hab in dem Turm zwanzig Jahre gearbeitet.
 
-Um halb fünf wurde die Kugel dunkel. Unten am Alex sind die Dinger
+Ich bin mit ihr weiter bis unter die Kugel, und da hab ich gesagt, ich
+kann nicht mehr. Sie hat genickt und weiter die Stufen gezählt. Laut.
+Ich hab sie noch lange zählen hören.
+
+Oben ist das Café, das sich dreht. Es hat sich schon gedreht, bevor sie
+ankam. Das hört man im ganzen Schaft, wenn man weiß, wie es klingt. Der
+Strom war seit fünf Tagen weg. Dann hat sie aufgehört zu zählen. Und
+wieder angefangen, bei eins, langsamer als auf der Treppe. Keine Stufen
+mehr. Sekunden. Sie hat gewartet, bis sich das Café ein Stück
+weitergedreht hatte. Bei achtunddreißig ging die Tür.
+
+Um 16:30 Uhr wurde die Kugel dunkel, und unten am Alex sind die Dinger
 umgefallen. Standen da und fielen um, fast alle. Warum, wusste damals
-keiner. Um sieben kam sie runter, allein. Die linke Schiene hing nur noch
-an einer Schelle. Sie hat gefragt, ob jemand Panzertape hat.
+keiner. Um sieben kam sie runter, allein, den Rucksack über einer
+Schulter. Die linke Schiene hing nur noch an einer Schelle.
+
+Sie hat den Rucksack aufgemacht, Panzertape rausgeholt und die Schiene
+festgeklebt, dreimal rum, ohne hinzusehen. Gefragt hat sie keinen. Wer
+nimmt auf einen Turm Panzertape mit? Drin lagen neben dem Akku noch
+zwei Rollen.
+
+Dann hat sie sich auf die Treppe gesetzt und auf ihre rechte Hand
+geschaut. Lange. Der Handschuh war über den Knöcheln aufgerissen, der
+Verband drunter auch. Ich hatte die Lampe aus, wegen der Batterie. Im
+Dunkeln hat einer ihrer Knöchel geleuchtet, ganz schwach, wie die Zeiger
+von einem Wecker. Ich hab mir gesagt, das ist der Schock. Meiner.
 
 ### III. Die Stille
 
@@ -346,6 +431,18 @@ Dann ist sie eingestiegen und hat sich nicht ans Fenster gesetzt, sondern
 an die Tür. Das hab ich mir gemerkt. Die Leute, die wissen, dass was
 kommt, setzen sich an die Tür.
 
+Ein Soldat, der mitgefahren ist, stand im Oktober auf dem Rückweg
+wieder bei mir am Bahnsteig. Der hat erzählt, sie hat auf der ganzen
+Fahrt kaum geschlafen. Wenn ihr an der Tür der Kopf runtergesackt ist,
+hat sie sich aufgerappelt und ist durch den Zug gegangen, vom ersten
+Wagen bis zum letzten und zurück, langsam, eine Hand an der Wand. Dann
+hat sie sich wieder an die Tür gesetzt. Die Soldaten haben gemeint, die
+zählt die Wagen.
+
+*[Sie dreht die Kelle wieder um.]*
+
+Das hätt ich ihr sagen können. Vierzehn.
+
 > *Bleistiftbrief, von Vera aufbewahrt*
 >
 > Stein, 27. August
@@ -391,18 +488,36 @@ Anker.
 
 Am 2. September, mit einem Offizier und einem Kofferradio. Sie hat drei
 Tage am Kai gesessen und mit Kopfhörern zum anderen Ufer rübergehört.
-Gegessen hat sie nur Simit. Simit, Simit, Simit. Am dritten Abend hat sie
-auf den Galataturm gezeigt und gesagt: „Da sitzt er.“ Der Sänger. Wir
-wussten damals nicht, dass es einen gibt.
+Gegessen hat sie nur Simit. Simit, Simit, Simit. Geschlafen hat sie gar
+nicht. Ich hab ihr meine Bank angeboten, die auf dem Achterdeck, mit dem
+Kissen. Sie hat den Kopf geschüttelt. Nachts hab ich ein paarmal aus dem
+Steuerhaus geschaut, und jedes Mal saß sie da, den Rücken am Poller,
+die Kopfhörer auf.
+
+Am ersten Abend hab ich ihr erklärt, wie man rüberkommt, ohne dass die
+Buzlar einen hören. Ohne Motor. Treiben lassen. Und treiben lassen kann
+man sich da drüben nur in der dritten Nacht, vorher steht die Strömung
+falsch, seit das Horn zu ist. Sie hat genickt. „Die dritte, ja.
+Deswegen sitz ich hier.“
+
+Das wusste in Kadıköy keiner außer mir und zwei alten Anglern. Bleibt
+der Offizier. Der Offizier war aus Ankara.
+
+Am dritten Abend hat sie auf den Galataturm gezeigt und gesagt: „Da
+sitzt er.“ Der Sänger. Wir wussten damals nicht, dass es einen gibt.
 
 **Sie sind hinübergefahren.**
 
 Ohne Licht, ohne Funk, die letzten fünfhundert Meter ohne Motor. Wir
 haben uns treiben lassen. Auf meinem Deck das Mädchen, zwölf Soldaten,
-achtzig Fischer mit Eimern. Und Korhan, ein Bergungstaucher aus Tuzla, ein
-Mann wie ein Schrank, mit einem Anker an einer Kette. Die Deutschen haben
-ihn Kord genannt, weil sie Korhan nicht aussprechen wollten. Er hat es
-sich gefallen lassen. Von ihr.
+achtzig Fischer mit Eimern. Und Korhan, ein Bergungstaucher aus Tuzla,
+ein Mann wie ein Schrank, mit einem Anker an einer Kette. Die Deutschen
+haben ihn Kord genannt, weil sie Korhan nicht aussprechen wollten. Das
+Mädchen konnte es. Als er an Bord kam, hat sie „Korhan“ zu ihm gesagt,
+bevor der Offizier den Mund aufhatte, richtig, mit dem h in der Mitte.
+Er hat erst sie angeschaut und dann den Offizier. Danach hat sie nur
+noch Kord gesagt, wie die anderen, und er hat es sich gefallen lassen.
+Von ihr.
 
 Die Fischer haben die Armschienen von dem Mädchen in Meerwasser getaucht,
 bevor sie an Land ging. Sie hat gefragt, wozu. Einer hat gesagt: „Für den
@@ -411,8 +526,18 @@ Geschmack.“
 Dann ist sie über die Brücke gerannt. Die Galatabrücke hat zwei
 Stockwerke, oben die Straße, unten die Restaurants. Sie ist unten durch,
 Kord oben, und die Fischer hinter ihnen haben die Eimer geschwungen. Ich
-bin am Kai geblieben, mit laufender Maschine. Gegen vier hat der Turm
-aufgehört zu leuchten.
+bin am Kai geblieben, mit laufender Maschine.
+
+Was auf der Brücke war, weiß ich von den Fischern. Sie hat immer
+gerufen, von wo eins kommt. Bevor es kam. Auf Deutsch, aber mit der
+Schiene gezeigt, und das versteht jeder. Sie zeigt nach links, und links
+kommt eins aus einer Küche, mit der Tischdecke dran. Sie zeigt hinter
+sich, ohne sich umzudrehen, und da kommt eins. Ab der Mitte haben die
+mit den Eimern nur noch auf ihren Arm geschaut. Der älteste von ihnen
+sagt bis heute, sie hat die Buzlar kommen hören, so gut hat sie das Lied
+gekannt. Die Kopfhörer lagen bei mir an Deck.
+
+Gegen vier hat der Turm aufgehört zu leuchten.
 
 **Und dann?**
 
@@ -465,20 +590,35 @@ Von unten. Das wollte außer mir keiner sehen. Die Generäle haben auf die
 Straßen geschaut, auf die Plätze. Ich bin in die Cloaca gestiegen. Die
 Römer haben vor zweieinhalbtausend Jahren einen Abwasserkanal gebaut, der
 heute noch läuft. Er war zugefroren, von innen nach außen, wie eine
-Ader. Und ein Seitenkanal lief unter das Kolosseum.
+Ader. Und die Kanäle hängen zusammen, bis unter das Kolosseum.
 
 **Sie haben Vera hinuntergeführt.**
+
+Das sagen alle. Es war umgekehrt.
 
 Sie kam mit einem Taucher, der kein Wort gesprochen hat und eine
 Ankerkette über der Schulter trug. Sie wollte ins Hypogäum, unter die
 Arena, wo früher die Tiere auf ihren Auftritt gewartet haben. Ich habe
-gesagt, das ist ein Labyrinth. Sie hat gesagt: „Sie sind doch
-Archäologin.“ So beleidigt hat mich zwanzig Jahre lang keiner. Und so
-gebraucht auch nicht.
+gesagt, das ist ein Labyrinth, da haben sich Kollegen von mir verlaufen,
+mit Karte. Sie hat gesagt: „Ich weiß.“ Dann ist sie vorausgegangen.
+
+Meine Karten hatte ich in einer Rolle dabei, sechs Blätter, jedes Maß von
+mir. Die Rolle hat sie nicht angefasst. An jeder Abzweigung hat sie
+halblaut gezählt, auf Deutsch, und ist abgebogen, bevor ich das erste
+Blatt aufgerollt hatte. Ich bin hinterher. Durch meine eigenen Kanäle,
+mit meinen Karten auf dem Rücken.
+
+Kurz vor dem Hypogäum habe ich gefragt, wozu sie mich überhaupt braucht.
+Sie hat gesagt: „Ohne Sie geht es nicht.“ Dabei hat sie auf meine Hände
+geschaut, bis ich sie in die Manteltaschen gesteckt habe. So beleidigt
+hat mich zwanzig Jahre lang keiner. Und so gebraucht auch nicht.
+
+Wofür, hat sie mir nie gesagt. Den Weg kannte sie ja.
 
 Unten waren die Keime. Kugeln aus Eis, faustgroß, Tausende, in den
-Mauernischen, und jede hat geleuchtet, ganz schwach, im Takt. Später
-habe ich eine aufgesägt. Sie hat Ringe wie ein Baum, und die Ringe werden
+Mauernischen, und jede hat geleuchtet, ganz schwach, im Takt. Ich bin
+stehen geblieben. Vera nicht. Später habe ich eine aufgesägt, mit der
+Steinsäge vom Institut. Sie hat Ringe wie ein Baum, und die Ringe werden
 enger, Tag für Tag. Ein Kollege von der Universität hat ausgerechnet,
 wann sie sich treffen. Am 21. Dezember, morgens. Wenn Orrin der Sonne am
 nächsten ist.
@@ -490,12 +630,12 @@ Dann haben wir Ollo gefunden.
 *[Sie lacht und hustet.]*
 
 Zwischen den Keimen lag einer, der nicht geleuchtet hat. Kleiner als
-die anderen, kniehoch, und die anderen haben ihn
-weggeschoben. Mit den Armen, immer wieder, aus der Nische raus. Er konnte
-nicht singen. Er hat nur geklirrt, wenn er sich bewegt hat, ollo, ollo,
-Eiswürfel im Glas. Vera hatte die Faust schon oben. Dann hat sie sie
-runtergenommen und ihm die Hand hingehalten. Wie der Junge in Berlin, hat
-sie mir später gesagt. Nur andersherum.
+die anderen, kniehoch, und die anderen haben ihn weggeschoben. Mit den
+Armen, immer wieder, aus der Nische raus. Er konnte nicht singen. Er hat
+nur geklirrt, wenn er sich bewegt hat, ollo, ollo, Eiswürfel im Glas.
+Vera hatte die Faust schon oben. Dann hat sie sie runtergenommen und ihm
+die Hand hingehalten. Wie der Junge in Berlin, hat sie mir später
+gesagt. Nur andersherum.
 
 **Und der Sänger?**
 
@@ -503,8 +643,8 @@ Stand in der Arena. Als hätte er auf Publikum gewartet. Auf den Rängen
 lag Schnee, und im Schnee standen Menschen mit Atemmasken. Keine
 ghiaccioli. Menschen. Sie haben gesummt. Einer hat auf Deutsch gerufen,
 der Kantor komme bald, der Kantor werde alles erklären. Vera ist stehen
-geblieben und hat gefragt: „Groß? Brille?“ Der Mann hat genickt. Dann ist
-sie in die Arena gegangen.
+geblieben und hat gesagt: „Groß. Brille.“ Ohne Fragezeichen. Der Mann
+hat genickt, und sie ist in die Arena gegangen.
 
 Was danach kam, habe ich nicht gesehen. Ich lag hinter einer Mauer, mit
 Ollo unter dem Mantel. Er war kalt. Zwei Finger habe ich in dieser Nacht
@@ -534,7 +674,7 @@ Stadt das Problem.
 
 *In Madrid hießen die Orriniden polos, wie das Eis am Stiel; in Rom sagte
 man ghiaccioli. Zwischen den beiden Städten gab es in diesem Herbst keine
-einzige Verbindung.*
+einzige Funkverbindung.*
 
 *Carmen Lozano Ruiz, 52, ist Grundschullehrerin in Vallecas. Drei Wochen
 lang war sie eine Gesungene. Wir sitzen nach Schulschluss in ihrem
@@ -567,9 +707,14 @@ geliebt. Ich sage das so, weil es so war.
 
 Um zehn Uhr abends haben die Töpfe angefangen. Die Kuriere hatten Zettel
 an jede Haustür geklebt, mit Bleistift, das habe ich erst später
-erfahren: am 3., 22 Uhr, alle auf die Balkone. Eine cacerolada. Das
+erfahren: am 3., 22:00 Uhr, alle auf die Balkone. Eine cacerolada. Das
 machen wir in Spanien, wenn wir mit der Regierung nicht einverstanden
 sind. Diesmal waren wir mit etwas anderem nicht einverstanden.
+
+Die Zettel hat eine Deutsche diktiert. Das weiß ich von einem der
+Kuriere, er war früher in meiner Klasse. Er hatte „gegen zehn“
+geschrieben. Sie hat ihn jeden einzelnen neu schreiben lassen,
+zweihundert Stück, bis nach Mitternacht. 22:00 Uhr, mit beiden Nullen.
 
 Ich stand am Fuß des Turms, einen Eisblock im Arm, und das Summen ist
 zerbrochen. Drei Millionen Kochtöpfe. Ich habe meinen Namen wieder
@@ -582,10 +727,13 @@ den Eisblock fallen lassen.
 
 Sie stand vor dem Kantor, am Eingang zum Turm, zwischen uns allen, die
 gerade aufgewacht sind. Ich war vielleicht zehn Meter weg. Sie hat nichts
-gesagt. Er hat gesprochen, auf Spanisch, damit wir es verstehen. Er hat
-auf sie gezeigt und gesagt: „Ella los llamó.“ Sie hat sie gerufen. Er
-hat es dreimal gesagt. Dann etwas auf Deutsch, das habe ich nicht
-verstanden.
+gesagt, sie hat ihn nur angeschaut. Den Blick kenne ich vom Schultor, von
+den Müttern der Drittklässler. Die winken nicht mehr. Die warten, bis die
+Tür zu ist.
+
+Er hat gesprochen, auf Spanisch, damit wir es verstehen. Er hat auf sie
+gezeigt und gesagt: „Ella los llamó.“ Sie hat sie gerufen. Er hat es
+dreimal gesagt. Dann etwas auf Deutsch, das habe ich nicht verstanden.
 
 *[Was der Kantor auf Deutsch sagte, steht im Bericht eines
 Allianzsoldaten, der neben Vera stand: „Du hast sie gerufen, Vera. Nicht
@@ -615,14 +763,25 @@ Post. Und ein Kühlwagen für den Kleinen. Der Kühlwagen ist das
 Wichtigste, hat die Deutsche gesagt. Wichtiger als die Post. Ich habe
 nicht gefragt.
 
+Vor der Abfahrt, auf dem Bahnsteig in Madrid, hat sie mir gesagt, vor
+welchen Tunneln ich pfeifen soll. Nicht vor allen. Vor sieben. Sie hat
+sie auf meiner Karte angekreuzt. Ich brauche dafür den Finger, sie nicht.
+
+*[Er legt den Finger auf die Karte. Neben der Strecke stehen sieben
+kleine Kreuze, dunkler als seine Schrift.]*
+
+Da habe ich doch gefragt, ob sie die Strecke schon gefahren ist. Sie hat
+„Nein“ gesagt. Ich bin sie zwanzig Jahre gefahren und hätte Ihnen die
+Tunnel nicht der Reihe nach aufsagen können.
+
 **Gab es Angriffe?**
 
 Hinter Vitoria kamen sie aufs Dach. Gesungene, Dutzende, von einer
 Brücke runtergesprungen. Hagel mit Stiefeln, so klingt das in der Lok.
-Die Deutsche und der Taucher sind rauf. Ich habe vor jedem Tunnel
+Die Deutsche und der Taucher sind rauf. Vor den sieben Tunneln habe ich
 gebremst und gepfiffen, dreimal lang, das hatten wir ausgemacht. Dreimal
-lang heißt: runter. Wie viele Tunnel es bis Irun sind, weiß ich nicht
-mehr. Ich habe jeden einzelnen gepfiffen.
+lang heißt: runter. Vor jedem der sieben waren Gesungene auf dem Dach.
+Vor den anderen keiner.
 
 In Irun mussten alle umsteigen, weil Spanien breitere Gleise hat als
 Frankreich. Umsteigen im Dunkeln, mit Gesungenen auf dem Bahnsteig. Den
@@ -630,12 +789,102 @@ Kühlwagen haben wir umgeladen, mit der Hand.
 
 **Was hat sie im Zug gemacht?**
 
-Geschlafen. Den Kopf auf dem Rucksack, die Armschienen an. Ein Soldat
-hat mit Kreide einen Kalender an die Wand vom Postwagen gemalt. Ganz
-unten der 21.12., mit einem Kreis drum. Jeden Morgen hat sie einen Tag
-durchgestrichen. Sie selbst, nicht der Soldat.
+Bis Irun hat sie nicht geschlafen. Hinter Irun schon, den Kopf auf dem
+Rucksack, die Armschienen an. Ein Soldat hat mit Kreide einen Kalender
+an die Wand vom Postwagen gemalt. Ganz unten der 21.12., mit einem Kreis
+drum. Jeden Morgen hat sie einen Tag durchgestrichen. Sie selbst, nicht
+der Soldat.
 
 ### VIII. Der Chor
+
+**Paris, Frankreich**
+
+*Armand Lécuyer, 71, Général a. D., befehligte im November die Truppen
+der Stillen Allianz in Paris. Sein Gefechtsstand lag im Hôtel des
+Invalides. Er empfängt mich in seiner Wohnung, in Anzug und Krawatte,
+steht auf, als ich hereinkomme, und setzt sich erst, als ich sitze.*
+
+Unternehmen Seine. 9. November, sechs Uhr. Zwanzigtausend Mann über die
+Brücken auf den Champ de Mars, Pioniere mit Sprengladungen an die
+Pfeiler des Turms. Fällt der Turm, fällt der Stachel, und mit dem
+Stachel der Sänger. Drei Wochen Planung. Der Plan war gut.
+
+**Am 7. November kam Vera.**
+
+Gegen elf Uhr vormittags stand eine deutsche Kurierin in meinem
+Gefechtsstand, mitten in der Lagebesprechung. Orange am Arm, Eisen an
+den Unterarmen. Sie hat gesagt: „Wenn Ihre Leute über die Brücken gehen,
+sind sie nach elf Minuten tot.“ Elf. Nicht zehn, nicht zwölf. Ich habe
+in vierzig Dienstjahren keine Lagebeurteilung gehört, die so genau war.
+Genau ist verdächtig.
+
+Ich habe sie in einen Keller sperren lassen.
+
+**Warum?**
+
+Ein Offizier, der zwei Tage vor einem Angriff so etwas vor meinem Stab
+sagt, kommt vor ein Kriegsgericht. Sie war keine Offizierin. Also der
+Keller.
+
+Und ich kannte sie. Nach Madrid hat die Allianz Plakate von ihr malen
+lassen: blond, die Faust erhoben, darunter „la rubia“. Auch in Paris,
+auf Spanisch. Eins hing im Gang vor meinem Lagezimmer, ich hatte es
+selbst aufhängen lassen, für die Truppe. Ich hielt sie für Propaganda.
+Ein Gesicht für die Wand, und die Arbeit machen andere. So ist es
+meistens.
+
+Jetzt stand das Plakat vor mir, kleiner als auf dem Papier, und erklärte
+mir, wie ich meine Leute umbringe.
+
+Es hängt heute bei mir im Flur. Sie sind daran vorbeigegangen.
+
+**Und am nächsten Morgen?**
+
+Die Wache hat gemeldet, sie habe sich im Keller auf den Boden gelegt und
+sofort geschlafen. Kein Protest, nichts. Um sechs hat sie an die Tür
+geklopft und nach mir verlangt. Ich bin selbst hinuntergegangen. Für so
+etwas hat ein General einen Adjutanten.
+
+In derselben Nacht hatte ich meiner Frau geschrieben, zwei Seiten, mit
+Bleistift, wie alle damals. Abgeschickt habe ich den Brief nicht. Er war
+hier.
+
+*[Er legt zwei Finger an die linke Seite seines Jacketts, dorthin, wo
+die Innentasche ist.]*
+
+Niemand hatte ihn gesehen. Mein Adjutant nicht, meine Frau bis heute
+nicht. Die Kurierin hat mir durch die Kellertür gesagt, was drinsteht.
+Den zweiten Absatz Wort für Wort, auch das Wort, das ich darin
+durchgestrichen hatte.
+
+**Was stand in dem Brief?**
+
+Nein.
+
+*[Pause.]*
+
+Um acht habe ich den Plan geändert. Unternehmen Seine blieb, am
+nächsten Morgen um sechs, am Pont d'Iéna, mit zwanzigtausend Mann und
+allem, was wir hatten. Als Ablenkung. Sie ging mit einer Radkurierin,
+einem Taucher und einem Stück Eis durch die Métro.
+
+**Zwanzigtausend Mann als Ablenkung.**
+
+Damit ein Mädchen eine Treppe hochgeht. Ja. In meinem Bericht steht es
+mit anderen Wörtern. Es bleibt dasselbe.
+
+Die meisten sind zurückgekommen. Zweihundertsechs nicht. Die Briefe an
+die Familien habe ich alle selbst unterschrieben.
+
+Ich gäbe den Befehl wieder. Morgen, um sechs.
+
+**Hat sie noch etwas gesagt?**
+
+Beim Gehen. Sie stand in der Tür, mit dem Rücken zu mir, und hat gesagt:
+„Beim ersten Mal waren alle tot.“ Ich habe gefragt: „Beim ersten Mal
+wovon?“
+
+Sie war schon draußen.
 
 **Paris, Frankreich**
 
@@ -648,7 +897,7 @@ Ohne Funk war Paris eine Stadt aus Rädern. Wir waren dreihundert, vier,
 mit Orange am Arm, und wir haben alles gefahren. Befehle, Insulin,
 Liebesbriefe. Die Liebesbriefe waren das meiste, ehrlich.
 
-Der Turm war schon immer eine Antenne. Wussten Sie das? 1909 wollten sie
+Der Turm ist eigentlich eine Antenne. Wussten Sie das? 1909 wollten sie
 ihn abreißen, und dann hat das Militär gesagt, nein, der ist gut für den
 Funk, und deshalb steht er noch. Siebentausend Tonnen Eisen. Die glaçons
 haben das sofort kapiert. Im Oktober war der Turm doppelt so dick, in
@@ -658,21 +907,67 @@ mitgesungen.
 
 **Wann haben Sie Vera kennengelernt?**
 
-Am 2. November an der Gare d'Austerlitz. Sie kam mit einem Kühlwagen,
-einem Taucher und einem kleinen glaçon, der an ihrem Hosenbein hing wie
-ein Hund. Mein Chef hat gesagt, ich soll sie zum Turm bringen. Ich hab
-gesagt, mit dem Rad? Er hat gesagt, du hast doch eins.
+Am 8. November an der Gare d'Austerlitz. Sie stand neben einem
+Kühlwagen, mit einem Taucher und einem kleinen glaçon, der an ihrem
+Hosenbein hing wie ein Hund. Mein Chef hat gesagt, ich soll sie zum Turm
+bringen. Ich hab gesagt, mit dem Rad? Er hat gesagt, du hast doch eins.
+
+Ich wollte mich vorstellen, aber sie war schneller: „Rin.“ Nicht
+Corinne. Corinne stand im Ausweis, Rin sagten damals nur meine Leute.
+Dann hat sie gesagt, ich soll erst das Croissant essen, sonst ist es
+nachher platt. Ich hatte eins unterm Pulli, in einer Serviette, für
+später. Das sieht man bei mir nicht, ich hab Übung.
 
 Sie hat auf meinem Gepäckträger gesessen. Mit diesen Armschienen. Mein
-Hinterrad hat das nicht überlebt.
+Hinterrad hat das nicht überlebt. Die Hände hat sie mir an die Seiten
+gelegt, genau dahin, wo ich nicht kitzlig bin. Ich bin fast überall
+kitzlig.
+
+**Und bis zum Angriff?**
+
+Haben wir gewartet. Am Abend vom 8. saßen wir in der Métro auf einem
+Bahnsteig, mit einer Kerze und dem Rest vom Croissant. Kord hat
+geschlafen, im Sitzen, den Anker im Arm. Sie nicht, die ganze Nacht
+nicht.
+
+Irgendwann hat sie gesagt, sie hat diesen Tag schon dreihundertmal
+gelebt. Einfach so, in dem Ton, in dem man sagt, dass es zieht. Ich hab
+gelacht. Sie hat gewartet, bis ich fertig war, und dann hat sie gesagt:
+„Jetzt sagst du: Beweis es.“
+
+Ich hab gesagt: „Beweis es.“ Es war raus, bevor ich überhaupt gemerkt
+hab, dass ich was sag.
+
+„Jetzt sagst du: Das war leicht.“ Ich hab den Mund zugemacht und bis
+drei gezählt. Und wieder auf. „Das war leicht.“
+
+Beim dritten Mal wollte ich irgendwas anderes sagen, egal was. Sie hat
+ein Wort gesagt, das ich nur zu meinem Bruder sag, mit meiner Betonung.
+Dann hab ich es gesagt. Ich hab gehört, wie es aus mir rauskommt, und
+konnte nichts machen.
+
+Ich kannte sie seit einem Tag. Nicht mal. Und sie hat mich angeschaut
+wie meine Oma am Bahnhof, wenn ich ein halbes Jahr nicht da war.
+
+*[Sie faltet die Croissanttüte zusammen, immer kleiner, bis es nicht
+mehr geht.]*
+
+Das hab ich noch keinem erzählt. Kord auch nicht, und dem erzähl ich
+alles. Ihnen jetzt.
+
+**Glauben Sie es?**
+
+Halb. Wenn ich's ganz glaub, kann ich nicht mehr schlafen.
 
 **Wie kamen Sie an den Turm?**
 
-Durch die Métro, Linie 6, das Stück unter der Erde, zu Fuß über die
-Gleise, weil keine Züge fuhren. Dann oben über den Viadukt von
-Bir-Hakeim, auf den Schienen, weil die Brücke darunter voller Gesungener
-war. Bis zur zweiten Etage sind es 674 Stufen. Ich hab nicht gezählt. Sie
-hat gezählt, laut, auf Deutsch, zwischen den Schlägen.
+Um sechs hat es am Pont d'Iéna angefangen, das hat man bis zu uns runter
+gehört. Wir sind los, durch die Métro, Linie 6, das Stück unter der
+Erde, zu Fuß über die Gleise, weil keine Züge fuhren. Dann oben über den
+Viadukt von Bir-Hakeim, auf den Schienen, weil die Brücke darunter
+voller Gesungener war. Bis zur zweiten Etage sind es 674 Stufen. Ich hab
+nicht gezählt. Sie hat gezählt, laut, auf Deutsch, zwischen den
+Schlägen.
 
 **Und oben?**
 
@@ -694,6 +989,15 @@ langsam aufgestiegen, wie Seifenblasen, und oben verschwunden.
 Vera hat gesagt: „Das ist das Abschiedslied.“ Ich hab gefragt, woher sie
 das weiß. Sie hat gesagt: „Es geht nach oben.“
 
+Von der Spitze ist ein großes Licht hoch, langsamer als die anderen.
+Dann kamen aus ihr auch welche. Aus der rechten Hand, aus den Knöcheln,
+durch den Handschuh, eins nach dem anderen. Vier. Die hab ich gezählt.
+Sie hat die Hand aufgemacht und ihnen nachgeschaut, bis sie zwischen den
+anderen nicht mehr zu finden waren. Dann hat sie gesagt: „Jetzt muss ich
+aufpassen.“
+
+Ich hab gefragt, worauf. Sie hat die Hand in die Jacke gesteckt.
+
 **Und dann?**
 
 Dann haben wir den Kometen gesehen. Orrin stand tief im Südwesten, und
@@ -703,7 +1007,8 @@ eingeschaltet. Auf der Frequenz kam ein Lied, und sie hat gesagt: „Das
 ist die Kassette. Das, was wir zurückgeschickt haben. Er singt unsere
 Antwort.“
 
-Ich hab gefragt, wohin er fliegt. Sie hat gesagt: „Nach Stein.“ Ich hab
+Ich hab gefragt, wohin er fliegt. Sie hat gesagt: „Nach Stein.“ „Woher
+weißt du das?“ „Ich träum seit August von unserer Turnhalle.“ Ich hab
 gefragt: „Was ist Stein?“ Sie hat gesagt: „Meine Schule.“
 
 Dann hat sie mein Rad genommen, das ohne Hinterrad, und es zum Bahnhof
@@ -775,6 +1080,16 @@ Der Brunner hatte den Radlader vom Bauhof geholt und das ganze Streusalz,
 das da lag, um die Turnhalle gekippt. Ein Ring, einen Meter hoch. Er hat
 gesagt: „Wenn's in Istanbul geht, geht's in Stein auch.“ Es ist gegangen.
 Die Dinger sind nicht drüber.
+
+Am Tor zum Pausenhof hat sie zu mir gesagt: „Ich hab das noch nie
+gemacht.“ Verstanden hab ich das nicht. Die hatte fei fünf Sänger
+hinter sich. Sie hat die linke Schiene festgezogen und ist
+vorausgegangen, und ich bin hinterher und hab nichts gefragt.
+
+Vor der Aula ist sie stehen geblieben und hat geschaut, wo's weitergeht.
+Den Gang runter, die Treppe rauf, wieder den Gang. In ihrer eigenen
+Schule. Das hab ich bei der Vera nie gesehen. Sogar die Französin
+war still.
 
 In der Aula stand der Linus. Auf der Bühne, wo er im Juni sein
 Abiturzeugnis gekriegt hat, und um ihn rum die, die das Läuten nicht
@@ -875,6 +1190,30 @@ Das stimmt ja.
 Ich hätte es am nächsten Tag gemacht. Oder am übernächsten. Das hab ich
 ihr nie gesagt.
 
+**Was haben Sie nach dem 12. August gehört?**
+
+Das Lied. Jeden Tag, elf Minuten und wieder von vorn. Ich hab bei jedem
+Ton gewusst, welcher als Nächster kommt. Am 19. August, in der Früh um
+halb fünf, kam zum ersten Mal ein falscher. Ein Sprung, wie bei einer
+Platte. Ein Stück zurück, und dann lief es weiter. Danach ist es immer
+wieder gesprungen, nicht jeden Tag. Den letzten Sprung hab ich im
+November gehört.
+
+Außer mir hat es keiner gemerkt, glaub ich. Die Orriniden haben nicht
+einmal den Takt verloren.
+
+*[Er drückt den Stöpsel im linken Ohr fester.]*
+
+**Wissen Sie heute, was das war?**
+
+Damals hab ich gedacht, das bin ich. Dass mein Kopf springt, nicht das
+Lied. Heute glaub ich, das war nicht ich.
+
+**Wer dann?**
+
+Gezählt hab ich die Sprünge nicht. Wenn Sie zu ihr fahren, fragen Sie
+sie nicht, wie es war. Fragen Sie, wie oft.
+
 **Haben Sie noch Kontakt?**
 
 Jedes Jahr am 21. Dezember liegt ein Päckchen vor meiner Tür. Kein
@@ -938,11 +1277,68 @@ In viertausenddreihundert Jahren, ungefähr. Die Kommission hat einen
 Horchposten auf dem Hesselberg, der hört jeden Tag. Das ist gut. Ich hör
 hier. Einmal im Jahr.
 
+**Linus hat gesagt, ich soll Sie nicht fragen, wie es war.**
+
+Sondern?
+
+**Wie oft.**
+
+*[Sie dreht das Rauschen leiser.]*
+
+Fünfhundertsechsundfünfzig.
+
+**Mitgezählt?**
+
+Ich zähl alles.
+
+**Aufgeschrieben?**
+
+Papier kommt nicht mit.
+
+**Livia Santucci hat in Rom zwei Finger verloren.**
+
+Mit zehn Fingern ist sie nie rausgekommen. Einundvierzig Versuche.
+
+**Warum haben Sie sie nicht oben gelassen?**
+
+Ohne sie ist Ollo jedes Mal zerbrochen. Beim ersten Mal hab ich ihn
+selbst erschlagen.
+
+*[Pause.]*
+
+Nach dem einundvierzigsten hab ich geschlafen.
+
+**Was hat das Schlafen damit zu tun?**
+
+Wenn ich schlaf, bleibt's.
+
+**In Madrid haben Sie den Kantor nicht geschlagen.**
+
+Doch. Elfmal.
+
+*[Sie zieht den Ärmel über die rechte Hand.]*
+
+Danach sind die Gesungenen nicht wach geblieben. Kein einziges Mal.
+
 **Rin sagt, Sie haben ihr Rad nie zurückgegeben.**
 
 *[Zum ersten Mal lacht sie.]*
 
 Das steht im Keller. Ohne Hinterrad. Sie weiß, wo der Keller ist.
+
+**Sie haben sie am ersten Tag Rin genannt, sagt sie. Nicht Corinne.**
+
+Ich kenn sie länger als sie mich.
+
+**Wie alt sind Sie?**
+
+Neunundzwanzig. Und ungefähr anderthalb.
+
+**Ist es weg?**
+
+*[Sie schiebt den Ärmel zurück und schaut auf die Narben.]*
+
+Ich probier's nicht aus.
 
 **Und Ollo?**
 
@@ -979,6 +1375,19 @@ dunkel.]*
 - Sie kennt das Lied der Orriniden auswendig und hört an kleinen
   Änderungen, was ein Schwarm vorhat. Deshalb schickt die Allianz sie und
   niemand anderen.
+- Rücklauf: Von Berlin bis Paris wacht sie nach jedem Tod dort wieder
+  auf, wo sie zuletzt aufgewacht ist (Abschnitt 4.3). Die anderen erleben
+  nur den Durchgang, der bleibt; darum scheint sie zu wissen, was kommt.
+  Sie hat es schon gesehen. Erzählt hat sie es nur Rin und dem
+  Interviewer.
+- Zählen: Schon am 3. März zählt sie mit, wie oft sich das Lied
+  wiederholt. Seit Berlin ist das Zählen ihr Logbuch. Papier kommt nicht
+  mit zurück, Zahlen schon. Sie zählt Stufen, Schritte, Sekunden, Tunnel
+  und die Rückläufe selbst: 556 bis zum letzten in Paris.
+- Innere Zeit: Zwischen dem 19. August und dem 9. November hat sie
+  ungefähr anderthalb Jahre mehr gelebt als alle um sie herum. In
+  Kapitel X, nach ihrem Alter gefragt: „Neunundzwanzig. Und ungefähr
+  anderthalb.“
 - Antrieb: Sie hat am 21. März gesendet. Das sagt sie bis zum letzten
   Kapitel niemandem; der Leser erfährt es in Madrid aus dem Mund des
   Kantors und in Kapitel X aus ihrem eigenen. Daneben sucht sie Linus.
@@ -995,7 +1404,7 @@ und bekommt in der Geschichte eine Herkunft:
 | Fingerlose Handschuhe | Fahrradhandschuhe aus dem Fundsachenregal des Betriebshofs, Finger abgeschnitten |
 | Kobaltblaue Lederjacke | Hannes Motorradjacke |
 | Oranger Querstreifen | Reflexband, Kennzeichen der Kuriere: nicht schießen |
-| Goldene Aufnäher an den Oberarmen | Kurierabzeichen der Stillen Allianz, ohne Schrift |
+| Goldene Aufnäher an den Oberarmen (nur im Referenzbild; seit 2026-10-15 nennt sie kein Prompt mehr, `docs/grok-prompts-vela-neu.md`) | Kurierabzeichen der Stillen Allianz, ohne Schrift; fallen sie an der Figur weg, entfällt Hannes Satz über die Abzeichen in Kapitel II |
 | Risse in der Jeans | erste Nacht in Treptow |
 | Spezialangriff (kniet, schlägt die Handschuhe auf den Boden, Welle aus Eissplittern nach beiden Seiten, `docs/design.md`, Abschnitt 5) | Sie schlägt die Armschienen auf den Boden; der Magnetstoß sprengt das Eisen-Eis der Orriniden in Splitter |
 | Sichtbarer Magnetstoß der Kette (`docs/design.md`, Abschnitt 5) | Feld der Armschienen |
@@ -1009,6 +1418,10 @@ und bekommt in der Geschichte eine Herkunft:
 - **Körper:** Eis mit Eisen darin, in der Mitte ein leuchtender Kern. Um
   jeden Orriniden und um jedes Nest liegt eine Frostzone: Reif im August,
   Schnee im September.
+- **Kern:** Der Kern eines Sängers ist ein Stück Lied, und das Lied ist
+  eine Schleife: elf Minuten, dann von vorn. In Berlin kommt Kern-Eis in
+  einen von Veras offenen Knöcheln; seitdem läuft sie zurück, wenn sie
+  stirbt (Abschnitt 4.3). Die Orriniden wissen davon nichts.
 - **Sinne:** Sie hören und singen im Funk. Dazu kommt ein tiefes Summen,
   das Menschen in Zähnen und Brust spüren.
 - **Schwächen:** starke Magnetfelder, Salzwasser, der Tod ihres Sängers.
@@ -1029,18 +1442,48 @@ und bekommt in der Geschichte eine Herkunft:
   Istanbul Buzlar (die Eise), in Rom ghiaccioli und in Madrid polos (beides
   Eis am Stiel), in Paris glaçons (Eiswürfel). Soldaten sagen Zapfen.
 
-### 4.3 Die Lehren der Städte
+### 4.3 Der Rücklauf
 
-| Stadt | Lehre | Folge |
+Von Berlin bis Paris läuft Vera zurück, wenn sie stirbt; das Wort kommt
+von der Taste am Kassettenrekorder. Angeregt ist die Schleife von
+*Edge of Tomorrow* (Abschnitt 2). Eigen sind der Ursprung in einem Stück
+Lied statt im Blut, jeder Schlaf als neuer Anker, das Zählen und das
+Ende beim Abschiedslied statt durch eine Transfusion. Vor Kapitel VIII
+zeigt das Buch den Rücklauf nur in dem, was Zeugen gesehen haben. Erst
+beim zweiten Lesen versteht man es.
+
+| Nr. | Regel | Im Buch |
 |---|---|---|
-| Berlin | Sie folgen Sendern. Magnetfelder sprengen ihr Eisen-Eis. Fällt der Sänger, fällt der Schwarm (verstanden erst in Istanbul) | Fernsehturm aus, dann Europa still; Magnet-Armschienen |
-| Istanbul | Salzwasser löst sie auf. Jeder Schwarm hat einen Sänger | Der Bosporus hält; Nester werden über den Sänger angegriffen |
-| Rom | Die Kälte kommt von unten. Unter jeder Stadt schlafen Keime, die im Perihel schlüpfen, am 21. Dezember um 5:47 Uhr | Die Uhr läuft |
-| Madrid | Lärm weckt die Gesungenen | Töpfe, später die Glocke in Stein |
-| Paris | Es gibt ein Abschiedslied; es geht nach oben statt nach unten | Aufnahme auf der B-Seite der Kassette |
-| Stein | Das Abschiedslied muss von dort kommen, wo die Antwort herkam, in der Minute vor dem Perihel, in der der Grundton Luft holt | 5:47 Uhr, Physiksaal |
+| R1 | **Ursprung.** Der Kern eines Sängers ist ein Stück Lied, also eine Schleife (Abschnitt 4.2). Am 19. August schlägt Vera oben im Fernsehturm in den Kern des Berliner Sängers, mit den offenen Knöcheln aus der Nacht in Treptow: nicht verheilt, nur umwickelt. Kern-Eis kommt in einen der offenen Knöchel (R5). Im ersten Durchgang stirbt sie dort mit dem Sänger | II (Ute: offene Knöchel; Albers: der Aufstieg), X (Narben) |
+| R2 | **Anker.** Stirbt Vera, wacht sie im selben Augenblick dort auf, wo sie zuletzt aufgewacht ist. Beim ersten Mal ist das der 19. August um 4:30 Uhr, auf der Pritsche im Pausenraum des Betriebshofs, wo sie seit dem 13. schläft. Sie schreit beim Aufwachen, und Hanne hört es. Jeder Schlaf setzt einen neuen Anker. Darum schläft sie erst, wenn ein Tag so ist, wie sie ihn behalten will: Wer schläft, schreibt fest, was passiert ist | II (Hanne), III (im Zug kaum geschlafen), IV (drei Tage wach, dann achtzehn Stunden Schlaf), VII (bis Irun wach), VIII (Lécuyer: schläft im Keller sofort; Rin: die Nacht vor dem Turm wach), X (Rom: nach einundvierzig Versuchen geschlafen) |
+| R3 | **Erinnerung.** Nur Vera erinnert sich. Die Zeugen haben nur den letzten Durchgang erlebt, den, der geblieben ist; darum wirkt Vera auf sie, als wüsste sie, was kommt. Vom Rücklauf weiß keiner von ihnen, außer Rin. Kein Zeuge vor Kapitel VIII nennt oder erklärt ihn; es bleiben Beobachtungen, die man beim zweiten Lesen versteht | II bis VII und VIII (Lécuyer): Beobachtungen; VIII (Rin), X (Vera) |
+| R4 | **Zählen.** Papier kommt nicht mit zurück, Zahlen schon. Vera zählt alles: Stufen, Schritte, Sekunden, Tunnel, Rückläufe | I (wie oft sich das Lied am 3. März wiederholt), II und VIII (Stufen), V (Abzweigungen), VII (sieben Tunnel), X („Ich zähl alles.“) |
+| R5 | **Kerne.** Jeder Sänger, den sie erschlägt, lässt Kern-Eis in einen Knöchel der rechten Hand: Berlin, Istanbul, Rom, Madrid. Vier Knöchel, später vier helle Narben. Im Dunkeln leuchten die Knöchel schwach. Den Sänger von Paris erschlägt sie auch, aber sein Kern geht mit den Keimen nach oben | II (Albers sieht das Leuchten im Treppenhaus), VIII (vier Lichter), X (Narben) |
+| R6 | **Träume.** Wenn sie schläft, träumt sie seit Berlin von einer Halle mit Sprossenwand und Basketballkörben, in der etwas Weißes liegt, von Wand zu Wand. Erst in Paris erkennt sie die Turnhalle ihrer Schule; darum weiß sie dort, dass der Grundton nach Stein fliegt | VIII (Rin), IX (die Turnhalle) |
+| R7 | **Ende.** In Paris, beim Abschiedslied, steigen aus den vier Knöcheln vier Lichter mit den Keimen auf. Der Rücklauf ist weg. Vera sagt: „Jetzt muss ich aufpassen.“ Stein hat nur einen Versuch | VIII (Rin), IX („Ich hab das noch nie gemacht.“), X |
+| R8 | **Zahlen.** 556 Rückläufe: Berlin 9, Istanbul 63, Rom 141, Madrid 27, Zug von Madrid nach Paris 4, Paris 312, Stein keiner. Zeit, die nur sie gelebt hat: ungefähr anderthalb Jahre | VIII (Rin: dreihundertmal), X („Fünfhundertsechsundfünfzig.“, „Neunundzwanzig. Und ungefähr anderthalb.“) |
+| R9 | **Sprung.** Ab dem 19. August hört Linus im Lied manchmal einen Sprung, wie bei einer Platte, jedes Mal, wenn Vera zurückläuft. Er weiß nicht, was das ist; heute ahnt er es | X (Linus) |
+| R10 | **Orriniden.** Der Grundton weiß nichts vom Rücklauf. Die Orriniden haben keinen Plan, in dem der Rücklauf vorkommt | gilt im ganzen Buch |
+| R11 | **Schweigen.** Vera erzählt es niemandem außer Rin, in jedem Pariser Durchgang am Abend vor dem Turm, und am Ende dem Interviewer | VIII, X |
 
-### 4.4 Die Gesungenen und der Kantor
+Bewusst offen bleibt, ob der Rücklauf ganz weg ist. In Kapitel X schaut
+Vera auf ihre Knöchel und sagt: „Ich probier's nicht aus.“
+
+### 4.4 Die Lehren der Städte
+
+| Stadt | Lehre | Folge | Rückläufe |
+|---|---|---|---|
+| Berlin | Sie folgen Sendern. Magnetfelder sprengen ihr Eisen-Eis. Fällt der Sänger, fällt der Schwarm (verstanden erst in Istanbul) | Fernsehturm aus, dann Europa still; Magnet-Armschienen | 9 |
+| Istanbul | Salzwasser löst sie auf. Jeder Schwarm hat einen Sänger | Der Bosporus hält; Nester werden über den Sänger angegriffen | 63 |
+| Rom | Die Kälte kommt von unten. Unter jeder Stadt schlafen Keime, die im Perihel schlüpfen, am 21. Dezember um 5:47 Uhr | Die Uhr läuft | 141 |
+| Madrid | Lärm weckt die Gesungenen | Töpfe, später die Glocke in Stein | 27 |
+| Paris | Es gibt ein Abschiedslied; es geht nach oben statt nach unten | Aufnahme auf der B-Seite der Kassette | 312 |
+| Stein | Das Abschiedslied muss von dort kommen, wo die Antwort herkam, in der Minute vor dem Perihel, in der der Grundton Luft holt | 5:47 Uhr, Physiksaal | 0 |
+
+Dazu kommen vier Rückläufe im Zug von Madrid nach Paris; zusammen sind es
+556 (Abschnitt 4.3, R8).
+
+### 4.5 Die Gesungenen und der Kantor
 
 - **Gesungene:** Menschen, die das Summen zu lange gehört haben. Sie
   folgen dem Lied, tragen Eis, verteidigen die Nester und tragen
@@ -1056,7 +1499,7 @@ und bekommt in der Geschichte eine Herkunft:
   kein Bösewicht und kämpft nie selbst; er spricht, und die Gesungenen
   kämpfen für ihn.
 
-### 4.5 Weitere Figuren
+### 4.6 Weitere Figuren
 
 | Figur | Ort | Rolle |
 |---|---|---|
@@ -1066,15 +1509,16 @@ und bekommt in der Geschichte eine Herkunft:
 | Frau Haberkorn | Stein | Linus' Mutter, fragt nach ihm |
 | Ute Hennig | Berlin-Treptow | sieht die erste Nacht und Veras ersten Wurf |
 | Hanne Kowalski | Berlin-Lichtenberg | baut die Armschienen, schenkt die Jacke |
-| Jens Albers | Berlin-Mitte | schaltet den Fernsehturm ab, führt Vera hinauf |
+| Jens Albers | Berlin-Mitte | schaltet den Fernsehturm ab, steigt mit Vera bis unter die Kugel |
 | Gerlinde Pospischil | Wien | Fahrdienstleiterin, schickt den stillen Zug nach Istanbul |
 | Nevin Tekin | Istanbul | Fährkapitänin, bringt Vera nachts nach Karaköy |
 | Korhan „Kord“ | Istanbul | Bergungstaucher mit Anker an der Kette; begleitet Vera ab Istanbul |
-| Livia Santucci | Rom | Archäologin, führt Vera durch die Cloaca Maxima ins Hypogäum |
+| Livia Santucci | Rom | Archäologin, geht hinter Vera durch die Cloaca Maxima ins Hypogäum, verliert in der Nacht zwei Finger |
 | Ollo | Rom | Stummer Orrinide, begleitet Vera ab Rom, lehrt sie in Paris das Abschiedslied |
 | Carmen Lozano Ruiz | Madrid | Lehrerin, drei Wochen eine Gesungene, hört den Kantor sprechen |
-| Xabier Etxeberria | Madrid bis Irun | Lokführer des Zugs über die Pyrenäen |
-| Corinne „Rin“ Delattre | Paris | Fahrradkurierin, bringt Vera zum Eiffelturm, kommt mit nach Stein |
+| Xabier Etxeberria | Madrid bis Irun | Lokführer des ersten Zugs von Madrid nach Paris |
+| Armand Lécuyer | Paris | General der Allianz, befehligt im November die Allianztruppen in Paris, Gefechtsstand im Hôtel des Invalides; lässt Vera in einen Keller sperren und macht Unternehmen Seine zur Ablenkung, nachdem sie ihm gesagt hat, was in seinem nicht abgeschickten Brief steht |
+| Corinne „Rin“ Delattre | Paris | Fahrradkurierin, bringt Vera zum Eiffelturm, kommt mit nach Stein; die Einzige, der Vera im Krieg vom Rücklauf erzählt |
 
 Kord, Ollo und Rin sind die drei anderen Helden aus `docs/design.md`,
 Abschnitt 5, und passen in die Rollen, die dort stehen: Kord wortkarg und
@@ -1082,7 +1526,7 @@ massig mit dem Anker, Ollo ein lebender Brocken Kometeneis, neugierig und
 stumm, Rin vorlaut und schnell. Rins Teleskopstab wäre der ausziehbare
 Stab, mit dem die Pariser Kuriere Briefe in obere Stockwerke reichten.
 
-### 4.6 Zeitleiste
+### 4.7 Zeitleiste
 
 | Datum | Ereignis | Kapitel |
 |---|---|---|
@@ -1092,38 +1536,50 @@ Stab, mit dem die Pariser Kuriere Briefe in obere Stockwerke reichten.
 | 24. März | Das Lied wird schneller | I |
 | Juni | Abitur; Linus hört weiter allein zu | X |
 | 12. August, gegen 23:30 Uhr | Nacht der Sternschnuppen; große Brocken fallen auf Berlin, Istanbul, Rom, Madrid und Paris; Linus geht zu den Orriniden | II |
-| 13. August | Hanne baut die Armschienen | II |
+| 13. August | Hanne baut die Armschienen; bis zum 19. schläft Vera auf der Pritsche im Pausenraum des Betriebshofs | II |
 | 14. August, 17:20 Uhr | Fernsehturm abgeschaltet | II |
-| 19. August | Der Sänger von Berlin fällt | II |
+| 19. August, 4:30 Uhr | Erster Rücklauf: Vera wacht schreiend auf der Pritsche auf | II, X |
+| 19. August, 16:30 Uhr | Die Kugel wird dunkel; der Sänger von Berlin fällt | II |
 | 20. August, 12 Uhr | Europa schaltet ab; die Stille Allianz entsteht | III |
 | 27. August | Stiller Zug von Wien nach Istanbul | III |
 | 2. bis 5. September | Istanbul; der Sänger auf dem Galataturm fällt | IV |
 | 14. bis 20. September | Rom; Keime entdeckt, Ollo gefunden, der Sänger in der Arena fällt | V |
 | 3. Oktober, 22 Uhr | cacerolada in Madrid; der Kantor zeigt sich; der Sänger auf dem Torrespaña fällt | VI |
-| Ende Oktober | Zug über die Pyrenäen | VII |
-| 2. November | Ankunft in Paris | VIII |
-| 9. November | Der Sänger von Paris fällt; das Abschiedslied; der Grundton löst sich vom Kometen | VIII |
+| Ende Oktober | Zug von Madrid über Irun nach Paris | VII |
+| Anfang November | Ankunft in Paris | VIII |
+| 7. November | Vera warnt Lécuyer im Gefechtsstand im Hôtel des Invalides: Gehen seine Leute über die Brücken, sind sie nach elf Minuten tot. Er lässt sie in einen Keller sperren | VIII |
+| 8. November | Morgens sagt Vera Lécuyer durch die Kellertür, was in dem Brief an seine Frau steht, den er nicht abgeschickt hat; er ändert den Plan. Abends erzählt sie Rin vom Rücklauf | VIII |
+| 9. November, 6 Uhr | Unternehmen Seine: Zwanzigtausend Mann greifen am Pont d'Iéna an, jetzt als Ablenkung; Vera geht mit Rin, Kord und Ollo durch die Métro zum Turm | VIII |
+| 9. November | Der Sänger von Paris fällt; das Abschiedslied; vier Lichter steigen aus Veras Knöcheln auf, der Rücklauf endet; der Grundton löst sich vom Kometen | VIII |
 | 11. November, kurz nach 19 Uhr | Der Grundton landet in der Turnhalle des Gymnasiums Stein | IX |
 | 20. Dezember, 23 Uhr | Vera kommt über die gefrorene Rednitz | IX |
 | 21. Dezember, 5:40 Uhr | Plan Hammer; Kandlbinder schießt Grün | IX |
 | 21. Dezember, 5:46 und 5:47 Uhr | Der Grundton verstummt; Vera sendet das Abschiedslied; Perihel | IX |
 | 21. Dezember, gegen 8 Uhr | Sonnenaufgang, Tauwetter | IX |
-| zehn Jahre später, 21. Dezember, 5:47 Uhr | Das Gespräch mit Vera | X |
+| zehn Jahre später, 21. Dezember, ab 5:30 Uhr | Das Gespräch mit Vera | X |
 
-### 4.7 Spannungsbogen
+### 4.8 Spannungsbogen
 
 - **Die große Frage:** Wer hat geantwortet, und kann diese Person
   zurücknehmen, was sie gerufen hat?
 - **Warum Vera nicht aussteigen kann:** Sie hat gedrückt. Sie kennt das
   Lied wie niemand sonst. Ihr Freund steht auf der anderen Seite. Ohne
-  Funk gibt es niemanden, der ihr die Aufgabe abnehmen könnte.
+  Funk gibt es niemanden, der ihr die Aufgabe abnehmen könnte. Und nur
+  sie erinnert sich an die Durchgänge, die nicht geblieben sind.
 - **Die Uhr:** das Perihel am 21. Dezember um 5:47 Uhr, bekannt ab Rom;
   in Stein zusätzlich Plan Hammer um 5:40 Uhr. Erinnert wird sie durch
-  den Kreidekalender im Zug und die Briefe der Mutter.
+  den Kreidekalender im Zug und die Briefe der Mutter. Seit Paris läuft
+  sie ohne Rücklauf: In Stein hat Vera einen Versuch.
 - **Grauzone:** Die Orriniden nisten nur. Die Gesungenen sind Opfer, und
   manche vermissen es. Die Schüler haben im März jeden gewarnt, und
   keiner hat zugehört. Vera hat gedrückt, und der Komet wäre trotzdem
-  gekommen. Kandlbinder rettet Stein mit einer Lüge.
+  gekommen. Kandlbinder rettet Stein mit einer Lüge. Lécuyer schickt
+  zwanzigtausend Mann als Ablenkung an den Pont d'Iéna, damit eine
+  Kurierin eine Treppe hinaufkommt. Die meisten kommen zurück, nicht
+  alle. Er würde es wieder tun. In Rom gibt es keinen Durchgang, in dem
+  Ollo heil bleibt und Livia alle Finger behält. Nach einundvierzig
+  Versuchen legt Vera sich schlafen, und die zwei Finger bleiben
+  verloren.
 
 Versprechen und wo sie eingelöst werden:
 
@@ -1134,20 +1590,34 @@ Versprechen und wo sie eingelöst werden:
 | Die Kassette in Veras Jackentasche | I | VIII (B-Seite), IX (gesendet) |
 | Sieben Töne nach unten | I | VIII: Das Abschiedslied geht nach oben |
 | Das Logbuch | I | X: Veras Einträge |
+| Vera zählt (Wiederholungen des Lieds, Stufen, Abzweigungen) | I, II, V, VIII | X: „Ich zähl alles.“; Abschnitt 4.3, R4 |
 | Linus geht zu den Lichtern | II | V, VI, IX, X |
 | Die Hand hinhalten (Linus in Treptow) | II | V: Vera bei Ollo, „nur andersherum“ |
-| Veras offene Knöchel | II | X: vier helle Narben |
+| Veras offene Knöchel | II | X: vier helle Narben; Abschnitt 4.3, R1: Kern-Eis in den Knöcheln |
+| Panzertape aus dem richtigen Spind, den Hanne ihr nie gezeigt hat | II | X („Fünfhundertsechsundfünfzig.“); Abschnitt 4.3, R2 und R3: Sie kennt den Spind aus früheren Durchgängen, in denen Hanne es ihr gesagt hat („Von Ihnen.“) |
+| Ein leuchtender Knöchel im Treppenhaus | II | VIII: vier Lichter steigen mit den Keimen auf |
 | „Die sind aus Eisen“ | II | II: Magnetschienenbremse |
 | Die Kugel bleibt grün; was oben sitzt, geht nicht mit | II | IV: der Sänger |
 | Die Antenne summt ohne Strom | Brief 2 | IX: Der Grundton landet an der Schule |
 | Salz | IV | IX: Streusalzring |
-| Töpfe | VI | IX: Glocke im Schlossturm |
+| Vera weiß es schon (die Strömung in der dritten Nacht, das Labyrinth, die Uhrzeit der cacerolada) | IV, V, VI | VIII (Rin), X |
+| Korhan, richtig ausgesprochen, bevor ihn jemand vorstellt | IV | VIII, X: Sie kennt ihn aus früheren Durchgängen |
+| Drei Tage ohne Schlaf, dann achtzehn Stunden Schlaf | IV | X: In Rom schläft sie erst nach einundvierzig Versuchen; Abschnitt 4.3, R2 |
 | Ollo hört keinen Funk | V | IX: Vera muss selbst singen; X: „Ich kann nicht singen“ |
+| „Ohne Sie geht es nicht.“ (Vera zu Livia); Livias zwei Finger | V | X: Ohne Livia zerbricht Ollo jedes Mal; geht Livia mit hinunter, kommt sie in keinem Durchgang mit zehn Fingern heraus |
+| „Sie hat ihn nicht geschlagen.“ (Carmen über den Kantor) | VI | IX: diesmal einmal; X: In Madrid hat Vera ihn elfmal geschlagen, und jedes Mal blieben die Gesungenen danach nicht wach |
+| Töpfe | VI | IX: Glocke im Schlossturm |
+| Sieben Tunnel, nicht alle | VII | X: „Ich zähl alles.“; Abschnitt 4.3, R8: 4 Rückläufe im Zug |
+| Träume von der Halle | VIII | VIII: „Nach Stein.“; IX: Der Grundton füllt die Turnhalle aus, von der Sprossenwand bis zu den Toren |
+| „Beim ersten Mal waren alle tot.“ | VIII (Lécuyer) | VIII (Rin: dreihundertmal), X: „Fünfhundertsechsundfünfzig.“; Abschnitt 4.3 |
 | Rins Rad | VIII | X: im Keller der Schule |
 | Plan Hammer | IX | IX: grüne Leuchtkugel |
+| „Ich hab das noch nie gemacht.“ | IX | VIII: „Jetzt muss ich aufpassen.“; der Rücklauf ist seit Paris weg, Stein hat einen Versuch |
 | Linus' Ohrstöpsel | X | X: das Päckchen von Vera |
+| Der Sprung im Lied | X (Linus) | Abschnitt 4.3, R9: jedes Mal, wenn Vera zurückläuft |
+| „Ich probier's nicht aus.“ | X | bleibt bewusst offen |
 
-### 4.8 Wirkliches und Erfundenes
+### 4.9 Wirkliches und Erfundenes
 
 - **Wirklich:** Gymnasium Stein; Stein an der Rednitz im Landkreis Fürth,
   die Bleistiftherstellung und das Faberschloss mit dem Glockenturm
@@ -1158,12 +1628,17 @@ Versprechen und wo sie eingelöst werden:
   Çamlıca-Hügel; Cloaca Maxima und Hypogäum des Kolosseums; Torrespaña,
   Retiro und cacerolada in Madrid; Spurwechsel in Irun; Eiffelturm, 1909
   als Funkantenne vor dem Abriss bewahrt, 674 Stufen bis zur zweiten
-  Etage; Metrolinie 6 über den Viadukt von Bir-Hakeim; Kugelschreiber
-  versagen in großer Kälte, Bleistifte nicht.
-- **Erfunden:** alle Personen, der Komet Orrin und die Orriniden, die
-  Funkstation, das P-Seminar und alle Räume und Vorgänge am Gymnasium
-  Stein, die Stille Allianz und ihre Kommission, der Horchposten auf dem
-  Hesselberg, Plan Hammer.
+  Etage; Metrolinie 6 über den Viadukt von Bir-Hakeim; Hôtel des
+  Invalides; Pont d'Iéna zwischen Trocadéro und Eiffelturm;
+  Kugelschreiber versagen in großer Kälte, Bleistifte nicht.
+- **Erfunden:** alle Personen, auch General Lécuyer, der Komet Orrin und
+  die Orriniden, der Rücklauf, die Funkstation, das P-Seminar und alle
+  Räume und Vorgänge am Gymnasium Stein, die Stille Allianz und ihre
+  Kommission, ihr Gefechtsstand im Hôtel des Invalides, der Horchposten
+  auf dem Hesselberg, Plan Hammer, Unternehmen Seine.
+- **Angelehnt:** die Form an *World War Z*, die Schleife an
+  *Edge of Tomorrow* (Abschnitt 2). Aus dem Film stammen weder Namen
+  noch Sätze.
 
 ## 5. Umsetzung im Spiel (Vorschlag)
 
@@ -1176,15 +1651,17 @@ Scrollen an Position 5:
 | 2 | Istanbul | Fähre nach Karaköy → Galatabrücke unten zwischen den Restaurants → Galatabrücke oben → Galataturm | Sänger von Istanbul | Salzwasser, Kord |
 | 3 | Rom | Forum im Schnee → Cloaca Maxima → Hypogäum mit den Keimen → Arena | Sänger von Rom | Keime, Ollo, erste Gesungene |
 | 4 | Madrid | Gran Vía in der Hitze → Puerta del Sol → Retiro mit gefrorenem Teich → Fuß des Torrespaña | Sänger von Madrid | Töpfe; der Kantor zeigt sich und kämpft nicht |
-| 5 | Zug über die Pyrenäen (Sonderstage) | Wagendächer; vor jedem Tunnel dreimal Pfiff, dann ducken | Träger auf dem Kühlwagen | Kreidekalender |
-| 6 | Paris | Gare d'Austerlitz → Métro → Viadukt von Bir-Hakeim → Champ de Mars → Treppen des Eiffelturms | Sänger von Paris | Abschiedslied, Rin |
+| 5 | Zug nach Norden (Sonderstage) | Wagendächer; vor jedem Tunnel dreimal Pfiff, dann ducken | Träger auf dem Kühlwagen | Kreidekalender |
+| 6 | Paris | Gare d'Austerlitz → Métro → Viadukt von Bir-Hakeim → Champ de Mars → Treppen des Eiffelturms | Sänger von Paris | Abschiedslied, Rin; im Hintergrund Unternehmen Seine, der Angriff am Pont d'Iéna als Ablenkung |
 | 7 | Stein | Rednitz im Eis → Hof des Faberschlosses, Glocke → Weg zur Schule | Träger mit Eis für den Grundton | Glocke weckt Gesungene |
-| 8 | Gymnasium Stein | Pausenhof mit Salzring → Aula → Gang zur Turnhalle → Turnhalle | Zwischenboss der Kantor mit seinen Gesungenen, Endboss der Grundton | 5:47 Uhr |
+| 8 | Gymnasium Stein | Pausenhof mit Salzring → Aula → Gang zur Turnhalle → Turnhalle | Zwischenboss der Kantor mit seinen Gesungenen, Endboss der Grundton | 5:47 Uhr, ein Versuch |
 
 - **Erzählen ohne lange Zwischensequenzen:** Vor jeder Stage eine
   Texttafel mit einem Satz aus einer Aussage (Stage 1 etwa: „Da haben
   die Leute gejubelt. Ehrlich. Gejubelt.“), nach jedem Boss ein
-  Bleistiftbrief der Mutter. So kommt die Form des Buchs ins Spiel.
+  Bleistiftbrief der Mutter. So kommt die Form des Buchs ins Spiel. Den
+  Rücklauf deuten die Tafeln höchstens an, wie die Aussagen vor Kapitel
+  VIII; ob eine Tafel ihn ausspricht, ist offen (Abschnitt 6, Punkt 7).
 - **Gegner:** Die Gegnerrollen aus `docs/design-gegner-stages.md` bleiben.
   Aus dem Schweif-Syndikat werden die Gesungenen; Overalls und
   Atemmasken passen schon. Dazu kommen Orriniden als neue Typen
@@ -1194,9 +1671,25 @@ Scrollen an Position 5:
 - **Helden:** In der Geschichte stößt Kord in Istanbul dazu, Ollo in Rom,
   Rin in Paris. Im Spiel sind alle vier wie beim Automaten von Anfang an
   wählbar; die Texttafeln erzählen Veras Weg.
+- **Continue als Rücklauf:** Der Continue-Ablauf aus `docs/design.md`,
+  Abschnitt 7 (Countdown „Weiter?“, Punkte bleiben, Zähler sichtbar),
+  bekommt ein Bild aus der Geschichte: Die Kassette spult zurück. Am
+  Ablauf selbst ändert das nichts. Vorschlag: Der Zähler heißt
+  „Rückläufe“ und steht auch auf dem Abschlussbild, neben Veras 556.
+  Continues sind nach E9 angenommen, ihre Zahl ist offen
+  (`docs/design.md`, Abschnitt 9, Offen 3). Der Vorschlag setzt keine
+  Zahlenwerte für die Spielmechanik; die stehen nur in `docs/mechanik.md`
+  und `spiel/src/kern/werte.ts`.
+- **Stage 8 ohne Rücklauf:** In der Geschichte hat Vera in Stein einen
+  Versuch. Möglich sind zwei Wege: ein eigener Continue-Bildschirm, auf
+  dem die Kassette nicht zurückspult und „Kein Rücklauf“ steht, oder gar
+  kein Continue in Stage 8. Streng nach der Geschichte gälte das schon
+  für Stage 7, die auch nach dem Fall von Paris spielt. Entschieden ist
+  das nicht (Abschnitt 6, Punkt 6).
 - **Ton:** kernig und comichaft wie bisher. Wer im Buch spricht, darf
   ernst sein. Orriniden zerspringen, Gesungene gehen k. o. und wachen am
-  Ende auf; von den Hauptfiguren stirbt niemand.
+  Ende auf; von den Hauptfiguren stirbt niemand, jedenfalls nicht im
+  Durchgang, der bleibt.
 
 ## 6. Offene Entscheidungen
 
@@ -1205,9 +1698,17 @@ Scrollen an Position 5:
    `docs/design-gegner-stages.md`, Abschnitt 6, und die Namen von Gegnern
    und Bossen.
 2. Heißt die Heldin endgültig Vera statt Vela (E7)?
-3. Kord, Ollo und Rin in den Rollen aus Abschnitt 4.5?
+3. Kord, Ollo und Rin in den Rollen aus Abschnitt 4.6?
 4. Die letzte Stage spielt an einer echten Schule. Vor einer
    Veröffentlichung sollte die Schule davon wissen; bis dahin bleibt das
    Innere frei erfunden, ohne echte Namen und ohne echte Räume.
 5. Bleibt die Chronik Grundlage für Texttafeln, oder soll daraus ein
    ausgeschriebener Text werden, etwa als Begleitheft?
+6. Continues ohne Rücklauf: Nach Paris hat Vera keinen Rücklauf mehr.
+   Bekommt Stage 8 einen eigenen Continue-Bildschirm mit „Kein
+   Rücklauf“, oder gibt es dort gar kein Continue (Abschnitt 5)? Gilt
+   das schon ab Stage 7? Die Zahl der Continues bleibt davon unabhängig
+   offen (`docs/design.md`, Abschnitt 9, Offen 3).
+7. Wie deutlich zeigt das Spiel den Rücklauf? Nur Andeutungen in den
+   Texttafeln, wie im Buch vor Kapitel VIII, oder ausgesprochen, etwa
+   auf einer Tafel mit Rins Aussage vor Stage 7?
