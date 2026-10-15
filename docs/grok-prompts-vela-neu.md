@@ -198,3 +198,8 @@ ENDE: Das Video endet noch mitten im Gehen (kein Anhalten, kein Abbremsen, kein 
 - Befehl (Soll): `umsetzen gehen <video> --ab 49 --bis 144 --zyklus 24 --ereignis keine --ankerx mittel --faktor $M`, ohne `--schritt lauf`.
 - In clip.txt prüfen: `zyklus_schluss_in_schritten` höchstens 60 (`SCHLUSS_GUT`), `schritt_px` und `zyklus_ticks` (= `schritt_px` / 1,75, 12 bis 60; alter
   Clip 68 und 39). Ein `schritt_px` deutlich unter etwa 56 (Schätzung) lässt das Gehen im Spiel fast im Sprinttakt laufen.
+
+## Weitere Prompts
+
+Kette 1 bis 4, Sprung, Sprungtritt, Treffer von vorn, Umfallen mit Liegen und Aufstehen, Griff und Wurf (mit Startbildern für Platz im Bild):
+`docs/grok-prompts-vela-neu-angriffe.md`.
