@@ -69,3 +69,24 @@ Mehrere Versuche (zwei bis drei) und das beste nehmen. Prüfen:
 - Die Bodenlinie liegt auf der untersten Figurzeile des ersten behaltenen Bildes: der Abschnitt soll mit einer Pose beginnen, in der der Standfuß am Boden ist.
 - Weißer Grund: Modus `ecke`; bei Löchern in hellen Stellen `--loch 8` oder `--tol 30`, bei grauem Hauch `--tol 55` oder das Video neu erzeugen; Ergebnis mit
   `hd_vorschau.gd` auf Grau und Weiß ansehen.
+
+### Ergebnis der ersten Lieferung „laufen“ (2026-10-15, zwei Videos à 6 s, 944 × 944, 24 B/s)
+
+Gemessen mit einem Skript, das je Bild die Figur gegen Weiß vermisst (Ober-, Unterkante, Breite); die Werte unten sind daraus.
+
+- Beide Videos: Gesicht, Zopf, Jacke, Aufnäher, Armschienen und Riss am Knie bleiben gleich, Profil nach rechts, rechte Körperseite zur Kamera, Hintergrund
+  durchgehend reinweiß ohne Schatten. Der Umsetzer im Modus `ecke` stellt sie ohne Nacharbeit frei (Standardwerte, kein weißer Saum).
+- **Bild 1 ist in beiden Videos die frontale A-Pose der Referenz** (Grok nimmt die Referenz als erstes Bild, obwohl der Prompt den Start im Profil verlangt);
+  die Drehung ins Profil dauert bis etwa Bild 15, danach läuft sie an. Brauchbar ist erst der eingeschwungene Teil.
+- **Tempo:** Video 1 läuft ein lockeres Joggen (Schrittabstand 12 bis 13 Bilder, ein Doppelschritt etwa 1 s). **Video 2 läuft ab Bild 61 gleichmäßig im
+  Sprinttempo** (Schrittabstand 7 bis 8 Bilder, Doppelschritt 15,6 Bilder = 0,65 s, 85 Bilder = gut 5 Doppelschritte). Gewählt: Video 2.
+- **Größe:** Die Figur füllt 87 bis 98 % der Bildhöhe (A-Pose: 926 von 944 Zeilen), nicht die verlangten 60 %. In 23 der 85 gewählten Bilder berühren
+  Haare oder Kopf die oberste Zeile (bis zu 50 Pixel breit), die Haarkuppe ist dort möglicherweise um wenige Zeilen angeschnitten; im umgesetzten Clip fällt das nicht auf. Die Größenangabe im Prompt wirkt also nicht; der Maßstab muss gemessen werden.
+- **Maßstab (`--faktor`) für alle Clips der neuen Vela: 0,1533** = 142 Spielpixel / 926 Zeilen der aufrechten A-Pose (Bild 1). Laufbild damit etwa 135 bis 140 Pixel
+  hoch, wie der alte Sprint-Clip (rund 133 bis 136).
+- **Umsetzung:** `--ab 61 --bis 145 --zyklus 16 --ereignis keine --ankerx mittel --schritt lauf --faktor 0.1533 --schluessel ecke --hd --hoehe 360`; die
+  Zyklussuche ohne `--zyklus` wählt 8 Bilder (halber Doppelschritt, weil die Aufnäherseite sich unterscheidet), darum 16 fest vorgeben. Ergebnis: Zyklus ab
+  Bild 9 der behaltenen 85, Schlussfehler 15 % eines Bildschritts, `schritt_px` 84, `zyklus_ticks` 24 (alter Sprint: 93 und 27). Befehl in
+  `godot/werkzeuge/vela_neu_clips.sh`.
+- Für die nächsten Prompts: Startpose-Satz so lassen (Grok kann es nicht), aber im Umsetzen immer die ersten 1,5 bis 2,5 s überspringen; Tempo-Angabe „0,65
+  Sekunden je Doppelschritt“ hat in einem von zwei Videos gewirkt, mehrere Versuche einplanen.
