@@ -21,6 +21,9 @@
 ##   --schatten <0..1> Stärke der Farbstufen, 0 = ganz flach (1)
 ##   --saettigung <f>  Farbsättigung (1 = unverändert), --kontrast <f> (1), --rim <0..1> heller Randstrahl (0)
 ##   --textur <px>     Texturen auf diese Kantenlänge verkleinern und Mip-Stufen erzeugen (2048); Tripo liefert bis 8192
+##   --faust <grad>    Finger beider Hände um diesen Winkel einrollen (Tripo-Animationen lassen die Finger offen);
+##                     --faustachse x|y|z und --faustzeichen 1|-1 wählen Achse und Richtung des Einrollens
+##   --blick-auf <knochen>  Kamera auf diesen Knochen richten (mit großem --hoehe für Nahaufnahmen, z. B. mixamorig_RightHand)
 ##   --pose <name>     Mixamo-Skelett in eine Probepose bringen (kampf, schlag, tritt), um die Verformung zu prüfen;
 ##                     Richtungen in Weltachsen (Figur blickt nach +Z, ihre linke Seite ist +X), Knochen zeigen auf ihr Ziel
 ##
@@ -142,6 +145,10 @@ var _schatten: float = 1.0
 var _saettigung: float = 1.0
 var _kontrast: float = 1.0
 var _rim: float = 0.0
+var _faust: float = 0.0
+var _faust_achse: String = "z"
+var _faust_zeichen: float = 1.0
+var _blick_knochen: String = ""
 var _textur_max: int = 2048
 var _texturen: Dictionary = {}
 var _vp: SubViewport = null
@@ -190,6 +197,10 @@ func _lauf() -> void:
 	_kontrast = float(arg.get("kontrast", "1"))
 	_rim = float(arg.get("rim", "0"))
 	_textur_max = int(arg.get("textur", "2048"))
+	_faust = float(arg.get("faust", "0"))
+	_faust_achse = String(arg.get("faustachse", "z"))
+	_faust_zeichen = float(arg.get("faustzeichen", "1"))
+	_blick_knochen = String(arg.get("blick-auf", ""))
 	if arg.has("erzeuge-test"):
 		_testfigur_schreiben(_pfad(String(arg["erzeuge-test"])))
 		quit(0)
@@ -215,6 +226,10 @@ func _lauf() -> void:
 		await process_frame
 	if arg.has("pose"):
 		_pose_anwenden(String(arg["pose"]))
+		for i: int in 3:
+			await process_frame
+	if _faust != 0.0 and not arg.has("anim") and _skelett() != null:
+		_faeuste(_skelett())
 		for i: int in 3:
 			await process_frame
 	if arg.has("ansichten"):
@@ -430,6 +445,10 @@ func _kamera_setzen(ansicht: String) -> void:
 			richtung = Vector3(-float(_blick), 0, 0)
 	var hoehe_kamera: float = _box.position.y + _kamera.size * (FUSS_ANTEIL - 0.5)
 	var ziel: Vector3 = Vector3(mitte.x, hoehe_kamera, mitte.z)
+	if _blick_knochen != "":
+		var sk: Skeleton3D = _skelett()
+		if sk != null and sk.find_bone(_blick_knochen) >= 0:
+			ziel = sk.global_transform * sk.get_bone_global_pose(sk.find_bone(_blick_knochen)).origin
 	_kamera.look_at_from_position(ziel + richtung * abstand, ziel, Vector3.UP)
 
 
@@ -459,6 +478,9 @@ func _animation(name: String, fps: int, bilder: int) -> void:
 	_kamera_setzen("seite")
 	for i: int in n:
 		ap.seek(float(i) / float(fps), true)
+		if _faust != 0.0 and _skelett() != null:
+			ap.advance(0.0)
+			_faeuste(_skelett())
 		await _bild("f%04d.png" % (i + 1))
 	print("Animation %s: %d Bilder (%.2f s) in %s" % [name, n, laenge, _aus])
 
@@ -496,6 +518,27 @@ func _richte(sk: Skeleton3D, name: String, ziel: Vector3) -> void:
 	var gp: Transform3D = sk.get_bone_global_pose(eltern) if eltern >= 0 else Transform3D.IDENTITY
 	var lokal: Transform3D = gp.affine_inverse() * neu
 	sk.set_bone_pose_rotation(b, lokal.basis.orthonormalized().get_rotation_quaternion())
+
+
+## Finger einrollen: jede Fingerrolle (1 bis 3) um `_faust` Grad um die gewählte lokale Achse, Daumen halb so stark.
+func _faeuste(sk: Skeleton3D) -> void:
+	if absf(_faust) < 0.01:
+		return
+	var achse: Vector3 = Vector3.BACK
+	match _faust_achse:
+		"x":
+			achse = Vector3.RIGHT
+		"y":
+			achse = Vector3.UP
+	for seite: String in ["Left", "Right"]:
+		for finger: String in ["Index", "Middle", "Ring", "Pinky", "Thumb"]:
+			for glied: int in [1, 2, 3]:
+				var b: int = sk.find_bone("mixamorig_%sHand%s%d" % [seite, finger, glied])
+				if b < 0:
+					continue
+				var grad: float = _faust * _faust_zeichen * (0.5 if finger == "Thumb" else 1.0)
+				var q: Quaternion = Quaternion(achse, deg_to_rad(grad))
+				sk.set_bone_pose_rotation(b, sk.get_bone_pose_rotation(b) * q)
 
 
 func _pose_anwenden(name: String) -> void:
