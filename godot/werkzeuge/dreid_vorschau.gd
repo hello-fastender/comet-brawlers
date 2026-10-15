@@ -561,7 +561,9 @@ func _faeuste(sk: Skeleton3D) -> void:
 					continue
 				var grad: float = _faust * _faust_zeichen * (0.5 if finger == "Thumb" else 1.0)
 				var q: Quaternion = Quaternion(achse, deg_to_rad(grad))
-				sk.set_bone_pose_rotation(b, sk.get_bone_pose_rotation(b) * q)
+				# von der Ruhepose aus, nicht von der aktuellen: Animationen ohne Fingerspuren lassen die Finger stehen,
+				# sonst summierte sich das Einrollen mit jedem Bild auf
+				sk.set_bone_pose_rotation(b, sk.get_bone_rest(b).basis.get_rotation_quaternion() * q)
 
 
 func _pose_anwenden(name: String) -> void:
