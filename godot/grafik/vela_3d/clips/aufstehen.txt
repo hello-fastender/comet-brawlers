@@ -1,0 +1,14 @@
+# Clip aufstehen der 3D-Vela, erzeugt von werkzeuge/dreid_bauen.gd (nicht von Hand ändern). Zeiteinheit 1/240 s, Bilder 1-basiert.
+version=1
+name=aufstehen
+quelle=aufstehen
+fps=240
+bilder=371
+groesse=1,1
+anker=0,0
+weich=0
+zyklus_bilder=371
+zyklus_start=1
+ruhe=371
+rueckkehr=vorwaerts
+ereignis_ruhe=371

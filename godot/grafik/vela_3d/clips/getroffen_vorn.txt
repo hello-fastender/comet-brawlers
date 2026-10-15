@@ -1,0 +1,19 @@
+# Clip getroffen_vorn der 3D-Vela, erzeugt von werkzeuge/dreid_bauen.gd (nicht von Hand ändern). Zeiteinheit 1/240 s, Bilder 1-basiert.
+version=1
+name=getroffen_vorn
+quelle=treffer
+fps=240
+bilder=471
+groesse=1,1
+anker=0,0
+weich=0
+zyklus_bilder=471
+zyklus_start=1
+kontakt=96
+rueckzug=111
+ruhe=341
+rueckkehr=vorwaerts
+ereignis_start=11
+ereignis_kontakt=96
+ereignis_rueckzug=111
+ereignis_ruhe=341

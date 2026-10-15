@@ -1,0 +1,16 @@
+# Clip umgeworfen der 3D-Vela, erzeugt von werkzeuge/dreid_bauen.gd (nicht von Hand ändern). Zeiteinheit 1/240 s, Bilder 1-basiert.
+version=1
+name=umgeworfen
+quelle=hinfallen
+fps=240
+bilder=481
+groesse=1,1
+anker=0,0
+weich=0
+zyklus_bilder=481
+zyklus_start=1
+rueckkehr=vorwaerts
+ereignis_start=1
+ereignis_abheben=91
+ereignis_aufprall=241
+ereignis_liegt=411

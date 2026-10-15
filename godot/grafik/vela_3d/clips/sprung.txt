@@ -1,0 +1,18 @@
+# Clip sprung der 3D-Vela, erzeugt von werkzeuge/dreid_bauen.gd (nicht von Hand ändern). Zeiteinheit 1/240 s, Bilder 1-basiert.
+version=1
+name=sprung
+quelle=sprung
+fps=240
+bilder=471
+groesse=1,1
+anker=0,0
+weich=0
+zyklus_bilder=471
+zyklus_start=1
+ruhe=331
+rueckkehr=vorwaerts
+ereignis_hocke=126
+ereignis_absprung=167
+ereignis_scheitel=227
+ereignis_aufsetzen=289
+ereignis_ruhe=331

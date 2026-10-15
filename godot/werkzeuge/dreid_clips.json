@@ -1,0 +1,17 @@
+{
+	"modell": "modell.glb",
+	"clips": {
+		"stand": {"typ": "stand", "basis": "boxen03", "basis_zeit": 0.0, "bewegung": "kampfhaltung_ki", "verstaerkung": 1.5, "schleife": "pingpong"},
+		"gehen": {"typ": "schleife", "quelle": "laufen", "von": 0.0, "bis": 0.625, "schritt": true},
+		"sprint": {"typ": "schleife", "quelle": "laufen", "von": 0.0, "bis": 0.625, "schritt": true},
+		"kette1": {"quelle": "boxen01", "von": 0.0, "bis": 2.208, "ereignisse": {"ausholen": 0.29, "kontakt": 0.604, "rueckzug": 0.625, "ruhe": 1.667}},
+		"kette2": {"quelle": "boxen02", "von": 1.5, "bis": 2.04, "ereignisse": {"ausholen": 1.667, "kontakt": 1.79, "rueckzug": 1.833, "ruhe": 2.0}},
+		"kette3": {"quelle": "boxen03", "von": 0.0, "bis": 2.542, "ereignisse": {"ausholen": 0.417, "kontakt": 0.667, "rueckzug": 0.708, "ruhe": 2.0}},
+		"kette4": {"quelle": "kick02", "von": 0.0, "bis": 1.375, "ereignisse": {"ausholen": 0.0, "kontakt1": 0.833, "kontakt": 0.938, "rueckzug": 0.958, "ruhe": 1.333}},
+		"sprung": {"quelle": "sprung", "von": 0.0, "bis": 1.958, "ereignisse": {"hocke": 0.52, "absprung": 0.69, "scheitel": 0.94, "aufsetzen": 1.2, "ruhe": 1.375}},
+		"getroffen_vorn": {"quelle": "treffer", "von": 0.0, "bis": 1.958, "ereignisse": {"start": 0.04, "kontakt": 0.396, "rueckzug": 0.458, "ruhe": 1.417}},
+		"umgeworfen": {"quelle": "hinfallen", "von": 0.0, "bis": 2.0, "ereignisse": {"start": 0.0, "abheben": 0.375, "aufprall": 1.0, "liegt": 1.708}},
+		"liegen": {"typ": "pose", "quelle": "hinfallen", "zeit": 2.0},
+		"aufstehen": {"quelle": "aufstehen", "von": 0.417, "bis": 1.958, "ereignisse": {"ruhe": 1.958}}
+	}
+}

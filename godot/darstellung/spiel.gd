@@ -21,6 +21,8 @@
 # Kommandozeile (nach „--“):
 #   --platzhalter     Rechtecke statt Vela (weder Video-Clips noch Puppe)
 #   --puppe           die Vela-Puppe aus Teilen erzwingen, auch wo Video-Clips vorliegen
+#   --dreid           Vela als 3D-Figur (DarstellungVela3D, docs/dreid-vela.md), wo es für die Aktion einen 3D-Clip gibt;
+#                     sonst gemalte Clips, Puppe, Platzhalter wie sonst
 #   --seed N          Seed des Spielstarts (Standard 1)
 #   --debug           Debug-Anzeige von Beginn an
 #   --szene <datei>   Prüfszene statt Spielstart (Pfad ab Repo-Wurzel)
@@ -64,6 +66,8 @@ var _zn_vorn: DarstellungZeichner = null
 var _puppe: Node2D = null
 ## Vela aus Video-Clips (DarstellungVelaFrames), sonst null
 var _frames: Node2D = null
+## Vela als 3D-Figur (DarstellungVela3D), sonst null
+var _dreid: Node2D = null
 var _hinweis: String = ""
 var _hinweis_rest: int = 0
 var _beenden: bool = false
@@ -111,10 +115,10 @@ static func stageLaden(buehne: String) -> String:
 
 ## Kommandozeilenargumente (nach „--“) in ein Dictionary:
 ## seed (int, 0 = nicht angegeben), debug, szene, eingabe, schritte (−1 = nicht
-## angegeben), pause, ende, platzhalter (Rechtecke statt Vela), puppe (Vela-Puppe statt Video-Clips),
+## angegeben), pause, ende, platzhalter (Rechtecke statt Vela), puppe (Vela-Puppe statt Video-Clips), dreid (Vela als 3D-Figur),
 ## fehler (leer oder Meldung).
 static func parseArgumente(argv: PackedStringArray) -> Dictionary:
-	var a: Dictionary = {"seed": 0, "debug": false, "szene": "", "eingabe": "", "schritte": -1, "pause": false, "ende": false, "platzhalter": false, "puppe": false, "fehler": ""}
+	var a: Dictionary = {"seed": 0, "debug": false, "szene": "", "eingabe": "", "schritte": -1, "pause": false, "ende": false, "platzhalter": false, "puppe": false, "dreid": false, "fehler": ""}
 	var i: int = 0
 	while i < argv.size():
 		var name: String = argv[i]
@@ -129,6 +133,8 @@ static func parseArgumente(argv: PackedStringArray) -> Dictionary:
 				a["platzhalter"] = true
 			"--puppe":
 				a["puppe"] = true
+			"--dreid":
+				a["dreid"] = true
 			"--seed", "--schritte", "--szene", "--eingabe":
 				if i + 1 >= argv.size() or argv[i + 1].begins_with("--"):
 					a["fehler"] = "Argument %s ohne Wert" % name
@@ -214,7 +220,13 @@ func _ready() -> void:
 		# Clips nach Bedarf laden und im Leerlauf vorausladen, nur im laufenden Spiel; Fotos, Filme, Tests und --ende
 		# laden sofort und ganz (reproduzierbar, siehe vela_frames.gd)
 		DarstellungVelaFrames.nachladen = frames != null and automatisch and not _beenden
-		puppeEinhaengen(DarstellungVelaPuppe.new(), frames)
+		var dreid: Node2D = null
+		if (a.get("dreid", false) as bool):
+			if DarstellungVela3D.bereit():
+				dreid = DarstellungVela3D.new()
+			else:
+				printerr("--dreid: Modell oder Animationen fehlen unter %s, die gemalte Vela bleibt" % DarstellungVela3D.ORDNER)
+		puppeEinhaengen(DarstellungVelaPuppe.new(), frames, dreid)
 
 
 ## Legt die beiden Zeichenebenen an (Hinten, Vorn). Die Ebenen ordnen über
@@ -235,10 +247,10 @@ func _ebenenAnlegen() -> void:
 	_vorn.zeichne = Callable(self, "_zeichneVorn")
 
 
-## Hängt die Quellen der Figur zwischen die beiden Ebenen: die Puppe und optional die Video-Frames. Ab dann
-## zeichnet die Darstellung den Körper der Figur nicht mehr selbst, wo eine Quelle die Aktion abdeckt (nur
-## ihren Schatten). Beide setzen ihre Lage aus DarstellungZeichnen.figurFuss(sitzung.welt).
-func puppeEinhaengen(puppe: Node2D, frames: Node2D = null) -> void:
+## Hängt die Quellen der Figur zwischen die beiden Ebenen: die Puppe und optional die Video-Frames und die 3D-Figur.
+## Ab dann zeichnet die Darstellung den Körper der Figur nicht mehr selbst, wo eine Quelle die Aktion abdeckt (nur
+## ihren Schatten). Alle setzen ihre Lage aus DarstellungZeichnen.figurFuss(sitzung.welt).
+func puppeEinhaengen(puppe: Node2D, frames: Node2D = null, dreid: Node2D = null) -> void:
 	_puppe = puppe
 	puppe.z_index = 1
 	add_child(puppe)
@@ -248,28 +260,36 @@ func puppeEinhaengen(puppe: Node2D, frames: Node2D = null) -> void:
 		frames.z_index = 1
 		add_child(frames)
 		move_child(frames, _vorn.get_index())
+	_dreid = dreid
+	if dreid != null:
+		dreid.z_index = 1
+		add_child(dreid)
+		move_child(dreid, _vorn.get_index())
 	_puppeAktualisieren()
 
 
-## Setzt die Quelle nach der Figur (Lage, Pose oder Bild, Blick). Reihenfolge: Video-Frames, wenn für die
-## Aktion ein Clip da ist; sonst die Puppe, wenn sie die Aktion abdeckt; sonst zeichnet die Platzhalterfigur
-## (Rechteck). Die nicht gewählten Quellen ruhen.
+## Setzt die Quelle nach der Figur (Lage, Pose oder Bild, Blick). Reihenfolge: die 3D-Figur, wenn sie eingehängt ist und für
+## die Aktion einen Clip hat; sonst Video-Frames, wenn für die Aktion ein Clip da ist; sonst die Puppe, wenn sie die Aktion
+## abdeckt; sonst zeichnet die Platzhalterfigur (Rechteck). Die nicht gewählten Quellen ruhen.
 func _puppeAktualisieren() -> void:
-	if (_puppe == null and _frames == null) or sitzung == null:
+	if (_puppe == null and _frames == null and _dreid == null) or sitzung == null:
 		return
 	var f: KernEntitaeten.Figur = sitzung.welt.figur
-	var video: bool = _frames != null and DarstellungVelaFrames.abgedeckt(f, sitzung.welt)
-	var mit_puppe: bool = _puppe != null and not video and DarstellungVelaPosen.abgedeckt(f)
-	figur_extern = video or mit_puppe
+	var drei: bool = _dreid != null and _dreid.call("geladen") and DarstellungVela3DTabelle.abgedeckt(f, sitzung.welt)
+	var video: bool = not drei and _frames != null and DarstellungVelaFrames.abgedeckt(f, sitzung.welt)
+	var mit_puppe: bool = _puppe != null and not drei and not video and DarstellungVelaPosen.abgedeckt(f)
+	figur_extern = drei or video or mit_puppe
 	if _puppe != null:
 		_puppe.visible = mit_puppe
 	if _frames != null:
 		_frames.visible = video
-	if video or mit_puppe:
+	if _dreid != null and not drei:
+		_dreid.call("verstecken")
+	if drei or video or mit_puppe:
 		var fuss: Vector2 = DarstellungZeichnen.figurFuss(sitzung.welt)
 		# Spiegelachse in der Mitte der Spielpixelspalte (ein halbes Spielpixel rechts vom Fußpunkt)
 		var ort: Vector2 = fuss + Vector2(DarstellungMasse.DARSTELLUNG * 0.5, 0.0)
-		var quelle: Node2D = _frames if video else _puppe
+		var quelle: Node2D = _dreid if drei else (_frames if video else _puppe)
 		quelle.position = ort
 		quelle.call("aus_figur", f, sitzung.welt)
 

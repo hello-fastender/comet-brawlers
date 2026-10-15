@@ -1,0 +1,14 @@
+# Clip gehen der 3D-Vela, erzeugt von werkzeuge/dreid_bauen.gd (nicht von Hand ändern). Zeiteinheit 1/240 s, Bilder 1-basiert.
+version=1
+name=gehen
+quelle=laufen
+fps=240
+bilder=151
+groesse=1,1
+anker=0,0
+weich=0
+zyklus_bilder=151
+zyklus_start=1
+zyklus_ticks=51
+schritt_px=89
+rueckkehr=vorwaerts

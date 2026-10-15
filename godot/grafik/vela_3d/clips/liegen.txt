@@ -1,0 +1,12 @@
+# Clip liegen der 3D-Vela, erzeugt von werkzeuge/dreid_bauen.gd (nicht von Hand ändern). Zeiteinheit 1/240 s, Bilder 1-basiert.
+version=1
+name=liegen
+quelle=hinfallen
+fps=240
+bilder=5
+groesse=1,1
+anker=0,0
+weich=0
+zyklus_bilder=5
+zyklus_start=1
+rueckkehr=vorwaerts

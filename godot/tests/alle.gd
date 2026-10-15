@@ -693,6 +693,7 @@ func _init() -> void:
 	_modul("Vela-Puppe", VelaTest.lauf())
 	_modul("Video", VideoTest.lauf())
 	_modul("Speicher der Clips", SpeicherTest.lauf())
+	_modul("Vela in 3D", Vela3DTest.lauf())
 	_modul("Darstellung mit Puppe", PuppeProtokollTest.lauf())
 	if not ohne_szenen:
 		_szenen(nur)

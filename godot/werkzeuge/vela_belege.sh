@@ -13,6 +13,8 @@
 #   godot_hd_spiel_uebergaenge.png        letztes Bild des alten und erstes Bild des neuen Clips bei jedem Wechsel (Posesprünge)
 #   godot_hd_spiel_anker_schatten.png     Figur und Schatten im Maßstab 1:1 mit dem Fußpunkt der Logik (rote Linie)
 # Braucht Godot (Pfad in $GODOT, Standard /tmp/Godot_v4.7.2-stable_linux.x86_64), xvfb-run, ImageMagick (convert, montage) und ffmpeg.
+# Für die 3D-Vela: BELEGE_FOTO=--dreid BELEGE_VORSATZ=godot_3d_spiel BELEGE_AUS=<ordner> godot/werkzeuge/vela_belege.sh gehen kette_folge ...
+# (nur die Belege mit Streifen und GIF; „uebergaenge“ und „anker_schatten“ kennen die Clipnamen der gemalten Vela).
 # Zwischenbilder liegen in $BELEGE_TMP (Standard /tmp/vela_belege) und werden nicht ins Repo gelegt; $BELEGE_AUS ersetzt docs/bilder.
 #
 # Szenen: die Vorführung der Scheibe (spiel/tests/szenen/vorfuehrung.txt) und werkzeuge/hd_film/ (Szenen und Eingaben
@@ -20,6 +22,8 @@
 # (Kästen), die gemalte Vela steht auf der Gerüst-Bühne.
 set -e
 G="${GODOT:-/tmp/Godot_v4.7.2-stable_linux.x86_64}"
+FOTO="${BELEGE_FOTO:-}"                  # zusätzliche Argumente für foto.gd, z. B. --dreid (3D-Vela, docs/dreid-vela.md)
+VORSATZ="${BELEGE_VORSATZ:-godot_hd_spiel}"   # Anfang der Dateinamen der Streifen und GIFs, z. B. godot_3d_spiel
 T="${BELEGE_TMP:-/tmp/vela_belege}"
 AUS="${BELEGE_AUS:-docs/bilder}"
 mkdir -p "$T" "$AUS"
@@ -44,7 +48,7 @@ beleg() {
 	local nach; nach=$(seq -s, "$von" "$bis")
 	echo "== $name: Ticks $von bis $bis"
 	xvfb-run -a "$G" --path godot --rendering-driver opengl3 --script res://werkzeuge/foto.gd -- --szene "$szene" --eingabe "$eingabe" \
-		--nach "$nach" --aus "$d/f" --info "$d/info.csv" > "$d/foto.log" 2>&1 || { tail -5 "$d/foto.log"; return 1; }
+		--nach "$nach" --aus "$d/f" --info "$d/info.csv" $FOTO > "$d/foto.log" 2>&1 || { tail -5 "$d/foto.log"; return 1; }
 	local modus="${fenster%%:*}" w="${fenster#*:}"
 	IFS=, read -r a b c e <<< "$w"
 	while IFS=, read -r frame fx fy aktion phase uhr blick quelle bild; do
@@ -78,8 +82,8 @@ beleg() {
 			if [ $((i % schritt)) -eq 0 ]; then liste+=("$f"); fi
 			i=$((i + 1))
 		done
-		montage "${liste[@]}" -tile "${spalten}x" -geometry +1+1 -background '#101010' "$AUS/godot_hd_spiel_${name}_streifen.png"
-		ls -la "$AUS/godot_hd_spiel_${name}_streifen.png" | awk '{print "   " $5 " Byte  " $9}'
+		montage "${liste[@]}" -tile "${spalten}x" -geometry +1+1 -background '#101010' "$AUS/${VORSATZ}_${name}_streifen.png"
+		ls -la "$AUS/${VORSATZ}_${name}_streifen.png" | awk '{print "   " $5 " Byte  " $9}'
 	fi
 	# GIF: jeder zweite Tick, gemeinsame Palette (ohne bei gif-skala 0)
 	[ "$gskala" = "0" ] && return 0
@@ -89,8 +93,8 @@ beleg() {
 		i=$((i + 1))
 	done
 	ffmpeg -v error -y -framerate 30 -i "$d/gif_%04d.png" -vf "split[a][b];[a]palettegen=max_colors=200:stats_mode=diff[p];[b][p]paletteuse=dither=sierra2_4a:diff_mode=rectangle" \
-		-loop 0 "$AUS/godot_hd_spiel_${name}.gif"
-	ls -la "$AUS/godot_hd_spiel_${name}.gif" | awk '{print "   " $5 " Byte  " $9}'
+		-loop 0 "$AUS/${VORSATZ}_${name}.gif"
+	ls -la "$AUS/${VORSATZ}_${name}.gif" | awk '{print "   " $5 " Byte  " $9}'
 }
 
 gewaehlt() { local c; for c in "${WAHL[@]}"; do [ "$c" = "$1" ] && return 0; done; return 1; }

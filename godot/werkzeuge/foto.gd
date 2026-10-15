@@ -1,7 +1,7 @@
 # Bildschirmfotos der Platzhalterdarstellung (Auftrag 6, Phase 2, 3.4).
 #
 #   xvfb-run -a godot --path godot --rendering-driver opengl3 --script res://werkzeuge/foto.gd -- \
-#       --szene <datei> --eingabe <datei> --nach 300,600,900 --aus <ordnerPrefix> [--debug] [--seed N] [--puppe|--platzhalter]
+#       --szene <datei> --eingabe <datei> --nach 300,600,900 --aus <ordnerPrefix> [--debug] [--seed N] [--puppe|--platzhalter|--dreid]
 #       [--info <datei.csv>]
 #
 # Lädt darstellung/spiel.tscn in einen SubViewport (1536 × 896), lässt die
@@ -24,7 +24,7 @@ func _initialize() -> void:
 
 ## Argumente --name wert (und --debug) → Dictionary; Fehler im Schlüssel "fehler".
 func _argumente(argv: PackedStringArray) -> Dictionary:
-	var a: Dictionary = {"szene": "", "eingabe": "", "nach": "", "aus": "", "seed": "", "info": "", "debug": false, "platzhalter": false, "puppe": false, "fehler": ""}
+	var a: Dictionary = {"szene": "", "eingabe": "", "nach": "", "aus": "", "seed": "", "info": "", "debug": false, "platzhalter": false, "puppe": false, "dreid": false, "fehler": ""}
 	var i: int = 0
 	while i < argv.size():
 		var name: String = argv[i]
@@ -38,6 +38,10 @@ func _argumente(argv: PackedStringArray) -> Dictionary:
 			continue
 		if name == "--puppe":
 			a["puppe"] = true
+			i += 1
+			continue
+		if name == "--dreid":
+			a["dreid"] = true
 			i += 1
 			continue
 		if not (name in ["--szene", "--eingabe", "--nach", "--aus", "--seed", "--info"]):
@@ -79,6 +83,8 @@ func _lauf() -> void:
 		argv.append("--platzhalter")
 	if a["puppe"]:
 		argv.append("--puppe")
+	if a["dreid"]:
+		argv.append("--dreid")
 	var spiel_skript: GDScript = load("res://darstellung/spiel.gd")
 	var spiel_args: Dictionary = spiel_skript.call("parseArgumente", argv)
 	var vp: SubViewport = SubViewport.new()
@@ -138,9 +144,14 @@ func _infozeile(spiel: Node2D, sitzung: DarstellungSitzung) -> String:
 	var fuss: Vector2 = DarstellungZeichnen.figurFuss(sitzung.welt)
 	var frames: Node2D = spiel.get("_frames")
 	var puppe: Node2D = spiel.get("_puppe")
+	var dreid: Node2D = spiel.get("_dreid")
 	var quelle: String = "platzhalter"
 	var nr: int = 0
-	if frames != null and frames.visible:
+	if dreid != null and dreid.visible:
+		# 3D-Vela: Clipname mit Vorsatz „3d:“, Nummer = Zeit im Clip in Millisekunden
+		quelle = "3d:" + String(dreid.call("clip_name"))
+		nr = roundi(float(dreid.call("zeit")) * 1000.0)
+	elif frames != null and frames.visible:
 		quelle = frames.call("clip_name")
 		nr = int(frames.call("bild_index")) + 1
 	elif puppe != null and puppe.visible:

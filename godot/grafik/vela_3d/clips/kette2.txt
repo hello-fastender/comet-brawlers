@@ -1,0 +1,20 @@
+# Clip kette2 der 3D-Vela, erzeugt von werkzeuge/dreid_bauen.gd (nicht von Hand ändern). Zeiteinheit 1/240 s, Bilder 1-basiert.
+version=1
+name=kette2
+quelle=boxen02
+fps=240
+bilder=131
+groesse=1,1
+anker=0,0
+weich=0
+zyklus_bilder=131
+zyklus_start=1
+ausholen=41
+kontakt=71
+rueckzug=81
+ruhe=121
+rueckkehr=vorwaerts
+ereignis_ausholen=41
+ereignis_kontakt=71
+ereignis_rueckzug=81
+ereignis_ruhe=121

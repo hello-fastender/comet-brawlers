@@ -23,16 +23,19 @@ godot/
   pruef/               Prüflauf: eingabe, szene, protokoll, pruefung, lauf.gd
   darstellung/         Zeichnen, Anzeige, Debug, Tastatur, Sitzung, spiel.gd/.tscn,
                        Vela-Puppe (vela_puppe.gd, vela_posen.gd; Rückfall), Vela aus Video-Clips (vela_frames.gd mit Laden nach
-                       Bedarf und Speicherbudget, vela_frames_tabelle.gd: Aktion und Uhr → Clip und Bild)
+                       Bedarf und Speicherbudget, vela_frames_tabelle.gd: Aktion und Uhr → Clip und Bild), Vela als 3D-Figur
+                       (vela_3d.gd, vela_3d_tabelle.gd, nur mit --dreid; Versuch, siehe docs/dreid-vela.md)
   werkzeuge/           foto.gd (Bildschirmfotos), kontakt.gd (Kontaktbögen), umsetzer.gd (Teileblatt → Teile),
                        film.gd (Einzelbilder der Puppe), vorlage.gd (Bewegungsvorlagen für Groks Videobearbeitung, Versuch),
-                       dreid_vorschau.gd (3D-Figur aus GLB mit Umrisslinie in Spielgröße, Versuch),
+                       dreid_vorschau.gd (3D-Figur aus GLB mit Umrisslinie in Spielgröße, Versuch), dreid_bauen.gd mit
+                       dreid_clips.json (Tripo-Animationen → Dateien für das Spiel, Versuch),
                        video_umsetzer.gd und video_bogen.gd (Videos → Clips, Prüfbögen),
                        vela_hd_clips.sh (alle fünfzehn Clips aus den Videos umsetzen), vela_belege.sh (Bildstreifen und GIFs im Spiel,
                        mit den Szenen unter hd_film/), hd_vorschau.gd, speicher_messung.gd und leistung.gd (Messungen)
   tests/               alle.gd (Testlauf), vergleich.gd (Fehlersuche), Testmodule (darstellung_test, vela_test, vela_qa,
-                       video_test, speicher_test, puppe_protokoll_test)
+                       video_test, speicher_test, vela3d_test, puppe_protokoll_test)
   grafik/vela/         erzeugte Teile der Vela-Puppe und teile.txt
+  grafik/vela_3d/      Modell (vela.glb), Animationen (animationen.res) und Clipdaten (clips/*.txt) der 3D-Vela, nicht importiert (.gdignore)
 ```
 
 Der Kern liest keine Dateien und kennt keine Engine. Aller Zustand steht in
@@ -50,9 +53,10 @@ Godot laden (Cloud-Sitzung; Befehl und Version stehen in `AGENTS.md`), dann:
 | `godot --headless --path godot --script res://tests/alle.gd` | alle Tests: Grundlagen, Reinheit des Kerns, Darstellung, Vela-Puppe, alle 74 Szenen bitgleich, Determinismus; Exit 1 bei einer Abweichung. Argumente nach `--`: `--nur <Teil>` (Szenen), `--ohne-szenen` |
 | `godot --headless --path godot --script res://pruef/lauf.gd -- --szene <datei> --eingabe <datei> --aus <ordner>` | Prüflauf, schreibt `protokoll.csv` und `objekte.csv` und gibt beide MD5 aus; Pfade ab der Repo-Wurzel (zum Beispiel `spiel/tests/szenen/T1.txt`) |
 | `godot --headless --path godot --script res://tests/vergleich.gd -- --ist <datei> --soll <datei>` | erste abweichende Zeile mit Frame, Spaltenname und beiden Werten |
-| `godot --path godot` | Spiel starten (Fenster 1280 × 747, frei skalierbar, F11 Vollbild); Argumente nach `--`: `--seed N`, `--debug`, `--szene <datei>`, `--eingabe <datei>`, `--schritte N`, `--pause`, `--ende`, `--platzhalter` (Rechtecke statt Vela), `--puppe` (die Pixel-Puppe statt der Clips) |
+| `godot --path godot` | Spiel starten (Fenster 1280 × 747, frei skalierbar, F11 Vollbild); Argumente nach `--`: `--seed N`, `--debug`, `--szene <datei>`, `--eingabe <datei>`, `--schritte N`, `--pause`, `--ende`, `--platzhalter` (Rechtecke statt Vela), `--puppe` (die Pixel-Puppe statt der Clips), `--dreid` (Vela als 3D-Figur, wo es einen 3D-Clip gibt, siehe `docs/dreid-vela.md`) |
 | `xvfb-run -a godot --path godot --rendering-driver opengl3 --script res://werkzeuge/foto.gd -- --szene <datei> --eingabe <datei> --nach 300,600 --aus docs/bilder/name [--info <csv>]` | Bildschirmfotos nach n Logikschritten (PNG `<aus>_<n:04d>.png`, 1536 × 896 aus `DarstellungZeichner`); lädt alle Clips sofort und ganz; unter `--headless` gibt es kein Rendering, deshalb Xvfb; `--info` schreibt je Bild Fußpunkt der Figur, Aktion, Aktionsuhr, Quelle (Clip, `puppe`, `platzhalter`) und Clipbild |
-| `godot/werkzeuge/vela_belege.sh [<beleg> …]` | Bildstreifen und GIFs der gemalten Vela im Spiel nach `docs/bilder/godot_hd_spiel_*` (aus `foto.gd`, ImageMagick und ffmpeg, etwa 6 Minuten), siehe „Gemalte Vela“, Belege |
+| `godot/werkzeuge/vela_belege.sh [<beleg> …]` | Bildstreifen und GIFs der gemalten Vela im Spiel nach `docs/bilder/godot_hd_spiel_*` (aus `foto.gd`, ImageMagick und ffmpeg, etwa 6 Minuten), siehe „Gemalte Vela“, Belege. Für die 3D-Vela: `BELEGE_FOTO=--dreid BELEGE_VORSATZ=godot_3d_spiel BELEGE_AUS=<ordner> BELEGE_TMP=<ordner> godot/werkzeuge/vela_belege.sh gehen kette_folge getroffen_vorn umgeworfen_aufstehen` (nur Belege mit Streifen und GIF) |
+| `godot --headless --path godot --script res://werkzeuge/dreid_bauen.gd -- --quelle <ordner> --bauen [--nur <clip>]` | Versuch „Vela in 3D“: baut aus `<ordner>/modell.glb` und den Tripo-FBX-Dateien nach dem Manifest `werkzeuge/dreid_clips.json` die Dateien unter `grafik/vela_3d/` (Modell, `animationen.res`, `clips/<name>.txt`); `--analyse <quelle\|alle>` gibt die Merkmale je Bild einer Quelle aus (Ereigniszeiten ablesen), siehe `docs/dreid-vela.md` |
 | `godot/werkzeuge/vela_hd_clips.sh <videoordner> [<hoehe>] [<ausordner>] [<clip> …]` | alle fünfzehn gemalten Clips (oder die genannten) aus den Quellvideos umsetzen; die einzige Quelle der Umsetzerbefehle, siehe „Gemalte Vela“ |
 | `xvfb-run -a godot --path godot --rendering-driver opengl3 --script res://werkzeuge/kontakt.gd -- --aus docs/bilder/godot_kontakt_vela.png` | Kontaktbogen der Vela-Puppe |
 | `godot --headless --path godot --script res://werkzeuge/speicher_messung.gd -- --modus clips` | Dateien, Texturspeicher (RSS, static, Texturen) und Ladezeit je Clip für alle fünfzehn Clips, die Summe und der Teilwert der ersten fünf; mit `--modus spiel --bilder 900` unter Xvfb: Nachladen im laufenden Spiel (Bild, ab dem jeder Clip bereit ist, Zeit je Bild) |

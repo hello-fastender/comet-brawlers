@@ -1,0 +1,13 @@
+# Clip stand der 3D-Vela, erzeugt von werkzeuge/dreid_bauen.gd (nicht von Hand ändern). Zeiteinheit 1/240 s, Bilder 1-basiert.
+version=1
+name=stand
+quelle=boxen03
+fps=240
+bilder=1191
+groesse=1,1
+anker=0,0
+weich=0
+zyklus_bilder=1191
+zyklus_start=1
+schleife=pingpong
+rueckkehr=vorwaerts

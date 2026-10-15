@@ -1,0 +1,21 @@
+# Clip kette4 der 3D-Vela, erzeugt von werkzeuge/dreid_bauen.gd (nicht von Hand ändern). Zeiteinheit 1/240 s, Bilder 1-basiert.
+version=1
+name=kette4
+quelle=kick02
+fps=240
+bilder=331
+groesse=1,1
+anker=0,0
+weich=0
+zyklus_bilder=331
+zyklus_start=1
+ausholen=1
+kontakt=226
+rueckzug=231
+ruhe=321
+rueckkehr=vorwaerts
+ereignis_ausholen=1
+ereignis_kontakt1=201
+ereignis_kontakt=226
+ereignis_rueckzug=231
+ereignis_ruhe=321
