@@ -21,6 +21,8 @@
 ##   --schatten <0..1> Stärke der Farbstufen, 0 = ganz flach (1)
 ##   --saettigung <f>  Farbsättigung (1 = unverändert), --kontrast <f> (1), --rim <0..1> heller Randstrahl (0)
 ##   --textur <px>     Texturen auf diese Kantenlänge verkleinern und Mip-Stufen erzeugen (2048); Tripo liefert bis 8192
+##   --pose <name>     Mixamo-Skelett in eine Probepose bringen (kampf, schlag, tritt), um die Verformung zu prüfen;
+##                     Richtungen in Weltachsen (Figur blickt nach +Z, ihre linke Seite ist +X), Knochen zeigen auf ihr Ziel
 ##
 ## Die Figur steht mit den Füßen bei 88 % der Bildhöhe, mittig. Das Bild hat durchsichtigen Grund.
 extends SceneTree
@@ -70,6 +72,65 @@ void fragment() {
 	ALBEDO = farbe.rgb;
 }
 """
+
+## Probeposen: Knochen (Mixamo, mit Unterstrich wie von Godot importiert) und die Richtung, in die sie zu ihrem
+## Kind zeigen sollen (Weltachsen, Figur blickt nach +Z, ihre linke Seite ist +X). Eltern vor Kindern.
+## "runter": Hüfte um diesen Anteil der Figurhöhe absenken, damit die Füße am Boden bleiben.
+const POSEN: Dictionary = {
+	"kampf": {
+		"runter": 0.06,
+		"aim": [
+			["mixamorig_Spine", Vector3(0, 0.97, 0.22)],
+			["mixamorig_Spine1", Vector3(0, 0.96, 0.27)],
+			["mixamorig_Spine2", Vector3(0, 0.96, 0.27)],
+			["mixamorig_LeftArm", Vector3(0.22, -0.75, 0.55)],
+			["mixamorig_LeftForeArm", Vector3(0.05, 0.6, 0.8)],
+			["mixamorig_RightArm", Vector3(-0.22, -0.75, 0.55)],
+			["mixamorig_RightForeArm", Vector3(-0.05, 0.6, 0.8)],
+			["mixamorig_LeftUpLeg", Vector3(0.12, -0.8, 0.55)],
+			["mixamorig_LeftLeg", Vector3(0.05, -0.95, -0.15)],
+			["mixamorig_LeftFoot", Vector3(0, -0.2, 1)],
+			["mixamorig_RightUpLeg", Vector3(-0.12, -0.85, -0.45)],
+			["mixamorig_RightLeg", Vector3(-0.05, -0.97, -0.1)],
+			["mixamorig_RightFoot", Vector3(0, -0.2, 1)],
+		],
+	},
+	"schlag": {
+		"runter": 0.07,
+		"aim": [
+			["mixamorig_Spine", Vector3(0, 0.95, 0.3)],
+			["mixamorig_Spine1", Vector3(0, 0.94, 0.34)],
+			["mixamorig_Spine2", Vector3(0, 0.94, 0.34)],
+			["mixamorig_LeftArm", Vector3(0.08, 0.02, 1.0)],
+			["mixamorig_LeftForeArm", Vector3(0.06, 0.03, 1.0)],
+			["mixamorig_RightArm", Vector3(-0.25, -0.75, 0.55)],
+			["mixamorig_RightForeArm", Vector3(-0.1, 0.6, 0.8)],
+			["mixamorig_LeftUpLeg", Vector3(0.12, -0.78, 0.6)],
+			["mixamorig_LeftLeg", Vector3(0.05, -0.95, -0.1)],
+			["mixamorig_LeftFoot", Vector3(0, -0.2, 1)],
+			["mixamorig_RightUpLeg", Vector3(-0.12, -0.85, -0.5)],
+			["mixamorig_RightLeg", Vector3(-0.05, -0.97, -0.05)],
+			["mixamorig_RightFoot", Vector3(0, -0.2, 1)],
+		],
+	},
+	"tritt": {
+		"runter": 0.0,
+		"aim": [
+			["mixamorig_Spine", Vector3(0, 0.98, -0.18)],
+			["mixamorig_Spine1", Vector3(0, 0.97, -0.22)],
+			["mixamorig_Spine2", Vector3(0, 0.97, -0.22)],
+			["mixamorig_LeftArm", Vector3(0.4, -0.7, 0.2)],
+			["mixamorig_LeftForeArm", Vector3(0.3, -0.4, 0.8)],
+			["mixamorig_RightArm", Vector3(-0.4, -0.7, 0.2)],
+			["mixamorig_RightForeArm", Vector3(-0.3, -0.4, 0.8)],
+			["mixamorig_LeftUpLeg", Vector3(0.05, 0.1, 1.0)],
+			["mixamorig_LeftLeg", Vector3(0.05, -0.25, 0.95)],
+			["mixamorig_RightUpLeg", Vector3(-0.02, -1.0, -0.05)],
+			["mixamorig_RightLeg", Vector3(-0.02, -1.0, 0.0)],
+			["mixamorig_RightFoot", Vector3(0, -0.2, 1)],
+		],
+	},
+}
 
 var _aus: String = ""
 var _seite: int = 512
@@ -152,6 +213,10 @@ func _lauf() -> void:
 	_aufbauen()
 	for i: int in 3:
 		await process_frame
+	if arg.has("pose"):
+		_pose_anwenden(String(arg["pose"]))
+		for i: int in 3:
+			await process_frame
 	if arg.has("ansichten"):
 		for name: String in ["vorn", "seite", "hinten", "schraeg"]:
 			_kamera_setzen(name)
@@ -390,6 +455,61 @@ func _animation(name: String, fps: int, bilder: int) -> void:
 		ap.seek(float(i) / float(fps), true)
 		await _bild("f%04d.png" % (i + 1))
 	print("Animation %s: %d Bilder (%.2f s) in %s" % [name, n, laenge, _aus])
+
+
+# ---------------------------------------------------------------------------
+# Probeposen
+# ---------------------------------------------------------------------------
+
+func _skelett() -> Skeleton3D:
+	var l: Array[Node] = _figur.find_children("*", "Skeleton3D", true, false)
+	if l.is_empty():
+		return null
+	return l[0] as Skeleton3D
+
+
+## Knochen `name` so drehen, dass seine Richtung zum ersten Kind in Weltrichtung `ziel` zeigt (kürzester Bogen).
+func _richte(sk: Skeleton3D, name: String, ziel: Vector3) -> void:
+	var b: int = sk.find_bone(name)
+	if b < 0:
+		printerr("Knochen fehlt: ", name)
+		return
+	var kinder: PackedInt32Array = sk.get_bone_children(b)
+	if kinder.is_empty():
+		return
+	var welt_zu_skelett: Basis = sk.global_transform.basis.orthonormalized().inverse()
+	var g: Transform3D = sk.get_bone_global_pose(b)
+	var gk: Transform3D = sk.get_bone_global_pose(kinder[0])
+	var ist: Vector3 = (gk.origin - g.origin).normalized()
+	var soll: Vector3 = (welt_zu_skelett * ziel).normalized()
+	if ist.length() < 0.5 or soll.length() < 0.5 or ist.dot(soll) < -0.999:
+		return
+	var q: Quaternion = Quaternion(ist, soll)
+	var neu: Transform3D = Transform3D(Basis(q) * g.basis, g.origin)
+	var eltern: int = sk.get_bone_parent(b)
+	var gp: Transform3D = sk.get_bone_global_pose(eltern) if eltern >= 0 else Transform3D.IDENTITY
+	var lokal: Transform3D = gp.affine_inverse() * neu
+	sk.set_bone_pose_rotation(b, lokal.basis.orthonormalized().get_rotation_quaternion())
+
+
+func _pose_anwenden(name: String) -> void:
+	var sk: Skeleton3D = _skelett()
+	if sk == null:
+		printerr("kein Skelett in der Figur, --pose braucht eine geriggte GLB")
+		return
+	if not POSEN.has(name):
+		printerr("unbekannte Pose %s (kampf, schlag, tritt)" % name)
+		return
+	var p: Dictionary = POSEN[name]
+	for e: Array in p["aim"]:
+		_richte(sk, String(e[0]), e[1] as Vector3)
+	var runter: float = float(p.get("runter", 0.0))
+	if runter > 0.0:
+		var h: int = sk.find_bone("mixamorig_Hips")
+		if h >= 0:
+			var welt_zu_skelett: Basis = sk.global_transform.basis.orthonormalized().inverse()
+			var d: Vector3 = welt_zu_skelett * Vector3(0, -runter * _box.size.y, 0)
+			sk.set_bone_pose_position(h, sk.get_bone_pose_position(h) + d)
 
 
 # ---------------------------------------------------------------------------
