@@ -48,6 +48,12 @@ extends SceneTree
 ##                        Top Figur bleibt); loch: vom Rand unerreichbare Flächen mit mittlerem Abstand über `loch`
 ##                        sind Figur (Standard 24; auf Schwarz 2: dunkle Kleidung füllen, echte Lücken bleiben offen);
 ##                        fleck: kleinste Fläche (Pixel in der Arbeitsauflösung), die als Teil der Figur gilt (Standard 4).
+##   --haarloch <n>       nur Modus ecke: Lücken zwischen Haarsträhnen, Zopf, Nacken und Kragen durchsichtig machen
+##                        (_haarluecken_entfernen). Kandidaten sind zusammenhängende helle Flächen (Abstand zur Randfarbe
+##                        unter n, z. B. 60), die nicht schon außen liegen; durchsichtig wird eine Fläche, wenn sie neutral
+##                        weiß ist (Median Rot − Blau höchstens HAAR_GELB; gelbliche Glanzlichter im Haar bleiben), warm
+##                        umrandet (Haar, Haut; nicht kühl wie das Metall der Armschienen) und Haar in der Nähe liegt (nicht
+##                        der Jeansriss). Standard 0 = aus; die neue Vela nutzt 60. Steht als `haarloch=` in clip.txt.
 ##   --ausser a-b,c       Videobilder weglassen (1-basiert wie --ab), z. B. Funken-Effekte eines Treffers, die Grok in
 ##                        einzelne Bilder gemalt hat. Steht als `ausser=` in clip.txt.
 ##   --staub <n>          dunkle Streupixel (Bodenstaub) entfernen: dunkle Figurpixel, in deren 7×7-Umgebung (Arbeits-
@@ -147,6 +153,24 @@ const STABIL_TOL: int = 20
 ## liegt, ist Figur (dunkle Kleidung); kleiner als LOCH_MIN gilt immer als Figur (Rauschen).
 const LOCH_TOL: int = 24
 const LOCH_MIN: int = 6
+## --haarloch (_haarluecken_entfernen), gemessen an stand_9 (Bild 97) und griff_2_6 (Bild 125) auf Videoauflösung:
+##  - HAAR_MIN: kleinste Fläche in Pixeln des Pixelmodus (wächst mit skala_p², wie LOCH_MIN); Augenweiß (etwa 20 Videopixel)
+##    bleibt darunter, die sichtbaren Lücken (30 bis 180 Videopixel) liegen darüber.
+##  - HAAR_GELB: höchster Median von Rot − Blau einer Lücke; Lücken 0 bis 19, Glanzlichter im Haar 27 bis 56.
+##  - Ring (Abstand 1 bis HAAR_RING, nur kräftige Pixel mit Abstand ≥ HAAR_SATT zur Randfarbe): warm (Rot − Blau ≥ HAAR_WARM)
+##    mindestens HAAR_WARM_ANTEIL Prozent und nicht weniger als kühl (Blau − Rot ≥ HAAR_KUEHL); Tusche (alle Kanäle unter
+##    HAAR_DUNKEL) zählt zu keiner Seite. Lücken 26 bis 94 % warm; Lichter der Armschienen 0 % warm, 67 bis 91 % kühl.
+##  - Haarnähe: mindestens HAAR_BLOND blonde Pixel im Umkreis HAAR_UMKREIS um die Fläche (Jeansriss: 0).
+const HAAR_MIN: int = 3
+const HAAR_GELB: int = 20
+const HAAR_RING: int = 2
+const HAAR_SATT: int = 60
+const HAAR_DUNKEL: int = 90
+const HAAR_WARM: int = 30
+const HAAR_KUEHL: int = 10
+const HAAR_WARM_ANTEIL: int = 20
+const HAAR_UMKREIS: int = 7
+const HAAR_BLOND: int = 3
 ## Kleinere Flecken sind Staub, auch wenn sie nah an der Figur liegen.
 const FLECK_MIN: int = 4
 ## „Nah“: Radius der Erweiterung der größten Fläche = Figurhöhe / NAH_TEILER (Zopfspitzen, abgesetzte Hand).
@@ -259,6 +283,7 @@ func _lauf() -> void:
 		return
 	var tol: int = int(arg.get("tol", str(TOL_ECKE)))
 	var loch: int = int(arg.get("loch", str(LOCH_TOL)))
+	var haarloch: int = int(arg.get("haarloch", "0"))
 	var fleck: int = int(arg.get("fleck", str(FLECK_MIN)))
 	var staub: int = int(arg.get("staub", "0"))
 	var ausser: Dictionary = {}
@@ -349,7 +374,7 @@ func _lauf() -> void:
 	if modus == "gruen" and gruen_dominanz(key0) < GRUEN_DOM_MIN:
 		print("Hinweis: Rand (%d, %d, %d) ist nicht grün, Modus ecke" % [key0.x, key0.y, key0.z])
 		modus = "ecke"
-	var sonde_fig: Dictionary = freistellen(sd, sw, sh, key0, modus, tol, loch, fleck, staub)
+	var sonde_fig: Dictionary = freistellen(sd, sw, sh, key0, modus, tol, loch, fleck, staub, 100, haarloch)
 	var sonde_rahmen: Rect2i = maske_rahmen(sonde_fig["maske"], sw, sh)
 	if sonde_rahmen.size.y == 0:
 		_fehler("keine Figur im Sondenbild gefunden (Schlüsselfarbe (%d, %d, %d), Modus %s)" % [key0.x, key0.y, key0.z, modus])
@@ -450,7 +475,7 @@ func _lauf() -> void:
 		var bd: PackedByteArray = b.get_data()
 		var k: Vector3i = keys[i]
 		var ausschnitt: PackedByteArray = zuschneiden_rgb(bd, arbeit_w, rahmen)
-		var fig: Dictionary = freistellen(ausschnitt, rahmen.size.x, rahmen.size.y, k, modus, tol, loch, fleck, staub, skala_p)
+		var fig: Dictionary = freistellen(ausschnitt, rahmen.size.x, rahmen.size.y, k, modus, tol, loch, fleck, staub, skala_p, haarloch)
 		if hd:
 			var wr: Dictionary = weich_freistellen(ausschnitt, fig["farbe"], rahmen.size.x, rahmen.size.y, k, modus, fig["maske"], kante, tol)
 			fig["wa"] = wr["alpha"]
@@ -746,6 +771,8 @@ func _lauf() -> void:
 			beschn_liste.append(i + 1)
 	text.append("beschnitten=" + ",".join(Array(beschn_liste).map(func(v: int) -> String: return str(v))))
 	text.append("tol=%d,%d,%d" % [tol, loch, fleck])
+	if haarloch > 0:
+		text.append("haarloch=%d" % haarloch)
 	if not ausser.is_empty():
 		text.append("ausser=" + ",".join(Array(ausser.keys()).map(func(k: int) -> String: return str(k))))
 	if schleife_art != "":
@@ -960,7 +987,7 @@ static func maske_rahmen(m: PackedByteArray, w: int, h: int) -> Rect2i:
 ## schaerfe (1000 · Kantenpixel / (Kantenpixel + weiche Pixel)).
 ## `skala_p`: Größe der Figur im Arbeitsbild in Prozent gegenüber dem Pixelmodus (100); Löcher (LOCH_MIN) und Staubfenster
 ## (STAUB_RADIUS) wachsen mit (nur HD-Modus).
-static func freistellen(d: PackedByteArray, w: int, h: int, key: Vector3i, modus: String, tol: int = TOL_ECKE, loch: int = LOCH_TOL, fleck: int = FLECK_MIN, staub: int = 0, skala_p: int = 100) -> Dictionary:
+static func freistellen(d: PackedByteArray, w: int, h: int, key: Vector3i, modus: String, tol: int = TOL_ECKE, loch: int = LOCH_TOL, fleck: int = FLECK_MIN, staub: int = 0, skala_p: int = 100, haarloch: int = 0) -> Dictionary:
 	var n: int = w * h
 	var alpha: PackedByteArray = PackedByteArray()
 	alpha.resize(n)
@@ -1006,6 +1033,8 @@ static func freistellen(d: PackedByteArray, w: int, h: int, key: Vector3i, modus
 			if a > 32 and a < 224:
 				weich += 1
 	_loecher_fuellen(maske, alpha, d, w, h, key, loch, LOCH_MIN * skala_p * skala_p / 10000)
+	if haarloch > 0 and modus == "ecke":
+		_haarluecken_entfernen(maske, alpha, d, w, h, key, haarloch, maxi(2, HAAR_MIN * skala_p * skala_p / 10000))
 	if staub > 0:
 		_staub_entfernen(maske, d, w, h, staub, STAUB_RADIUS * skala_p / 100)
 	_inseln_entfernen(maske, w, h, fleck)
@@ -1098,6 +1127,121 @@ static func _loecher_fuellen(maske: PackedByteArray, alpha: PackedByteArray, d: 
 			for p: int in liste:
 				maske[p] = 1
 				alpha[p] = 255
+
+
+## Lücken zwischen Haarsträhnen, Zopf, Nacken und Kragen (--haarloch): Grok malt dort weißen Grund, den die Füllung der
+## Löcher (`loch`, klein gehalten für die Lichter der Armschienen) und die Grenze `tol` (hellgraue Säume zwischen den Strähnen)
+## als Figur behalten. Kandidaten sind Flächen (4er-Nachbarschaft) aus Pixeln mit Abstand zur Randfarbe unter `grenze`, die
+## nicht schon zum Außenraum gehören (Maske 0 und vom Rand erreichbar). Durchsichtig wird eine Fläche ab `min_n` Pixeln, wenn
+## sie neutral ist (Median Rot − Blau ≤ HAAR_GELB), ihr Ring warm und nicht kühl ist und Haar in der Nähe liegt (HAAR_*).
+static func _haarluecken_entfernen(maske: PackedByteArray, alpha: PackedByteArray, d: PackedByteArray, w: int, h: int, key: Vector3i, grenze: int, min_n: int) -> void:
+	var n: int = w * h
+	var abst: PackedByteArray = PackedByteArray()
+	abst.resize(n)
+	for p: int in n:
+		var i: int = p * 3
+		abst[p] = mini(255, maxi(absi(d[i] - key.x), maxi(absi(d[i + 1] - key.y), absi(d[i + 2] - key.z))))
+	# Außenraum: Maske 0 und vom Rand erreichbar (0 = innen, 1 = außen, 2 = Kandidat besucht)
+	var marke: PackedByteArray = PackedByteArray()
+	marke.resize(n)
+	var stapel: PackedInt32Array = PackedInt32Array()
+	for x: int in w:
+		for y: int in [0, h - 1]:
+			var p: int = y * w + x
+			if maske[p] == 0 and marke[p] == 0:
+				marke[p] = 1
+				stapel.append(p)
+	for y: int in h:
+		for x: int in [0, w - 1]:
+			var p: int = y * w + x
+			if maske[p] == 0 and marke[p] == 0:
+				marke[p] = 1
+				stapel.append(p)
+	while not stapel.is_empty():
+		var p: int = stapel[stapel.size() - 1]
+		stapel.resize(stapel.size() - 1)
+		var px: int = p % w
+		var py: int = p / w
+		for q: int in [p - 1 if px > 0 else -1, p + 1 if px < w - 1 else -1, p - w if py > 0 else -1, p + w if py < h - 1 else -1]:
+			if q >= 0 and maske[q] == 0 and marke[q] == 0:
+				marke[q] = 1
+				stapel.append(q)
+	var ring_marke: PackedInt32Array = PackedInt32Array()
+	ring_marke.resize(n)
+	var flaeche_nr: int = 0
+	for s: int in n:
+		if marke[s] != 0 or abst[s] >= grenze:
+			continue
+		flaeche_nr += 1
+		var liste: PackedInt32Array = PackedInt32Array([s])
+		marke[s] = 2
+		var i: int = 0
+		while i < liste.size():
+			var p: int = liste[i]
+			i += 1
+			var px: int = p % w
+			var py: int = p / w
+			for q: int in [p - 1 if px > 0 else -1, p + 1 if px < w - 1 else -1, p - w if py > 0 else -1, p + w if py < h - 1 else -1]:
+				if q >= 0 and marke[q] == 0 and abst[q] < grenze:
+					marke[q] = 2
+					liste.append(q)
+		if liste.size() < min_n:
+			continue
+		# neutral weiß? (Median Rot − Blau)
+		var gelb: PackedInt32Array = PackedInt32Array()
+		var x0: int = w
+		var y0: int = h
+		var x1: int = 0
+		var y1: int = 0
+		for p: int in liste:
+			gelb.append(d[p * 3] - d[p * 3 + 2])
+			ring_marke[p] = -flaeche_nr
+			x0 = mini(x0, p % w)
+			x1 = maxi(x1, p % w)
+			y0 = mini(y0, p / w)
+			y1 = maxi(y1, p / w)
+		gelb.sort()
+		if gelb[gelb.size() / 2] > HAAR_GELB:
+			continue
+		# Ring: kräftige Pixel im Abstand 1 bis HAAR_RING, die weder zur Fläche noch zum Außenraum gehören
+		var warm: int = 0
+		var kuehl: int = 0
+		var alle: int = 0
+		for p: int in liste:
+			var px: int = p % w
+			var py: int = p / w
+			for y: int in range(maxi(py - HAAR_RING, 0), mini(py + HAAR_RING + 1, h)):
+				for x: int in range(maxi(px - HAAR_RING, 0), mini(px + HAAR_RING + 1, w)):
+					var q: int = y * w + x
+					if ring_marke[q] == -flaeche_nr or ring_marke[q] == flaeche_nr or marke[q] == 1 or abst[q] < HAAR_SATT:
+						continue
+					ring_marke[q] = flaeche_nr
+					alle += 1
+					var r: int = d[q * 3]
+					var b: int = d[q * 3 + 2]
+					if maxi(r, maxi(d[q * 3 + 1], b)) < HAAR_DUNKEL:
+						continue
+					if r - b >= HAAR_WARM:
+						warm += 1
+					elif b - r >= HAAR_KUEHL:
+						kuehl += 1
+		if alle == 0 or warm * 100 < HAAR_WARM_ANTEIL * alle or warm < kuehl:
+			continue
+		# Haar in der Nähe: blonde Pixel im Umkreis
+		var blond: int = 0
+		for y: int in range(maxi(y0 - HAAR_UMKREIS, 0), mini(y1 + HAAR_UMKREIS + 1, h)):
+			for x: int in range(maxi(x0 - HAAR_UMKREIS, 0), mini(x1 + HAAR_UMKREIS + 1, w)):
+				var q: int = (y * w + x) * 3
+				var r: int = d[q]
+				var g: int = d[q + 1]
+				var b: int = d[q + 2]
+				if r - b >= 40 and r - g >= 0 and r - g < 30 and g - b >= 25 and maxi(r, maxi(g, b)) >= 150:
+					blond += 1
+		if blond < HAAR_BLOND:
+			continue
+		for p: int in liste:
+			maske[p] = 0
+			alpha[p] = 0
 
 
 ## Entfernt dunkle, einzeln liegende Figurpixel (Staub): siehe STAUB_DUNKEL. Rechnet mit einem Summenbild der Maske.
