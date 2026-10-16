@@ -22,7 +22,7 @@ const SCHRITTE: int = 800
 ## `_test_*` aus der Puppe). `fussmitte`: der Fußpunkt (`--ankerx-video`) liegt auf der Mitte zwischen den Stiefeln der
 ## Kampfhaltung im ersten Bild (nur Clips, die in der Kampfhaltung beginnen). Bei HD-Clips ist `hoehe` die Figurhöhe im ersten Bild in Spielbildpixeln (Dateipixel · skala), `massstab` der
 ## Spielbildpixel je Videopixel. Seit der neuen Vela (2026-10-16, docs/grok-prompts-vela-neu*.md) ist er 142 / Zeilen der A-Pose in Bild 1
-## des Quellvideos: 0,1529 bei den quadratischen 944-Pixel-Videos, 0,1791 bei den Hochformat-Videos (sprung, sprungtritt, wurf). `ankerx`: false
+## des Quellvideos: 0,1529 bei den quadratischen 944-Pixel-Videos, 0,1791 bei den Hochformat-Videos (sprung, sprungtritt). `ankerx`: false
 ## bei HD-Clips, die nicht in der Kampfhaltung beginnen (kette1 beginnt am Ende des Ausholens, sprung und sprungtritt in der
 ## Hocke, Wartezeit abgeschnitten): ihr Anker (`--ankerx-video`, Fußmitte der Haltung im Video) liegt nicht unter dem ersten
 ## Bild, sondern nur innerhalb der Figur des ersten Bildes (geprüft).
@@ -41,7 +41,7 @@ const ECHTE: Dictionary = {
 	"liegen": {"min": 1, "hoehe": [], "ankerx": false, "hd": true},
 	"aufstehen": {"min": 50, "hoehe": [], "ankerx": false, "hd": true},
 	"griff": {"min": 30, "hoehe": [], "ankerx": false, "hd": true},
-	"wurf": {"min": 50, "hoehe": [], "ankerx": false, "hd": true, "massstab": 0.1791},
+	"wurf": {"min": 35, "hoehe": [], "ankerx": false, "hd": true},
 }
 ## Maßstab (clip.txt, Spielbildpixel je Videopixel) aller echten Clips: dieselbe Größe der Figur, 0,3 % Spielraum.
 const MASSSTAB: float = 0.1529
@@ -591,7 +591,7 @@ func _tabelle_griff_wurf() -> void:
 	# --- die Festlegungen der Tabelle liegen innerhalb der Zeiten des Kerns ---
 	_ok(T.GRIFF_KONTAKT_BIS >= 1 and T.GRIFF_KONTAKT_BIS < T.GRIFF_DAUER, "Griff: Kontaktfenster (uhr 1 bis %d) vor dem Ende des Zugs (uhr %d)" % [T.GRIFF_KONTAKT_BIS, T.GRIFF_DAUER])
 	_ok(T.GRIFF_DAUER < KernWerte.HALTEFRIST, "Griff: die Haltepose ist lange vor dem Losreißen (g+%d) erreicht (uhr %d)" % [KernWerte.HALTEFRIST + 1, T.GRIFF_DAUER])
-	_ok(T.WURF_HEBEN_UHR > 1 and T.WURF_HEBEN_UHR < KernWerte.WURF_LOSLASSEN, "Wurf: die Arme sind in uhr %d oben, vor dem Loslassen (uhr %d)" % [T.WURF_HEBEN_UHR, KernWerte.WURF_LOSLASSEN])
+	_ok(T.WURF_HEBEN_UHR > 1 and T.WURF_HEBEN_UHR < KernWerte.WURF_LOSLASSEN, "Wurf: das Zurücknehmen endet in uhr %d, vor dem Loslassen (uhr %d)" % [T.WURF_HEBEN_UHR, KernWerte.WURF_LOSLASSEN])
 	_gleich(KernWerte.WURF_LOSLASSEN, KernWerte.WURF_TRAGEN_BIS + 1, "Wurf: losgelassen im Frame nach dem Tragen (E+21, E+22)")
 	_ok(KernWerte.WURF_LOSLASSEN < KernWerte.WURF_GEBUNDEN_BIS, "Wurf: nach dem Loslassen bleibt Zeit bis zum Ende der Bindung (E+22 gegen E+%d)" % KernWerte.WURF_GEBUNDEN_BIS)
 	# --- Griff: Kontaktbild im Frame des Zugreifens, dann der Zug an die Brust, die Haltepose hält bis zum Losreißen ---
@@ -625,24 +625,24 @@ func _tabelle_griff_wurf() -> void:
 		if T.griff(u, true, gd) != g_ruhe:
 			halten_ok = false
 	_ok(halten_ok, "Griff nach einem Kniestoß (knie_zahl > 0, uhr beginnt neu): die Haltepose steht sofort, es wird nicht noch einmal zugegriffen")
-	# --- Wurf: Ducken und Arme hoch, Schwung, Loslassen in E+22, Ausschwingen, Kampfhaltung in E+37 ---
+	# --- Wurf (Stoßwurf): Zurücknehmen, Stoß mit beiden Händen, Loslassen in E+22 (Hände offen), kurzes Halten, Rückzug, Kampfhaltung in E+37 ---
 	var w_ev: Dictionary = wd["ereignis"]
 	var w_kontakt: int = wd["kontakt"]
 	var w_ruhe: int = wd["ruhe"]
 	var w_heben: int = w_ev["heben"]
 	var wv: Array[int] = T.verlauf("wurf", KernWerte.WURF_GEBUNDEN_BIS + 10, wd)
-	_gleich(wv[0], 0, "Wurf: uhr 1 zeigt das erste Bild (dieselbe Pose wie die Haltepose des Griffs)")
-	_gleich(wv[T.WURF_HEBEN_UHR - 1], w_heben, "Wurf: in uhr %d stehen die Arme über dem Kopf (Bild `heben`)" % T.WURF_HEBEN_UHR)
+	_gleich(wv[0], 0, "Wurf: uhr 1 zeigt das erste Bild (Deckung, schließt an die Haltepose des Griffs an)")
+	_gleich(wv[T.WURF_HEBEN_UHR - 1], w_heben, "Wurf: in uhr %d endet das Zurücknehmen (Bild `heben`)" % T.WURF_HEBEN_UHR)
 	_gleich(wv[KernWerte.WURF_LOSLASSEN - 1], w_kontakt, "Wurf: im Frame des Loslassens (uhr %d = E+22) das Bild `kontakt`" % KernWerte.WURF_LOSLASSEN)
 	var nur_einmal: bool = true
 	for u: int in range(1, wv.size() + 1):
 		if (wv[u - 1] == w_kontakt) != (u == KernWerte.WURF_LOSLASSEN):
 			nur_einmal = false
 	_ok(nur_einmal, "Wurf: das Kontaktbild steht genau im Frame des Loslassens, sonst nie")
-	_ok(wv[KernWerte.WURF_TRAGEN_BIS - 1] < w_kontakt and wv[KernWerte.WURF_TRAGEN_BIS - 1] > w_heben, "Wurf: im letzten Tragframe (uhr %d) der Schwung vor dem Loslassen (Bild %d, Heben %d, Kontakt %d)" % [KernWerte.WURF_TRAGEN_BIS, wv[KernWerte.WURF_TRAGEN_BIS - 1], w_heben, w_kontakt])
-	_ok(wv[KernWerte.WURF_LOSLASSEN] == w_kontakt + 1 or wv[KernWerte.WURF_LOSLASSEN] <= int(wd["rueckzug"]), "Wurf: im Frame nach dem Loslassen beginnt das Ausschwingen (Bild %d)" % wv[KernWerte.WURF_LOSLASSEN])
+	_ok(wv[KernWerte.WURF_TRAGEN_BIS - 1] < w_kontakt and wv[KernWerte.WURF_TRAGEN_BIS - 1] > w_heben, "Wurf: im letzten Tragframe (uhr %d) der Stoß vor dem Loslassen (Bild %d, Heben %d, Kontakt %d)" % [KernWerte.WURF_TRAGEN_BIS, wv[KernWerte.WURF_TRAGEN_BIS - 1], w_heben, w_kontakt])
+	_ok(wv[KernWerte.WURF_LOSLASSEN] == w_kontakt + 1 or wv[KernWerte.WURF_LOSLASSEN] <= int(wd["rueckzug"]), "Wurf: im Frame nach dem Loslassen hält der Stoß kurz (Bild %d)" % wv[KernWerte.WURF_LOSLASSEN])
 	var mitte: int = KernWerte.WURF_LOSLASSEN + (KernWerte.WURF_GEBUNDEN_BIS - KernWerte.WURF_LOSLASSEN) / 3
-	_gleich(wv[mitte - 1], int(wd["rueckzug"]), "Wurf: das Ausschwingen (Bild `rueckzug`, tiefe offene Hände) ist in uhr %d erreicht" % mitte)
+	_gleich(wv[mitte - 1], int(wd["rueckzug"]), "Wurf: der Rückzug aus dem Stoß (Bild `rueckzug`) beginnt in uhr %d" % mitte)
 	_gleich(wv[KernWerte.WURF_GEBUNDEN_BIS - 1], w_ruhe, "Wurf: im letzten gebundenen Frame (uhr %d = E+37) ist die Kampfhaltung erreicht" % KernWerte.WURF_GEBUNDEN_BIS)
 	var w_mono: bool = true
 	var w_innen: bool = true
@@ -1344,22 +1344,41 @@ func _echte_clips() -> void:
 			var bg: Array[int] = _liste(clip, "breite_sil")
 			_ok(absi(hg[n - 1] - hg[d["ruhe"]]) <= 1 and absi(bg[n - 1] - bg[d["ruhe"]]) <= 2, "griff: nach der Haltepose ändert sich die Pose nicht mehr (Silhouette %d × %d gegen %d × %d)" % [bg[d["ruhe"]], hg[d["ruhe"]], bg[n - 1], hg[n - 1]])
 		elif clip == "wurf":
+			# Stoßwurf (dritte Fassung, wurf_3_6): Zurücknehmen bis `heben` (Ellbogen auseinander, Fäuste vor der Brust), Stoß mit
+			# beiden Händen, im Kontaktbild beide Arme vorn, Hände offen; kurzes Halten bis `rueckzug`, Rückkehr in die Kampfhaltung (`ruhe`)
 			var heben: int = ev["heben"]
-			_ok(heben < int(d["kontakt"]) and int(d["kontakt"]) < int(d["rueckzug"]) and int(d["rueckzug"]) < int(d["ruhe"]) and int(d["ruhe"]) < n, "wurf: Heben (%d) < Wurf (Kontakt %d) < Rückzug (%d) < Ruhe (%d) < Bilderzahl" % [heben, d["kontakt"], d["rueckzug"], d["ruhe"]])
+			_ok(heben < int(d["kontakt"]) and int(d["kontakt"]) < int(d["rueckzug"]) and int(d["rueckzug"]) < int(d["ruhe"]) and int(d["ruhe"]) < n, "wurf: Zurücknehmen (Heben %d) < Stoß (Kontakt %d) < Rückzug (%d) < Ruhe (%d) < Bilderzahl" % [heben, d["kontakt"], d["rueckzug"], d["ruhe"]])
 			var hw: Array[int] = _liste(clip, "hoehe_sil")
-			_ok(hw[heben] >= hw[0] - 6, "wurf: beim Heben steht die Figur aufrecht (Silhouette %d gegen %d am Anfang)" % [hw[heben], hw[0]])
-			_ok(hw[heben] >= hw.max() - 6, "wurf: die Arme sind beim Heben am höchsten (Silhouette %d von %d)" % [hw[heben], hw.max()])
 			var vw: Array[int] = _liste(clip, "vorn")
-			_ok(vw[d["kontakt"]] >= vw.max() - 16 and vw[d["kontakt"]] - vw[0] >= 20, "wurf: im Wurf (Loslassen) ist die Figur nach vorn gelehnt (%d gegen %d am Anfang, größter Wert %d)" % [vw[d["kontakt"]], vw[0], vw.max()])
-			_ok(vw[d["ruhe"]] <= vw[0] + 6 and hw[d["ruhe"]] >= hw[0] - 4, "wurf: die Ruhe ist wieder die Kampfhaltung des Anfangs (vorn %d gegen %d, Höhe %d gegen %d)" % [vw[d["ruhe"]], vw[0], hw[d["ruhe"]], hw[0]])
-			# Der Wurf beginnt in der Pose, in der der Griff endet (Haltepose von `griff`): gleiche Höhe und Vorderkante der Silhouette.
-			# Neue Vela: Griff und Wurf stammen aus zwei Videos ohne gemeinsame Haltepose (wurf_7 beginnt geduckt, 8 Spielbildpixel
-			# niedriger und weiter hinten); bis zu einem neuen Wurf-Video 10 statt 3 Spielbildpixel Spielraum
+			_ok(hw[heben] >= hw[0] - 6, "wurf: beim Zurücknehmen bleibt die Figur aufrecht (Silhouette %d gegen %d am Anfang)" % [hw[heben], hw[0]])
+			_ok(vw[heben] <= vw[0] + 4, "wurf: am Ende des Zurücknehmens reicht die Figur nicht weiter nach vorn als in der Deckung (%d gegen %d)" % [vw[heben], vw[0]])
+			# Stoßwurf statt Wurf über den Kopf: die Hände bleiben im ganzen Clip unter dem Scheitel des ersten Bildes
+			_ok(hw.max() <= hw[0] + 2, "wurf: kein Wurf über den Kopf, die Hände bleiben unter dem Scheitel (Silhouette höchstens %d gegen %d am Anfang)" % [hw.max(), hw[0]])
+			# und keine T-Form: nach hinten reicht die Silhouette höchstens 12 Spielbildpixel weiter als am Anfang (wurf_3_6: 8, das ist
+			# der hintere Stiefel, der im Stoß nach hinten rutscht; die Arme bleiben vor dem Körper)
+			var bw: Array[int] = _liste(clip, "breite_sil")
+			var hinten_max: int = 0
+			for i: int in n:
+				hinten_max = maxi(hinten_max, bw[i] - vw[i])
+			_ok(hinten_max <= bw[0] - vw[0] + 12, "wurf: keine T-Form, die Arme bleiben vor dem Körper (nach hinten höchstens %d gegen %d am Anfang)" % [hinten_max, bw[0] - vw[0]])
+			# der Stoß reicht 21 Spielbildpixel über die Deckung; das frontale Vorstrecken eines Arms davor (Video 116, 117) reicht 6 weiter
+			_ok(vw[d["kontakt"]] - vw[heben] >= 15, "wurf: vom Ende des Zurücknehmens bis zum Loslassen stoßen die Arme nach vorn (%d gegen %d)" % [vw[d["kontakt"]], vw[heben]])
+			_ok(vw[d["kontakt"]] >= vw.max() - 8 and vw[d["kontakt"]] - vw[0] >= 20, "wurf: im Stoß (Loslassen) sind die Arme nach vorn gestreckt (%d gegen %d am Anfang, größter Wert %d)" % [vw[d["kontakt"]], vw[0], vw.max()])
+			_ok(vw[d["rueckzug"]] < vw[d["kontakt"]], "wurf: im Rückzug kommen die Arme zurück (%d gegen %d im Kontakt)" % [vw[d["rueckzug"]], vw[d["kontakt"]]])
+			# Die Ruhe ist die Kampfhaltung von `stand` (danach folgt STAND): gleiche Höhe und Vorderkante der Silhouette
+			var sd2: Dictionary = _daten("stand")
+			if not sd2.is_empty():
+				var hs2: Array[int] = _liste("stand", "hoehe_sil")
+				var vs2: Array[int] = _liste("stand", "vorn")
+				_ok(absi(vw[d["ruhe"]] - vs2[0]) <= 6 and absi(hw[d["ruhe"]] - hs2[0]) <= 3, "wurf: die Ruhe ist die Kampfhaltung von stand (vorn %d gegen %d, Höhe %d gegen %d)" % [vw[d["ruhe"]], vs2[0], hw[d["ruhe"]], hs2[0]])
+			# Der Wurf schließt an die Pose an, in der der Griff endet (Haltepose von `griff`): gleiche Höhe und Vorderkante der Silhouette.
+			# wurf_3_6 beginnt in frontaler Deckung (Fäuste am Kinn), 4 Spielbildpixel höher als die Haltepose im Profil, Vorderkante gleich;
+			# 5 Spielbildpixel Spielraum
 			var gd2: Dictionary = _daten("griff")
 			if not gd2.is_empty():
 				var hg2: Array[int] = _liste("griff", "hoehe_sil")
 				var vg2: Array[int] = _liste("griff", "vorn")
-				_ok(absi(hw[0] - hg2[gd2["ruhe"]]) <= 10 and absi(vw[0] - vg2[gd2["ruhe"]]) <= 10, "wurf: das erste Bild ist die Haltepose des Griffs (Höhe %d gegen %d, Vorderkante %d gegen %d)" % [hw[0], hg2[gd2["ruhe"]], vw[0], vg2[gd2["ruhe"]]])
+				_ok(absi(hw[0] - hg2[gd2["ruhe"]]) <= 5 and absi(vw[0] - vg2[gd2["ruhe"]]) <= 5, "wurf: das erste Bild schließt an die Haltepose des Griffs an (Höhe %d gegen %d, Vorderkante %d gegen %d)" % [hw[0], hg2[gd2["ruhe"]], vw[0], vg2[gd2["ruhe"]]])
 		elif clip == "liegen":
 			_gleich(n, 1, "liegen: ein Standbild (ohne Staubkörner)")
 		elif clip == "aufstehen":

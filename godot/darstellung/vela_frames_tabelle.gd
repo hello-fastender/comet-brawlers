@@ -37,10 +37,11 @@
 ##                                                   (`ruhe` des Clips) in uhr GRIFF_DAUER; die Pose hält, solange der Griff dauert (Losreißen
 ##                                                   in g+61). Nach einem Kniestoß beginnt GRIFF mit uhr 1 neu (knie_zahl > 0): dann steht
 ##                                                   die Haltepose sofort, es wird nicht noch einmal zugegriffen
-##   WURF (V und R)                 wurf            wurf: uhr 1 bis WURF_LOSLASSEN − 1 (Gegner in der Haltelage, Tragen bis E+21) Ducken, Arme
-##                                                   hoch (Bild `heben` in uhr WURF_HEBEN_UHR), Schwung; Loslassen im Frame WURF_LOSLASSEN
-##                                                   (22, der Gegner steigt auf 59 px): das Bild `kontakt`; danach Ausschwingen (Bild
-##                                                   `rueckzug`) und Rückkehr in die Kampfhaltung (`ruhe`) bis uhr WURF_GEBUNDEN_BIS (37)
+##   WURF (V und R)                 wurf            wurf (Stoßwurf): uhr 1 bis WURF_LOSLASSEN − 1 (Gegner in der Haltelage, Tragen bis E+21)
+##                                                   Zurücknehmen der Fäuste (Bild `heben` in uhr WURF_HEBEN_UHR), Stoß mit beiden Händen;
+##                                                   Loslassen im Frame WURF_LOSLASSEN (22, der Gegner steigt auf 59 px): das Bild `kontakt`
+##                                                   (Arme vorn, Hände offen); danach kurzes Halten bis `rueckzug` und Rückkehr in die
+##                                                   Kampfhaltung (`ruhe`) bis uhr WURF_GEBUNDEN_BIS (37)
 ##   KNIESTOSS, SPEZIAL, SPRINTANGRIFF, SPRINTSPRUNG, WAFFE, AUFNEHMEN, NEUEINSTIEG, SPRUNGANGRIFF H und T (hoch, runter) und alle
 ##   übrigen: kein Clip (Puppe, sonst Platzhalter).
 ## UMGEWORFEN, TOT, LIEGEN und AUFSTEHEN zeigen den Clip so gespiegelt, dass der Flug in `bahn_richtung` geht (der Clip
@@ -499,19 +500,20 @@ static func griff(u: int, halten: bool, d: Dictionary) -> int:
 	return clampi(_ablauf(u, 1, GRIFF_KONTAKT_BIS, GRIFF_DAUER, d), 0, bilder - 1)
 
 
-## Wurf (Kampf 8.4): eigene Darstellungsfestlegung. Der Clip beginnt mit derselben Pose wie die Haltepose des Griffs; bis uhr
-## WURF_HEBEN_UHR duckt sich die Figur (die ersten Bilder, in wenigen Ticks) und hebt die Arme: das Bild `heben` (Arme über dem Kopf)
-## steht in diesem Tick. Danach folgt der Schwung bis zum Loslassen in WURF_LOSLASSEN.
+## Wurf (Kampf 8.4, Stoßwurf): eigene Darstellungsfestlegung. Der Clip beginnt in der Deckung (Fäuste am Kinn), die an die Haltepose
+## des Griffs anschließt; bis uhr WURF_HEBEN_UHR nimmt die Figur die Fäuste zurück (Ellbogen auseinander): das Bild `heben` (Ende des
+## Zurücknehmens) steht in diesem Tick. Danach folgt der Stoß mit beiden Händen bis zum Loslassen in WURF_LOSLASSEN.
 const WURF_HEBEN_UHR: int = 12
 
 
 ## Wurf: Aktionsuhr u (Beginn 1 in E+1, 1 bis WURF_GEBUNDEN_BIS) → Bild des Clips `wurf`. Zeiten aus KernWerte:
 ##   uhr 1 bis WURF_LOSLASSEN − 1 (Tragen, der Gegner steht in der Haltelage): vom ersten Bild über `heben` (uhr WURF_HEBEN_UHR) bis
 ##     vor das Loslassen,
-##   uhr WURF_LOSLASSEN (E+22, der Gegner wird in 59 px Höhe losgelassen): das Bild `kontakt`,
-##   danach das Ausschwingen mit tiefen Händen bis `rueckzug` im ersten Drittel der übrigen Ticks, dann die Rückkehr in die Kampfhaltung
-##     (`ruhe`), die im letzten gebundenen Frame (E+37) erreicht ist; ab E+38 ist die Figur in STAND.
-## Beide Wurfrichtungen (V vorwärts, R rückwärts über die Figur) zeigen denselben Clip (Schwung nach vorn).
+##   uhr WURF_LOSLASSEN (E+22, der Gegner wird in 59 px Höhe losgelassen): das Bild `kontakt` (Arme vorn, Hände offen),
+##   danach das kurze Halten des Stoßes bis `rueckzug` im ersten Drittel der übrigen Ticks (5 Ticks; `rueckzug` muss darum mindestens
+##     5 Bilder nach `kontakt` liegen, sonst steht das Kontaktbild auch im Tick nach dem Loslassen), dann die Rückkehr in die
+##     Kampfhaltung (`ruhe`), die im letzten gebundenen Frame (E+37) erreicht ist; ab E+38 ist die Figur in STAND.
+## Beide Wurfrichtungen (V vorwärts, R rückwärts über die Figur) zeigen denselben Clip (Stoß nach vorn).
 static func wurf(u: int, d: Dictionary) -> int:
 	var bilder: int = int(d["bilder"])
 	var ev: Dictionary = d["ereignis"]

@@ -9,12 +9,12 @@
 #                  Ordner vela/<ordner>/grok-video-d9db4961-8774-4dfa-aa5f-292ac6fa3ed6-<n>.mp4). Erwartet umbenannt als
 #                  <ordner>/<ordner>_<n>.mp4, z. B. stand/stand_9.mp4. Ausnahmen: sprint aus der ersten Lieferung (2026-10-15,
 #                  zweites von zwei Laufen-Videos) als laufen_v2.mp4; gehen und kette2 aus der zweiten Fassung des Prompts
-#                  (Drive-Ordner gehen2 und kette2_2), ebenso kette4 und griff (kette4_2, griff_2).
+#                  (Drive-Ordner gehen2 und kette2_2), ebenso kette4 und griff (kette4_2, griff_2); wurf aus der dritten Fassung (wurf_3).
 #   <ausordner>    Standard godot/grafik/vela_video (die Clips des Spiels)
 #   <clip> ...     nur diese Clips umsetzen (Standard: alle)
 #
 # Maßstab: `--faktor` = 142 / Zeilen der A-Pose in Bild 1 des Videos: 0.1529 bei den quadratischen 944-Pixel-Videos (A-Pose 929 Zeilen),
-# 0.1791 bei den Hochformat-Videos 768 × 1168 (sprung, sprungtritt, wurf; A-Pose 793 Zeilen). Die Figur ist so in allen Clips gleich groß.
+# 0.1791 bei den Hochformat-Videos 768 × 1168 (sprung, sprungtritt; A-Pose 793 Zeilen). Die Figur ist so in allen Clips gleich groß.
 # Weißer Grund: `--schluessel ecke`; `--loch 8` (statt 24), sonst werden die hellen Lichter der Stahl-Armschienen durchsichtig.
 # `--haarloch 60` (alle Clips): weiße Lücken zwischen Haarsträhnen, Zopf, Nacken und Kragen werden durchsichtig (neutral weiß,
 # warm umrandet, Haar in der Nähe); die Lichter der Armschienen (kühl umrandet) und Glanzlichter im Haar (gelblich) bleiben Figur.
@@ -62,8 +62,11 @@ umsetzen getroffen_vorn getroffen_vorn/getroffen_vorn_6.mp4 --loch 8 --kuerzen n
 # Griff: zweite Fassung, griff_2_6: Kontakt Video 93 (offene Hände ganz vorn), stille Haltepose im Profil ab Video 121 (Fäuste dicht vor dem
 # Kinn, enger als im Prompt verlangt); Fußpunkt = Stiefelmitte von Kontakt und Haltepose (die Stiefel driften beim Greifen 8 bis 12 Videopixel)
 umsetzen griff griff_2/griff_2_6.mp4 --loch 8 --kuerzen nein --ab 72 --bis 125 --ausser 94-95 --faktor $Q --ankerx-video 448.5 --setze kontakt=22,rueckzug=23,ruhe=48
-# Wurf (Hochformat): Mangel: kein Wurf im Profil (3/4- bis Frontalansicht), erstes Bild passt nicht genau zur Haltepose des Griffs
-umsetzen wurf wurf/wurf_7.mp4 --loch 8 --kuerzen nein --ab 78 --bis 130 --faktor $H --ankerx-video 373.75 --setze heben=17,kontakt=29,rueckzug=39,ruhe=53
+# Wurf: dritte Fassung (Stoßwurf, Drive-Ordner wurf_3), wurf_3_6; Video 7 bis 9 breiten die Arme seitlich aus (T-Form). Beginnt in frontaler
+# Deckung (Video 100; keines der Videos hat vor dem Stoß eine Haltepose im Profil), Zurücknehmen bis 112 (Ellbogen außen), Stoß mit beiden
+# Händen im Profil, Kontakt 123 (Hände offen), Rückzug 128 (mindestens 5 Bilder nach dem Kontakt, sonst steht das Kontaktbild auch in uhr 23),
+# Ruhe 140 (Kampfhaltung, 3/4); Fußpunkt = Stiefelmitte dieser Kampfhaltung
+umsetzen wurf wurf_3/wurf_3_6.mp4 --loch 8 --kuerzen nein --ab 100 --bis 140 --faktor $Q --ankerx-video 418.25 --setze heben=13,kontakt=24,rueckzug=29,ruhe=41
 # Sprung und Sprungtritt (Hochformat)
 umsetzen sprung sprung/sprung_7.mp4 --loch 8 --ankery unten --ereignis sprung --kuerzen nein --ab 78 --bis 135 --faktor $H --ankerx-video 379.0 --setze ruhe=58
 umsetzen sprungtritt sprungtritt/sprungtritt_7.mp4 --loch 16 --ankery unten --ereignis sprung --kuerzen nein --ab 73 --bis 141 --ausser 91-102 --faktor $H --ankerx-video 358 --setze kontakt=17,rueckzug=21,ruhe=57

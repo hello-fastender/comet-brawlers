@@ -328,14 +328,14 @@ Offene Punkte:
 Die fünfzehn Clips unter `grafik/vela_video/` zeigen seit 2026-10-16 die neue Vela (realistischer Comic, blond, Referenzbild in frontaler A-Pose;
 Prompts, Befunde und Auswahl: `docs/grok-prompts-vela-neu.md` und `docs/grok-prompts-vela-neu-angriffe.md`). Quelle sind 29 Grok-Videos der
 ersten Lieferung (geteilte Drive-Ablage «Comet Brawlers», Ordner `vela/`), dazu das Laufen-Video vom 2026-10-15 und ein Kette-2-Video nach der
-zweiten Fassung des Prompts; `gehen`, `kette2`, `kette4` und `griff` stammen aus der zweiten Fassung ihrer Prompts (Drive-Ordner `gehen2`, `kette2_2`, `kette4_2`, `griff_2`); der Wurf wird ein Stoßwurf (dritte Fassung, Videos stehen aus). Je Clip hat ein Agent die Videos gesichtet, das beste gewählt, geschnitten und umgesetzt, ein zweiter hat das Ergebnis
+zweiten Fassung des Prompts; `gehen`, `kette2`, `kette4` und `griff` stammen aus der zweiten Fassung ihrer Prompts (Drive-Ordner `gehen2`, `kette2_2`, `kette4_2`, `griff_2`); der Wurf ist ein Stoßwurf aus der dritten Fassung (Drive-Ordner `wurf_3`). Je Clip hat ein Agent die Videos gesichtet, das beste gewählt, geschnitten und umgesetzt, ein zweiter hat das Ergebnis
 unabhängig geprüft. Die Befehle stehen nur in `werkzeuge/vela_neu_clips.sh` (Wiederholung geprüft: gleiche `clip.txt`). Die alte, rotbraune Vela
 liegt in der Git-Geschichte; ihre Befehle bleiben in `werkzeuge/vela_hd_clips.sh` (Abschnitt unten).
 
 Unterschiede zur alten Vela: weißer statt grüner Grund (`--schluessel ecke`, `--loch 8`, sonst werden die Lichter der Stahl-Armschienen
 durchsichtig; `--haarloch 60` macht die weißen Lücken zwischen Haarsträhnen, Zopf, Nacken und Kragen durchsichtig, `--schatten 8`
 Groks grauen Bodenschatten außerhalb der Figurkontur, beide seit 2026-10-16, Erklärung im Kopf von `werkzeuge/video_umsetzer.gd`); Maßstab aus der A-Pose in Bild 1 jedes Videos (142 / Zeilen: 0,1529 bei den quadratischen, 0,1791 bei den Hochformat-Videos
-`sprung`, `sprungtritt`, `wurf`); Kampfhaltung 137 Spielbildpixel hoch (alte Vela 142); Stand als Hin-und-her-Schleife (`schleife=pingpong`,
+`sprung` und `sprungtritt`); Kampfhaltung 137 Spielbildpixel hoch (alte Vela 142); Stand als Hin-und-her-Schleife (`schleife=pingpong`,
 33 Bilder, 160 Ticks), weil das Atmen im Video keinen Zyklus schließt. Grok stellt die neue Vela in allen Videos «orthodox» hin (linkes Bein und
 linke Faust vorn). `tests/video_test.gd` beschreibt die neuen Clips (Maßstäbe, Höhen, Bildzahlen, kürzere Reichweiten), alle Tests bestehen.
 
@@ -349,14 +349,14 @@ linke Faust vorn). `tests/video_test.gd` beschreibt die neuen Clips (Maßstäbe,
 | `kette3` | 23 | 1,24 | 7,4 | kette3_7 | Haken von unten; Füße rutschen beim Haken etwas |
 | `kette4` | 66 | 3,66 | 19,3 | kette4_2_8 | zweite Fassung; vordere Faust, Tritt mit dem vorderen Bein, Ruhe in Deckung; Standstiefel gleitet 6,7 Spielbildpixel |
 | `getroffen_vorn` | 50 | 2,89 | 12,9 | getroffen_vorn_6 | Kontakt = Oberkörper am weitesten zurück |
-| `griff` | 52 | 2,84 | 14,9 | griff_2_6 | zweite Fassung; stille Haltepose im Profil (Fäuste dicht vor dem Kinn), passt zum Anfang von `wurf` |
-| `wurf` | 53 | 2,81 | 14,8 | wurf_7 | kein Wurf im Profil; Anfang passt nicht genau zur Haltepose |
+| `griff` | 52 | 2,84 | 14,9 | griff_2_6 | zweite Fassung; stille Haltepose im Profil (Fäuste dicht vor dem Kinn); `wurf` beginnt frontal (Sprung in der Ansicht) |
+| `wurf` | 41 | 2,34 | 12,5 | wurf_3_6 | Stoßwurf (dritte Fassung); beginnt in frontaler Deckung (Video 100), Stoß im Profil, Ruhe 3/4 nah an `stand`, aber 9 Spielbildpixel breiter (beim Wechsel zu `stand` rückt jeder Stiefel 4 bis 5 nach innen) |
 | `sprung` | 58 | 3,34 | 13,3 | sprung_7 | Hochformat |
 | `sprungtritt` | 57 | 3,15 | 13,6 | sprungtritt_7 | Hochformat, `--loch 16` |
 | `umgeworfen` | 45 | 2,24 | 10,9 | umgeworfen_aufstehen_7 | Zopfspitze am linken Rand abgeschnitten |
 | `liegen` | 1 | 0,04 | 0,1 | umgeworfen_aufstehen_7 | Video 168 |
 | `aufstehen` | 54 | 2,39 | 8,3 | umgeworfen_aufstehen_7 | Video 168 bis 221 |
-| zusammen | 588 | 31,6 | 150,8 | | alte Vela 709 Bilder, 52,6 MB |
+| zusammen | 576 | 31,1 | 148,4 | | alte Vela 709 Bilder, 52,6 MB |
 
 Gemessen mit `werkzeuge/speicher_messung.gd -- --modus clips` (2026-10-16).
 
@@ -446,7 +446,7 @@ Art und Blick; `bildindex_wahl` macht daraus den Bildindex. Alle Zeiten kommen a
 | AUFSTEHEN | `aufstehen` | uhr 1 bis 26 (`FIGUR_AUFSTEHEN_DAUER`) gleichmäßig vom Liegen bis zur Kampfhaltung |
 | GRIFF (Zugreifen) | `griff` | der Kern schließt den Griff am Ende eines LAUF-Frames und beginnt dort GRIFF mit uhr 1, der Gegner steht schon in der Haltelage (19 px vor der Figur); das Kontaktbild (Hände ausgestreckt, Bild 11) steht in uhr 1 und 2 (`GRIFF_KONTAKT_BIS`), dann ziehen die Arme den Gegner an die Brust (Rückzug, Bilder 13 bis 32) bis zur Haltepose in uhr 12 (`GRIFF_DAUER`) |
 | GRIFF (Halten) | `griff` | die Haltepose (Fäuste vor der Brust, leicht vorgebeugt, breiter Stand, Bild 32) hält bis zum Losreißen in g+61 (`HALTEFRIST` 60) und nach dem Kniestoß (der Kern beginnt GRIFF dann mit uhr 1 neu: `knie_zahl` > 0, die Haltepose steht sofort, es wird nicht noch einmal zugegriffen) |
-| WURF V und R | `wurf` | uhr 1 bis 21 (Tragen, `WURF_TRAGEN_BIS`, der Gegner bleibt in der Haltelage): Ducken aus der Haltepose (Bild 1 = Pose der Haltepose), Arme über dem Kopf in uhr 12 (`WURF_HEBEN_UHR`, Bild 42), Schwung; uhr 22 (`WURF_LOSLASSEN`, E+22, der Gegner steigt auf 59 px und fliegt): das Bild `kontakt` (55), nur in diesem Frame; danach das Ausschwingen mit tiefen offenen Händen (Bild 62 in uhr 27) und die Rückkehr in die Kampfhaltung (Bild 87) im letzten gebundenen Frame (uhr 37 = `WURF_GEBUNDEN_BIS`); ab uhr 38 STAND |
+| WURF V und R | `wurf` | uhr 1 bis 21 (Tragen, `WURF_TRAGEN_BIS`, der Gegner bleibt in der Haltelage): Stoßwurf: aus der Deckung (Bild 1, Fäuste am Kinn, frontal; schließt an die Haltepose des Griffs an) nimmt die Figur die Fäuste zurück (Ellbogen auseinander; Ende = Bild `heben` 13 in uhr 12, `WURF_HEBEN_UHR`), dann der Stoß mit beiden Händen nach vorn (frontal streckt sich zuerst der ferne Arm, dann dreht die Figur ins Profil); uhr 22 (`WURF_LOSLASSEN`, E+22, der Gegner steigt auf 59 px und fliegt): das Bild `kontakt` (24, beide Arme vorn, Hände offen), nur in diesem Frame; danach kurzes Halten und Rückzug (Bild `rueckzug` 29 in uhr 27) und die Rückkehr in die Kampfhaltung (Bild 41) im letzten gebundenen Frame (uhr 37 = `WURF_GEBUNDEN_BIS`); ab uhr 38 STAND |
 | KNIESTOSS | – | **kein Clip**: Platzhalter. Der Kern beginnt für jeden Kniestoß eine eigene Aktion (22 Ticks, Treffer in K+5), danach wieder GRIFF; die Figur ist für diese Ticks der Platzhalter-Kasten (siehe „Beurteilung“) |
 | SPRUNGANGRIFF H, T | – | kein Clip: Platzhalter |
 | SPRINTSPRUNG, SPRINTANGRIFF | – | kein Clip: Platzhalter |
@@ -457,7 +457,7 @@ Art und Blick; `bildindex_wahl` macht daraus den Bildindex. Alle Zeiten kommen a
 Zum Zugreifen: Der Kern hat keinen Anlauf vor dem Griff (Kampf 8.1: Griff am Ende des LAUF-Frames, Drücke ab g+1). Das Ausholen des Clips (Bilder 3 bis
 10, eine Hand streckt sich zuerst) entfällt deshalb; das Kontaktbild steht in dem Frame, in dem der Kern greift (Test: Szenen T6_a, T6_b, T16_a, T16_b und
 `werkzeuge/hd_film/griff_*`). Zum Wurf: Der Gegner steht in uhr 1 bis 21 am Boden in der Haltelage (die Logik hebt ihn erst in E+22 auf 59 px), die
-Arme sind in der Darstellung schon früher über dem Kopf; beim Wurf rückwärts (R) zeigt der Clip denselben Schwung nach vorn, der Gegner fliegt hinter die
+Arme stoßen in der Darstellung schon ab uhr 13 nach vorn; beim Wurf rückwärts (R) zeigt der Clip denselben Stoß nach vorn, der Gegner fliegt hinter die
 Figur (der Clip kennt nur den Vorwärtswurf). Der Sprung: Die Logik hebt die Figur (`h` aus `KernWerte`, Scheitel 51,25 px), das Bild zeigt nur die
 Haltung; der Anker liegt auf der untersten Figurzeile jedes Bildes (`--ankery unten`), der Schatten bleibt am Boden. Der Kern kennt den Sprungangriff
 (`SPRUNGANGRIFF`, Varianten N neutral, R Richtung, H hoch, T runter, Kampf 5.2), die Tabelle ruft den Clip deshalb für N und R. Der Kern wurde nicht angefasst.
