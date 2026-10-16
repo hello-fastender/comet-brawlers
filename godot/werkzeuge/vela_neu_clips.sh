@@ -18,6 +18,8 @@
 # Weißer Grund: `--schluessel ecke`; `--loch 8` (statt 24), sonst werden die hellen Lichter der Stahl-Armschienen durchsichtig.
 # `--haarloch 60` (alle Clips): weiße Lücken zwischen Haarsträhnen, Zopf, Nacken und Kragen werden durchsichtig (neutral weiß,
 # warm umrandet, Haar in der Nähe); die Lichter der Armschienen (kühl umrandet) und Glanzlichter im Haar (gelblich) bleiben Figur.
+# `--schatten 8` (alle Clips): Groks grauer Bodenschatten (unter liegendem Körper, unter Stiefeln, Wischspuren) wird durchsichtig,
+# soweit er außerhalb der dunklen Kontur der Figur liegt.
 # Fußpunkt: `--ankerx-video` = Stiefelmitte der ruhigen Kampfhaltung im jeweiligen Video (gemessen); gehen und sprint `--ankerx mittel`.
 # Bildnummern (`--ab`, `--bis`, `--ausser`) sind Videobilder (1-basiert), `--setze` zählt die behaltenen Bilder.
 #
@@ -29,7 +31,7 @@ shift 2 2>/dev/null || shift $# || true
 WAHL=("$@")
 G="${GODOT:-/tmp/Godot_v4.7.2-stable_linux.x86_64}"
 U=("$G" --headless --path godot --script res://werkzeuge/video_umsetzer.gd --)
-C=(--aus "$AUS" --hd --hoehe 360 --schluessel ecke --haarloch 60)
+C=(--aus "$AUS" --hd --hoehe 360 --schluessel ecke --haarloch 60 --schatten 8)
 Q=0.1529
 H=0.1791
 
