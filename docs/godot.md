@@ -355,7 +355,7 @@ linke Faust vorn). `tests/video_test.gd` beschreibt die neuen Clips (Maßstäbe,
 | `umgeworfen` | 45 | 2,24 | 10,9 | umgeworfen_aufstehen_7 | Zopfspitze am linken Rand abgeschnitten |
 | `liegen` | 1 | 0,04 | 0,1 | umgeworfen_aufstehen_7 | Video 168 |
 | `aufstehen` | 54 | 2,39 | 8,3 | umgeworfen_aufstehen_7 | Video 168 bis 221 |
-| zusammen | 588 | 31,5 | CLIPS | | alte Vela 709 Bilder, 52,6 MB |
+| zusammen | 588 | 31,5 | 150,9 | | alte Vela 709 Bilder, 52,6 MB |
 
 Gemessen mit `werkzeuge/speicher_messung.gd -- --modus clips` (2026-10-16).
 
