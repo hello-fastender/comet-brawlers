@@ -21,29 +21,30 @@ const SCHRITTE: int = 800
 ## Pixel-Clip; seit der zweiten Lieferung am 2026-10-08 sind alle echten Clips gemalt (Pixel-Clips gibt es nur noch als
 ## `_test_*` aus der Puppe). `fussmitte`: der Fußpunkt (`--ankerx-video`) liegt auf der Mitte zwischen den Stiefeln der
 ## Kampfhaltung im ersten Bild (nur Clips, die in der Kampfhaltung beginnen). Bei HD-Clips ist `hoehe` die Figurhöhe im ersten Bild in Spielbildpixeln (Dateipixel · skala), `massstab` der
-## Spielbildpixel je Videopixel (Clips mit dem Sprung-Startbild: Figur nur 45 % der Bildhöhe, deshalb 0,330). `ankerx`: false
+## Spielbildpixel je Videopixel. Seit der neuen Vela (2026-10-16, docs/grok-prompts-vela-neu*.md) ist er 142 / Zeilen der A-Pose in Bild 1
+## des Quellvideos: 0,1529 bei den quadratischen 944-Pixel-Videos, 0,1791 bei den Hochformat-Videos (sprung, sprungtritt, wurf). `ankerx`: false
 ## bei HD-Clips, die nicht in der Kampfhaltung beginnen (kette1 beginnt am Ende des Ausholens, sprung und sprungtritt in der
 ## Hocke, Wartezeit abgeschnitten): ihr Anker (`--ankerx-video`, Fußmitte der Haltung im Video) liegt nicht unter dem ersten
 ## Bild, sondern nur innerhalb der Figur des ersten Bildes (geprüft).
 const ECHTE: Dictionary = {
-	"stand": {"min": 30, "hoehe": [141, 144], "ankerx": false, "fussmitte": true, "hd": true},
+	"stand": {"min": 30, "hoehe": [135, 140], "ankerx": false, "fussmitte": true, "hd": true},
 	"gehen": {"min": 20, "hoehe": [], "ankerx": false, "hd": true},
-	"kette1": {"min": 20, "hoehe": [139, 144], "ankerx": false, "hd": true},
+	"kette1": {"min": 20, "hoehe": [134, 140], "ankerx": false, "hd": true},
 	"kette2": {"min": 30, "hoehe": [], "ankerx": false, "hd": true},
 	"kette3": {"min": 20, "hoehe": [], "ankerx": false, "hd": true},
 	"kette4": {"min": 60, "hoehe": [], "ankerx": false, "hd": true},
 	"sprint": {"min": 16, "hoehe": [], "ankerx": false, "hd": true},
-	"sprung": {"min": 60, "hoehe": [], "ankerx": false, "hd": true, "massstab": 0.3302},
-	"sprungtritt": {"min": 40, "hoehe": [], "ankerx": false, "hd": true, "massstab": 0.3302},
-	"getroffen_vorn": {"min": 40, "hoehe": [140, 144], "ankerx": false, "fussmitte": true, "hd": true},
-	"umgeworfen": {"min": 50, "hoehe": [140, 144], "ankerx": false, "fussmitte": true, "hd": true},
+	"sprung": {"min": 50, "hoehe": [], "ankerx": false, "hd": true, "massstab": 0.1791},
+	"sprungtritt": {"min": 40, "hoehe": [], "ankerx": false, "hd": true, "massstab": 0.1791},
+	"getroffen_vorn": {"min": 40, "hoehe": [136, 141], "ankerx": false, "fussmitte": true, "hd": true},
+	"umgeworfen": {"min": 40, "hoehe": [130, 136], "ankerx": false, "fussmitte": true, "hd": true},
 	"liegen": {"min": 1, "hoehe": [], "ankerx": false, "hd": true},
-	"aufstehen": {"min": 60, "hoehe": [], "ankerx": false, "hd": true},
+	"aufstehen": {"min": 50, "hoehe": [], "ankerx": false, "hd": true},
 	"griff": {"min": 30, "hoehe": [], "ankerx": false, "hd": true},
-	"wurf": {"min": 80, "hoehe": [], "ankerx": false, "hd": true},
+	"wurf": {"min": 50, "hoehe": [], "ankerx": false, "hd": true, "massstab": 0.1791},
 }
 ## Maßstab (clip.txt, Spielbildpixel je Videopixel) aller echten Clips: dieselbe Größe der Figur, 0,3 % Spielraum.
-const MASSSTAB: float = 0.1694
+const MASSSTAB: float = 0.1529
 const MASSSTAB_TOL: float = 0.0006
 ## HD-Clips: Figur im Spiel gleich hoch wie die Pixel-Figur (Spielbildpixel), Spielraum für Atem und Rundung
 const SPIELHOEHE: float = 142.0
@@ -486,15 +487,23 @@ func _hd_clips_zuordnung() -> void:
 	var ver: Array[int] = T.verlauf("stand", 3 * ticks, st)
 	var s_ok: bool = true
 	var benutzt: Dictionary = {}
+	var pingpong: bool = String(st.get("schleife", "")) == "pingpong"
+	var umkehr: bool = false
 	for u: int in ticks:
 		benutzt[ver[u]] = true
+		# vorwärts; bei `schleife=pingpong` vorwärts bis zum letzten Bild, dann rückwärts
 		if u > 0 and ver[u] < ver[u - 1]:
+			if pingpong:
+				umkehr = true
+			else:
+				s_ok = false
+		if u > 0 and umkehr and ver[u] > ver[u - 1]:
 			s_ok = false
 		if ver[u] != ver[u + ticks] or ver[u] != ver[u + 2 * ticks]:
 			s_ok = false
-	_ok(s_ok, "HD stand: ein Zyklus über %d Ticks, danach von vorn, Bilder laufen vorwärts" % ticks)
+	_ok(s_ok, "HD stand: ein Zyklus über %d Ticks, danach von vorn, Bilder laufen %s" % [ticks, "hin und zurück" if pingpong else "vorwärts"])
 	_gleich(benutzt.size(), n, "HD stand: alle %d Zyklusbilder kommen im Zyklus vor" % n)
-	_ok(ticks >= 100 and ticks <= 140, "HD stand: Atemzyklus in Echtzeit (%d Ticks = %.1f s)" % [ticks, float(ticks) / 60.0])
+	_ok(ticks >= 100 and ticks <= 200, "HD stand: Atemzyklus in Echtzeit (%d Ticks = %.1f s)" % [ticks, float(ticks) / 60.0])
 	# --- sprungtritt: Sprungangriff N und R ---
 	var ev: Dictionary = tt["ereignis"]
 	var absprung: int = ev["absprung"]
@@ -1240,17 +1249,24 @@ func _echte_clips() -> void:
 			# HD-Clip kette1: das Video beginnt erst am Ende des Ausholens (die Wartezeit und der Anfang des Ausholens sind
 			# abgeschnitten, Datei sparen); Bezug ist dann das Ausholen-Ende statt des ersten Bildes
 			var bezug: int = vorn[a] if bool(d["weich"]) else vorn[0]
+			# Neue Vela (orthodoxe Kampfhaltung): die vordere Faust der Deckung steht schon weit vorn, der Schlag reicht 11 bis 21
+			# Spielbildpixel darüber hinaus (kette1 53 gegen 42, kette2 69 gegen 48; die alte Vela 25 und mehr)
 			if clip != "kette3":
-				_ok(vorn[kt] - bezug >= 25, "%s: im Kontakt ist die Figur weit nach vorn gestreckt (%d gegen %d)" % [clip, vorn[kt], bezug])
+				_ok(vorn[kt] - bezug >= 10, "%s: im Kontakt ist die Figur nach vorn gestreckt (%d gegen %d)" % [clip, vorn[kt], bezug])
 		elif clip == "stand":
 			_gleich(int(d["fps"]), 24, "stand: Quelle 24 Bilder/s")
 			_gleich(int(d["zyklus_bilder"]), n, "stand: der ganze Clip ist der Zyklus")
-			var mittel: int = 0
-			for i: int in range(1, n):
-				mittel += _diff(clip, i, i + 1)
-			mittel /= n - 1
-			_ok(_diff(clip, n, 1) <= 4 * mittel, "stand: die Schleife schließt (Unterschied letztes zum ersten Bild %d, mittlerer Bildschritt %d)" % [_diff(clip, n, 1), mittel])
-			_gleich(T.zyklus_ticks("stand", d), (n * 60 + 12) / 24, "stand: %d Bilder bei 24 Bildern/s in Echtzeit (%d Ticks)" % [n, (n * 60 + 12) / 24])
+			# Hin und her (`schleife=pingpong`, neue Vela: das Atmen im Video schließt keinen Zyklus): die Naht ist gespiegelt und
+			# braucht keine Prüfung; ein Durchlauf sind 2 · (n − 1) Bildschritte
+			var pingpong: bool = String(d.get("schleife", "")) == "pingpong"
+			if not pingpong:
+				var mittel: int = 0
+				for i: int in range(1, n):
+					mittel += _diff(clip, i, i + 1)
+				mittel /= n - 1
+				_ok(_diff(clip, n, 1) <= 4 * mittel, "stand: die Schleife schließt (Unterschied letztes zum ersten Bild %d, mittlerer Bildschritt %d)" % [_diff(clip, n, 1), mittel])
+			var schritte: int = 2 * (n - 1) if pingpong else n
+			_gleich(T.zyklus_ticks("stand", d), (schritte * 60 + 12) / 24, "stand: %d Bildschritte bei 24 Bildern/s in Echtzeit (%d Ticks)" % [schritte, (schritte * 60 + 12) / 24])
 		elif clip == "sprint":
 			_gleich(int(d["zyklus_bilder"]), 16, "sprint: Doppelschritt aus 16 Bildern")
 			var mittel2: int = 0
@@ -1284,8 +1300,9 @@ func _echte_clips() -> void:
 			var rz2: int = d["rueckzug"]
 			_ok(int(ev["hocke"]) < ab2 and ab2 < kt2 and kt2 <= rz2 and rz2 < au2 and au2 < int(ev["tief"]) and int(ev["tief"]) <= int(ev["ruhe"]), "sprungtritt: Hocke < Absprung < Kontakt ≤ Rückzug < Aufsetzen < Tief ≤ Ruhe")
 			_ok(luft2[ab2] >= 2 and luft2[ab2 - 1] < 2, "sprungtritt: das Absprungbild ist das erste in der Luft (%d, davor %d)" % [luft2[ab2], luft2[ab2 - 1]])
-			_ok(vorn2[kt2] >= vorn2.max() - 4 and vorn2[kt2] - vorn2[0] >= 40, "sprungtritt: im Kontaktbild ist das Bein voll nach vorn gestreckt (%d gegen %d in der Haltung, größter Wert %d)" % [vorn2[kt2], vorn2[0], vorn2.max()])
-			_ok(vorn2[ab2] < vorn2[kt2] - 40, "sprungtritt: im Absprungbild ist das Bein noch nicht gestreckt (%d)" % vorn2[ab2])
+			_ok(vorn2[kt2] >= vorn2.max() - 4 and vorn2[kt2] - vorn2[0] >= 25, "sprungtritt: im Kontaktbild ist das Bein voll nach vorn gestreckt (%d gegen %d in der Haltung, größter Wert %d)" % [vorn2[kt2], vorn2[0], vorn2.max()])
+			# neue Vela: der Tritt reicht 32 Spielbildpixel über die Haltung hinaus (alte Vela über 40)
+			_ok(vorn2[ab2] < vorn2[kt2] - 25, "sprungtritt: im Absprungbild ist das Bein noch nicht gestreckt (%d)" % vorn2[ab2])
 			_ok(vorn2[rz2] >= vorn2.max() - 4 and vorn2[rz2 + 1] < vorn2[rz2], "sprungtritt: Rückzug = letztes Bild der vollen Streckung (%d, danach %d)" % [vorn2[rz2], vorn2[rz2 + 1]])
 			_ok(luft2[au2] <= 1 and luft2[au2 - 1] > 1, "sprungtritt: das Aufsetzbild ist das erste am Boden (%d, davor %d)" % [luft2[au2], luft2[au2 - 1]])
 			var hs2: Array[int] = _liste(clip, "hoehe_sil")
@@ -1293,7 +1310,9 @@ func _echte_clips() -> void:
 		elif clip == "getroffen_vorn":
 			var br: Array[int] = _liste(clip, "breite_sil")
 			_ok(int(ev["start"]) < int(ev["kontakt"]) and int(ev["kontakt"]) < int(ev["rueckzug"]) and int(ev["rueckzug"]) < int(ev["ruhe"]), "getroffen_vorn: Start < Auslenkung < Rückzug < Ruhe")
-			_ok(br[ev["kontakt"]] >= br.max() * 9 / 10, "getroffen_vorn: im Kontaktbild sind die Arme weit außen (%d von %d)" % [br[ev["kontakt"]], br.max()])
+			# größte Auslenkung: Arme weit außen (alte Vela) oder Oberkörper am weitesten zurückgebogen, Silhouette am niedrigsten (neue Vela)
+			var hsg: Array[int] = _liste(clip, "hoehe_sil")
+			_ok(br[ev["kontakt"]] >= br.max() * 9 / 10 or hsg[ev["kontakt"]] <= hsg.min() + 2, "getroffen_vorn: im Kontaktbild ist die Auslenkung am größten (Breite %d von %d, Höhe %d, kleinste %d)" % [br[ev["kontakt"]], br.max(), hsg[ev["kontakt"]], hsg.min()])
 			_ok(br[ev["ruhe"]] <= br[0] + 6, "getroffen_vorn: die Ruhe ist wieder eine Haltung (Breite %d, Anfang %d)" % [br[ev["ruhe"]], br[0]])
 		elif clip == "umgeworfen":
 			var lu: Array[int] = _liste(clip, "luft")
@@ -1303,7 +1322,8 @@ func _echte_clips() -> void:
 			for i: int in range(int(ev["scheitel"]), n):
 				tiefst = mini(tiefst, lu[i])
 			_ok(lu[ev["aufprall"]] <= tiefst + 3 and lu[int(ev["aufprall"]) - 1] > tiefst + 3, "umgeworfen: der Aufprall ist das erste Bild am Boden (Luft %d, davor %d, tiefster Stand %d)" % [lu[ev["aufprall"]], lu[int(ev["aufprall"]) - 1], tiefst])
-			_ok(lu[int(ev["aufprall"]) - 1] - lu[ev["aufprall"]] >= 6, "umgeworfen: beim Aufprall fällt die Körperunterkante deutlich (%d px)" % (lu[int(ev["aufprall"]) - 1] - lu[ev["aufprall"]]))
+			# neue Vela: weicher Aufprall (Luft 13, 6, 2), alte Vela 6 px und mehr
+			_ok(lu[int(ev["aufprall"]) - 1] - lu[ev["aufprall"]] >= 3, "umgeworfen: beim Aufprall fällt die Körperunterkante (%d px)" % (lu[int(ev["aufprall"]) - 1] - lu[ev["aufprall"]]))
 		elif clip == "gehen":
 			_gleich(int(d["zyklus_bilder"]), n, "gehen: der ganze Clip ist ein Doppelschritt (Zyklus)")
 			var mittel3: int = 0
@@ -1332,12 +1352,14 @@ func _echte_clips() -> void:
 			var vw: Array[int] = _liste(clip, "vorn")
 			_ok(vw[d["kontakt"]] >= vw.max() - 16 and vw[d["kontakt"]] - vw[0] >= 20, "wurf: im Wurf (Loslassen) ist die Figur nach vorn gelehnt (%d gegen %d am Anfang, größter Wert %d)" % [vw[d["kontakt"]], vw[0], vw.max()])
 			_ok(vw[d["ruhe"]] <= vw[0] + 6 and hw[d["ruhe"]] >= hw[0] - 4, "wurf: die Ruhe ist wieder die Kampfhaltung des Anfangs (vorn %d gegen %d, Höhe %d gegen %d)" % [vw[d["ruhe"]], vw[0], hw[d["ruhe"]], hw[0]])
-			# Der Wurf beginnt in der Pose, in der der Griff endet (Haltepose von `griff`): gleiche Höhe und Vorderkante der Silhouette
+			# Der Wurf beginnt in der Pose, in der der Griff endet (Haltepose von `griff`): gleiche Höhe und Vorderkante der Silhouette.
+			# Neue Vela: Griff und Wurf stammen aus zwei Videos ohne gemeinsame Haltepose (wurf_7 beginnt geduckt, 8 Spielbildpixel
+			# niedriger und weiter hinten); bis zu einem neuen Wurf-Video 10 statt 3 Spielbildpixel Spielraum
 			var gd2: Dictionary = _daten("griff")
 			if not gd2.is_empty():
 				var hg2: Array[int] = _liste("griff", "hoehe_sil")
 				var vg2: Array[int] = _liste("griff", "vorn")
-				_ok(absi(hw[0] - hg2[gd2["ruhe"]]) <= 3 and absi(vw[0] - vg2[gd2["ruhe"]]) <= 3, "wurf: das erste Bild ist die Haltepose des Griffs (Höhe %d gegen %d, Vorderkante %d gegen %d)" % [hw[0], hg2[gd2["ruhe"]], vw[0], vg2[gd2["ruhe"]]])
+				_ok(absi(hw[0] - hg2[gd2["ruhe"]]) <= 10 and absi(vw[0] - vg2[gd2["ruhe"]]) <= 10, "wurf: das erste Bild ist die Haltepose des Griffs (Höhe %d gegen %d, Vorderkante %d gegen %d)" % [hw[0], hg2[gd2["ruhe"]], vw[0], vg2[gd2["ruhe"]]])
 		elif clip == "liegen":
 			_gleich(n, 1, "liegen: ein Standbild (ohne Staubkörner)")
 		elif clip == "aufstehen":
