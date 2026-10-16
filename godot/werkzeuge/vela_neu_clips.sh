@@ -9,7 +9,7 @@
 #                  Ordner vela/<ordner>/grok-video-d9db4961-8774-4dfa-aa5f-292ac6fa3ed6-<n>.mp4). Erwartet umbenannt als
 #                  <ordner>/<ordner>_<n>.mp4, z. B. stand/stand_9.mp4. Ausnahmen: sprint aus der ersten Lieferung (2026-10-15,
 #                  zweites von zwei Laufen-Videos) als laufen_v2.mp4; gehen und kette2 aus der zweiten Fassung des Prompts
-#                  (Drive-Ordner gehen2 und kette2_2).
+#                  (Drive-Ordner gehen2 und kette2_2), ebenso kette4 und griff (kette4_2, griff_2).
 #   <ausordner>    Standard godot/grafik/vela_video (die Clips des Spiels)
 #   <clip> ...     nur diese Clips umsetzen (Standard: alle)
 #
@@ -48,12 +48,16 @@ umsetzen kette1 kette1/kette1_7.mp4 --loch 8 --kuerzen nein --ab 88 --bis 118 --
 umsetzen kette2 kette2_2/kette2_2_7.mp4 --loch 8 --kuerzen nein --ab 91 --bis 121 --ausser 103-106 --faktor $Q --ankerx-video 411.75 --setze kontakt=11,rueckzug=13,ruhe=27
 # Kette 3: Haken von unten
 umsetzen kette3 kette3/kette3_7.mp4 --loch 8 --kuerzen nein --ab 89 --bis 130 --ausser 101-119 --faktor $Q --ankerx-video 426.25 --setze ausholen=2,kontakt=11,rueckzug=13,ruhe=23
-# Kette 4: Schlag und Tritt; Mangel: halbe Rückenansicht im Schlag, Beinseiten wechseln in der Drehung
-umsetzen kette4 kette4/kette4_7.mp4 --loch 8 --kuerzen nein --ab 37 --bis 143 --ausser 45-74,106-116,119-121 --faktor $Q --ankerx-video 415 --ankery unten --setze kontakt1=7,kontakt=39,rueckzug=40,ruhe=61
+# Kette 4: zweite Fassung, kette4_2_8 (vordere Faust, Tritt mit dem vorderen Bein, Ruhe in Deckung wie stand); der erste Schlag (Video 28
+# bis 46, noch in der Drehung) ist abgeschnitten, der Clip beginnt am Wendepunkt davor (Video 55). Keine Rückenansicht, kein Beinwechsel mehr;
+# Reichweite Schlag 61, Tritt 64 Spielbildpixel; der Standstiefel gleitet noch 6,7 Spielbildpixel (bisher 15,6).
+# Verworfen: kette4_2_6 (Rücken zur Kamera beim Tritt), kette4_2_7 (Arme hängen am Anfang und in der Ruhe, Ruhe 143 statt 137 hoch)
+umsetzen kette4 kette4_2/kette4_2_8.mp4 --loch 8 --kuerzen nein --ab 55 --bis 145 --ausser 67-91 --faktor $Q --ankerx-video 425 --setze kontakt1=11,kontakt=41,rueckzug=42,ruhe=66
 # Treffer von vorn: Kontakt = Oberkörper am weitesten zurück
 umsetzen getroffen_vorn getroffen_vorn/getroffen_vorn_6.mp4 --loch 8 --kuerzen nein --ab 64 --bis 130 --ausser 65-70,87-97 --ereignis treffer --faktor $Q --ankerx-video 468 --setze start=1,kontakt=16,rueckzug=18,ruhe=48
-# Griff: keine stille Haltepose im Video, Ruhe = Ende des Zugs (Video 89)
-umsetzen griff griff/griff_6.mp4 --loch 8 --kuerzen nein --ab 50 --bis 89 --ausser 70-78 --faktor $Q --ankerx-video 430.0 --setze kontakt=19,rueckzug=21,ruhe=31
+# Griff: zweite Fassung, griff_2_6: Kontakt Video 93 (offene Hände ganz vorn), stille Haltepose im Profil ab Video 121 (Fäuste dicht vor dem
+# Kinn, enger als im Prompt verlangt); Fußpunkt = Stiefelmitte von Kontakt und Haltepose (die Stiefel driften beim Greifen 8 bis 12 Videopixel)
+umsetzen griff griff_2/griff_2_6.mp4 --loch 8 --kuerzen nein --ab 72 --bis 125 --ausser 94-95 --faktor $Q --ankerx-video 448.5 --setze kontakt=22,rueckzug=23,ruhe=48
 # Wurf (Hochformat): Mangel: kein Wurf im Profil (3/4- bis Frontalansicht), erstes Bild passt nicht genau zur Haltepose des Griffs
 umsetzen wurf wurf/wurf_7.mp4 --loch 8 --kuerzen nein --ab 78 --bis 130 --faktor $H --ankerx-video 373.75 --setze heben=17,kontakt=29,rueckzug=39,ruhe=53
 # Sprung und Sprungtritt (Hochformat)

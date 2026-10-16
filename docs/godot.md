@@ -328,7 +328,7 @@ Offene Punkte:
 Die fünfzehn Clips unter `grafik/vela_video/` zeigen seit 2026-10-16 die neue Vela (realistischer Comic, blond, Referenzbild in frontaler A-Pose;
 Prompts, Befunde und Auswahl: `docs/grok-prompts-vela-neu.md` und `docs/grok-prompts-vela-neu-angriffe.md`). Quelle sind 29 Grok-Videos der
 ersten Lieferung (geteilte Drive-Ablage «Comet Brawlers», Ordner `vela/`), dazu das Laufen-Video vom 2026-10-15 und ein Kette-2-Video nach der
-zweiten Fassung des Prompts; `gehen` und `kette2` stammen aus der zweiten Fassung ihrer Prompts (Drive-Ordner `gehen2`, `kette2_2`). Je Clip hat ein Agent die Videos gesichtet, das beste gewählt, geschnitten und umgesetzt, ein zweiter hat das Ergebnis
+zweiten Fassung des Prompts; `gehen`, `kette2`, `kette4` und `griff` stammen aus der zweiten Fassung ihrer Prompts (Drive-Ordner `gehen2`, `kette2_2`, `kette4_2`, `griff_2`); der Wurf wird ein Stoßwurf (dritte Fassung, Videos stehen aus). Je Clip hat ein Agent die Videos gesichtet, das beste gewählt, geschnitten und umgesetzt, ein zweiter hat das Ergebnis
 unabhängig geprüft. Die Befehle stehen nur in `werkzeuge/vela_neu_clips.sh` (Wiederholung geprüft: gleiche `clip.txt`). Die alte, rotbraune Vela
 liegt in der Git-Geschichte; ihre Befehle bleiben in `werkzeuge/vela_hd_clips.sh` (Abschnitt unten).
 
@@ -346,16 +346,16 @@ linke Faust vorn). `tests/video_test.gd` beschreibt die neuen Clips (Maßstäbe,
 | `kette1` | 23 | 1,20 | 6,7 | kette1_7 | Kontakt 97; Faust reicht 11 Spielbildpixel über die Deckung |
 | `kette2` | 27 | 1,51 | 8,9 | kette2_2_7 | zweite Fassung; Reichweite 75 Spielbildpixel, Ruhe profilnah |
 | `kette3` | 23 | 1,24 | 7,4 | kette3_7 | Haken von unten; Füße rutschen beim Haken etwas |
-| `kette4` | 63 | 3,43 | 18,0 | kette4_7 | Schlag und Tritt; halbe Rückenansicht im Schlag |
+| `kette4` | 66 | 3,66 | 19,3 | kette4_2_8 | zweite Fassung; vordere Faust, Tritt mit dem vorderen Bein, Ruhe in Deckung; Standstiefel gleitet 6,7 Spielbildpixel |
 | `getroffen_vorn` | 50 | 2,89 | 12,9 | getroffen_vorn_6 | Kontakt = Oberkörper am weitesten zurück |
-| `griff` | 31 | 1,71 | 9,4 | griff_6 | keine stille Haltepose im Video |
+| `griff` | 52 | 2,84 | 14,9 | griff_2_6 | zweite Fassung; stille Haltepose im Profil (Fäuste dicht vor dem Kinn), passt zum Anfang von `wurf` |
 | `wurf` | 53 | 2,81 | 14,8 | wurf_7 | kein Wurf im Profil; Anfang passt nicht genau zur Haltepose |
 | `sprung` | 58 | 3,34 | 13,3 | sprung_7 | Hochformat |
 | `sprungtritt` | 57 | 3,15 | 13,6 | sprungtritt_7 | Hochformat, `--loch 16` |
 | `umgeworfen` | 45 | 2,24 | 10,9 | umgeworfen_aufstehen_7 | Zopfspitze am linken Rand abgeschnitten |
 | `liegen` | 1 | 0,04 | 0,1 | umgeworfen_aufstehen_7 | Video 168 |
 | `aufstehen` | 54 | 2,39 | 8,3 | umgeworfen_aufstehen_7 | Video 168 bis 221 |
-| zusammen | 564 | 30,2 | 144,0 | | alte Vela 709 Bilder, 52,6 MB |
+| zusammen | 588 | 31,5 | CLIPS | | alte Vela 709 Bilder, 52,6 MB |
 
 Gemessen mit `werkzeuge/speicher_messung.gd -- --modus clips` (2026-10-16).
 
