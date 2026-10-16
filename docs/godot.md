@@ -328,7 +328,7 @@ Offene Punkte:
 Die fünfzehn Clips unter `grafik/vela_video/` zeigen seit 2026-10-16 die neue Vela (realistischer Comic, blond, Referenzbild in frontaler A-Pose;
 Prompts, Befunde und Auswahl: `docs/grok-prompts-vela-neu.md` und `docs/grok-prompts-vela-neu-angriffe.md`). Quelle sind 29 Grok-Videos der
 ersten Lieferung (geteilte Drive-Ablage «Comet Brawlers», Ordner `vela/`), dazu das Laufen-Video vom 2026-10-15 und ein Kette-2-Video nach der
-zweiten Fassung des Prompts. Je Clip hat ein Agent die Videos gesichtet, das beste gewählt, geschnitten und umgesetzt, ein zweiter hat das Ergebnis
+zweiten Fassung des Prompts; `gehen` und `kette2` stammen aus der zweiten Fassung ihrer Prompts (Drive-Ordner `gehen2`, `kette2_2`). Je Clip hat ein Agent die Videos gesichtet, das beste gewählt, geschnitten und umgesetzt, ein zweiter hat das Ergebnis
 unabhängig geprüft. Die Befehle stehen nur in `werkzeuge/vela_neu_clips.sh` (Wiederholung geprüft: gleiche `clip.txt`). Die alte, rotbraune Vela
 liegt in der Git-Geschichte; ihre Befehle bleiben in `werkzeuge/vela_hd_clips.sh` (Abschnitt unten).
 
@@ -341,10 +341,10 @@ linke Faust vorn). `tests/video_test.gd` beschreibt die neuen Clips (Maßstäbe,
 | Clip | Bilder | Dateien (MB) | Texturen (MiB) | Video | Anmerkung |
 |---|---|---|---|---|---|
 | `stand` | 33 | 1,85 | 8,7 | stand_9 | Atemzug hin und her (Video 97 bis 129) |
-| `gehen` | 33 | 1,53 | 6,6 | gehen_8 | Doppelschritt 33 Bilder; Schritte zu kurz (`schritt_px` 50, 29 Ticks), neues Video mit der zweiten Fassung steht aus |
+| `gehen` | 30 | 1,46 | 6,5 | gehen2_6 | zweite Fassung; Doppelschritt 30 Bilder, `schritt_px` 57, 33 Ticks (erste Lieferung 50 und 29) |
 | `sprint` | 16 | 0,91 | 4,5 | laufen_v2 | Doppelschritt 16 Bilder, `schritt_px` 83, 24 Ticks |
 | `kette1` | 23 | 1,20 | 6,7 | kette1_7 | Kontakt 97; Faust reicht 11 Spielbildpixel über die Deckung |
-| `kette2` | 32 | 1,85 | 10,3 | kette2_2_8 | zweite Fassung; Oberkörper beim Schlag frontal |
+| `kette2` | 27 | 1,51 | 8,9 | kette2_2_7 | zweite Fassung; Reichweite 75 Spielbildpixel, Ruhe profilnah |
 | `kette3` | 23 | 1,24 | 7,4 | kette3_7 | Haken von unten; Füße rutschen beim Haken etwas |
 | `kette4` | 63 | 3,43 | 18,0 | kette4_7 | Schlag und Tritt; halbe Rückenansicht im Schlag |
 | `getroffen_vorn` | 50 | 2,89 | 12,9 | getroffen_vorn_6 | Kontakt = Oberkörper am weitesten zurück |
@@ -355,7 +355,7 @@ linke Faust vorn). `tests/video_test.gd` beschreibt die neuen Clips (Maßstäbe,
 | `umgeworfen` | 45 | 2,24 | 10,9 | umgeworfen_aufstehen_7 | Zopfspitze am linken Rand abgeschnitten |
 | `liegen` | 1 | 0,04 | 0,1 | umgeworfen_aufstehen_7 | Video 168 |
 | `aufstehen` | 54 | 2,39 | 8,3 | umgeworfen_aufstehen_7 | Video 168 bis 221 |
-| zusammen | 572 | 30,6 | 145,5 | | alte Vela 709 Bilder, 52,6 MB |
+| zusammen | 564 | 30,2 | 144,0 | | alte Vela 709 Bilder, 52,6 MB |
 
 Gemessen mit `werkzeuge/speicher_messung.gd -- --modus clips` (2026-10-16).
 

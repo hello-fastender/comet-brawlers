@@ -30,7 +30,7 @@ const ECHTE: Dictionary = {
 	"stand": {"min": 30, "hoehe": [135, 140], "ankerx": false, "fussmitte": true, "hd": true},
 	"gehen": {"min": 20, "hoehe": [], "ankerx": false, "hd": true},
 	"kette1": {"min": 20, "hoehe": [134, 140], "ankerx": false, "hd": true},
-	"kette2": {"min": 30, "hoehe": [], "ankerx": false, "hd": true},
+	"kette2": {"min": 25, "hoehe": [], "ankerx": false, "hd": true},
 	"kette3": {"min": 20, "hoehe": [], "ankerx": false, "hd": true},
 	"kette4": {"min": 60, "hoehe": [], "ankerx": false, "hd": true},
 	"sprint": {"min": 16, "hoehe": [], "ankerx": false, "hd": true},
@@ -1250,7 +1250,7 @@ func _echte_clips() -> void:
 			# abgeschnitten, Datei sparen); Bezug ist dann das Ausholen-Ende statt des ersten Bildes
 			var bezug: int = vorn[a] if bool(d["weich"]) else vorn[0]
 			# Neue Vela (orthodoxe Kampfhaltung): die vordere Faust der Deckung steht schon weit vorn, der Schlag reicht 11 bis 21
-			# Spielbildpixel darüber hinaus (kette1 53 gegen 42, kette2 69 gegen 48; die alte Vela 25 und mehr)
+			# Spielbildpixel darüber hinaus (kette1 53 gegen 42, kette2 75 gegen 41; die alte Vela 25 und mehr)
 			if clip != "kette3":
 				_ok(vorn[kt] - bezug >= 10, "%s: im Kontakt ist die Figur nach vorn gestreckt (%d gegen %d)" % [clip, vorn[kt], bezug])
 		elif clip == "stand":

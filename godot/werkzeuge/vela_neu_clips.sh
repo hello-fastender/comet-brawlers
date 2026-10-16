@@ -8,8 +8,8 @@
 #   <videoordner>  Ordner mit den Quellvideos (liegen nicht im Repo, sondern in der geteilten Drive-Ablage «Comet Brawlers»,
 #                  Ordner vela/<ordner>/grok-video-d9db4961-8774-4dfa-aa5f-292ac6fa3ed6-<n>.mp4). Erwartet umbenannt als
 #                  <ordner>/<ordner>_<n>.mp4, z. B. stand/stand_9.mp4. Ausnahmen: sprint aus der ersten Lieferung (2026-10-15,
-#                  zweites von zwei Laufen-Videos) als laufen_v2.mp4, kette2 aus der zweiten Fassung des Prompts (Chat-Upload
-#                  2026-10-16) als kette2_2/kette2_2_8.mp4.
+#                  zweites von zwei Laufen-Videos) als laufen_v2.mp4; gehen und kette2 aus der zweiten Fassung des Prompts
+#                  (Drive-Ordner gehen2 und kette2_2).
 #   <ausordner>    Standard godot/grafik/vela_video (die Clips des Spiels)
 #   <clip> ...     nur diese Clips umsetzen (Standard: alle)
 #
@@ -36,15 +36,16 @@ umsetzen() { local clip="$1" video="$2"; shift 2; gewaehlt "$clip" || return 0; 
 
 # Stand: ruhige Kampfhaltung ab Video 73; das Atmen schließt keinen Zyklus, darum ein Atemzug hin und her
 umsetzen stand stand/stand_9.mp4 --loch 8 --ab 97 --bis 129 --zyklus 33 --schleife pingpong --ereignis keine --faktor $Q --ankerx-video 445.75
-# Gehen: gehen_8 hat den gleichmäßigsten Takt (Doppelschritt 33 Bilder); --tol 70 gegen Grok-Wischspuren unter den Stiefeln.
-# Mangel: Schritte zu kurz (schritt_px 50 statt etwa 68), neues Video mit der zweiten Fassung des Prompts steht aus
-umsetzen gehen gehen/gehen_8.mp4 --tol 70 --kuerzen nein --ab 102 --bis 134 --zyklus 33 --ereignis keine --ankerx mittel --faktor $Q
+# Gehen: zweite Fassung des Prompts (gehen2_6, längere Schritte): Doppelschritt 30 Bilder, Zyklus 105 bis 134 (Schluss 22 % eines
+# Bildschritts bei Bild 135), schritt_px 57 (erste Lieferung gehen_8: 50); --tol 70 gegen Grok-Wischspuren unter den Stiefeln
+umsetzen gehen gehen2/gehen2_6.mp4 --tol 70 --loch 8 --kuerzen nein --ab 105 --bis 134 --zyklus 30 --ereignis keine --ankerx mittel --faktor $Q
 # Sprint: einziges Video im verlangten Tempo (Doppelschritt 15,6 Bilder); Fenster beginnt mit voll aufgesetztem Fuß (Bodenlinie)
 umsetzen sprint laufen_v2.mp4 --loch 8 --ab 118 --bis 133 --zyklus 16 --ereignis keine --ankerx mittel --schritt lauf --faktor $Q
 # Kette 1: kette1_6 verworfen (zwei Schläge); Kontakt 97, gehalten bis 106, Ruhe 118 (profilnah wie stand)
 umsetzen kette1 kette1/kette1_7.mp4 --loch 8 --kuerzen nein --ab 88 --bis 118 --ausser 99-106 --faktor $Q --ankerx-video 436.25 --setze kontakt=10,rueckzug=12,ruhe=23
-# Kette 2: zweite Fassung (vordere Faust, Schritt des vorderen Beins, kein Schatten), Reichweite 69 statt 60 bei kette2_7
-umsetzen kette2 kette2_2/kette2_2_8.mp4 --loch 8 --kuerzen nein --ab 59 --bis 133 --ausser 72-114 --faktor $Q --ankerx-video 397 --setze kontakt=11,rueckzug=14,ruhe=32
+# Kette 2: zweite Fassung, Drive-Ordner kette2_2, Video 7 (Video 9 ist dieselbe Datei, Video 6 hält den Arm bis zum Schluss gestreckt):
+# ruhige Kampfhaltung 60 bis 85, Kontakt 101 (Reichweite 75 Spielbildpixel), kurz gehalten, Ruhe 121 profilnah
+umsetzen kette2 kette2_2/kette2_2_7.mp4 --loch 8 --kuerzen nein --ab 91 --bis 121 --ausser 103-106 --faktor $Q --ankerx-video 411.75 --setze kontakt=11,rueckzug=13,ruhe=27
 # Kette 3: Haken von unten
 umsetzen kette3 kette3/kette3_7.mp4 --loch 8 --kuerzen nein --ab 89 --bis 130 --ausser 101-119 --faktor $Q --ankerx-video 426.25 --setze ausholen=2,kontakt=11,rueckzug=13,ruhe=23
 # Kette 4: Schlag und Tritt; Mangel: halbe Rückenansicht im Schlag, Beinseiten wechseln in der Drehung
