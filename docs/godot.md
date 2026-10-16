@@ -333,7 +333,8 @@ unabhängig geprüft. Die Befehle stehen nur in `werkzeuge/vela_neu_clips.sh` (W
 liegt in der Git-Geschichte; ihre Befehle bleiben in `werkzeuge/vela_hd_clips.sh` (Abschnitt unten).
 
 Unterschiede zur alten Vela: weißer statt grüner Grund (`--schluessel ecke`, `--loch 8`, sonst werden die Lichter der Stahl-Armschienen
-durchsichtig); Maßstab aus der A-Pose in Bild 1 jedes Videos (142 / Zeilen: 0,1529 bei den quadratischen, 0,1791 bei den Hochformat-Videos
+durchsichtig; `--haarloch 60` macht die weißen Lücken zwischen Haarsträhnen, Zopf, Nacken und Kragen durchsichtig, `--schatten 8`
+Groks grauen Bodenschatten außerhalb der Figurkontur, beide seit 2026-10-16, Erklärung im Kopf von `werkzeuge/video_umsetzer.gd`); Maßstab aus der A-Pose in Bild 1 jedes Videos (142 / Zeilen: 0,1529 bei den quadratischen, 0,1791 bei den Hochformat-Videos
 `sprung`, `sprungtritt`, `wurf`); Kampfhaltung 137 Spielbildpixel hoch (alte Vela 142); Stand als Hin-und-her-Schleife (`schleife=pingpong`,
 33 Bilder, 160 Ticks), weil das Atmen im Video keinen Zyklus schließt. Grok stellt die neue Vela in allen Videos «orthodox» hin (linkes Bein und
 linke Faust vorn). `tests/video_test.gd` beschreibt die neuen Clips (Maßstäbe, Höhen, Bildzahlen, kürzere Reichweiten), alle Tests bestehen.
@@ -355,7 +356,7 @@ linke Faust vorn). `tests/video_test.gd` beschreibt die neuen Clips (Maßstäbe,
 | `umgeworfen` | 45 | 2,24 | 10,9 | umgeworfen_aufstehen_7 | Zopfspitze am linken Rand abgeschnitten |
 | `liegen` | 1 | 0,04 | 0,1 | umgeworfen_aufstehen_7 | Video 168 |
 | `aufstehen` | 54 | 2,39 | 8,3 | umgeworfen_aufstehen_7 | Video 168 bis 221 |
-| zusammen | 588 | 31,5 | 150,9 | | alte Vela 709 Bilder, 52,6 MB |
+| zusammen | 588 | 31,6 | 150,8 | | alte Vela 709 Bilder, 52,6 MB |
 
 Gemessen mit `werkzeuge/speicher_messung.gd -- --modus clips` (2026-10-16).
 
