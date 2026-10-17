@@ -336,7 +336,8 @@ Unterschiede zur alten Vela: weißer statt grüner Grund (`--schluessel ecke`, `
 durchsichtig; `--haarloch 60` macht die weißen Lücken zwischen Haarsträhnen, Zopf, Nacken und Kragen durchsichtig, `--schatten 8`
 Groks grauen Bodenschatten außerhalb der Figurkontur, beide seit 2026-10-16, Erklärung im Kopf von `werkzeuge/video_umsetzer.gd`; seit
 2026-10-17 nach Funden im Spiel auch die Lücken am Kragen, im Haarschatten und schmal hinter dem Ohr, den dunkleren Kontaktschatten direkt unter dem Körper,
-eingeschlossene graue Taschen zwischen Jackensaum, Armschiene, Handschuh und Hüfte, ohne grauen Saum am weichen Rand); Maßstab aus der A-Pose in Bild 1 jedes Videos (142 / Zeilen: 0,1529 bei den quadratischen, 0,1791 bei den Hochformat-Videos
+eingeschlossene graue Taschen zwischen Jackensaum, Armschiene, Handschuh und Hüfte, ohne grauen Saum am weichen Rand; `sprungtritt` mit
+`--loch 8` wie alle anderen Clips statt 16, sonst war das Glanzlicht der Armschiene vor der Brust in sechs Bildern ausgestanzt); Maßstab aus der A-Pose in Bild 1 jedes Videos (142 / Zeilen: 0,1529 bei den quadratischen, 0,1791 bei den Hochformat-Videos
 `sprung` und `sprungtritt`); Kampfhaltung 137 Spielbildpixel hoch (alte Vela 142); Stand als Hin-und-her-Schleife (`schleife=pingpong`,
 33 Bilder, 160 Ticks), weil das Atmen im Video keinen Zyklus schließt. Grok stellt die neue Vela in allen Videos «orthodox» hin (linkes Bein und
 linke Faust vorn). `tests/video_test.gd` beschreibt die neuen Clips (Maßstäbe, Höhen, Bildzahlen, kürzere Reichweiten), alle Tests bestehen.
@@ -354,7 +355,7 @@ linke Faust vorn). `tests/video_test.gd` beschreibt die neuen Clips (Maßstäbe,
 | `griff` | 52 | 2,84 | 14,9 | griff_2_6 | zweite Fassung; stille Haltepose im Profil (Fäuste dicht vor dem Kinn); `wurf` beginnt frontal (Sprung in der Ansicht) |
 | `wurf` | 41 | 2,34 | 12,5 | wurf_3_6 | Stoßwurf (dritte Fassung); beginnt in frontaler Deckung (Video 100), Stoß im Profil, Ruhe 3/4 nah an `stand`, aber 9 Spielbildpixel breiter (beim Wechsel zu `stand` rückt jeder Stiefel 4 bis 5 nach innen) |
 | `sprung` | 58 | 3,35 | 13,2 | sprung_7 | Hochformat |
-| `sprungtritt` | 57 | 3,16 | 13,6 | sprungtritt_7 | Hochformat, `--loch 16` |
+| `sprungtritt` | 57 | 3,16 | 13,6 | sprungtritt_7 | Hochformat |
 | `umgeworfen` | 45 | 2,24 | 10,9 | umgeworfen_aufstehen_7 | Zopfspitze am linken Rand abgeschnitten |
 | `liegen` | 1 | 0,04 | 0,1 | umgeworfen_aufstehen_7 | Video 168 |
 | `aufstehen` | 54 | 2,38 | 8,3 | umgeworfen_aufstehen_7 | Video 168 bis 221 |

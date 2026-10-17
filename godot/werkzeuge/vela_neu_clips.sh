@@ -70,7 +70,7 @@ umsetzen griff griff_2/griff_2_6.mp4 --loch 8 --kuerzen nein --ab 72 --bis 125 -
 umsetzen wurf wurf_3/wurf_3_6.mp4 --loch 8 --kuerzen nein --ab 100 --bis 140 --faktor $Q --ankerx-video 418.25 --setze heben=13,kontakt=24,rueckzug=29,ruhe=41
 # Sprung und Sprungtritt (Hochformat)
 umsetzen sprung sprung/sprung_7.mp4 --loch 8 --ankery unten --ereignis sprung --kuerzen nein --ab 78 --bis 135 --faktor $H --ankerx-video 379.0 --setze ruhe=58
-umsetzen sprungtritt sprungtritt/sprungtritt_7.mp4 --loch 16 --ankery unten --ereignis sprung --kuerzen nein --ab 73 --bis 141 --ausser 91-102 --faktor $H --ankerx-video 358 --setze kontakt=17,rueckzug=21,ruhe=57
+umsetzen sprungtritt sprungtritt/sprungtritt_7.mp4 --loch 8 --ankery unten --ereignis sprung --kuerzen nein --ab 73 --bis 141 --ausser 91-102 --faktor $H --ankerx-video 358 --setze kontakt=17,rueckzug=21,ruhe=57
 # Umgeworfen, Liegen, Aufstehen aus einem 10-s-Video (241 Bilder); --tol 70 gegen Grok-Schatten unter dem Körper
 umsetzen umgeworfen umgeworfen_aufstehen/umgeworfen_aufstehen_7.mp4 --tol 70 --loch 14 --kuerzen nein --ab 106 --bis 150 --ankery unten --ereignis flug --faktor $Q --ankerx-video 435.25 --setze liegt=45
 umsetzen liegen umgeworfen_aufstehen/umgeworfen_aufstehen_7.mp4 --tol 70 --loch 14 --kuerzen nein --ab 168 --bis 168 --ereignis keine --ankery unten --faktor $Q --ankerx-video 435.25
