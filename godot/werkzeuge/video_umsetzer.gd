@@ -166,7 +166,8 @@ const LOCH_MIN: int = 6
 ##    mindestens HAAR_KERN_ANTEIL Prozent ihrer Pixel fast weiß sind (Abstand zur Randfarbe unter HAAR_KERN). Glanzlichter im
 ##    Haar haben keinen solchen Kern (0 %).
 ##  - Ring (Abstand 1 bis HAAR_RING, nur kräftige Pixel mit Abstand ≥ HAAR_SATT zur Randfarbe): warm (Rot − Blau ≥ HAAR_WARM)
-##    mindestens HAAR_WARM_ANTEIL Prozent; Tusche (alle Kanäle unter HAAR_DUNKEL) zählt nicht als warm. Lücken 18 bis 94 % warm;
+##    mindestens HAAR_WARM_ANTEIL Prozent; Tusche (alle Kanäle unter HAAR_DUNKEL) zählt nicht als warm. HAAR_WARM 20 statt 30:
+##    hinter dem Ohr liegen nur Mischtöne aus Haut, Haar und Tusche (Rot − Blau 22 bis 29; kette4 Bild 17). Lücken 18 bis 94 % warm;
 ##    Lichter der Armschienen 0 % warm (67 bis 91 % kühl: Blau − Rot ≥ 10). Kühle Ringpixel zählen nicht dagegen: die Lücke zwischen Zopf und
 ##    Kragen grenzt an viel blaues Leder (stand Bild 6, kette4 Bild 39, umgeworfen Bild 18; 2026-10-17 im Spiel gefunden).
 ##  - Haarnähe: mindestens HAAR_BLOND blonde Pixel im Umkreis HAAR_UMKREIS um die Fläche. Blond heißt Rot − Blau ≥ HAAR_BLOND_RB,
@@ -187,7 +188,7 @@ const HAAR_KERN_ANTEIL: int = 10
 const HAAR_RING: int = 2
 const HAAR_SATT: int = 60
 const HAAR_DUNKEL: int = 90
-const HAAR_WARM: int = 30
+const HAAR_WARM: int = 20
 const HAAR_WARM_ANTEIL: int = 10
 const HAAR_UMKREIS: int = 7
 const HAAR_BLOND: int = 20
