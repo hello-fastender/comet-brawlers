@@ -52,8 +52,8 @@ extends SceneTree
 ##                        (_haarluecken_entfernen). Kandidaten sind zusammenhängende helle Flächen (Abstand zur Randfarbe
 ##                        unter n, z. B. 60), die nicht schon außen liegen; durchsichtig wird eine Fläche, wenn sie neutral
 ##                        weiß ist (Median Rot − Blau höchstens HAAR_GELB; gelbliche Glanzlichter im Haar bleiben), warm
-##                        umrandet (Haar, Haut; nicht kühl wie das Metall der Armschienen) und Haar in der Nähe liegt (nicht
-##                        der Jeansriss). Standard 0 = aus; die neue Vela nutzt 60. Steht als `haarloch=` in clip.txt.
+##                        umrandet (zum Teil Haar oder Haut; das Metall der Armschienen ist nur kühl umrandet) und blondes
+##                        Haar in der Nähe liegt (nicht beim Jeansriss und den Armschienen). Standard 0 = aus; die neue Vela nutzt 60. Steht als `haarloch=` in clip.txt.
 ##   --schatten <n>       nur Modus ecke: grauen Bodenschatten und Wischspuren entfernen (_schatten_entfernen): fast farblose
 ##                        helle Pixel (größter minus kleinster Kanal höchstens n, kleinster Kanal ab SCHATTEN_HELL, nicht
 ##                        bläulich), die vom Außenraum aus erreichbar sind, ohne die dunkle Kontur der Figur zu überqueren,
@@ -161,11 +161,19 @@ const LOCH_MIN: int = 6
 ## --haarloch (_haarluecken_entfernen), gemessen an stand_9 (Bild 97) und griff_2_6 (Bild 125) auf Videoauflösung:
 ##  - HAAR_MIN: kleinste Fläche in Pixeln des Pixelmodus (wächst mit skala_p², wie LOCH_MIN); Augenweiß (etwa 20 Videopixel)
 ##    bleibt darunter, die sichtbaren Lücken (30 bis 180 Videopixel) liegen darüber.
-##  - HAAR_GELB: höchster Median von Rot − Blau einer Lücke; Lücken 0 bis 19, Glanzlichter im Haar 27 bis 56.
+##  - HAAR_GELB: höchster Median von Rot − Blau einer Lücke; Lücken 0 bis 19, Glanzlichter im Haar 27 bis 56. Schmale Lücken
+##    zwischen blondem Haar sind am Rand cremefarben (umgeworfen Bild 18: Median um 25); sie zählen bis HAAR_GELB_KERN, wenn
+##    mindestens HAAR_KERN_ANTEIL Prozent ihrer Pixel fast weiß sind (Abstand zur Randfarbe unter HAAR_KERN). Glanzlichter im
+##    Haar haben keinen solchen Kern (0 %).
 ##  - Ring (Abstand 1 bis HAAR_RING, nur kräftige Pixel mit Abstand ≥ HAAR_SATT zur Randfarbe): warm (Rot − Blau ≥ HAAR_WARM)
-##    mindestens HAAR_WARM_ANTEIL Prozent und nicht weniger als kühl (Blau − Rot ≥ HAAR_KUEHL); Tusche (alle Kanäle unter
-##    HAAR_DUNKEL) zählt zu keiner Seite. Lücken 26 bis 94 % warm; Lichter der Armschienen 0 % warm, 67 bis 91 % kühl.
-##  - Haarnähe: mindestens HAAR_BLOND blonde Pixel im Umkreis HAAR_UMKREIS um die Fläche (Jeansriss: 0).
+##    mindestens HAAR_WARM_ANTEIL Prozent; Tusche (alle Kanäle unter HAAR_DUNKEL) zählt nicht als warm. Lücken 18 bis 94 % warm;
+##    Lichter der Armschienen 0 % warm (67 bis 91 % kühl: Blau − Rot ≥ 10). Kühle Ringpixel zählen nicht dagegen: die Lücke zwischen Zopf und
+##    Kragen grenzt an viel blaues Leder (stand Bild 6, kette4 Bild 39, umgeworfen Bild 18; 2026-10-17 im Spiel gefunden).
+##  - Haarnähe: mindestens HAAR_BLOND blonde Pixel im Umkreis HAAR_UMKREIS um die Fläche. Blond heißt Rot − Blau ≥ HAAR_BLOND_RB,
+##    0 ≤ Rot − Grün < HAAR_BLOND_RG (Haut hat mehr Rot), Grün − Blau ≥ HAAR_BLOND_GB und hellster Kanal ≥ HAAR_BLOND_HELL, so
+##    zählt auch Haar im Schatten (umgeworfen: das liegende Haar ist dunkelblond). Gemessen in der Arbeitsauflösung an
+##    umgeworfen (Video 123), aufstehen (185), griff (85), stand (102) und getroffen_vorn (118): Lücken 35 bis 351,
+##    Lichter der Armschienen höchstens 4.
 ## --schatten (_schatten_entfernen): Grok malt unter liegenden Körpern und schwingenden Stiefeln einen weichen grauen Schatten
 ## (gemessen in umgeworfen_aufstehen_7: (215, 212, 216) bis (154, 155, 160), Spanne der Kanäle höchstens 6); die Armschienen
 ## sind bläulich (Blau − Rot 14 bis 25). SCHATTEN_HELL: kleinster Kanal mindestens; SCHATTEN_BLAU: Blau − Rot höchstens.
@@ -173,14 +181,20 @@ const SCHATTEN_HELL: int = 140
 const SCHATTEN_BLAU: int = 6
 const HAAR_MIN: int = 3
 const HAAR_GELB: int = 20
+const HAAR_GELB_KERN: int = 40
+const HAAR_KERN: int = 16
+const HAAR_KERN_ANTEIL: int = 10
 const HAAR_RING: int = 2
 const HAAR_SATT: int = 60
 const HAAR_DUNKEL: int = 90
 const HAAR_WARM: int = 30
-const HAAR_KUEHL: int = 10
-const HAAR_WARM_ANTEIL: int = 20
+const HAAR_WARM_ANTEIL: int = 10
 const HAAR_UMKREIS: int = 7
-const HAAR_BLOND: int = 3
+const HAAR_BLOND: int = 20
+const HAAR_BLOND_RB: int = 30
+const HAAR_BLOND_RG: int = 35
+const HAAR_BLOND_GB: int = 15
+const HAAR_BLOND_HELL: int = 80
 ## Kleinere Flecken sind Staub, auch wenn sie nah an der Figur liegen.
 const FLECK_MIN: int = 4
 ## „Nah“: Radius der Erweiterung der größten Fläche = Figurhöhe / NAH_TEILER (Zopfspitzen, abgesetzte Hand).
@@ -1195,7 +1209,7 @@ static func _schatten_entfernen(maske: PackedByteArray, alpha: PackedByteArray, 
 ## Löcher (`loch`, klein gehalten für die Lichter der Armschienen) und die Grenze `tol` (hellgraue Säume zwischen den Strähnen)
 ## als Figur behalten. Kandidaten sind Flächen (4er-Nachbarschaft) aus Pixeln mit Abstand zur Randfarbe unter `grenze`, die
 ## nicht schon zum Außenraum gehören (Maske 0 und vom Rand erreichbar). Durchsichtig wird eine Fläche ab `min_n` Pixeln, wenn
-## sie neutral ist (Median Rot − Blau ≤ HAAR_GELB), ihr Ring warm und nicht kühl ist und Haar in der Nähe liegt (HAAR_*).
+## sie neutral ist (Median Rot − Blau ≤ HAAR_GELB), ihr Ring zum Teil warm ist und Haar in der Nähe liegt (HAAR_*).
 static func _haarluecken_entfernen(maske: PackedByteArray, alpha: PackedByteArray, d: PackedByteArray, w: int, h: int, key: Vector3i, grenze: int, min_n: int) -> void:
 	var n: int = w * h
 	var abst: PackedByteArray = PackedByteArray()
@@ -1263,11 +1277,16 @@ static func _haarluecken_entfernen(maske: PackedByteArray, alpha: PackedByteArra
 			y0 = mini(y0, p / w)
 			y1 = maxi(y1, p / w)
 		gelb.sort()
-		if gelb[gelb.size() / 2] > HAAR_GELB:
-			continue
+		var gelb_median: int = gelb[gelb.size() / 2]
+		if gelb_median > HAAR_GELB:
+			var kern: int = 0
+			for p: int in liste:
+				if abst[p] < HAAR_KERN:
+					kern += 1
+			if gelb_median > HAAR_GELB_KERN or kern * 100 < HAAR_KERN_ANTEIL * liste.size():
+				continue
 		# Ring: kräftige Pixel im Abstand 1 bis HAAR_RING, die weder zur Fläche noch zum Außenraum gehören
 		var warm: int = 0
-		var kuehl: int = 0
 		var alle: int = 0
 		for p: int in liste:
 			var px: int = p % w
@@ -1285,9 +1304,7 @@ static func _haarluecken_entfernen(maske: PackedByteArray, alpha: PackedByteArra
 						continue
 					if r - b >= HAAR_WARM:
 						warm += 1
-					elif b - r >= HAAR_KUEHL:
-						kuehl += 1
-		if alle == 0 or warm * 100 < HAAR_WARM_ANTEIL * alle or warm < kuehl:
+		if alle == 0 or warm * 100 < HAAR_WARM_ANTEIL * alle:
 			continue
 		# Haar in der Nähe: blonde Pixel im Umkreis
 		var blond: int = 0
@@ -1297,7 +1314,7 @@ static func _haarluecken_entfernen(maske: PackedByteArray, alpha: PackedByteArra
 				var r: int = d[q]
 				var g: int = d[q + 1]
 				var b: int = d[q + 2]
-				if r - b >= 40 and r - g >= 0 and r - g < 30 and g - b >= 25 and maxi(r, maxi(g, b)) >= 150:
+				if r - b >= HAAR_BLOND_RB and r - g >= 0 and r - g < HAAR_BLOND_RG and g - b >= HAAR_BLOND_GB and maxi(r, maxi(g, b)) >= HAAR_BLOND_HELL:
 					blond += 1
 		if blond < HAAR_BLOND:
 			continue
