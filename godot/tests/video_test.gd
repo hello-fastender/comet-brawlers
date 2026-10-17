@@ -1018,7 +1018,7 @@ func _schatten_regeln() -> void:
 	_gleich(m[25 * w + 47], 1, "Schatten: hellgraues Loch fern vom Boden bleibt Figur (Glanzlicht)")
 	_gleich(m[80 * w + 104], 0, "Schatten: bläulicher Bodenschatten (von unten erreichbar) fällt weg")
 	_gleich(m[60 * w + 22], 1, "Schatten: gleich bläulicher Lichtrand oben auf der liegenden Armschiene bleibt Figur")
-	_gleich([weg[81 * w + 60], weg[65 * w + 47], weg[40 * w + 60]], [1, 2, 0], "Schatten: weg markiert Flut (1) und Schattenloch (2)")
+	_gleich([weg[85 * w + 60], weg[81 * w + 60], weg[65 * w + 47], weg[40 * w + 60]], [1, 3, 2, 0], "Schatten: weg markiert helles Grau (1), Bodenschatten (3) und Schattenloch (2)")
 	var ohne: Dictionary = u.call("freistellen", rgb, w, h, key, "ecke", 40, 8, 4, 0, 100, 0, 0)
 	_gleich([(ohne["maske"] as PackedByteArray)[81 * w + 60], (ohne["maske"] as PackedByteArray)[65 * w + 47]], [1, 1], "Schatten: ohne --schatten bleiben Schatten und Loch Figur")
 	# Weicher Rand: entfernter Schatten jenseits von WEICH_WEG_SAUM Schichten bleibt durchsichtig (ohne weg käme er halb deckend zurück)

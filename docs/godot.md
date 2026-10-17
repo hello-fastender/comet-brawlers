@@ -354,7 +354,7 @@ linke Faust vorn). `tests/video_test.gd` beschreibt die neuen Clips (Maßstäbe,
 | `griff` | 52 | 2,84 | 14,9 | griff_2_6 | zweite Fassung; stille Haltepose im Profil (Fäuste dicht vor dem Kinn); `wurf` beginnt frontal (Sprung in der Ansicht) |
 | `wurf` | 41 | 2,34 | 12,5 | wurf_3_6 | Stoßwurf (dritte Fassung); beginnt in frontaler Deckung (Video 100), Stoß im Profil, Ruhe 3/4 nah an `stand`, aber 9 Spielbildpixel breiter (beim Wechsel zu `stand` rückt jeder Stiefel 4 bis 5 nach innen) |
 | `sprung` | 58 | 3,35 | 13,2 | sprung_7 | Hochformat |
-| `sprungtritt` | 57 | 3,15 | 13,6 | sprungtritt_7 | Hochformat, `--loch 16` |
+| `sprungtritt` | 57 | 3,16 | 13,6 | sprungtritt_7 | Hochformat, `--loch 16` |
 | `umgeworfen` | 45 | 2,24 | 10,9 | umgeworfen_aufstehen_7 | Zopfspitze am linken Rand abgeschnitten |
 | `liegen` | 1 | 0,04 | 0,1 | umgeworfen_aufstehen_7 | Video 168 |
 | `aufstehen` | 54 | 2,38 | 8,3 | umgeworfen_aufstehen_7 | Video 168 bis 221 |

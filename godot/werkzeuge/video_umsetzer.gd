@@ -1300,7 +1300,7 @@ static func _schatten_entfernen(maske: PackedByteArray, alpha: PackedByteArray, 
 		if lo >= SCHATTEN_HELL and maxi(r, maxi(g, b)) - lo <= spanne and b - r <= SCHATTEN_BLAU:
 			grau[p] = 1
 		elif boden > 0 and lo >= SCHATTEN_TIEF and p / w >= unten - boden and r <= g and g <= b and b - r <= SCHATTEN_TIEF_BLAU:
-			grau[p] = 1
+			grau[p] = 3
 		elif unten_min > 0 and boden > 0 and lo >= SCHATTEN_TIEF and p / w >= unten - boden and r <= g and g <= b and b - r <= SCHATTEN_UNTEN_BLAU:
 			grau[p] = 2
 	var marke: PackedByteArray = PackedByteArray()
@@ -1331,14 +1331,15 @@ static func _schatten_entfernen(maske: PackedByteArray, alpha: PackedByteArray, 
 			maske[p] = 0
 			alpha[p] = 0
 			if not weg.is_empty():
-				weg[p] = 1
+				# 1 = helles Grau (auch der Glättungssaum der Umrisslinien), 3 = Bodenschatten (dunkle oder bläuliche Stufe, Saum der Löcher)
+				weg[p] = 1 if grau[p] == 1 and not von_loechern else 3
 		var px: int = p % w
 		var py: int = p / w
 		for q: int in [p - 1 if px > 0 else -1, p + 1 if px < w - 1 else -1, p - w if py > 0 else -1, p + w if py < h - 1 else -1]:
 			if q < 0 or marke[q] != 0:
 				continue
 			# bläuliche Stufe (2) nur von unten betreten (q über p) oder aus ihr selbst heraus
-			if maske[q] == 0 or grau[q] == 1 or (grau[q] == 2 and (q == p - w or grau[p] == 2)):
+			if maske[q] == 0 or grau[q] == 1 or grau[q] == 3 or (grau[q] == 2 and (q == p - w or grau[p] == 2)):
 				marke[q] = 1
 				stapel.append(q)
 	if unten_min <= 0:
@@ -1695,8 +1696,12 @@ static func kante_standard(figur_hoehe: float) -> int:
 ##    Farbe der Nachbarn statt der verrauschten Auflösung; im Modus gruen wird zuletzt Grün auf max(r, b) begrenzt.
 ##  - `weg` (von freistellen): als Schatten entfernte Pixel weiter als WEICH_WEG_SAUM Pixel außerhalb der Maskenkante bleiben
 ##    durchsichtig; sonst kämen sie als halb deckender grauer oder dunkler Saum zurück (ihr Grau liegt weit von der Schlüsselfarbe
-##    und fast auf der Strecke zu dunkler Kleidung). Die innersten Schichten bleiben weich: dort liegt die Kantenglättung der
-##    dunklen Umrisslinie, deren Grau die Schattenflut ebenfalls erfasst.
+##    und fast auf der Strecke zu dunkler Kleidung). In den innersten Schichten liegt die Kantenglättung der dunklen Umrisslinie,
+##    deren helles Grau die Schattenflut ebenfalls erfasst (`weg` 1): sie bleiben dort weich wie jede Kante. Echter Bodenschatten
+##    (`weg` 2: Schattenloch, 3: dunkle oder bläuliche Stufe und Saum der Löcher) bekommt dort Alpha nur, wenn er sich als Mischung
+##    aus Figurfarbe und Schlüsselfarbe entmischen lässt, sonst 0 (aufstehen Bild 8, 9: sonst hellgrauer deckender Saum unter dem
+##    Ärmel). Innenpixel des Bandes, die nur an solchen Bodenschatten grenzen, bleiben deckend in ihrer Farbe: an ihnen lag im Video
+##    Schatten, kein Weiß (aufstehen Bild 16 bis 22: Nieten am Handschuh wurden sonst gegen Weiß entmischt und dunkel).
 ## Rückgabe: alpha (0 bis 255), farbe (RGB, gerade, nicht vormultipliziert; nur wo alpha > 0 von Belang).
 static func weich_freistellen(d: PackedByteArray, farbe: PackedByteArray, w: int, h: int, key: Vector3i, modus: String, maske: PackedByteArray, kante: int, tol: int, weg: PackedByteArray = PackedByteArray()) -> Dictionary:
 	var n: int = w * h
@@ -1736,6 +1741,26 @@ static func weich_freistellen(d: PackedByteArray, farbe: PackedByteArray, w: int
 							tiefe[q] = wert
 							neu.append(q)
 			(innen if art == 0 else aussen).append(neu)
+	# Woran grenzt ein Innenpixel des Bandes: 1 = Grund (auch helles entferntes Grau), 2 = entfernter Bodenschatten (`weg` 2, 3), 3 = beides
+	var quelle: PackedByteArray = PackedByteArray()
+	if not weg.is_empty():
+		quelle.resize(n)
+		for k: int in innen.size():
+			for p: int in innen[k]:
+				var px: int = p % w
+				var py: int = p / w
+				var qq: int = 0
+				if k == 0:
+					for q: int in [p - 1 if px > 0 else -1, p + 1 if px < w - 1 else -1, p - w if py > 0 else -1, p + w if py < h - 1 else -1]:
+						if q >= 0 and maske[q] == 0:
+							qq |= 2 if weg[q] >= 2 else 1
+				else:
+					for dy: int in range(maxi(py - 1, 0), mini(py + 2, h)):
+						for dx: int in range(maxi(px - 1, 0), mini(px + 2, w)):
+							var q: int = dy * w + dx
+							if tiefe[q] == k:
+								qq |= quelle[q]
+				quelle[p] = qq
 	var alpha: PackedByteArray = PackedByteArray()
 	alpha.resize(n)
 	var bekannt: PackedByteArray = PackedByteArray()
@@ -1784,8 +1809,15 @@ static func weich_freistellen(d: PackedByteArray, farbe: PackedByteArray, w: int
 		nah[i3 + 2] = fb
 		if hat_f:
 			bekannt[p] = 1
-		if not weg.is_empty() and weg[p] != 0 and tiefe[p] < -WEICH_WEG_SAUM:
-			continue
+		var weg_saum: bool = false
+		if not weg.is_empty():
+			if weg[p] != 0:
+				if tiefe[p] < -WEICH_WEG_SAUM:
+					continue
+				weg_saum = weg[p] >= 2
+			elif tiefe[p] > 0 and quelle[p] == 2:
+				# grenzt nur an entfernten Schatten, nicht an Grund: bleibt deckend in der eigenen Farbe (Glanzpunkte, Stahlkanten)
+				continue
 		# Alpha: Grün-Dominanz (gruen) oder Abstand zur Schlüsselfarbe (ecke)
 		var a: int = 255
 		if modus == "gruen":
@@ -1808,6 +1840,10 @@ static func weich_freistellen(d: PackedByteArray, farbe: PackedByteArray, w: int
 				var ez: int = ckz - fkz * au / 255
 				if ex * ex + ey * ey + ez * ez <= rest2:
 					a = au
+					weg_saum = false
+		if weg_saum:
+			# entfernter Schatten im Saum: nur als Mischung aus Figurfarbe und Grund (Kantenglättung), nie als eigenes Grau
+			a = 0
 		if a < WEICH_ALPHA_MIN:
 			a = 0
 		elif a > 247:
