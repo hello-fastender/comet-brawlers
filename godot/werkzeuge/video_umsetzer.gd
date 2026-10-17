@@ -195,6 +195,14 @@ const SCHATTEN_BLAU: int = 6
 const SCHATTEN_TIEF: int = 100
 const SCHATTEN_TIEF_BLAU: int = 10
 const SCHATTEN_BODEN: int = 14
+## Bläulicher Bodenschatten (umgeworfen Bild 41, 42: (102, 109, 118) bis (148, 157, 164), Blau − Rot 14 bis 18) hat die Farbe des
+## Stahls (Blau − Rot 10 bis 29). Er zählt nur in Bodennähe, mit Blau − Rot höchstens SCHATTEN_UNTEN_BLAU, und die Flut darf ihn nur
+## von unten betreten (vom Boden her; innerhalb solcher Pixel dann in jede Richtung): die Oberkante der liegenden Armschiene erreicht
+## man nur von oben (Versuch ohne diese Bedingung: umgeworfen Bild 30, 32 verloren ihren Lichtrand). Übrig bleibt er nur als
+## zusammenhängende Fläche (8er-Nachbarschaft) ab SCHATTEN_UNTEN_MIN Pixeln des Pixelmodus (wächst mit skala_p²); einzelne
+## Pixel an der Unterkante von Ellbogenplatte und Armschienenspitze kehren zur Figur zurück (aufstehen Bild 11, 12; umgeworfen 37).
+const SCHATTEN_UNTEN_BLAU: int = 20
+const SCHATTEN_UNTEN_MIN: int = 11
 ## Schattenlöcher (_schattenloch): eingeschlossene helle Fläche (nicht vom Rand erreichbar), die _loecher_fuellen sonst als
 ## Figur füllt, weil sie im Mittel weiter als `loch` von der Randfarbe liegt: grauer Grund zwischen Jackensaum, Armschiene,
 ## Handschuh und Hüfte (aufstehen Bild 14 bis 16: 57 bis 286 Arbeitspixel, Abstand 17 bis 38, 73 bis 91 % neutral, Ring
@@ -1105,7 +1113,7 @@ static func freistellen(d: PackedByteArray, w: int, h: int, key: Vector3i, modus
 	var boden: int = SCHATTEN_BODEN * ARBEIT * skala_p / 100
 	if schatten > 0 and modus == "ecke":
 		weg.resize(n)
-		_schatten_entfernen(maske, alpha, d, w, h, schatten, boden, weg)
+		_schatten_entfernen(maske, alpha, d, w, h, schatten, boden, weg, false, SCHATTEN_UNTEN_MIN * skala_p * skala_p / 10000)
 	var loch_schatten: int = schatten if modus == "ecke" else 0
 	var offen: int = _loecher_fuellen(maske, alpha, d, w, h, key, loch, LOCH_MIN * skala_p * skala_p / 10000, loch_schatten, SCHATTEN_LOCH_MIN * skala_p * skala_p / 10000, weg, boden)
 	if offen > 0:
@@ -1268,10 +1276,11 @@ static func _schattenloch(liste: PackedInt32Array, maske: PackedByteArray, d: Pa
 ## Grauer Bodenschatten und Wischspuren (--schatten): Vom Außenraum (Maske 0, vom Rand erreichbar) aus breitet sich der
 ## Hintergrund über fast farblose helle Figurpixel aus (Spanne der Kanäle ≤ `spanne`, kleinster Kanal ≥ SCHATTEN_HELL, Blau − Rot
 ## ≤ SCHATTEN_BLAU), in den untersten `boden` Zeilen über der untersten Figurzeile auch über dunkleren kühlen Schatten
-## (SCHATTEN_TIEF*); sie werden durchsichtig und in `weg` mit 1 markiert. Die dunkle Kontur der Figur hält die Ausbreitung auf, so
-## bleiben Lichter innerhalb der Figur. Läuft vor _loecher_fuellen: weiße Taschen, die nur der Schatten einschloss, gehören danach
-## zum Außenraum. `von_loechern`: die Flut beginnt statt am Rand in den Schattenlöchern (`weg` 2) und nimmt deren grauen Saum mit.
-static func _schatten_entfernen(maske: PackedByteArray, alpha: PackedByteArray, d: PackedByteArray, w: int, h: int, spanne: int, boden: int = 0, weg: PackedByteArray = PackedByteArray(), von_loechern: bool = false) -> void:
+## (SCHATTEN_TIEF*) und, nur von unten betreten und ab `unten_min` Pixeln Fläche, bläulicher Schatten (SCHATTEN_UNTEN_*); sie werden
+## durchsichtig und in `weg` mit 1 markiert. Die dunkle Kontur der Figur hält die Ausbreitung auf, so bleiben Lichter innerhalb der
+## Figur. Läuft vor _loecher_fuellen: weiße Taschen, die nur der Schatten einschloss, gehören danach zum Außenraum. `von_loechern`:
+## die Flut beginnt statt am Rand in den Schattenlöchern (`weg` 2) und nimmt deren grauen Saum mit (ohne bläuliche Stufe).
+static func _schatten_entfernen(maske: PackedByteArray, alpha: PackedByteArray, d: PackedByteArray, w: int, h: int, spanne: int, boden: int = 0, weg: PackedByteArray = PackedByteArray(), von_loechern: bool = false, unten_min: int = 0) -> void:
 	var n: int = w * h
 	var unten: int = h
 	for p: int in range(n - 1, -1, -1):
@@ -1292,6 +1301,8 @@ static func _schatten_entfernen(maske: PackedByteArray, alpha: PackedByteArray, 
 			grau[p] = 1
 		elif boden > 0 and lo >= SCHATTEN_TIEF and p / w >= unten - boden and r <= g and g <= b and b - r <= SCHATTEN_TIEF_BLAU:
 			grau[p] = 1
+		elif unten_min > 0 and boden > 0 and lo >= SCHATTEN_TIEF and p / w >= unten - boden and r <= g and g <= b and b - r <= SCHATTEN_UNTEN_BLAU:
+			grau[p] = 2
 	var marke: PackedByteArray = PackedByteArray()
 	marke.resize(n)
 	var stapel: PackedInt32Array = PackedInt32Array()
@@ -1304,19 +1315,19 @@ static func _schatten_entfernen(maske: PackedByteArray, alpha: PackedByteArray, 
 		for x: int in w:
 			for y: int in [0, h - 1]:
 				var p: int = y * w + x
-				if (maske[p] == 0 or grau[p] == 1) and marke[p] == 0:
+				if (maske[p] == 0 or grau[p] != 0) and marke[p] == 0:
 					marke[p] = 1
 					stapel.append(p)
 		for y: int in h:
 			for x: int in [0, w - 1]:
 				var p: int = y * w + x
-				if (maske[p] == 0 or grau[p] == 1) and marke[p] == 0:
+				if (maske[p] == 0 or grau[p] != 0) and marke[p] == 0:
 					marke[p] = 1
 					stapel.append(p)
 	while not stapel.is_empty():
 		var p: int = stapel[stapel.size() - 1]
 		stapel.resize(stapel.size() - 1)
-		if grau[p] == 1:
+		if grau[p] != 0:
 			maske[p] = 0
 			alpha[p] = 0
 			if not weg.is_empty():
@@ -1324,9 +1335,40 @@ static func _schatten_entfernen(maske: PackedByteArray, alpha: PackedByteArray, 
 		var px: int = p % w
 		var py: int = p / w
 		for q: int in [p - 1 if px > 0 else -1, p + 1 if px < w - 1 else -1, p - w if py > 0 else -1, p + w if py < h - 1 else -1]:
-			if q >= 0 and marke[q] == 0 and (maske[q] == 0 or grau[q] == 1):
+			if q < 0 or marke[q] != 0:
+				continue
+			# bläuliche Stufe (2) nur von unten betreten (q über p) oder aus ihr selbst heraus
+			if maske[q] == 0 or grau[q] == 1 or (grau[q] == 2 and (q == p - w or grau[p] == 2)):
 				marke[q] = 1
 				stapel.append(q)
+	if unten_min <= 0:
+		return
+	# bläuliche Stufe nur als zusammenhängende Fläche (8er-Nachbarschaft) ab `unten_min` Pixeln, sonst zurück zur Figur
+	var gesehen: PackedByteArray = PackedByteArray()
+	gesehen.resize(n)
+	for s: int in n:
+		if grau[s] != 2 or maske[s] != 0 or gesehen[s] != 0:
+			continue
+		var liste: PackedInt32Array = PackedInt32Array([s])
+		gesehen[s] = 1
+		var i: int = 0
+		while i < liste.size():
+			var p: int = liste[i]
+			i += 1
+			var px: int = p % w
+			var py: int = p / w
+			for y: int in range(maxi(py - 1, 0), mini(py + 2, h)):
+				for x: int in range(maxi(px - 1, 0), mini(px + 2, w)):
+					var q: int = y * w + x
+					if grau[q] == 2 and maske[q] == 0 and gesehen[q] == 0:
+						gesehen[q] = 1
+						liste.append(q)
+		if liste.size() < unten_min:
+			for p: int in liste:
+				maske[p] = 1
+				alpha[p] = 255
+				if not weg.is_empty():
+					weg[p] = 0
 
 
 ## Ist die helle Fläche `liste` eine Lücke zwischen Körperteilen (TUSCHE_*): reinweißer Kern, fast farblos, Ring vor allem

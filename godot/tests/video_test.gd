@@ -1002,6 +1002,9 @@ func _schatten_regeln() -> void:
 	flaeche.call(63, 58, 77, 72, 150, 160, 172)  # Stahl
 	flaeche.call(65, 60, 75, 70, 225, 225, 228)  # Licht im Stahl: dasselbe Hellgrau
 	flaeche.call(40, 20, 55, 30, 225, 225, 228)  # dasselbe Hellgrau hoch oben (Glanzlicht, nicht in Bodennähe)
+	flaeche.call(96, 78, 108, 83, 122, 131, 140)  # bläulicher Bodenschatten, von unten erreichbar
+	flaeche.call(15, 62, 29, 75, 20, 30, 45)  # liegende Armschiene (dunkel) am Körper
+	flaeche.call(15, 60, 29, 61, 130, 140, 150)  # ihr Lichtrand oben: gleiches Blaugrau, nur von oben erreichbar
 	var key: Vector3i = Vector3i(253, 253, 253)
 	var r: Dictionary = u.call("freistellen", rgb, w, h, key, "ecke", 40, 8, 4, 0, 100, 0, 8)
 	var m: PackedByteArray = r["maske"]
@@ -1013,6 +1016,8 @@ func _schatten_regeln() -> void:
 	_gleich(m[59 * w + 47], 0, "Schatten: grauer Saum ums Schattenloch fällt mit weg")
 	_gleich(m[65 * w + 70], 1, "Schatten: Licht im Stahl (Metallring) bleibt Figur")
 	_gleich(m[25 * w + 47], 1, "Schatten: hellgraues Loch fern vom Boden bleibt Figur (Glanzlicht)")
+	_gleich(m[80 * w + 104], 0, "Schatten: bläulicher Bodenschatten (von unten erreichbar) fällt weg")
+	_gleich(m[60 * w + 22], 1, "Schatten: gleich bläulicher Lichtrand oben auf der liegenden Armschiene bleibt Figur")
 	_gleich([weg[81 * w + 60], weg[65 * w + 47], weg[40 * w + 60]], [1, 2, 0], "Schatten: weg markiert Flut (1) und Schattenloch (2)")
 	var ohne: Dictionary = u.call("freistellen", rgb, w, h, key, "ecke", 40, 8, 4, 0, 100, 0, 0)
 	_gleich([(ohne["maske"] as PackedByteArray)[81 * w + 60], (ohne["maske"] as PackedByteArray)[65 * w + 47]], [1, 1], "Schatten: ohne --schatten bleiben Schatten und Loch Figur")
