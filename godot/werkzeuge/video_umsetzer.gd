@@ -53,12 +53,16 @@ extends SceneTree
 ##                        unter n, z. B. 60), die nicht schon außen liegen; durchsichtig wird eine Fläche, wenn sie neutral
 ##                        weiß ist (Median Rot − Blau höchstens HAAR_GELB; gelbliche Glanzlichter im Haar bleiben), warm
 ##                        umrandet (zum Teil Haar oder Haut; das Metall der Armschienen ist nur kühl umrandet) und blondes
-##                        Haar in der Nähe liegt (nicht beim Jeansriss und den Armschienen). Standard 0 = aus; die neue Vela nutzt 60. Steht als `haarloch=` in clip.txt.
+##                        Haar in der Nähe liegt (nicht beim Jeansriss und den Armschienen); ebenso Lücken zwischen Körperteilen
+##                        mit reinweißem Kern, die vor allem von dunkler Tusche umrandet sind (TUSCHE_*). Standard 0 = aus; die neue Vela nutzt 60. Steht als `haarloch=` in clip.txt.
 ##   --schatten <n>       nur Modus ecke: grauen Bodenschatten und Wischspuren entfernen (_schatten_entfernen): fast farblose
 ##                        helle Pixel (größter minus kleinster Kanal höchstens n, kleinster Kanal ab SCHATTEN_HELL, nicht
-##                        bläulich), die vom Außenraum aus erreichbar sind, ohne die dunkle Kontur der Figur zu überqueren,
-##                        werden durchsichtig. Lichter auf Armschienen und Stiefeln liegen innerhalb der Kontur und bleiben.
-##                        Standard 0 = aus; die neue Vela nutzt 8. Steht als `schatten=` in clip.txt.
+##                        bläulich), in Bodennähe auch dunklerer kühler Kontaktschatten (SCHATTEN_TIEF*), die vom Außenraum aus
+##                        erreichbar sind, ohne die dunkle Kontur der Figur zu überqueren, werden durchsichtig; ebenso
+##                        eingeschlossene Schattenlöcher (_schattenloch: grauer Grund zwischen Jacke, Arm und Hüfte, den
+##                        _loecher_fuellen sonst füllt) samt grauem Saum. Lichter auf Armschienen und Stiefeln liegen innerhalb
+##                        der Kontur und bleiben. Der weiche Rand holt Entferntes nicht zurück. Standard 0 = aus; die neue Vela
+##                        nutzt 8. Steht als `schatten=` in clip.txt.
 ##   --ausser a-b,c       Videobilder weglassen (1-basiert wie --ab), z. B. Funken-Effekte eines Treffers, die Grok in
 ##                        einzelne Bilder gemalt hat. Steht als `ausser=` in clip.txt.
 ##   --staub <n>          dunkle Streupixel (Bodenstaub) entfernen: dunkle Figurpixel, in deren 7×7-Umgebung (Arbeits-
@@ -130,6 +134,8 @@ const HD_HOEHE_STANDARD: int = 360
 const HD_ARBEIT_PROZENT: int = 150
 const WEICH_REST: int = 30
 const WEICH_ALPHA_MIN: int = 8
+## Schichten außerhalb der Maskenkante, in denen vom Schatten entfernte Pixel (--schatten) noch weichen Alpha bekommen.
+const WEICH_WEG_SAUM: int = 2
 ## HD-Leinwand: Rand in HD-Pixeln um den Zuschnitt des Spielclips (weiche Ränder dünner Teile liegen außerhalb der harten Silhouette).
 const HD_LEINWAND_RAND: int = 6
 ## Abstand von |Figurfarbe − Schlüsselfarbe|, ab dem sich ein Randpixel entmischen lässt (sonst nur die Grün-Dominanz).
@@ -174,12 +180,46 @@ const LOCH_MIN: int = 6
 ##    0 ≤ Rot − Grün < HAAR_BLOND_RG (Haut hat mehr Rot), Grün − Blau ≥ HAAR_BLOND_GB und hellster Kanal ≥ HAAR_BLOND_HELL, so
 ##    zählt auch Haar im Schatten (umgeworfen: das liegende Haar ist dunkelblond). Gemessen in der Arbeitsauflösung an
 ##    umgeworfen (Video 123), aufstehen (185), griff (85), stand (102) und getroffen_vorn (118): Lücken 35 bis 351,
-##    Lichter der Armschienen höchstens 4.
+##    Lichter der Armschienen höchstens 4. Dazu Grün − Blau ≥ Rot − Grün (gelblich wie Haar, nicht orange wie Haut): seit die
+##    Flächen in der 8er-Nachbarschaft wachsen, zählte die Haut im Knieriss sonst als Haar (kette2 Bild 7: 22 statt 1 Pixel, die
+##    weißen Fäden des Risses wären weggefallen); Haarlücken behalten 27 bis 141.
 ## --schatten (_schatten_entfernen): Grok malt unter liegenden Körpern und schwingenden Stiefeln einen weichen grauen Schatten
 ## (gemessen in umgeworfen_aufstehen_7: (215, 212, 216) bis (154, 155, 160), Spanne der Kanäle höchstens 6); die Armschienen
 ## sind bläulich (Blau − Rot 14 bis 25). SCHATTEN_HELL: kleinster Kanal mindestens; SCHATTEN_BLAU: Blau − Rot höchstens.
 const SCHATTEN_HELL: int = 140
 const SCHATTEN_BLAU: int = 6
+## Dunkler Kontaktschatten direkt unter dem Körper (aufstehen Bild 6 und 22: (114, 119, 122) bis (167, 167, 170), Blau − Rot
+## bis 9): kleinster Kanal ab SCHATTEN_TIEF, Rot ≤ Grün ≤ Blau, Blau − Rot höchstens SCHATTEN_TIEF_BLAU, aber nur in den
+## untersten SCHATTEN_BODEN Spielbildpixeln über der untersten Figurzeile des Bildes: der obere Rand des Stahls am
+## ausgestreckten Schlagarm hat dieselben Grautöne ohne Tuschekontur (kette1 Bild 5: (132, 136, 136) bis (147, 149, 154)).
+const SCHATTEN_TIEF: int = 100
+const SCHATTEN_TIEF_BLAU: int = 10
+const SCHATTEN_BODEN: int = 14
+## Schattenlöcher (_schattenloch): eingeschlossene helle Fläche (nicht vom Rand erreichbar), die _loecher_fuellen sonst als
+## Figur füllt, weil sie im Mittel weiter als `loch` von der Randfarbe liegt: grauer Grund zwischen Jackensaum, Armschiene,
+## Handschuh und Hüfte (aufstehen Bild 14 bis 16: 57 bis 286 Arbeitspixel, Abstand 17 bis 38, 73 bis 91 % neutral, Ring
+## 20 bis 23 % Metall, 0 % warm). Sie bleibt durchsichtig, wenn sie bis in Bodennähe reicht (wie SCHATTEN_TIEF: untere
+## SCHATTEN_BODEN Spielbildpixel; das reinweiße Glanzlicht am Stahlring des hochgerissenen Arms, umgeworfen Bild 29, sieht sonst
+## genauso aus), ab SCHATTEN_LOCH_MIN Pixeln des Pixelmodus (wächst mit skala_p²), mittlerem Abstand höchstens SCHATTEN_LOCH_ABST, mindestens SCHATTEN_LOCH_NEUTRAL
+## Prozent neutralen Pixeln (Spanne ≤ `schatten`, Blau − Rot von −4 bis SCHATTEN_BLAU) und einem Ring (Abstand bis HAAR_RING,
+## nur Figur) mit höchstens SCHATTEN_LOCH_METALL Prozent Metall (Blau − Rot 8 bis 29) und SCHATTEN_LOCH_WARM Prozent Warmem
+## (Rot − Blau ≥ 20; Haut, Haar). Lichter der Armschienen (0 bis 26 % neutral, Ring 43 bis 64 % Metall), Glanz der Jacke
+## (Blau − Rot um 22), Hautlichter (warm umrandet) und Stiefelglanz (Abstand über 40) bleiben Figur.
+const SCHATTEN_LOCH_MIN: int = 12
+const SCHATTEN_LOCH_ABST: int = 40
+const SCHATTEN_LOCH_NEUTRAL: int = 70
+const SCHATTEN_LOCH_METALL: int = 30
+const SCHATTEN_LOCH_WARM: int = 10
+## Lücken zwischen Körperteilen (_haarluecken_entfernen, zweiter Weg ohne Haar): eine helle Fläche mit reinweißem Kern
+## (mindestens TUSCHE_KERN Prozent der Pixel mit Abstand unter HAAR_KERN), fast farblos (Median Rot − Blau von TUSCHE_GELB_MIN
+## bis HAAR_GELB), deren Ring zu mindestens TUSCHE_ANTEIL Prozent aus dunkler Tusche (Umrisslinien) und zu höchstens
+## TUSCHE_METALL Prozent aus Metall (Blau − Rot ab 8) besteht, ist Hintergrund zwischen Handschuh und Hüfte (gehen Bild 26:
+## Tusche 71 %, Metall 8 %) oder unter Jacke und Hand (aufstehen Bild 18: 63 %, 28 %). Lichter der Armschienen: Tusche höchstens
+## 14 %, Metall 66 bis 92 %. Stiefelglanz und Nieten haben keinen reinweißen Kern oder sind kleiner als HAAR_MIN.
+const TUSCHE_KERN: int = 30
+const TUSCHE_GELB_MIN: int = -12
+const TUSCHE_ANTEIL: int = 50
+const TUSCHE_METALL: int = 30
 const HAAR_MIN: int = 3
 const HAAR_GELB: int = 20
 const HAAR_GELB_KERN: int = 40
@@ -503,7 +543,7 @@ func _lauf() -> void:
 		var ausschnitt: PackedByteArray = zuschneiden_rgb(bd, arbeit_w, rahmen)
 		var fig: Dictionary = freistellen(ausschnitt, rahmen.size.x, rahmen.size.y, k, modus, tol, loch, fleck, staub, skala_p, haarloch, schatten)
 		if hd:
-			var wr: Dictionary = weich_freistellen(ausschnitt, fig["farbe"], rahmen.size.x, rahmen.size.y, k, modus, fig["maske"], kante, tol)
+			var wr: Dictionary = weich_freistellen(ausschnitt, fig["farbe"], rahmen.size.x, rahmen.size.y, k, modus, fig["maske"], kante, tol, fig["weg"])
 			fig["wa"] = wr["alpha"]
 			fig["wf"] = wr["farbe"]
 		fig["nr"] = i
@@ -1060,9 +1100,17 @@ static func freistellen(d: PackedByteArray, w: int, h: int, key: Vector3i, modus
 				maske[p] = 1
 			if a > 32 and a < 224:
 				weich += 1
+	# weg: vom Schatten entfernte Pixel (Flut und Schattenlöcher); weich_freistellen holt sie nicht als grauen Saum zurück
+	var weg: PackedByteArray = PackedByteArray()
+	var boden: int = SCHATTEN_BODEN * ARBEIT * skala_p / 100
 	if schatten > 0 and modus == "ecke":
-		_schatten_entfernen(maske, alpha, d, w, h, schatten)
-	_loecher_fuellen(maske, alpha, d, w, h, key, loch, LOCH_MIN * skala_p * skala_p / 10000)
+		weg.resize(n)
+		_schatten_entfernen(maske, alpha, d, w, h, schatten, boden, weg)
+	var loch_schatten: int = schatten if modus == "ecke" else 0
+	var offen: int = _loecher_fuellen(maske, alpha, d, w, h, key, loch, LOCH_MIN * skala_p * skala_p / 10000, loch_schatten, SCHATTEN_LOCH_MIN * skala_p * skala_p / 10000, weg, boden)
+	if offen > 0:
+		# grauer Saum um die Schattenlöcher: dieselbe Flut, von den Löchern aus
+		_schatten_entfernen(maske, alpha, d, w, h, schatten, boden, weg, true)
 	if haarloch > 0 and modus == "ecke":
 		_haarluecken_entfernen(maske, alpha, d, w, h, key, haarloch, maxi(2, HAAR_MIN * skala_p * skala_p / 10000))
 	if staub > 0:
@@ -1077,14 +1125,21 @@ static func freistellen(d: PackedByteArray, w: int, h: int, key: Vector3i, modus
 			if x == 0 or y == 0 or x == w - 1 or y == h - 1 or maske[p - 1] == 0 or maske[p + 1] == 0 or maske[p - w] == 0 or maske[p + w] == 0:
 				rand += 1
 	var schaerfe: int = 1000 * rand / (rand + weich) if rand + weich > 0 else 0
-	return {"maske": maske, "farbe": farbe, "schaerfe": schaerfe}
+	return {"maske": maske, "farbe": farbe, "schaerfe": schaerfe, "weg": weg}
 
 
 ## Vom Rand aus (4er-Nachbarschaft) unerreichbare Flächen ohne Figur: Figur, wenn klein (Rauschen) oder
 ## im Mittel weiter als LOCH_TOL von der Schlüsselfarbe entfernt (dunkle Kleidung). Echte Lücken zwischen
-## Arm und Rumpf zeigen die Schlüsselfarbe selbst und bleiben durchsichtig.
-static func _loecher_fuellen(maske: PackedByteArray, alpha: PackedByteArray, d: PackedByteArray, w: int, h: int, key: Vector3i, loch: int = LOCH_TOL, loch_min: int = LOCH_MIN) -> void:
+## Arm und Rumpf zeigen die Schlüsselfarbe selbst und bleiben durchsichtig. Mit `schatten` > 0 bleiben auch Schattenlöcher
+## (_schattenloch, ab `schatten_min` Pixeln, unterste Zeile höchstens `boden` Zeilen über der untersten Figurzeile) durchsichtig;
+## sie werden in `weg` mit 2 markiert. Rückgabe: Zahl der Schattenlöcher.
+static func _loecher_fuellen(maske: PackedByteArray, alpha: PackedByteArray, d: PackedByteArray, w: int, h: int, key: Vector3i, loch: int = LOCH_TOL, loch_min: int = LOCH_MIN, schatten: int = 0, schatten_min: int = 0, weg: PackedByteArray = PackedByteArray(), boden: int = 0) -> int:
 	var n: int = w * h
+	var unten: int = h
+	for p: int in range(n - 1, -1, -1):
+		if maske[p] != 0:
+			unten = p / w
+			break
 	var aussen: PackedByteArray = PackedByteArray()
 	aussen.resize(n)
 	var stapel: PackedInt32Array = PackedInt32Array()
@@ -1126,6 +1181,7 @@ static func _loecher_fuellen(maske: PackedByteArray, alpha: PackedByteArray, d: 
 			stapel[sp] = p + w
 			sp += 1
 	# übrige Nicht-Figur-Pixel: Flächen einzeln prüfen
+	var offen: int = 0
 	for s: int in n:
 		if maske[s] != 0 or aussen[s] != 0:
 			continue
@@ -1154,17 +1210,74 @@ static func _loecher_fuellen(maske: PackedByteArray, alpha: PackedByteArray, d: 
 				aussen[p + w] = 2
 				liste.append(p + w)
 		if liste.size() < loch_min or summe / liste.size() > loch:
+			if schatten > 0 and liste.size() >= maxi(schatten_min, loch_min) and summe / liste.size() <= SCHATTEN_LOCH_ABST and _schattenloch(liste, maske, d, w, h, schatten, unten - boden):
+				for p: int in liste:
+					weg[p] = 2
+				offen += 1
+				continue
 			for p: int in liste:
 				maske[p] = 1
 				alpha[p] = 255
+	return offen
+
+
+## Ist das Loch `liste` grauer Grund (SCHATTEN_LOCH_*): reicht bis in Bodennähe (Zeile ≥ `y_boden`), überwiegend neutral,
+## Ring ohne viel Metall und Warmes?
+static func _schattenloch(liste: PackedInt32Array, maske: PackedByteArray, d: PackedByteArray, w: int, h: int, spanne: int, y_boden: int) -> bool:
+	var tief: int = 0
+	for p: int in liste:
+		tief = maxi(tief, p / w)
+	if tief < y_boden:
+		return false
+	var neutral: int = 0
+	for p: int in liste:
+		var r: int = d[p * 3]
+		var g: int = d[p * 3 + 1]
+		var b: int = d[p * 3 + 2]
+		if maxi(r, maxi(g, b)) - mini(r, mini(g, b)) <= spanne and b - r >= -4 and b - r <= SCHATTEN_BLAU:
+			neutral += 1
+	if neutral * 100 < SCHATTEN_LOCH_NEUTRAL * liste.size():
+		return false
+	var gesehen: Dictionary = {}
+	for p: int in liste:
+		gesehen[p] = true
+	var alle: int = 0
+	var metall: int = 0
+	var warm: int = 0
+	for p: int in liste:
+		var px: int = p % w
+		var py: int = p / w
+		for y: int in range(maxi(py - HAAR_RING, 0), mini(py + HAAR_RING + 1, h)):
+			for x: int in range(maxi(px - HAAR_RING, 0), mini(px + HAAR_RING + 1, w)):
+				var q: int = y * w + x
+				if gesehen.has(q) or maske[q] == 0:
+					continue
+				gesehen[q] = true
+				alle += 1
+				var r: int = d[q * 3]
+				var b: int = d[q * 3 + 2]
+				if maxi(r, maxi(d[q * 3 + 1], b)) < HAAR_DUNKEL:
+					continue
+				if b - r >= 8 and b - r < 30:
+					metall += 1
+				elif r - b >= 20:
+					warm += 1
+	return alle > 0 and metall * 100 <= SCHATTEN_LOCH_METALL * alle and warm * 100 <= SCHATTEN_LOCH_WARM * alle
 
 
 ## Grauer Bodenschatten und Wischspuren (--schatten): Vom Außenraum (Maske 0, vom Rand erreichbar) aus breitet sich der
 ## Hintergrund über fast farblose helle Figurpixel aus (Spanne der Kanäle ≤ `spanne`, kleinster Kanal ≥ SCHATTEN_HELL, Blau − Rot
-## ≤ SCHATTEN_BLAU); sie werden durchsichtig. Die dunkle Kontur der Figur hält die Ausbreitung auf, so bleiben Lichter innerhalb der
-## Figur. Läuft vor _loecher_fuellen: weiße Taschen, die nur der Schatten einschloss, gehören danach zum Außenraum.
-static func _schatten_entfernen(maske: PackedByteArray, alpha: PackedByteArray, d: PackedByteArray, w: int, h: int, spanne: int) -> void:
+## ≤ SCHATTEN_BLAU), in den untersten `boden` Zeilen über der untersten Figurzeile auch über dunkleren kühlen Schatten
+## (SCHATTEN_TIEF*); sie werden durchsichtig und in `weg` mit 1 markiert. Die dunkle Kontur der Figur hält die Ausbreitung auf, so
+## bleiben Lichter innerhalb der Figur. Läuft vor _loecher_fuellen: weiße Taschen, die nur der Schatten einschloss, gehören danach
+## zum Außenraum. `von_loechern`: die Flut beginnt statt am Rand in den Schattenlöchern (`weg` 2) und nimmt deren grauen Saum mit.
+static func _schatten_entfernen(maske: PackedByteArray, alpha: PackedByteArray, d: PackedByteArray, w: int, h: int, spanne: int, boden: int = 0, weg: PackedByteArray = PackedByteArray(), von_loechern: bool = false) -> void:
 	var n: int = w * h
+	var unten: int = h
+	for p: int in range(n - 1, -1, -1):
+		if maske[p] != 0:
+			unten = p / w
+			break
 	var grau: PackedByteArray = PackedByteArray()
 	grau.resize(n)
 	for p: int in n:
@@ -1177,27 +1290,37 @@ static func _schatten_entfernen(maske: PackedByteArray, alpha: PackedByteArray, 
 		var lo: int = mini(r, mini(g, b))
 		if lo >= SCHATTEN_HELL and maxi(r, maxi(g, b)) - lo <= spanne and b - r <= SCHATTEN_BLAU:
 			grau[p] = 1
+		elif boden > 0 and lo >= SCHATTEN_TIEF and p / w >= unten - boden and r <= g and g <= b and b - r <= SCHATTEN_TIEF_BLAU:
+			grau[p] = 1
 	var marke: PackedByteArray = PackedByteArray()
 	marke.resize(n)
 	var stapel: PackedInt32Array = PackedInt32Array()
-	for x: int in w:
-		for y: int in [0, h - 1]:
-			var p: int = y * w + x
-			if (maske[p] == 0 or grau[p] == 1) and marke[p] == 0:
+	if von_loechern:
+		for p: int in n:
+			if weg[p] == 2:
 				marke[p] = 1
 				stapel.append(p)
-	for y: int in h:
-		for x: int in [0, w - 1]:
-			var p: int = y * w + x
-			if (maske[p] == 0 or grau[p] == 1) and marke[p] == 0:
-				marke[p] = 1
-				stapel.append(p)
+	else:
+		for x: int in w:
+			for y: int in [0, h - 1]:
+				var p: int = y * w + x
+				if (maske[p] == 0 or grau[p] == 1) and marke[p] == 0:
+					marke[p] = 1
+					stapel.append(p)
+		for y: int in h:
+			for x: int in [0, w - 1]:
+				var p: int = y * w + x
+				if (maske[p] == 0 or grau[p] == 1) and marke[p] == 0:
+					marke[p] = 1
+					stapel.append(p)
 	while not stapel.is_empty():
 		var p: int = stapel[stapel.size() - 1]
 		stapel.resize(stapel.size() - 1)
 		if grau[p] == 1:
 			maske[p] = 0
 			alpha[p] = 0
+			if not weg.is_empty():
+				weg[p] = 1
 		var px: int = p % w
 		var py: int = p / w
 		for q: int in [p - 1 if px > 0 else -1, p + 1 if px < w - 1 else -1, p - w if py > 0 else -1, p + w if py < h - 1 else -1]:
@@ -1206,9 +1329,45 @@ static func _schatten_entfernen(maske: PackedByteArray, alpha: PackedByteArray, 
 				stapel.append(q)
 
 
+## Ist die helle Fläche `liste` eine Lücke zwischen Körperteilen (TUSCHE_*): reinweißer Kern, fast farblos, Ring vor allem
+## dunkle Tusche und kaum Metall? `marke` 1 = Außenraum.
+static func _tuscheluecke(liste: PackedInt32Array, gelb_median: int, abst: PackedByteArray, marke: PackedByteArray, d: PackedByteArray, w: int, h: int) -> bool:
+	if gelb_median < TUSCHE_GELB_MIN or gelb_median > HAAR_GELB:
+		return false
+	var kern: int = 0
+	for p: int in liste:
+		if abst[p] < HAAR_KERN:
+			kern += 1
+	if kern * 100 < TUSCHE_KERN * liste.size():
+		return false
+	var gesehen: Dictionary = {}
+	for p: int in liste:
+		gesehen[p] = true
+	var alle: int = 0
+	var dunkel: int = 0
+	var metall: int = 0
+	for p: int in liste:
+		var px: int = p % w
+		var py: int = p / w
+		for y: int in range(maxi(py - HAAR_RING, 0), mini(py + HAAR_RING + 1, h)):
+			for x: int in range(maxi(px - HAAR_RING, 0), mini(px + HAAR_RING + 1, w)):
+				var q: int = y * w + x
+				if gesehen.has(q) or marke[q] == 1 or abst[q] < HAAR_SATT:
+					continue
+				gesehen[q] = true
+				alle += 1
+				var r: int = d[q * 3]
+				var b: int = d[q * 3 + 2]
+				if maxi(r, maxi(d[q * 3 + 1], b)) < HAAR_DUNKEL:
+					dunkel += 1
+				elif b - r >= 8 and b - r < 50:
+					metall += 1
+	return alle > 0 and dunkel * 100 >= TUSCHE_ANTEIL * alle and metall * 100 <= TUSCHE_METALL * alle
+
+
 ## Lücken zwischen Haarsträhnen, Zopf, Nacken und Kragen (--haarloch): Grok malt dort weißen Grund, den die Füllung der
 ## Löcher (`loch`, klein gehalten für die Lichter der Armschienen) und die Grenze `tol` (hellgraue Säume zwischen den Strähnen)
-## als Figur behalten. Kandidaten sind Flächen (4er-Nachbarschaft) aus Pixeln mit Abstand zur Randfarbe unter `grenze`, die
+## als Figur behalten. Kandidaten sind Flächen (8er-Nachbarschaft) aus Pixeln mit Abstand zur Randfarbe unter `grenze`, die
 ## nicht schon zum Außenraum gehören (Maske 0 und vom Rand erreichbar). Durchsichtig wird eine Fläche ab `min_n` Pixeln, wenn
 ## sie neutral ist (Median Rot − Blau ≤ HAAR_GELB), ihr Ring zum Teil warm ist und Haar in der Nähe liegt (HAAR_*).
 static func _haarluecken_entfernen(maske: PackedByteArray, alpha: PackedByteArray, d: PackedByteArray, w: int, h: int, key: Vector3i, grenze: int, min_n: int) -> void:
@@ -1258,10 +1417,14 @@ static func _haarluecken_entfernen(maske: PackedByteArray, alpha: PackedByteArra
 			i += 1
 			var px: int = p % w
 			var py: int = p / w
-			for q: int in [p - 1 if px > 0 else -1, p + 1 if px < w - 1 else -1, p - w if py > 0 else -1, p + w if py < h - 1 else -1]:
-				if q >= 0 and marke[q] == 0 and abst[q] < grenze:
-					marke[q] = 2
-					liste.append(q)
+			# 8er-Nachbarschaft: schmale Lücken zerfallen sonst an hellgrauen Pixeln in Stücke unter min_n (kette1 Bild 12
+			# hinter dem Ohr: drei Stücke zu 8 und 9 Arbeitspixeln, nur über Ecken verbunden)
+			for y: int in range(maxi(py - 1, 0), mini(py + 2, h)):
+				for x: int in range(maxi(px - 1, 0), mini(px + 2, w)):
+					var q: int = y * w + x
+					if marke[q] == 0 and abst[q] < grenze:
+						marke[q] = 2
+						liste.append(q)
 		if liste.size() < min_n:
 			continue
 		# neutral weiß? (Median Rot − Blau)
@@ -1279,6 +1442,11 @@ static func _haarluecken_entfernen(maske: PackedByteArray, alpha: PackedByteArra
 			y1 = maxi(y1, p / w)
 		gelb.sort()
 		var gelb_median: int = gelb[gelb.size() / 2]
+		if _tuscheluecke(liste, gelb_median, abst, marke, d, w, h):
+			for p: int in liste:
+				maske[p] = 0
+				alpha[p] = 0
+			continue
 		if gelb_median > HAAR_GELB:
 			var kern: int = 0
 			for p: int in liste:
@@ -1315,7 +1483,7 @@ static func _haarluecken_entfernen(maske: PackedByteArray, alpha: PackedByteArra
 				var r: int = d[q]
 				var g: int = d[q + 1]
 				var b: int = d[q + 2]
-				if r - b >= HAAR_BLOND_RB and r - g >= 0 and r - g < HAAR_BLOND_RG and g - b >= HAAR_BLOND_GB and maxi(r, maxi(g, b)) >= HAAR_BLOND_HELL:
+				if r - b >= HAAR_BLOND_RB and r - g >= 0 and r - g < HAAR_BLOND_RG and g - b >= HAAR_BLOND_GB and g - b >= r - g and maxi(r, maxi(g, b)) >= HAAR_BLOND_HELL:
 					blond += 1
 		if blond < HAAR_BLOND:
 			continue
@@ -1483,8 +1651,12 @@ static func kante_standard(figur_hoehe: float) -> int:
 ##    Kleidung am Rand nicht zu dick. Im Modus ecke entscheidet der Abstand zur Schlüsselfarbe.
 ##  - Farbe: Mischung C = α · F + (1 − α) · K wird nach F aufgelöst; bei kleinem Alpha (unter 40 bis 140 von 255) zählt die
 ##    Farbe der Nachbarn statt der verrauschten Auflösung; im Modus gruen wird zuletzt Grün auf max(r, b) begrenzt.
+##  - `weg` (von freistellen): als Schatten entfernte Pixel weiter als WEICH_WEG_SAUM Pixel außerhalb der Maskenkante bleiben
+##    durchsichtig; sonst kämen sie als halb deckender grauer oder dunkler Saum zurück (ihr Grau liegt weit von der Schlüsselfarbe
+##    und fast auf der Strecke zu dunkler Kleidung). Die innersten Schichten bleiben weich: dort liegt die Kantenglättung der
+##    dunklen Umrisslinie, deren Grau die Schattenflut ebenfalls erfasst.
 ## Rückgabe: alpha (0 bis 255), farbe (RGB, gerade, nicht vormultipliziert; nur wo alpha > 0 von Belang).
-static func weich_freistellen(d: PackedByteArray, farbe: PackedByteArray, w: int, h: int, key: Vector3i, modus: String, maske: PackedByteArray, kante: int, tol: int) -> Dictionary:
+static func weich_freistellen(d: PackedByteArray, farbe: PackedByteArray, w: int, h: int, key: Vector3i, modus: String, maske: PackedByteArray, kante: int, tol: int, weg: PackedByteArray = PackedByteArray()) -> Dictionary:
 	var n: int = w * h
 	# Abstand zur Kante der Maske: +k innen, −k außen (1 = unmittelbar an der Kante), 0 = weiter als `kante` entfernt
 	var tiefe: PackedInt32Array = PackedInt32Array()
@@ -1570,6 +1742,8 @@ static func weich_freistellen(d: PackedByteArray, farbe: PackedByteArray, w: int
 		nah[i3 + 2] = fb
 		if hat_f:
 			bekannt[p] = 1
+		if not weg.is_empty() and weg[p] != 0 and tiefe[p] < -WEICH_WEG_SAUM:
+			continue
 		# Alpha: Grün-Dominanz (gruen) oder Abstand zur Schlüsselfarbe (ecke)
 		var a: int = 255
 		if modus == "gruen":

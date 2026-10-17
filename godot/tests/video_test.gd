@@ -95,6 +95,7 @@ func _alles() -> void:
 	_tabelle_clipdaten()
 	_abspieler()
 	_hd_funktionen()
+	_schatten_regeln()
 	_hd_umsetzung()
 	_abdeckung()
 	_szene_griff_wurf()
@@ -974,6 +975,54 @@ func _hd_funktionen() -> void:
 	_gleich(hd["fuss"], Vector2(50.5, 190.9), "clip.txt HD: Fußpunkt in Dateipixeln")
 	var px: Dictionary = T.clip_lesen("bilder=3\ngroesse=100,200\nanker=50,190\n")
 	_ok(not bool(px["weich"]) and px["skala"] == 1.0 and px["format"] == "png" and px["fuss"] == Vector2(50.5, 191.0), "clip.txt Pixel: nicht weich, Skala 1, Fußpunkt (anker + 0,5; + 1)")
+
+
+## --schatten im Modus ecke (weißer Grund): heller und dunkler Bodenschatten, Schattenloch mit grauem Saum, Lichter mit
+## Metallring, gleiches Grau oben an der Figur (außerhalb der Bodennähe) und der weiche Rand ohne grauen Saum.
+func _schatten_regeln() -> void:
+	var u: GDScript = load("res://werkzeuge/video_umsetzer.gd")
+	var w: int = 120
+	var h: int = 100
+	var rgb: PackedByteArray = PackedByteArray()
+	rgb.resize(w * h * 3)
+	rgb.fill(253)
+	var flaeche: Callable = func(x0: int, y0: int, x1: int, y1: int, r: int, g: int, b: int) -> void:
+		for y: int in range(y0, y1 + 1):
+			for x: int in range(x0, x1 + 1):
+				var i: int = (y * w + x) * 3
+				rgb[i] = r
+				rgb[i + 1] = g
+				rgb[i + 2] = b
+	flaeche.call(30, 10, 89, 79, 26, 42, 74)  # Körper (Jeansblau)
+	flaeche.call(30, 10, 89, 11, 130, 134, 136)  # oberer Rand im Grau des dunklen Schattens (wie Stahl am Schlagarm)
+	flaeche.call(25, 80, 95, 83, 124, 124, 126)  # dunkler Kontaktschatten direkt unter dem Körper
+	flaeche.call(20, 84, 100, 86, 200, 200, 203)  # heller Bodenschatten
+	flaeche.call(39, 59, 56, 71, 160, 160, 163)  # grauer Saum ums Schattenloch
+	flaeche.call(40, 60, 55, 70, 225, 225, 228)  # Schattenloch: hellgrau, eingeschlossen
+	flaeche.call(63, 58, 77, 72, 150, 160, 172)  # Stahl
+	flaeche.call(65, 60, 75, 70, 225, 225, 228)  # Licht im Stahl: dasselbe Hellgrau
+	flaeche.call(40, 20, 55, 30, 225, 225, 228)  # dasselbe Hellgrau hoch oben (Glanzlicht, nicht in Bodennähe)
+	var key: Vector3i = Vector3i(253, 253, 253)
+	var r: Dictionary = u.call("freistellen", rgb, w, h, key, "ecke", 40, 8, 4, 0, 100, 0, 8)
+	var m: PackedByteArray = r["maske"]
+	var weg: PackedByteArray = r["weg"]
+	_gleich(m[40 * w + 60], 1, "Schatten: Körper bleibt Figur")
+	_gleich([m[81 * w + 60], m[85 * w + 60]], [0, 0], "Schatten: dunkler Kontaktschatten und heller Bodenschatten fallen weg")
+	_gleich(m[10 * w + 60], 1, "Schatten: dasselbe Grau oben an der Figur (außerhalb der Bodennähe) bleibt Figur")
+	_gleich(m[65 * w + 47], 0, "Schatten: eingeschlossenes hellgraues Schattenloch bleibt durchsichtig")
+	_gleich(m[59 * w + 47], 0, "Schatten: grauer Saum ums Schattenloch fällt mit weg")
+	_gleich(m[65 * w + 70], 1, "Schatten: Licht im Stahl (Metallring) bleibt Figur")
+	_gleich(m[25 * w + 47], 1, "Schatten: hellgraues Loch fern vom Boden bleibt Figur (Glanzlicht)")
+	_gleich([weg[81 * w + 60], weg[65 * w + 47], weg[40 * w + 60]], [1, 2, 0], "Schatten: weg markiert Flut (1) und Schattenloch (2)")
+	var ohne: Dictionary = u.call("freistellen", rgb, w, h, key, "ecke", 40, 8, 4, 0, 100, 0, 0)
+	_gleich([(ohne["maske"] as PackedByteArray)[81 * w + 60], (ohne["maske"] as PackedByteArray)[65 * w + 47]], [1, 1], "Schatten: ohne --schatten bleiben Schatten und Loch Figur")
+	# Weicher Rand: entfernter Schatten jenseits von WEICH_WEG_SAUM Schichten bleibt durchsichtig (ohne weg käme er halb deckend zurück)
+	var wr: Dictionary = u.call("weich_freistellen", rgb, r["farbe"], w, h, key, "ecke", m, 4, 40, weg)
+	var wo: Dictionary = u.call("weich_freistellen", rgb, r["farbe"], w, h, key, "ecke", m, 4, 40)
+	var al: PackedByteArray = wr["alpha"]
+	_gleich([al[82 * w + 60], al[83 * w + 60]], [0, 0], "Schatten: weicher Rand holt den Kontaktschatten nicht zurück")
+	_ok((wo["alpha"] as PackedByteArray)[82 * w + 60] > 0, "Schatten: ohne weg käme der Kontaktschatten als Saum zurück")
+	_ok(al[80 * w + 60] == (wo["alpha"] as PackedByteArray)[80 * w + 60], "Schatten: die innerste Schicht bleibt weich wie bisher (Kantenglättung)")
 
 
 ## Synthetisches HD-Video (aus dem Quellbild von Vela auf Grün, mit Hüpfen, Skalierung und H.264-Kompression) im Umsetzer

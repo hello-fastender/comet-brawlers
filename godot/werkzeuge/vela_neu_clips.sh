@@ -19,7 +19,8 @@
 # `--haarloch 60` (alle Clips): weiße Lücken zwischen Haarsträhnen, Zopf, Nacken und Kragen werden durchsichtig (neutral weiß,
 # warm umrandet, Haar in der Nähe); die Lichter der Armschienen (kühl umrandet) und Glanzlichter im Haar (gelblich) bleiben Figur.
 # `--schatten 8` (alle Clips): Groks grauer Bodenschatten (unter liegendem Körper, unter Stiefeln, Wischspuren) wird durchsichtig,
-# soweit er außerhalb der dunklen Kontur der Figur liegt.
+# soweit er außerhalb der dunklen Kontur der Figur liegt; in Bodennähe auch der dunklere Kontaktschatten und eingeschlossene graue
+# Taschen (zwischen Jackensaum, Armschiene, Handschuh und Hüfte beim Aufstehen), ohne grauen Saum am weichen Rand.
 # Fußpunkt: `--ankerx-video` = Stiefelmitte der ruhigen Kampfhaltung im jeweiligen Video (gemessen); gehen und sprint `--ankerx mittel`.
 # Bildnummern (`--ab`, `--bis`, `--ausser`) sind Videobilder (1-basiert), `--setze` zählt die behaltenen Bilder.
 #

@@ -334,31 +334,33 @@ liegt in der Git-Geschichte; ihre Befehle bleiben in `werkzeuge/vela_hd_clips.sh
 
 Unterschiede zur alten Vela: weißer statt grüner Grund (`--schluessel ecke`, `--loch 8`, sonst werden die Lichter der Stahl-Armschienen
 durchsichtig; `--haarloch 60` macht die weißen Lücken zwischen Haarsträhnen, Zopf, Nacken und Kragen durchsichtig, `--schatten 8`
-Groks grauen Bodenschatten außerhalb der Figurkontur, beide seit 2026-10-16, Erklärung im Kopf von `werkzeuge/video_umsetzer.gd`); Maßstab aus der A-Pose in Bild 1 jedes Videos (142 / Zeilen: 0,1529 bei den quadratischen, 0,1791 bei den Hochformat-Videos
+Groks grauen Bodenschatten außerhalb der Figurkontur, beide seit 2026-10-16, Erklärung im Kopf von `werkzeuge/video_umsetzer.gd`; seit
+2026-10-17 nach Funden im Spiel auch die Lücken am Kragen, im Haarschatten und schmal hinter dem Ohr, den dunkleren Kontaktschatten direkt unter dem Körper,
+eingeschlossene graue Taschen zwischen Jackensaum, Armschiene, Handschuh und Hüfte, ohne grauen Saum am weichen Rand); Maßstab aus der A-Pose in Bild 1 jedes Videos (142 / Zeilen: 0,1529 bei den quadratischen, 0,1791 bei den Hochformat-Videos
 `sprung` und `sprungtritt`); Kampfhaltung 137 Spielbildpixel hoch (alte Vela 142); Stand als Hin-und-her-Schleife (`schleife=pingpong`,
 33 Bilder, 160 Ticks), weil das Atmen im Video keinen Zyklus schließt. Grok stellt die neue Vela in allen Videos «orthodox» hin (linkes Bein und
 linke Faust vorn). `tests/video_test.gd` beschreibt die neuen Clips (Maßstäbe, Höhen, Bildzahlen, kürzere Reichweiten), alle Tests bestehen.
 
 | Clip | Bilder | Dateien (MB) | Texturen (MiB) | Video | Anmerkung |
 |---|---|---|---|---|---|
-| `stand` | 33 | 1,85 | 8,7 | stand_9 | Atemzug hin und her (Video 97 bis 129) |
-| `gehen` | 30 | 1,46 | 6,5 | gehen2_6 | zweite Fassung; Doppelschritt 30 Bilder, `schritt_px` 57, 33 Ticks (erste Lieferung 50 und 29) |
+| `stand` | 33 | 1,87 | 8,6 | stand_9 | Atemzug hin und her (Video 97 bis 129) |
+| `gehen` | 30 | 1,46 | 6,5 | gehen2_6 | zweite Fassung; Doppelschritt 30 Bilder, `schritt_px` 59, 34 Ticks (erste Lieferung 50 und 29) |
 | `sprint` | 16 | 0,91 | 4,5 | laufen_v2 | Doppelschritt 16 Bilder, `schritt_px` 83, 24 Ticks |
-| `kette1` | 23 | 1,20 | 6,7 | kette1_7 | Kontakt 97; Faust reicht 11 Spielbildpixel über die Deckung |
-| `kette2` | 27 | 1,51 | 8,9 | kette2_2_7 | zweite Fassung; Reichweite 75 Spielbildpixel, Ruhe profilnah |
-| `kette3` | 23 | 1,24 | 7,4 | kette3_7 | Haken von unten; Füße rutschen beim Haken etwas |
-| `kette4` | 66 | 3,66 | 19,3 | kette4_2_8 | zweite Fassung; vordere Faust, Tritt mit dem vorderen Bein, Ruhe in Deckung; Standstiefel gleitet 6,7 Spielbildpixel |
-| `getroffen_vorn` | 50 | 2,89 | 12,9 | getroffen_vorn_6 | Kontakt = Oberkörper am weitesten zurück |
+| `kette1` | 23 | 1,21 | 6,7 | kette1_7 | Kontakt 97; Faust reicht 11 Spielbildpixel über die Deckung |
+| `kette2` | 27 | 1,52 | 8,9 | kette2_2_7 | zweite Fassung; Reichweite 75 Spielbildpixel, Ruhe profilnah |
+| `kette3` | 23 | 1,25 | 7,4 | kette3_7 | Haken von unten; Füße rutschen beim Haken etwas |
+| `kette4` | 66 | 3,68 | 19,3 | kette4_2_8 | zweite Fassung; vordere Faust, Tritt mit dem vorderen Bein, Ruhe in Deckung; Standstiefel gleitet 6,7 Spielbildpixel |
+| `getroffen_vorn` | 50 | 2,89 | 12,8 | getroffen_vorn_6 | Kontakt = Oberkörper am weitesten zurück |
 | `griff` | 52 | 2,84 | 14,9 | griff_2_6 | zweite Fassung; stille Haltepose im Profil (Fäuste dicht vor dem Kinn); `wurf` beginnt frontal (Sprung in der Ansicht) |
 | `wurf` | 41 | 2,34 | 12,5 | wurf_3_6 | Stoßwurf (dritte Fassung); beginnt in frontaler Deckung (Video 100), Stoß im Profil, Ruhe 3/4 nah an `stand`, aber 9 Spielbildpixel breiter (beim Wechsel zu `stand` rückt jeder Stiefel 4 bis 5 nach innen) |
-| `sprung` | 58 | 3,34 | 13,3 | sprung_7 | Hochformat |
+| `sprung` | 58 | 3,35 | 13,2 | sprung_7 | Hochformat |
 | `sprungtritt` | 57 | 3,15 | 13,6 | sprungtritt_7 | Hochformat, `--loch 16` |
 | `umgeworfen` | 45 | 2,24 | 10,9 | umgeworfen_aufstehen_7 | Zopfspitze am linken Rand abgeschnitten |
 | `liegen` | 1 | 0,04 | 0,1 | umgeworfen_aufstehen_7 | Video 168 |
-| `aufstehen` | 54 | 2,39 | 8,3 | umgeworfen_aufstehen_7 | Video 168 bis 221 |
-| zusammen | 576 | 31,1 | 148,4 | | alte Vela 709 Bilder, 52,6 MB |
+| `aufstehen` | 54 | 2,38 | 8,3 | umgeworfen_aufstehen_7 | Video 168 bis 221 |
+| zusammen | 576 | 31,1 | 148,3 | | alte Vela 709 Bilder, 52,6 MB |
 
-Gemessen mit `werkzeuge/speicher_messung.gd -- --modus clips` (2026-10-16).
+Gemessen mit `werkzeuge/speicher_messung.gd -- --modus clips` (2026-10-17).
 
 ## Gemalte Vela (alte, rotbraune Vela, HD-Clips im Spiel 2026-10-08 bis 2026-10-15)
 
