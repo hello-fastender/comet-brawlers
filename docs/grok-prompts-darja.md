@@ -517,3 +517,17 @@ HANDLUNG: Übergang: Darja steht wie in der Referenz frontal in der A-Pose. Sie 
 
 ENDE: Das letzte Bild (6,0 s) gleicht dem Bild bei 2,0 s: dieselbe KAMPFHALTUNG wie vor dem Treffer, linke Hand vorn in Schulterhöhe, rechte Hand vor dem Kinn, beide Hände offen, beide Stiefeletten an derselben Stelle, Mundtuch über Nase, Mund und Kinn, Hals frei. Von 3,9 s bis zum letzten Bild steht Darja still: kein zweiter Treffer, kein Zucken, kein Schritt, keine Drehung, kein Blick zur Kamera, kein Abnehmen oder Rutschen des Mundtuchs, keine Rückkehr in die A-Pose. Nochmals das Wichtigste: grüner Hintergrund in jedem Bild, feste Kamera, Darja gleich groß und in der Mitte, Stiefeletten auf der Höhe des ersten Bildes, strenges Profil nach rechts ohne Rückenansicht, genau ein Treffer von vorn mit heftigem Zurückschnellen von Kopf und Oberkörper, Mundtuch in jedem Bild über Nase und Mund, nichts ändern, nichts hinzufügen.
 ```
+
+### Lieferung vom 2026-10-18 (zwei Videos, Prompts gehen und getroffen erster Fassung)
+
+Beide Videos (Drive `darja/darja_gehen`, `darja/darja_schlagen`; dieselben Dateinamen `grok-video-8b05dba3-…`) geprüft mit
+Kontaktbögen und Kopfausschnitten je Bild:
+
+- Video A: Drehung über den Rücken (Bild 20 bis 30 Rückenansicht), dann Kampfhaltung mit offenen Händen (Bild 46 bis 63,
+  Mundtuch sitzt), ab Bild 64 rutscht das Mundtuch, ab 72 ist es weg; Kopf in den Nacken (72 bis 100) ohne Mundtuch, am Ende
+  Blick zur Kamera. Brauchbar: Bild 46 bis 63 als `stand` (im Spiel seit 2026-10-18, `docs/godot.md`, „Gegner aus Video-Clips“).
+- Video B: Drehung sauber, Schritte mit fliegendem Haar (36 bis 71), tiefer Ausfallschritt mit erhobenen Händen (72 bis 83,
+  Mundtuch sitzt), ab 84 Mundtuch am Hals bis zum Ende. Kein Gehzyklus, kein Treffer.
+
+Folgerung: die zweite Fassung `getroffen` (oben) mit Mundtuch in jedem Absatz; `gehen` und `schlag` vor der nächsten
+Bestellung ebenso kürzen und das Mundtuch festnageln.

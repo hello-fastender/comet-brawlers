@@ -372,6 +372,11 @@ static func zeichneGegner(zn: DarstellungZeichner, k: Kamera, g: KernEntitaeten.
 	zeichneKoerper(zn, koerperRechteck(lageVon(k, g), gegnerUmriss(g), form), gegnerFarbe(g), g.blick, form, false)
 
 
+## Gegnerplätze (Index in welt.gegner), deren Körper eine Quelle außerhalb zeichnet (DarstellungGegnerFrames); die
+## Darstellung zeichnet für sie nur den Schatten. Leer in Tests und Werkzeugen, gesetzt von spiel.gd vor dem Zeichnen.
+static var gegner_extern: Dictionary = {}
+
+
 # ===========================================================================
 # Objekte und Geschosse (Kampf 3, 10; Welt 6, 9)
 # ===========================================================================
@@ -550,7 +555,8 @@ static func stueckZeichne(zn: DarstellungZeichner, k: Kamera, welt: KernWelt, s:
 		"figur":
 			zeichneFigur(zn, k, s.e as KernEntitaeten.Figur, welt.frame)
 		"gegner":
-			zeichneGegner(zn, k, s.e as KernEntitaeten.Gegner)
+			if not gegner_extern.has(s.nr):
+				zeichneGegner(zn, k, s.e as KernEntitaeten.Gegner)
 		"objekt":
 			zeichneObjekt(zn, k, s.e as KernEntitaeten.Objekt)
 

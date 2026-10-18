@@ -66,6 +66,8 @@ var _zn_vorn: DarstellungZeichner = null
 var _puppe: Node2D = null
 ## Vela aus Video-Clips (DarstellungVelaFrames), sonst null
 var _frames: Node2D = null
+## Gegner aus Video-Clips (DarstellungGegnerFrames, Darja für Bolzer), sonst null
+var _gegner_frames: DarstellungGegnerFrames = null
 ## Vela als 3D-Figur (DarstellungVela3D), sonst null
 var _dreid: Node2D = null
 var _hinweis: String = ""
@@ -227,6 +229,13 @@ func _ready() -> void:
 			else:
 				printerr("--dreid: Modell oder Animationen fehlen unter %s, die gemalte Vela bleibt" % DarstellungVela3D.ORDNER)
 		puppeEinhaengen(DarstellungVelaPuppe.new(), frames, dreid)
+		# Gegner aus Clips (vorerst Darja für Bolzer), zwischen Hinten und Vorn wie die Figur
+		if DarstellungGegnerFrames.bereit():
+			_gegner_frames = DarstellungGegnerFrames.new()
+			_gegner_frames.z_index = 0
+			add_child(_gegner_frames)
+			move_child(_gegner_frames, _vorn.get_index())
+			_gegnerAktualisieren()
 
 
 ## Legt die beiden Zeichenebenen an (Hinten, Vorn). Die Ebenen ordnen über
@@ -294,6 +303,15 @@ func _puppeAktualisieren() -> void:
 		quelle.call("aus_figur", f, sitzung.welt)
 
 
+## Setzt die Gegner-Clips nach der Welt und sagt der Darstellung, welche Gegner sie nicht selbst zeichnet.
+func _gegnerAktualisieren() -> void:
+	if _gegner_frames == null or sitzung == null:
+		DarstellungZeichnen.gegner_extern = {}
+		return
+	_gegner_frames.aus_welt(sitzung.welt)
+	DarstellungZeichnen.gegner_extern = DarstellungGegnerFrames.extern
+
+
 # ===========================================================================
 # Schleife
 # ===========================================================================
@@ -319,6 +337,7 @@ func _process(_delta: float) -> void:
 		sitzung.vollbild_anfrage = false
 		vollbildUmschalten()
 	_puppeAktualisieren()
+	_gegnerAktualisieren()
 	if DarstellungVelaFrames.nachladen:
 		DarstellungVelaFrames.vorausladen_schritt(DarstellungVelaFrames.vorausladen_budget_us())
 	_hinten.queue_redraw()
