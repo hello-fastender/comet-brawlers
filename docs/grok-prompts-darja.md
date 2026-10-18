@@ -529,5 +529,17 @@ Kontaktbögen und Kopfausschnitten je Bild:
 - Video B: Drehung sauber, Schritte mit fliegendem Haar (36 bis 71), tiefer Ausfallschritt mit erhobenen Händen (72 bis 83,
   Mundtuch sitzt), ab 84 Mundtuch am Hals bis zum Ende. Kein Gehzyklus, kein Treffer.
 
-Folgerung: die zweite Fassung `getroffen` (oben) mit Mundtuch in jedem Absatz; `gehen` und `schlag` vor der nächsten
-Bestellung ebenso kürzen und das Mundtuch festnageln.
+Folgerung: die zweite Fassung `getroffen` (oben) mit Mundtuch in jedem Absatz.
+
+Nachtrag, gleiche Lieferung, Drive-Ordner `darja_gehen` und `darja_schlagen` (je zwei Videos, vom Nutzer hier
+hochgeladen): In allen vier Videos sitzt das Mundtuch bis zum letzten Bild.
+
+- Gehen, Video 1: Drehung bis etwa Bild 30, dann gleichmäßiger Gang im Profil nach rechts; der Umsetzer findet den
+  Doppelschritt (33 Bilder ab Bild 52, Güte 48 %, Schrittlänge 52). Im Spiel als `gehen`. Video 2 gleichwertig (Haar fliegt
+  bei der Drehung stärker), nicht umgesetzt.
+- Schlag, Video 2: Haltung mit offenen Händen ab etwa Bild 60, Handballenstoß der rechten Hand ab Bild 86, voll gestreckt
+  ab Bild 99 (Ausdehnung nach vorn 62 gegenüber 40 im Stand), gehalten bis zum Ende, keine Rückkehr in die Haltung. Im
+  Spiel als `schlag` (Bild 80 bis 104, Rückkehr rückwärts). Video 1: der Arm schiebt sich langsam vor (Bild 72 bis 108),
+  kein Stoß; nicht umgesetzt.
+- Stand: aus beiden Gehen- und Schlag-Videos ist die Haltung vor der Aktion (Schlag-Video 2, Bild 60 bis 85) ein
+  besserer `stand` als die 18 Bilder aus Video A; noch nicht ausgetauscht.

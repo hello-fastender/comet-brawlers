@@ -651,28 +651,36 @@ der Verbrauch an Grafikspeicher einer echten GPU und eine eventuelle Kompression
 
 ## Gegner aus Video-Clips: Darja (seit 2026-10-18)
 
-Erster Gegner-Clip im Spiel: `godot/grafik/darja_video/stand/` (HD-Modus, 18 Bilder, Schleife hin und her), umgesetzt aus
-dem Grok-Video der neuen Darja (`docs/grok-prompts-darja.md`, Abschnitt 5; Video A der Lieferung vom 2026-10-18, Bilder 46
-bis 63, `--faktor 0.1564` = 142 / 908 Zeilen der A-Pose, `--loch 255`, `--zyklus 18 --schleife pingpong`). Nur diese 18
-Bilder sind brauchbar: In beiden Videos der Lieferung rutscht das Mundtuch danach vom Gesicht (Video A ab Bild 64, Video B
-ab Bild 84), ein Gehzyklus oder ein Treffer mit sitzendem Mundtuch ist nicht enthalten.
+Erste Gegner-Clips im Spiel unter `godot/grafik/darja_video/` (HD-Modus, `--loch 255`, `--faktor 0.1564` = 142 / 908 Zeilen
+der A-Pose in Bild 1), umgesetzt aus den Grok-Videos der neuen Darja (`docs/grok-prompts-darja.md`, Abschnitt 5, Lieferung
+vom 2026-10-18):
+
+| Clip | Quelle | Fenster | Umsetzer | Befund |
+|---|---|---|---|---|
+| `stand` | Treffer-Video A | Bild 46 bis 63 (18 Bilder) | `--zyklus 18 --schleife pingpong --ereignis keine` | nur dort sitzt das Mundtuch; danach rutscht es, der Treffer ist unbrauchbar |
+| `gehen` | Gehen-Video 1 | Bild 52 bis 84 (33 Bilder, ein Doppelschritt) | `--kuerzen nein --zyklus 33 --ankerx mittel --ereignis keine` | Mundtuch sitzt im ganzen Video, Zyklus vom Umsetzer gefunden (Güte 48 %), `schritt_px` 52, `zyklus_ticks` 30 |
+| `schlag` | Schlag-Video 2 | Bild 80 bis 104 (25 Bilder) | `--kuerzen nein --ereignis vorn --zyklus 0 --setze ausholen=7,kontakt=20,rueckzug=22` | Handballenstoß mit der rechten Hand, Kontakt bei Bild 99 (vorn 62 gegenüber 40 im Stand); das Video kehrt nicht in die Haltung zurück, darum `rueckkehr=rueckwaerts` |
 
 Anzeige: `darstellung/gegner_frames.gd` (`DarstellungGegnerFrames`) hält je Gegnerplatz einen `DarstellungVelaFrames`-Node;
-die Clips sind dort unter `<figur>_<clip>` registriert (`darja_stand`), Laden, Speicherbudget, Maßstab und Anker sind die
-der Vela-Clips. Zuordnung (`FIGUR_JE_TYP`, `clip_fuer`): Darja steht vorläufig für den Typ Bolzer; in stehender Form
-(`gegnerForm` „stand“) mit den Aktionen STAND, ANKUENDIGUNG, GEHEN und NACHLAUF zeigt sie `stand` (Schleife in Echtzeit über
-`welt.frame`), alles andere (Auftritt, Angriff, Treffer, Flug, Liegen, Aufstehen, gehalten, tot) den Platzhalter. Gegner, die ein Clip zeigt, stehen in `DarstellungZeichnen.gegner_extern` (Slotnummern); `zeichneGegner` lässt
-für sie den Körper weg, der Schatten bleibt. Tiefe: der Node liegt auf z_index 0 nach der Ebene Hinten; ein Gegner hinter
-oder auf der Tiefe der Figur bekommt 0, einer davor 2 (die Figur liegt auf 1, Vorn auf 30); Objekte zwischen Gegner und
-Figur ordnet das nur näherungsweise. `spiel.gd` legt den Node an, wenn `DarstellungGegnerFrames.bereit()` einen Clip findet
-(nicht mit `--platzhalter`), und setzt ihn in jedem Bild nach `_puppeAktualisieren`. Tests und Werkzeuge, die `zeichneBild`
-direkt aufrufen, bleiben unberührt (`gegner_extern` leer). Bild: `docs/bilder/godot_darja_stand.png` (Vorführung, Frame 690,
-`foto.gd --puppe`).
+die Clips sind dort unter `<figur>_<clip>` registriert (`darja_stand` …), Laden, Speicherbudget, Maßstab und Anker sind die
+der Vela-Clips. Zuordnung (`FIGUR_JE_TYP`, `clip_fuer`, `bildindex`): Darja steht vorläufig für den Typ Bolzer; in stehender
+Form (`gegnerForm` „stand“) zeigt GEHEN oder NACHLAUF `gehen` (Schleife über `welt.frame` mit `zyklus_ticks` des Clips; die
+Gehstufe des Gegners bleibt unberücksichtigt, bei langsamem Gehen rutschen die Füße etwas), STAND oder ANKUENDIGUNG `stand`
+(Schleife hin und her), ANGRIFF mit Bolzer-Code `schlag` (Bilder 0 bis kontakt − 1 über die Startframes bis `aktiv_von`,
+das Kontaktbild im Trefferfenster `aktiv_von` bis `aktiv_bis` aus `KernWerte.NAH_ANGRIFFE`, danach `rueckzug`) und der
+NACHLAUF nach einem Bolzer-Angriff `schlag` rückwärts von `rueckzug` nach Bild 0 über die Nachlaufdauer. Alles andere
+(Auftritt, Treffer, Flug, Liegen, Aufstehen, gehalten, tot) zeigt den Platzhalter. Gegner, die ein Clip zeigt, stehen in
+`DarstellungZeichnen.gegner_extern` (Slotnummern); `zeichneGegner` lässt für sie den Körper weg, der Schatten bleibt.
+Tiefe: der Node liegt auf z_index 0 nach der Ebene Hinten; ein Gegner hinter oder auf der Tiefe der Figur bekommt 0, einer
+davor 2 (die Figur liegt auf 1, Vorn auf 30); Objekte zwischen Gegner und Figur ordnet das nur näherungsweise. `spiel.gd`
+legt den Node an, wenn `DarstellungGegnerFrames.bereit()` einen Clip findet (nicht mit `--platzhalter`), und setzt ihn in
+jedem Bild nach `_puppeAktualisieren`. Tests und Werkzeuge, die `zeichneBild` direkt aufrufen, bleiben unberührt
+(`gegner_extern` leer). Bilder: `docs/bilder/godot_darja_stand.png` und `godot_darja_gehen.png` (Vorführung, `foto.gd --puppe`).
 
-Offen: Clips `gehen`, `schlag`, `getroffen`, `umgeworfen`, `liegen`, `aufstehen` (Prompts in `docs/grok-prompts-darja.md`,
-Abschnitt 5; das Mundtuch muss in den Videos halten), eine Tabelle Aktion → Clip je Gegner wie `vela_frames_tabelle.gd`
-(Gehen mit `zyklus_ticks` aus der Schrittlänge, Treffer und Flug mit der Reaktionsuhr der Gegnerlogik), die Rolle Darjas im
-Design (`docs/figuren.md`, `docs/entwuerfe/gegner-soldaten.md`), Speicher bei mehreren Figuren.
+Offen: Clips `getroffen`, `umgeworfen`, `liegen`, `aufstehen` (Prompts in `docs/grok-prompts-darja.md`, Abschnitt 5; das
+Mundtuch muss in den Videos halten), eine Tabelle Aktion → Clip je Gegner wie `vela_frames_tabelle.gd` mit der Gehstufe und
+der Reaktionsuhr der Gegnerlogik, die Rolle Darjas im Design (`docs/figuren.md`, `docs/entwuerfe/gegner-soldaten.md`),
+Speicher bei mehreren Figuren.
 
 ## Stand
 
@@ -681,6 +689,6 @@ auf `griff` und `wurf` abgebildet; 74 von 74 Szenen bitgleich zur TypeScript-Ref
 der Referenz; `alle.gd` grün (4339 Prüfungen, etwa 70 s). Offen: Abnahme der
 Leistung im Fenster (60 Bilder je Sekunde bei 1536 × 896, vom Nutzer zu bestätigen; hier nur Software-Rendering gemessen), die Entscheidung über die Höhe der gemalten
 Clips (360 gewählt, 480 gemessen, siehe „Auflösung 1536 × 896“), die Entscheidung über den Weg der Figurenanimation, gemalte Clips für die Aktionen ohne Clip (Kniestoß, Spezial, Sprintangriff, Sprungangriff H und T,
-Sprintsprung, Getroffen von hinten, Waffe, Aufnehmen, Neueinstieg; siehe „Gemalte Vela“, „Aktionen ohne gemalten Clip“), Speicher bei weiteren Figuren (Clips der Bühne laden oder Texturen komprimieren), Grafik der übrigen Figuren und des Hintergrunds (erster Gegner-Clip: Darja `stand` für Bolzer, siehe „Gegner aus Video-Clips“), Ton, Export.
+Sprintsprung, Getroffen von hinten, Waffe, Aufnehmen, Neueinstieg; siehe „Gemalte Vela“, „Aktionen ohne gemalten Clip“), Speicher bei weiteren Figuren (Clips der Bühne laden oder Texturen komprimieren), Grafik der übrigen Figuren und des Hintergrunds (erste Gegner-Clips: Darja `stand`, `gehen`, `schlag` für Bolzer, siehe „Gegner aus Video-Clips“), Ton, Export.
 `docs/grafik.md` (Zeile „Anzeigeleiste, Schrift“ und „Effekte“, „bei 2× verdoppelt“) ist noch
 auf Faktor 2 geschrieben; im Code folgt alles aus `DARSTELLUNG` = 4 und die Schrift ist 4 × 4 Bildpixel je Schriftpixel.
