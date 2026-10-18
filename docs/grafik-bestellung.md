@@ -964,39 +964,31 @@ mit genauer Beschreibung an Grok.
 
 ## Realistische Figuren (zweites Grok-Projekt „Comet Brawlers real“, ab 2026-10-18)
 
-Für die realistisch gemalten Figuren, die über Tripo zu 3D-Modellen
-werden (zuerst Darja; Rolle im Design noch offen), ein eigenes
+Für die realistisch gemalten Figuren (zuerst Darja) ein eigenes
 Grok-Projekt, damit sich die Pixelgrafik-Anweisungen des ersten Projekts
-nicht einmischen. Jede Bestellung mit dem Referenzbild der Figur.
+nicht einmischen. In diesem Projekt entstehen nur die Referenzbilder
+(frontale A-Pose auf Grün). Die Bewegungen entstehen nicht als Blätter,
+sondern als Grok-Videos aus der Referenz `@Darja` nach
+`docs/grok-prompts-darja.md` (Abschnitt 5 für die neue Version), die der
+Video-Umsetzer in Clips zerlegt (`docs/godot.md`, „Video-Umsetzer“).
 
 ### Projektanweisungen
 
 ```text
-Projekt: Comet Brawlers, realistische Spielfiguren als Vorlagen für 3D-Modelle und für Animationsblätter.
-Stil für alle Bilder: realistische digitale Malerei wie ein Charakterbild für ein modernes Videospiel, fotonahe Haut, Leder mit feiner Narbung, Haar mit einzelnen Strähnen, saubere, geschlossene Kontur. Keine Pixelgrafik, kein Comic, keine Tuschekontur, kein Cel-Shading, keine Unschärfe, keine Bewegungsunschärfe.
-Hintergrund immer einfarbig Grün #00B140, flach, ohne Verlauf, ohne Boden, ohne Bodenlinie, ohne Schatten; nie grau, nie weiß, nie Studio. Kein Grün, Olivgrün oder Türkis auf der Figur.
-Jede Figur wird mit ihrem Referenzbild bestellt und bleibt in Gesicht, Haar, Kleidung, Schuhen, Proportionen und Größe genau gleich; nichts hinzufügen, was nicht bestellt ist: keine Waffen, Holster, Taschen, Gurte, Riemen, Schmuck, Handschuhe, Masken.
-Einzelbild: ganze Figur, genau von vorn, A-Pose mit vom Körper abgespreizten Armen, quadratisch, Figur etwa 90 Prozent der Bildhöhe, nichts angeschnitten.
-Blatt: dieselbe Figur in mehreren Posen, Dreiviertelansicht wie im Prügelspiel am Automaten (Körper leicht zum Betrachter gedreht, Gesicht und Brust sichtbar), Blick und Bewegung nach rechts; jede Pose einzeln mit deutlichem grünem Abstand, keine Überlappung, alle gleich groß, Füße auf einer gemeinsamen Grundlinie, gleichmäßige Abstände; die Bildzahl genau einhalten.
-Licht weich und gleichmäßig von vorn, keine harten Schatten, keine grünen Reflexe. Lack, Latex, Vinyl, Hochglanz, Spiegelungen verboten.
-Keine Schrift, Nummern, Rahmen, Trennlinien, Logos, Wasserzeichen, keine zweite Figur außer auf Blättern derselben Figur.
+Projekt: Comet Brawlers, realistische Spielfiguren. Hier entstehen Referenzbilder, aus denen später Videos werden.
+Stil für alle Bilder: realistische digitale Malerei wie ein Charakterbild für ein modernes Videospiel, fotonahe Haut, Leder mit feiner Narbung, Haar mit einzelnen Strähnen, saubere, geschlossene Kontur. Keine Pixelgrafik, kein Comic, keine Tuschekontur, kein Cel-Shading, keine Unschärfe.
+Hintergrund immer einfarbig Grün #00B140, flach, ohne Verlauf, ohne Boden, ohne Bodenlinie, ohne Schatten; nie grau, nie weiß, nie Studio. Kein Grün, Olivgrün oder Türkis auf der Figur, auch nicht in den Augen; Stoff und Leder matt, damit sich das Grün nicht spiegelt; kein Gegenlicht, kein Randlicht, kein Lichtsaum. Schwarz und Dunkelbraun neutral oder warm, nie grünstichig.
+Jede Figur bleibt in Gesicht, Haar, Kleidung, Schuhen, Proportionen und Größe genau gleich wie in ihrem Referenzbild; nichts hinzufügen, was nicht bestellt ist: keine Waffen, Holster, Taschen, Gurte, Riemen, Schmuck, Handschuhe, Bandagen, Masken.
+Referenzbild: ganze Figur, genau von vorn, A-Pose mit etwa 35 Grad vom Körper abgespreizten, gestreckten Armen, offene Hände mit fünf sichtbaren Fingern, Füße schulterbreit, quadratisch, Figur etwa 85 Prozent der Bildhöhe, Rand rundum, nichts angeschnitten.
+Haar liegt hinter Ohren und Schultern als geschlossene Fläche ohne Lücken, durch die Grün scheint.
+Licht weich und gleichmäßig von vorn, keine harten Schatten. Lack, Latex, Vinyl, Hochglanz, Spiegelungen verboten.
+Keine Schrift, Nummern, Rahmen, Logos, Wasserzeichen, keine zweite Person, keine Gegenstände.
 ```
 
 ### Darja
 
-Referenzbild: Darja in A-Pose, Mundtuch nur über Nase, Mund und Kinn,
-Hals frei, offenes dunkelbraunes Haar, anthrazitfarbener Leder-Catsuit,
-schwarze Stiletto-Stiefeletten (Stand 2026-10-18, „neue Version“).
-
-```text
-Blatt B, Gehen, Darja, dieselbe Figur wie im beigefügten Bild: eine Reihe
-mit genau 8 Bildern eines Gehzyklus nach rechts, aufrechter,
-selbstbewusster Gang, Arme gegenläufig zu den Beinen, Bild 1 rechte
-Ferse setzt vorn auf, Bild 5 linke Ferse setzt vorn auf, Haare schwingen
-leicht mit und verdecken nie das Gesicht, Absätze in den Kontaktbildern
-senkrecht.
-```
-
-Weitere Blätter (Schlagen, Springen, Reaktionen) folgen nach demselben
-Muster: „Blatt <X>, <Aktion>, Darja, dieselbe Figur wie im beigefügten
-Bild“ plus Reihen und Bildzahlen.
+Neue Version vom 2026-10-18: Mundtuch nur über Nase, Mund und Kinn, Hals
+frei, offenes dunkelbraunes Haar, Catsuit aus mattem anthrazitfarbenem
+Leder, schwarze Stiletto-Stiefeletten, keine Bandage. Video-Prompts
+(stand, gehen, später Schlag, Sprung, Treffer) in
+`docs/grok-prompts-darja.md`, Abschnitt 5.
