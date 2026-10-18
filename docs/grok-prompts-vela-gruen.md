@@ -47,6 +47,32 @@ diese drei Schalter (Standard ist `--schluessel gruen`, die beiden anderen wirke
 grünen Video je Clip neu einstellen und am Ergebnis prüfen. Maßstab (`--faktor` = 142 / Zeilen der A-Pose im ersten Bild) und Fußpunkt
 (`--ankerx-video`) je Video neu messen wie bisher; Bildnummern und `--setze` gelten nur für das jeweilige Video.
 
+## Ergebnis der ersten grünen Lieferung (2026-10-18)
+
+Drive-Ordner `vela/Neu2`, ein Video je Clip (Umfallen zwei). Alle quadratischen Videos beginnen mit `vela_gruen_start_voll.png` statt
+mit den kleineren Startbildern; `sprung`, `sprungtritt` und Umfallen kamen im Hochformat 832 × 1088 (ein Umfallen-Video 896 × 1024). Das
+Grün ist in jedem Bild gleichmäßig (etwa RGB 0, 167, 66), ohne Bodenschatten. Umgesetzt mit `--loch 255` (Befehle und Gründe in
+`godot/werkzeuge/vela_neu_clips.sh`, Einordnung in `docs/godot.md`, «Grüne Lieferung»).
+
+| Clip | im Spiel | Befund |
+|---|---|---|
+| `stand` | grün | Kinn eingezogen, Blick auf die Fäuste statt waagrecht; Atmen kaum zu sehen |
+| `gehen` | grün | Schritte kürzer als verlangt; Haarschlaufe oben am Bildrand abgeschnitten (großes Startbild) |
+| `sprint` | grün | gleichmäßig erst ab 4,1 s, Drehung erst bei 1,8 s |
+| `kette1` | grün | Jab richtig mit der vorderen linken Faust, aber 1,1 s zu spät; Ruhe 3/4 statt Profil, Finte der hinteren Faust vorher |
+| `kette2` | weiß | kein Rückzug (Arm bleibt gestreckt), kein Schritt, 3/4 frontal |
+| `kette3` | weiß | kein Haken von unten: gerader, steigender Schlag mit der hinteren rechten Faust |
+| `kette4` | weiß | Tritt mit dem hinteren rechten Bein (halb mit dem Rücken zur Kamera), zusätzlicher Cross, Standfuß gleitet |
+| `getroffen_vorn` | weiß | zuckt nach vorn und unten zusammen statt zurück; Stand enger als in `stand` |
+| `griff` | grün | 0,5 bis 1 s später als verlangt, sonst wie verlangt |
+| `wurf` | weiß | Armschienen in zwölf Bildern dunkelgrau gemalt; Start passt nicht an die Haltepose von `griff` |
+| `sprung` | grün | nach der Landung Füße enger als in `stand` (Sprung beim Wechsel) |
+| `sprungtritt` | grün | wie verlangt, etwa 20 Bilder später |
+| Umfallen | grün | Video 1: im Flug Zopf und Hand am linken Rand abgeschnitten (Hochformat statt 1:1); Video 2 dreht den Rücken zur Kamera und springt hoch |
+
+Für eine zweite grüne Lieferung: die kleineren Startbilder benutzen (Tabelle oben) und Format 1:1 einstellen; bei `kette2`, `kette3`,
+`kette4`, `getroffen_vorn` und `wurf` lohnt ein neuer Versuch, bei `kette1` und `stand` ein Versuch mit Blick waagrecht und Ruhe im Profil.
+
 ## Prompts
 
 Jeder Block ist ein vollständiger Prompt zum Einfügen.

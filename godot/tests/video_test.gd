@@ -22,7 +22,8 @@ const SCHRITTE: int = 800
 ## `_test_*` aus der Puppe). `fussmitte`: der Fußpunkt (`--ankerx-video`) liegt auf der Mitte zwischen den Stiefeln der
 ## Kampfhaltung im ersten Bild (nur Clips, die in der Kampfhaltung beginnen). Bei HD-Clips ist `hoehe` die Figurhöhe im ersten Bild in Spielbildpixeln (Dateipixel · skala), `massstab` der
 ## Spielbildpixel je Videopixel. Seit der neuen Vela (2026-10-16, docs/grok-prompts-vela-neu*.md) ist er 142 / Zeilen der A-Pose in Bild 1
-## des Quellvideos: 0,1529 bei den quadratischen 944-Pixel-Videos, 0,1791 bei den Hochformat-Videos (sprung, sprungtritt). `ankerx`: false
+## des Quellvideos: 0,1529 bei den quadratischen 944-Pixel-Videos der weißen Lieferung, 0,1530 bei denen der grünen (2026-10-18), 0,1757 bei
+## den grünen Hochformat-Videos 832 × 1088 (sprung, sprungtritt, umgeworfen, liegen, aufstehen). `ankerx`: false
 ## bei HD-Clips, die nicht in der Kampfhaltung beginnen (kette1 beginnt am Ende des Ausholens, sprung und sprungtritt in der
 ## Hocke, Wartezeit abgeschnitten): ihr Anker (`--ankerx-video`, Fußmitte der Haltung im Video) liegt nicht unter dem ersten
 ## Bild, sondern nur innerhalb der Figur des ersten Bildes (geprüft).
@@ -34,12 +35,12 @@ const ECHTE: Dictionary = {
 	"kette3": {"min": 20, "hoehe": [], "ankerx": false, "hd": true},
 	"kette4": {"min": 60, "hoehe": [], "ankerx": false, "hd": true},
 	"sprint": {"min": 16, "hoehe": [], "ankerx": false, "hd": true},
-	"sprung": {"min": 50, "hoehe": [], "ankerx": false, "hd": true, "massstab": 0.1791},
-	"sprungtritt": {"min": 40, "hoehe": [], "ankerx": false, "hd": true, "massstab": 0.1791},
+	"sprung": {"min": 40, "hoehe": [], "ankerx": false, "hd": true, "massstab": 0.1757},
+	"sprungtritt": {"min": 40, "hoehe": [], "ankerx": false, "hd": true, "massstab": 0.1757},
 	"getroffen_vorn": {"min": 40, "hoehe": [136, 141], "ankerx": false, "fussmitte": true, "hd": true},
-	"umgeworfen": {"min": 40, "hoehe": [130, 136], "ankerx": false, "fussmitte": true, "hd": true},
-	"liegen": {"min": 1, "hoehe": [], "ankerx": false, "hd": true},
-	"aufstehen": {"min": 50, "hoehe": [], "ankerx": false, "hd": true},
+	"umgeworfen": {"min": 40, "hoehe": [136, 141], "ankerx": false, "fussmitte": true, "hd": true, "massstab": 0.1757},
+	"liegen": {"min": 1, "hoehe": [], "ankerx": false, "hd": true, "massstab": 0.1757},
+	"aufstehen": {"min": 50, "hoehe": [], "ankerx": false, "hd": true, "massstab": 0.1757},
 	"griff": {"min": 30, "hoehe": [], "ankerx": false, "hd": true},
 	"wurf": {"min": 35, "hoehe": [], "ankerx": false, "hd": true},
 }
