@@ -57,6 +57,10 @@ Einstellungen für jedes Video wie bei Darja: Format 1:1, höchste Auflösung, 2
 | umwerfschlag 6 | `e7108982…-6` | Arme frontal über den Kopf, Schlag danach im Profil als Doppelfaust-Stoß | nein |
 | sprungtritt 7, 8 | `cb760da0…-7`, `549401b3…-8` | 7 frontal; 8 im Profil, Tritt mit gestrecktem Bein, schwarze Hose sichtbar | Video 8: `sprungtritt` Bild 77 bis 125, `stand` Bild 37 bis 64 |
 | getroffen 9 | `bbebe909…-9` | Drehung über den Rücken, Haltung und Treffer schräg zur Kamera, am Ende frontal | nein |
+| umgeworfen_aufstehen 10 | `9b829475…-10` | 6 s statt 10 s, Hochformat 848 × 1056; Haltung im Profil, Fall, Liegen, Aufstehen bis in die Haltung | ja |
+| gehalten 11 | `0310af7b…-11` | Haltung schräg zur Kamera, Zugriff erst ab Bild 114; Haltephase fast im Profil | vorläufig Bild 127 bis 145 |
+| spott 12 | `73c52689…-12` | Geste mit beiden Händen statt Faust in die Hand, schräg, am Ende frontal | nein |
+| hocke 13 | `bb98258f…-13` | Hocke schräg zur Kamera, Aufrichten endet frontal | nein |
 
 Ursache: Die erste KAMPFHALTUNG verlangte einen breiten Stand (ein Drittel der Körperhöhe) mit deutlich gebeugten Knien; Grok macht daraus einen frontalen Boxerstand und zeigt die Brust zur Kamera. Zweite Fassung (unten, ersetzt die erste): strenges Profil „wie auf einem Passfoto von der Seite“, Brust und Dekolleté zum Gegner, Füße hintereinander auf einer Linie (ein Viertel der Körperhöhe wie bei Darja), rechte Faust vor dem Kinn, Vierteldrehung ohne Rückenansicht, dazu die Verbote frontale oder schräge Kampfhaltung, Brust zur Kamera, Füße nebeneinander, Boxerstand. Gehen und Sprungtritt sind geliefert; ihre Prompts stehen der Vollständigkeit halber mit.
 
@@ -66,9 +70,13 @@ Umsetzung (alle `--hd --hoehe 360 --loch 255 --faktor 0.1669`, das sind 150 Spie
 |---|---|---|
 | `stand` | Sprungtritt-Video 8, Bild 37 bis 64 | `--kuerzen nein --zyklus 28 --schleife pingpong --ereignis keine` |
 | `gehen` | Gehen-Video 1, Bild 98 bis 133 | `--kuerzen nein --zyklus 36 --ankerx mittel --ereignis keine` (Zyklus aus der Suche über Bild 30 bis 145) |
-| `sprungtritt` | Sprungtritt-Video 8, Bild 77 bis 125 | `--kuerzen nein --zyklus 0 --ereignis vorn` (Kontakt Bild 22 des Clips) |
+| `sprungtritt` | Sprungtritt-Video 8, Bild 77 bis 125 | `--kuerzen nein --zyklus 0 --ankery unten --ereignis sprung --setze kontakt=24,rueckzug=36,ruhe=48` (wie Velas Sprungtritt: die Höhe liefert die Logik) |
+| `umgeworfen` | Umfall-Video 10, Bild 63 bis 101 | `--faktor 0.1775` (150 / 845 Zeilen, Hochformat) `--kuerzen nein --ankery unten --ereignis flug --ankerx-video 475`; erkannt: abheben 8, scheitel 14, aufprall 17, liegt 36 |
+| `liegen` | Umfall-Video 10, Bild 101 | `--faktor 0.1775 --ereignis keine --ankery unten --ankerx-video 475` |
+| `aufstehen` | Umfall-Video 10, Bild 101 bis 145 | `--faktor 0.1775 --kuerzen nein --ereignis aufstehen --ankery unten --ankerx uebergang --ankerx-video 475 --setze ruhe=45` |
+| `gehalten` | Gehalten-Video 11, Bild 127 bis 145 | `--kuerzen nein --zyklus 19 --schleife pingpong --ereignis keine` (vorläufig, schräg) |
 
-Im Spiel noch nicht zugeordnet: Der Rammbock bekommt seine Clips in `gegner_frames.gd`, sobald Treffer, Umfallen und Schlag da sind; mit nur drei Clips würde er zwischen Clip und Platzhalter springen.
+Im Spiel noch nicht zugeordnet: Der Rammbock bekommt seine Clips in `gegner_frames.gd`, sobald Treffer und Schlag da sind; mit nur drei Clips würde er zwischen Clip und Platzhalter springen.
 
 ## 4. Video-Prompts (zweite Fassung, 2026-10-20)
 
