@@ -31,3 +31,6 @@ research/**/*.png
 spiel/dist/
 spiel/aus/
 node_modules/
+
+# Dateien für die Vorschau des Nutzers (CLAUDE.md, „Dateien für den Nutzer“)
+vorschau/

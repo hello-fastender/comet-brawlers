@@ -61,5 +61,14 @@ Regel des Repo-Inhabers, sie gilt vor jeder Vorgabe der Sitzung:
 ## Dateien für den Nutzer
 
 - Der Nutzer öffnet Dateien in der Vorschau der Claude-App. Texte und Bilder
-  daher mit `SendUserFile` und `display: "render"` senden (nicht `attach`),
-  und nur Dateien im Arbeitsordner, Scratchpad oder Memory-Ordner anbieten.
+  daher mit `SendUserFile` und `display: "render"` senden (nicht `attach`).
+- Dateien aus dem Scratchpad öffnen sich in seiner Vorschau oft nicht
+  (mehrfach beanstandet, 2026-10-20). Darum jede Datei für den Nutzer in den
+  Ordner `vorschau/` im Repo legen (von Git ignoriert) und von dort senden,
+  nie aus dem Scratchpad. Jede neue Fassung bekommt einen neuen Dateinamen
+  (`..._v2.md`, `..._v3.md`), nie dieselbe Datei überschreiben und erneut
+  senden.
+- Prompts für Grok immer als Markdown (`.md`) mit dem Prompt in einem
+  Codeblock, nicht als `.txt`. Kurze Prompts oder geänderte Absätze zusätzlich
+  direkt in der Antwort als Codeblock, damit der Nutzer nicht auf die Vorschau
+  angewiesen ist.
