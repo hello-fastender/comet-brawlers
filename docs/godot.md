@@ -660,27 +660,36 @@ vom 2026-10-18):
 | `stand` | Treffer-Video A | Bild 46 bis 63 (18 Bilder) | `--zyklus 18 --schleife pingpong --ereignis keine` | nur dort sitzt das Mundtuch; danach rutscht es, der Treffer ist unbrauchbar |
 | `gehen` | Gehen-Video 1 | Bild 52 bis 84 (33 Bilder, ein Doppelschritt) | `--kuerzen nein --zyklus 33 --ankerx mittel --ereignis keine` | Mundtuch sitzt im ganzen Video, Zyklus vom Umsetzer gefunden (Güte 48 %), `schritt_px` 52, `zyklus_ticks` 30 |
 | `schlag` | Schlag-Video 2 | Bild 80 bis 104 (25 Bilder) | `--kuerzen nein --ereignis vorn --zyklus 0 --setze ausholen=7,kontakt=20,rueckzug=22` | Handballenstoß mit der rechten Hand, Kontakt bei Bild 99 (vorn 62 gegenüber 40 im Stand); das Video kehrt nicht in die Haltung zurück, darum `rueckkehr=rueckwaerts` |
+| `getroffen` | Treffer-Video 5 (2026-10-20) | Bild 48 bis 128 ohne 60 bis 108 (32 Bilder) | `--kuerzen nein --ausser 60-108 --ereignis treffer --zyklus 0 --setze start=1,kontakt=10,rueckzug=13,ruhe=29` | Ruck nach hinten, Haar fliegt; das lange Verharren ist ausgeschnitten |
+| `umgeworfen` | Umwerf-Video 7 | Bild 60 bis 91 (32 Bilder) | `--kuerzen nein --ankery unten --ereignis flug --ankerx-video 246.5` | erkannt: start 2, abheben 6, scheitel 13, aufprall 28, liegt 31 (1-basiert) |
+| `liegen` | Umwerf-Video 7 | Bild 91 | `--ereignis keine --ankery unten --ankerx-video 246.5` | |
+| `aufstehen` | Umwerf-Video 7 | Bild 91 bis 141 (51 Bilder) | `--ereignis aufstehen --ankery unten --ankerx uebergang --ankerx-video 246.5 --setze ruhe=51` | Aufsetzen, Kniestand, Stand im Profil |
+| `gehalten` | Gehalten-Video 9 | Bild 104 bis 144 (41 Bilder) | `--kuerzen nein --zyklus 41 --schleife pingpong --ereignis keine` | vorgebeugt, Hände gegen die Brust des Haltenden |
+| `hocke` | Hocke-Video 16 | Bild 76 bis 100 (25 Bilder) | `--kuerzen nein --zyklus 25 --schleife pingpong --ereignis keine` | lauert auf den Ballen |
+| `auftritt` | Hocke-Video 16 | Bild 100 bis 128 (29 Bilder) | `--kuerzen nein --zyklus 0 --ereignis keine --ankerx-video 474.5` | Aufrichten in die Haltung |
 
 Anzeige: `darstellung/gegner_frames.gd` (`DarstellungGegnerFrames`) hält je Gegnerplatz einen `DarstellungVelaFrames`-Node;
 die Clips sind dort unter `<figur>_<clip>` registriert (`darja_stand` …), Laden, Speicherbudget, Maßstab und Anker sind die
-der Vela-Clips. Zuordnung (`FIGUR_JE_TYP`, `clip_fuer`, `bildindex`): Darja steht vorläufig für den Typ Bolzer; in stehender
-Form (`gegnerForm` „stand“) zeigt GEHEN oder NACHLAUF `gehen` (Schleife über `welt.frame` mit `zyklus_ticks` des Clips; die
-Gehstufe des Gegners bleibt unberücksichtigt, bei langsamem Gehen rutschen die Füße etwas), STAND oder ANKUENDIGUNG `stand`
-(Schleife hin und her), ANGRIFF mit Bolzer-Code `schlag` (Bilder 0 bis kontakt − 1 über die Startframes bis `aktiv_von`,
-das Kontaktbild im Trefferfenster `aktiv_von` bis `aktiv_bis` aus `KernWerte.NAH_ANGRIFFE`, danach `rueckzug`) und der
-NACHLAUF nach einem Bolzer-Angriff `schlag` rückwärts von `rueckzug` nach Bild 0 über die Nachlaufdauer. Alles andere
-(Auftritt, Treffer, Flug, Liegen, Aufstehen, gehalten, tot) zeigt den Platzhalter. Gegner, die ein Clip zeigt, stehen in
-`DarstellungZeichnen.gegner_extern` (Slotnummern); `zeichneGegner` lässt für sie den Körper weg, der Schatten bleibt.
-Tiefe: der Node liegt auf z_index 0 nach der Ebene Hinten; ein Gegner hinter oder auf der Tiefe der Figur bekommt 0, einer
-davor 2 (die Figur liegt auf 1, Vorn auf 30); Objekte zwischen Gegner und Figur ordnet das nur näherungsweise. `spiel.gd`
-legt den Node an, wenn `DarstellungGegnerFrames.bereit()` einen Clip findet (nicht mit `--platzhalter`), und setzt ihn in
-jedem Bild nach `_puppeAktualisieren`. Tests und Werkzeuge, die `zeichneBild` direkt aufrufen, bleiben unberührt
-(`gegner_extern` leer). Bilder: `docs/bilder/godot_darja_stand.png` und `godot_darja_gehen.png` (Vorführung, `foto.gd --puppe`).
+der Vela-Clips. Zuordnung (`clip_fuer`, `bildindex`, `blick_fuer`): Darja steht vorläufig für den Typ Bolzer. STAND und
+ANKUENDIGUNG zeigen `stand` (Schleife hin und her), GEHEN und NACHLAUF ohne Angriff `gehen` (Schleife mit `zyklus_ticks`;
+die Gehstufe bleibt unberücksichtigt), ANGRIFF mit Bolzer-Code `schlag` nach der Angriffsuhr (Startframes bis `aktiv_von`,
+Kontaktbild im Trefferfenster aus `KernWerte.NAH_ANGRIFFE`, danach `rueckzug`), der NACHLAUF danach `schlag` rückwärts,
+GETROFFEN `getroffen` (Ablauf wie Velas Treffer über `REAKTION_DAUER` ab `reaktion_h`), UMGEWORFEN und TOT `umgeworfen` über
+`DarstellungVelaFramesTabelle.flug` mit der Bahn des Gegners (Stillstand F4 beim Tod; das Ende zeigt das Liegebild), LIEGEN
+`liegen`, AUFSTEHEN `aufstehen` gleichmäßig über `AUFSTEHEN_GEGNER` (18) ab `ruhe_frame + liegedauer`, GEHALTEN `gehalten`
+(Schleife), WARTEN hockend `hocke` (Schleife) und AUFTRITT aus der Hocke `auftritt` über 49 Frames (`modus_uhr`). Flug,
+Liegen und Aufstehen werden so gespiegelt, dass der Flug in `bahn_richtung` geht. Ohne Clip bleiben SPOTT, die Auftritte aus
+Versteck und Rand und TAUMELN (Platzhalter). Gegner, die ein Clip zeigt, stehen in `DarstellungZeichnen.gegner_extern`
+(Slotnummern); `zeichneGegner` lässt für sie den Körper weg, der Schatten bleibt. Tiefe: der Node liegt auf z_index 0 nach der
+Ebene Hinten; ein Gegner hinter oder auf der Tiefe der Figur bekommt 0, einer davor 2 (die Figur liegt auf 1, Vorn auf 30);
+Objekte zwischen Gegner und Figur ordnet das nur näherungsweise. `spiel.gd` legt den Node an, wenn
+`DarstellungGegnerFrames.bereit()` einen Clip findet (nicht mit `--platzhalter`), und setzt ihn in jedem Bild nach
+`_puppeAktualisieren`. Tests und Werkzeuge, die `zeichneBild` direkt aufrufen, bleiben unberührt (`gegner_extern` leer).
+Bilder: `docs/bilder/godot_darja_*.png` (Vorführung, `foto.gd --puppe`; in `godot_darja_reaktionen.png` oben Treffer, Tod im Flug, gehalten, unten geworfen, Liegen, Aufstehen; das farbige Rechteck hinter der gehaltenen Darja ist Velas Platzhalter, weil `--puppe` Griff und Wurf nicht abdeckt; im Spiel zeigt Vela dort ihre Clips). Der hockende Bolzer der Vorführung steht nur am Bildrand, `hocke` und `auftritt` sind darum nicht fotografiert. Speicher: zehn Clips, 12 MB Dateien.
 
-Offen: Clips `getroffen`, `umgeworfen`, `liegen`, `aufstehen` (Prompts in `docs/grok-prompts-darja.md`, Abschnitt 5; das
-Mundtuch muss in den Videos halten), eine Tabelle Aktion → Clip je Gegner wie `vela_frames_tabelle.gd` mit der Gehstufe und
-der Reaktionsuhr der Gegnerlogik, die Rolle Darjas im Design (`docs/figuren.md`, `docs/entwuerfe/gegner-soldaten.md`),
-Speicher bei mehreren Figuren.
+Offen: `spott` (die Lieferung vom 2026-10-20 dreht sich zur Kamera), ein `stand` aus der Haltung des Schlag- oder
+Treffer-Videos (gleiche Handhaltung wie `schlag` und `getroffen`, weniger Sprung beim Wechsel), die Gehstufe beim Gehen, die
+Rolle Darjas im Design (`docs/figuren.md`, `docs/entwuerfe/gegner-soldaten.md`), Speicher bei mehreren Figuren.
 
 ## Stand
 
@@ -689,6 +698,6 @@ auf `griff` und `wurf` abgebildet; 74 von 74 Szenen bitgleich zur TypeScript-Ref
 der Referenz; `alle.gd` grün (4339 Prüfungen, etwa 70 s). Offen: Abnahme der
 Leistung im Fenster (60 Bilder je Sekunde bei 1536 × 896, vom Nutzer zu bestätigen; hier nur Software-Rendering gemessen), die Entscheidung über die Höhe der gemalten
 Clips (360 gewählt, 480 gemessen, siehe „Auflösung 1536 × 896“), die Entscheidung über den Weg der Figurenanimation, gemalte Clips für die Aktionen ohne Clip (Kniestoß, Spezial, Sprintangriff, Sprungangriff H und T,
-Sprintsprung, Getroffen von hinten, Waffe, Aufnehmen, Neueinstieg; siehe „Gemalte Vela“, „Aktionen ohne gemalten Clip“), Speicher bei weiteren Figuren (Clips der Bühne laden oder Texturen komprimieren), Grafik der übrigen Figuren und des Hintergrunds (erste Gegner-Clips: Darja `stand`, `gehen`, `schlag` für Bolzer, siehe „Gegner aus Video-Clips“), Ton, Export.
+Sprintsprung, Getroffen von hinten, Waffe, Aufnehmen, Neueinstieg; siehe „Gemalte Vela“, „Aktionen ohne gemalten Clip“), Speicher bei weiteren Figuren (Clips der Bühne laden oder Texturen komprimieren), Grafik der übrigen Figuren und des Hintergrunds (Darja für Bolzer mit zehn Clips, siehe „Gegner aus Video-Clips“), Ton, Export.
 `docs/grafik.md` (Zeile „Anzeigeleiste, Schrift“ und „Effekte“, „bei 2× verdoppelt“) ist noch
 auf Faktor 2 geschrieben; im Code folgt alles aus `DARSTELLUNG` = 4 und die Schrift ist 4 × 4 Bildpixel je Schriftpixel.
