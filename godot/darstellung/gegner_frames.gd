@@ -3,25 +3,34 @@
 ## DarstellungVelaFrames unter dem Namen `<figur>_<clip>` registriert (clip_registrieren), so gelten Laden,
 ## Speicherbudget, Maßstab und Anker unverändert. Der Node liest die Welt nur.
 ##
-## Stand 2026-10-20: einzige Figur ist Darja (`darja`, docs/grok-prompts-darja.md); sie steht vorläufig für den Gegnertyp
-## Bolzer (FIGUR_JE_TYP), bis das Design die Rolle festlegt. Zuordnung Aktion → Clip in clip_fuer, Bilder in bildindex:
-##   STAND, ANKUENDIGUNG → stand; GEHEN, NACHLAUF ohne Angriff → gehen; ANGRIFF (Bolzer-Code) → schlag, NACHLAUF danach →
-##   schlag rückwärts; GETROFFEN → getroffen; UMGEWORFEN, TOT → umgeworfen; LIEGEN → liegen; AUFSTEHEN → aufstehen;
+## Stand 2026-10-20: Darja (`darja`, docs/grok-prompts-darja.md) steht vorläufig für den Gegnertyp Bolzer, Vroni
+## (`vroni`, docs/grok-prompts-rammbock.md) für den Rammbock (FIGUR_JE_TYP). Zuordnung Aktion → Clip in clip_fuer, Bilder
+## in bildindex:
+##   STAND, ANKUENDIGUNG → stand; GEHEN, NACHLAUF ohne Angriff → gehen; ANGRIFF → Clip des Angriffscodes (ANGRIFF_CLIP,
+##   ohne eigenen Clip schlag), NACHLAUF danach → derselbe Clip rückwärts (sprungtritt vorwärts bis zur Landung); GETROFFEN → getroffen; UMGEWORFEN, TOT → umgeworfen; LIEGEN → liegen; AUFSTEHEN → aufstehen;
 ##   GEHALTEN → gehalten; WARTEN hockend → hocke; AUFTRITT aus der Hocke → auftritt; SPOTT → spott (über SPOTT_DAUER).
 ##   Ohne Clip (Auftritt aus Versteck oder Rand, TAUMELN …) zeichnet die Darstellung den Platzhalter.
 class_name DarstellungGegnerFrames
 extends Node2D
 
 ## Gegnertyp → Figur, deren Clips ihn zeigen.
-const FIGUR_JE_TYP: Dictionary = {"Bolzer": "darja"}
+const FIGUR_JE_TYP: Dictionary = {"Bolzer": "darja", "Rammbock": "vroni"}
 ## Figur → Clips, die es gibt (Ordner res://grafik/<figur>_video/<clip>/).
-const CLIPS_JE_FIGUR: Dictionary = {"darja": ["stand", "gehen", "schlag", "getroffen", "umgeworfen", "liegen", "aufstehen", "gehalten", "hocke", "auftritt", "spott"]}
+const CLIPS_JE_FIGUR: Dictionary = {
+	"darja": ["stand", "gehen", "schlag", "getroffen", "umgeworfen", "liegen", "aufstehen", "gehalten", "hocke", "auftritt", "spott"],
+	"vroni": ["stand", "gehen", "schlag", "umwerfschlag", "sprungtritt", "getroffen", "umgeworfen", "liegen", "aufstehen",
+		"gehalten", "hocke", "auftritt", "spott"],
+}
+## Angriffscode (docs/spezifikation-welt.md, 5.5) → Clip; fehlt der Clip bei der Figur, zeigt `schlag` den Angriff.
+const ANGRIFF_CLIP: Dictionary = {"RU": "umwerfschlag", "RS": "sprungtritt"}
+## Clips, die den Angriff nach der Angriffsuhr zeigen (bildindex).
+const ANGRIFF_CLIPS: Array[String] = ["schlag", "umwerfschlag", "sprungtritt"]
 ## Aktionen, die der Clip `stand` abdeckt, und Aktionen, die `gehen` abdeckt (ohne Gehclip zeigt sie `stand`).
 const STAND_AKTIONEN: Array[String] = ["STAND", "ANKUENDIGUNG", "GEHEN", "NACHLAUF"]
 const GEHEN_AKTIONEN: Array[String] = ["GEHEN", "NACHLAUF"]
-## Auftritt aus der Hocke: Bolzer 49 Frames bis kampffähig (docs/spezifikation-welt.md, 4.2; Darstellungswert, die Logik
+## Auftritt aus der Hocke je Typ: Frames bis kampffähig (docs/spezifikation-welt.md, 4.2; Darstellungswert, die Logik
 ## bleibt maßgeblich).
-const AUFTRITT_HOCKE_DAUER: int = 49
+const AUFTRITT_HOCKE_DAUER: Dictionary = {"Bolzer": KernWerte.AUFTRITT_HOCKE_BOLZER, "Rammbock": KernWerte.AUFTRITT_HOCKE_RAMMBOCK}
 
 ## Gegnerplätze (Index in welt.gegner), die gerade ein Clip zeigt; DarstellungZeichnen lässt für sie den Körper weg.
 static var extern: Dictionary = {}
@@ -76,10 +85,10 @@ static func clip_fuer(g: KernEntitaeten.Gegner) -> String:
 			if g.auftritt == "hocke":
 				name = "auftritt"
 		"ANGRIFF":
-			if g.modus == "ANGRIFF" and g.angriff_code.begins_with("B"):
-				name = "schlag"
+			if g.modus == "ANGRIFF" and _nahangriff(g.angriff_code):
+				name = _angriff_clip(g.angriff_code, clips)
 		"NACHLAUF":
-			name = "schlag" if g.angriff_code.begins_with("B") else "gehen"
+			name = _angriff_clip(g.angriff_code, clips) if _nahangriff(g.angriff_code) else "gehen"
 		"GEHEN":
 			name = "gehen"
 		"STAND", "ANKUENDIGUNG":
@@ -94,9 +103,20 @@ static func clip_fuer(g: KernEntitaeten.Gegner) -> String:
 			return figur + "_stand"
 		return ""
 	# stehende Clips nur in stehender Form (nicht liegend, nicht hockend)
-	if ["stand", "gehen", "schlag", "getroffen", "spott"].has(name) and DarstellungZeichnen.gegnerForm(g) != "stand":
+	if ["stand", "gehen", "schlag", "umwerfschlag", "sprungtritt", "getroffen", "spott"].has(name) \
+			and DarstellungZeichnen.gegnerForm(g) != "stand":
 		return ""
 	return figur + "_" + name
+
+
+## Nahangriff von Bolzer oder Rammbock (Code in KernWerte.NAH_ANGRIFFE)?
+static func _nahangriff(code: String) -> bool:
+	return KernWerte.NAH_ANGRIFFE.has(code)
+
+
+static func _angriff_clip(code: String, clips: Array) -> String:
+	var name: String = String(ANGRIFF_CLIP.get(code, "schlag"))
+	return name if clips.has(name) else "schlag"
 
 
 ## Blick des Clips: Flug, Liegen und Aufstehen zeigen den Clip so gespiegelt, dass der Flug in bahn_richtung geht
@@ -140,13 +160,13 @@ static func bildindex(clip: String, d: Dictionary, g: KernEntitaeten.Gegner, wel
 		var ua: int = clampi(welt.frame - beginn + 1, 1, KernWerte.AUFSTEHEN_GEGNER)
 		return (ua - 1) * ruhe / maxi(KernWerte.AUFSTEHEN_GEGNER - 1, 1)
 	if clip.ends_with("_auftritt"):
-		var dauer: int = AUFTRITT_HOCKE_DAUER
+		var dauer: int = int(AUFTRITT_HOCKE_DAUER.get(g.typ, KernWerte.AUFTRITT_HOCKE_BOLZER))
 		var ut: int = clampi(g.modus_uhr, 1, dauer)
 		return (ut - 1) * (bilder - 1) / maxi(dauer - 1, 1)
 	if clip.ends_with("_spott"):
 		var us: int = clampi(g.modus_uhr, 1, KernWerte.SPOTT_DAUER)
 		return (us - 1) * (bilder - 1) / maxi(KernWerte.SPOTT_DAUER - 1, 1)
-	if clip.ends_with("_schlag"):
+	if ANGRIFF_CLIPS.has(clip.get_slice("_", clip.get_slice_count("_") - 1)):
 		var kontakt: int = clampi(int(d.get("kontakt", 0)), 0, bilder - 1)
 		var rueckzug: int = clampi(int(d.get("rueckzug", kontakt)), kontakt, bilder - 1)
 		if g.modus == "ANGRIFF":
@@ -161,6 +181,10 @@ static func bildindex(clip: String, d: Dictionary, g: KernEntitaeten.Gegner, wel
 			return rueckzug
 		var dauer_n: int = maxi(g.nachlauf_ende - g.angriff_aktiv_ende, 1)
 		var un: int = clampi(welt.frame - g.angriff_aktiv_ende, 0, dauer_n)
+		if clip.ends_with("_sprungtritt"):
+			# nach dem Tritt vorwärts bis zur Landung (ruhe), nicht rückwärts in die Hocke vor dem Absprung
+			var ruhe: int = clampi(int(d.get("ruhe", bilder - 1)), rueckzug, bilder - 1)
+			return rueckzug + un * (ruhe - rueckzug) / dauer_n
 		return clampi(rueckzug - un * rueckzug / dauer_n, 0, rueckzug)
 	var n: int = DarstellungVelaFramesTabelle.zyklus_laenge(d)
 	var ticks: int = DarstellungVelaFramesTabelle.zyklus_ticks(clip, d)

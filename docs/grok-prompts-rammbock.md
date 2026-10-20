@@ -76,7 +76,19 @@ Umsetzung (alle `--hd --hoehe 360 --loch 255 --faktor 0.1669`, das sind 150 Spie
 | `aufstehen` | Umfall-Video 10, Bild 101 bis 145 | `--faktor 0.1775 --kuerzen nein --ereignis aufstehen --ankery unten --ankerx uebergang --ankerx-video 475 --setze ruhe=45` |
 | `gehalten` | Gehalten-Video 11, Bild 127 bis 145 | `--kuerzen nein --zyklus 19 --schleife pingpong --ereignis keine` (vorläufig, schräg) |
 
-Im Spiel noch nicht zugeordnet: Der Rammbock bekommt seine Clips in `gegner_frames.gd`, sobald Treffer und Schlag da sind; mit nur drei Clips würde er zwischen Clip und Platzhalter springen.
+Lieferung der zweiten Fassung (2026-10-20, Videos 14 bis 19): schlag 14, umwerfschlag 15, getroffen 16 und gehalten 19 im Profil; spott 17 und hocke 18 wieder schräg zur Kamera (vorläufig verwendet).
+
+| Clip | Quelle | Umsetzer |
+|---|---|---|
+| `schlag` | Video 14 (`471ba3c9…-14`), Bild 37 bis 50 | `--kuerzen nein --zyklus 0 --ereignis vorn` (Kontakt Bild 9; der lange gehaltene Arm danach fehlt, Rückkehr rückwärts) |
+| `umwerfschlag` | Video 15 (`f22021f4…-15`), Bild 79 bis 109 | `--kuerzen nein --zyklus 0 --ereignis vorn` (Arme über den Kopf, Kontakt Bild 28) |
+| `getroffen` | Video 16 (`d206f4bd…-16`), Bild 66 bis 122 ohne 82 bis 89 | `--kuerzen nein --zyklus 0 --ereignis treffer --setze start=6,kontakt=14,rueckzug=16,ruhe=46` |
+| `gehalten` | Video 19 (`56deb3bf…-19`), Bild 97 bis 145 | `--kuerzen nein --zyklus 49 --schleife pingpong --ereignis keine` (ersetzt die vorläufige Fassung aus Video 11) |
+| `hocke` | Video 18 (`1a667a8c…-18`), Bild 61 bis 97 | `--kuerzen nein --zyklus 37 --schleife pingpong --ereignis keine` (vorläufig, schräg) |
+| `auftritt` | Video 18, Bild 97 bis 127 | `--kuerzen nein --zyklus 0 --ereignis keine` (vorläufig, endet schräg) |
+| `spott` | Video 17 (`680461ec…-17`), Bild 97 bis 133 | `--kuerzen nein --zyklus 0 --ereignis keine` (vorläufig, schräg) |
+
+Alle mit `--hd --hoehe 360 --loch 255 --faktor 0.1669`. Im Spiel zeigt Vroni den Rammbock (`godot/darstellung/gegner_frames.gd`, `docs/godot.md`, „Vroni als Rammbock“).
 
 ## 4. Video-Prompts (zweite Fassung, 2026-10-20)
 

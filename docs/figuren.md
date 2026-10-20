@@ -969,6 +969,8 @@ Gesungene, fünf Orriniden. Die Bosse stehen in einem eigenen Abschnitt.
 | 11 | schwerer Gegner, Teleskopklaue (Greifer) | Haken | Mensch | Mann, etwa 60, Ölzeug, Bootshaken | Paris, Gymnasium |
 | 12 | schwerer Gegner, Fahrzeug (Lastläufer) | Stapler | Mensch mit Fahrzeug | Gabelstapler mit Eisblöcken | Berlin¹, Madrid, Paris |
 
+Entscheidung des Nutzers vom 2026-10-20 zu Nr. 2: Der Rammbock wird eine Frau im bayerischen Dirndl, Arbeitsname Vroni (Wirtin um 30, Halstuch über Nase und Mund, Zopf; Bild und Prompts in `docs/grok-prompts-rammbock.md`), statt des Mannes um 45 mit Weste und Strickmütze. Ebenso zeigt Darja (`docs/grok-prompts-darja.md`) vorläufig den Bolzer. Offen ist der Abgleich mit den Grundsätzen oben (Gesungene mit Atemmaske und Overall, Typ 1 als Orrinide).
+
 Städte sind die Stages aus G 5; „Zug“ ist der Zug nach Norden,
 „Gymnasium“ das Gymnasium Stein.
 

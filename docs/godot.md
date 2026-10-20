@@ -688,6 +688,17 @@ Objekte zwischen Gegner und Figur ordnet das nur näherungsweise. `spiel.gd` leg
 `_puppeAktualisieren`. Tests und Werkzeuge, die `zeichneBild` direkt aufrufen, bleiben unberührt (`gegner_extern` leer).
 Bilder: `docs/bilder/godot_darja_*.png` (Vorführung, `foto.gd --puppe`; in `godot_darja_reaktionen.png` oben Treffer, Tod im Flug, gehalten, unten geworfen, Liegen, Aufstehen; das farbige Rechteck hinter der gehaltenen Darja ist Velas Platzhalter, weil `--puppe` Griff und Wurf nicht abdeckt; im Spiel zeigt Vela dort ihre Clips). Der hockende Bolzer der Vorführung steht nur am Bildrand, `hocke` und `auftritt` sind darum nicht fotografiert. Speicher: zehn Clips, 12 MB Dateien.
 
+### Vroni als Rammbock (seit 2026-10-20)
+
+Clips unter `godot/grafik/vroni_video/` aus den Grok-Videos der ersten und zweiten Fassung (`docs/grok-prompts-rammbock.md`,
+Abschnitt 3, dort auch Quellen und Umsetzer-Aufrufe): `stand`, `gehen`, `schlag`, `umwerfschlag`, `sprungtritt`,
+`getroffen`, `umgeworfen`, `liegen`, `aufstehen`, `gehalten`, `hocke`, `auftritt`, `spott`. Maßstab 150 Spielbildpixel für
+die A-Pose (`--faktor 0.1669` bei 944 × 944, `0.1775` beim Hochformat-Umfallvideo), Vroni ist damit etwas größer als Darja.
+Zuordnung wie bei Darja, dazu je Angriffscode ein Clip (`ANGRIFF_CLIP`): RA und RB `schlag`, RU `umwerfschlag`, RS
+`sprungtritt` (Anker unten wie bei Velas Sprungtritt, die Höhe kommt aus der Logik; nach dem Tritt läuft der Clip vorwärts
+bis zur Landung). Der Auftritt aus der Hocke dauert beim Rammbock 69 Frames (`KernWerte.AUFTRITT_HOCKE_RAMMBOCK`).
+Vorläufig, weil schräg zur Kamera: `hocke`, `auftritt`, `spott`. Bild: `docs/bilder/godot_vroni.png` (Vorführung Frame 700 und 900, Vroni geht neben Darja und Vela).
+
 Offen: die Gehstufe beim Gehen, ein Spott mit dem Kopf streng im Profil, die
 Rolle Darjas im Design (`docs/figuren.md`, `docs/entwuerfe/gegner-soldaten.md`), Speicher bei mehreren Figuren.
 
