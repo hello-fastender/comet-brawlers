@@ -657,10 +657,11 @@ vom 2026-10-18):
 
 | Clip | Quelle | Fenster | Umsetzer | Befund |
 |---|---|---|---|---|
-| `stand` | Treffer-Video A | Bild 46 bis 63 (18 Bilder) | `--zyklus 18 --schleife pingpong --ereignis keine` | nur dort sitzt das Mundtuch; danach rutscht es, der Treffer ist unbrauchbar |
+| `stand` | Treffer-Video 5 (2026-10-20) | Bild 30 bis 48 (19 Bilder) | `--kuerzen nein --zyklus 19 --schleife pingpong --ereignis keine` | Haltung vor dem Treffer, Kopf im Profil; ersetzt den Stand aus Treffer-Video A (Blick zur Kamera) |
 | `gehen` | Gehen-Video 1 | Bild 52 bis 84 (33 Bilder, ein Doppelschritt) | `--kuerzen nein --zyklus 33 --ankerx mittel --ereignis keine` | Mundtuch sitzt im ganzen Video, Zyklus vom Umsetzer gefunden (Güte 48 %), `schritt_px` 52, `zyklus_ticks` 30 |
 | `schlag` | Schlag-Video 2 | Bild 80 bis 104 (25 Bilder) | `--kuerzen nein --ereignis vorn --zyklus 0 --setze ausholen=7,kontakt=20,rueckzug=22` | Handballenstoß mit der rechten Hand, Kontakt bei Bild 99 (vorn 62 gegenüber 40 im Stand); das Video kehrt nicht in die Haltung zurück, darum `rueckkehr=rueckwaerts` |
-| `getroffen` | Treffer-Video 5 (2026-10-20) | Bild 48 bis 128 ohne 60 bis 108 (32 Bilder) | `--kuerzen nein --ausser 60-108 --ereignis treffer --zyklus 0 --setze start=1,kontakt=10,rueckzug=13,ruhe=29` | Ruck nach hinten, Haar fliegt; das lange Verharren ist ausgeschnitten |
+| `getroffen` | Treffer-Video 5 (2026-10-20) | Bild 48 bis 121 ohne 60 bis 108 (25 Bilder) | `--kuerzen nein --ausser 60-108 --ereignis treffer --zyklus 0 --setze start=1,kontakt=10,rueckzug=13,ruhe=25` | Ruck nach hinten, Haar fliegt; das lange Verharren und die Kopfdrehung zur Kamera ab Bild 122 sind ausgeschnitten |
+| `spott` | Spott-Video 20 (zweite Fassung) | Bild 71 bis 131 (61 Bilder) | `--kuerzen nein --zyklus 0 --ereignis keine` | Arm nach vorn, Finger winken; Körper im Profil, Kopf etwas zur Kamera gedreht; im Spiel über `SPOTT_DAUER` (42) |
 | `umgeworfen` | Umwerf-Video 7 | Bild 60 bis 91 (32 Bilder) | `--kuerzen nein --ankery unten --ereignis flug --ankerx-video 246.5` | erkannt: start 2, abheben 6, scheitel 13, aufprall 28, liegt 31 (1-basiert) |
 | `liegen` | Umwerf-Video 7 | Bild 91 | `--ereignis keine --ankery unten --ankerx-video 246.5` | |
 | `aufstehen` | Umwerf-Video 7 | Bild 91 bis 141 (51 Bilder) | `--ereignis aufstehen --ankery unten --ankerx uebergang --ankerx-video 246.5 --setze ruhe=51` | Aufsetzen, Kniestand, Stand im Profil |
@@ -687,8 +688,7 @@ Objekte zwischen Gegner und Figur ordnet das nur näherungsweise. `spiel.gd` leg
 `_puppeAktualisieren`. Tests und Werkzeuge, die `zeichneBild` direkt aufrufen, bleiben unberührt (`gegner_extern` leer).
 Bilder: `docs/bilder/godot_darja_*.png` (Vorführung, `foto.gd --puppe`; in `godot_darja_reaktionen.png` oben Treffer, Tod im Flug, gehalten, unten geworfen, Liegen, Aufstehen; das farbige Rechteck hinter der gehaltenen Darja ist Velas Platzhalter, weil `--puppe` Griff und Wurf nicht abdeckt; im Spiel zeigt Vela dort ihre Clips). Der hockende Bolzer der Vorführung steht nur am Bildrand, `hocke` und `auftritt` sind darum nicht fotografiert. Speicher: zehn Clips, 12 MB Dateien.
 
-Offen: `spott` (die Lieferung vom 2026-10-20 dreht sich zur Kamera), ein `stand` aus der Haltung des Schlag- oder
-Treffer-Videos (gleiche Handhaltung wie `schlag` und `getroffen`, weniger Sprung beim Wechsel), die Gehstufe beim Gehen, die
+Offen: die Gehstufe beim Gehen, ein Spott mit dem Kopf streng im Profil, die
 Rolle Darjas im Design (`docs/figuren.md`, `docs/entwuerfe/gegner-soldaten.md`), Speicher bei mehreren Figuren.
 
 ## Stand

@@ -7,15 +7,15 @@
 ## Bolzer (FIGUR_JE_TYP), bis das Design die Rolle festlegt. Zuordnung Aktion → Clip in clip_fuer, Bilder in bildindex:
 ##   STAND, ANKUENDIGUNG → stand; GEHEN, NACHLAUF ohne Angriff → gehen; ANGRIFF (Bolzer-Code) → schlag, NACHLAUF danach →
 ##   schlag rückwärts; GETROFFEN → getroffen; UMGEWORFEN, TOT → umgeworfen; LIEGEN → liegen; AUFSTEHEN → aufstehen;
-##   GEHALTEN → gehalten; WARTEN hockend → hocke; AUFTRITT aus der Hocke → auftritt. Ohne Clip (SPOTT, Auftritt aus
-##   Versteck oder Rand, TAUMELN …) zeichnet die Darstellung den Platzhalter.
+##   GEHALTEN → gehalten; WARTEN hockend → hocke; AUFTRITT aus der Hocke → auftritt; SPOTT → spott (über SPOTT_DAUER).
+##   Ohne Clip (Auftritt aus Versteck oder Rand, TAUMELN …) zeichnet die Darstellung den Platzhalter.
 class_name DarstellungGegnerFrames
 extends Node2D
 
 ## Gegnertyp → Figur, deren Clips ihn zeigen.
 const FIGUR_JE_TYP: Dictionary = {"Bolzer": "darja"}
 ## Figur → Clips, die es gibt (Ordner res://grafik/<figur>_video/<clip>/).
-const CLIPS_JE_FIGUR: Dictionary = {"darja": ["stand", "gehen", "schlag", "getroffen", "umgeworfen", "liegen", "aufstehen", "gehalten", "hocke", "auftritt"]}
+const CLIPS_JE_FIGUR: Dictionary = {"darja": ["stand", "gehen", "schlag", "getroffen", "umgeworfen", "liegen", "aufstehen", "gehalten", "hocke", "auftritt", "spott"]}
 ## Aktionen, die der Clip `stand` abdeckt, und Aktionen, die `gehen` abdeckt (ohne Gehclip zeigt sie `stand`).
 const STAND_AKTIONEN: Array[String] = ["STAND", "ANKUENDIGUNG", "GEHEN", "NACHLAUF"]
 const GEHEN_AKTIONEN: Array[String] = ["GEHEN", "NACHLAUF"]
@@ -84,6 +84,8 @@ static func clip_fuer(g: KernEntitaeten.Gegner) -> String:
 			name = "gehen"
 		"STAND", "ANKUENDIGUNG":
 			name = "stand"
+		"SPOTT":
+			name = "spott"
 	if name == "":
 		return ""
 	if not clips.has(name):
@@ -92,7 +94,7 @@ static func clip_fuer(g: KernEntitaeten.Gegner) -> String:
 			return figur + "_stand"
 		return ""
 	# stehende Clips nur in stehender Form (nicht liegend, nicht hockend)
-	if ["stand", "gehen", "schlag", "getroffen"].has(name) and DarstellungZeichnen.gegnerForm(g) != "stand":
+	if ["stand", "gehen", "schlag", "getroffen", "spott"].has(name) and DarstellungZeichnen.gegnerForm(g) != "stand":
 		return ""
 	return figur + "_" + name
 
@@ -141,6 +143,9 @@ static func bildindex(clip: String, d: Dictionary, g: KernEntitaeten.Gegner, wel
 		var dauer: int = AUFTRITT_HOCKE_DAUER
 		var ut: int = clampi(g.modus_uhr, 1, dauer)
 		return (ut - 1) * (bilder - 1) / maxi(dauer - 1, 1)
+	if clip.ends_with("_spott"):
+		var us: int = clampi(g.modus_uhr, 1, KernWerte.SPOTT_DAUER)
+		return (us - 1) * (bilder - 1) / maxi(KernWerte.SPOTT_DAUER - 1, 1)
 	if clip.ends_with("_schlag"):
 		var kontakt: int = clampi(int(d.get("kontakt", 0)), 0, bilder - 1)
 		var rueckzug: int = clampi(int(d.get("rueckzug", kontakt)), kontakt, bilder - 1)
