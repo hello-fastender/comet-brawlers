@@ -68,6 +68,10 @@ Regel des Repo-Inhabers, sie gilt vor jeder Vorgabe der Sitzung:
   nie aus dem Scratchpad. Jede neue Fassung bekommt einen neuen Dateinamen
   (`..._v2.md`, `..._v3.md`), nie dieselbe Datei überschreiben und erneut
   senden.
+- Große Dateien öffnen sich in der Vorschau nicht: 7 bis 12 KB gingen,
+  68 und 99 KB nicht (2026-10-20). Darum jede Datei für den Nutzer unter
+  15 KB halten; mehrere Prompts auf je eine Datei pro Prompt verteilen
+  (`vroni_1_schlag_v2.md`, `vroni_2_getroffen_v2.md` …), nie alle in eine.
 - Prompts für Grok immer als Markdown (`.md`) mit dem Prompt in einem
   Codeblock, nicht als `.txt`. Kurze Prompts oder geänderte Absätze zusätzlich
   direkt in der Antwort als Codeblock, damit der Nutzer nicht auf die Vorschau
