@@ -84,7 +84,8 @@ static func clip_fuer(g: KernEntitaeten.Gegner) -> String:
 		"AUFTRITT":
 			if g.auftritt == "hocke":
 				name = "auftritt"
-		"ANGRIFF":
+		"ANGRIFF", "SPRUNG":
+			# der Sprungtritt des Rammbocks (RS) heißt in der Logik SPRUNG
 			if g.modus == "ANGRIFF" and _nahangriff(g.angriff_code):
 				name = _angriff_clip(g.angriff_code, clips)
 		"NACHLAUF":

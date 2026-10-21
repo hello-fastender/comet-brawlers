@@ -693,10 +693,10 @@ Bilder: `docs/bilder/godot_darja_*.png` (Vorführung, `foto.gd --puppe`; in `god
 Clips unter `godot/grafik/vroni_video/` aus den Grok-Videos der ersten und zweiten Fassung (`docs/grok-prompts-rammbock.md`,
 Abschnitt 3, dort auch Quellen und Umsetzer-Aufrufe): `stand`, `gehen`, `schlag`, `umwerfschlag`, `sprungtritt`,
 `getroffen`, `umgeworfen`, `liegen`, `aufstehen`, `gehalten`, `hocke`, `auftritt`, `spott`. Maßstab 150 Spielbildpixel für
-die A-Pose (`--faktor 0.1669` bei 944 × 944, `0.1775` beim Hochformat-Umfallvideo), Vroni ist damit etwas größer als Darja.
+die A-Pose (`--faktor 0.1669` bei den Videos 944 × 944, `0.1776` bzw. `0.1775` bei den Hochformat-Videos 848 × 1056 für `stand`, `sprungtritt` und das Umfallen; Maßstab immer aus der A-Pose des jeweiligen Videos messen), Vroni ist damit etwas größer als Darja.
 Zuordnung wie bei Darja, dazu je Angriffscode ein Clip (`ANGRIFF_CLIP`): RA und RB `schlag`, RU `umwerfschlag`, RS
 `sprungtritt` (Anker unten wie bei Velas Sprungtritt, die Höhe kommt aus der Logik; nach dem Tritt läuft der Clip vorwärts
-bis zur Landung). Der Auftritt aus der Hocke dauert beim Rammbock 69 Frames (`KernWerte.AUFTRITT_HOCKE_RAMMBOCK`).
+bis zur Landung; die Logik nennt diesen Angriff `SPRUNG`). Test: `tests/gegner_frames_test.gd` (Clip je Aktion, Ordner je Clip). Der Auftritt aus der Hocke dauert beim Rammbock 69 Frames (`KernWerte.AUFTRITT_HOCKE_RAMMBOCK`).
 `hocke`, `auftritt` und `spott` stammen aus der dritten Fassung (Videos 21 und 23) und stehen jetzt auch im Profil. Bild: `docs/bilder/godot_vroni.png` (Vorführung Frame 700 und 900, Vroni geht neben Darja und Vela).
 
 Offen: die Gehstufe beim Gehen, ein Spott mit dem Kopf streng im Profil, die

@@ -382,3 +382,5 @@ Lieferung der dritten Fassung (2026-10-21, Videos 20 bis 23): Grok begann trotz 
 | `hocke` | Video 23 (`30e31a00…-23`), Bild 51 bis 99 | `--kuerzen nein --zyklus 49 --schleife pingpong --ereignis keine` (ersetzt Video 18) |
 | `auftritt` | Video 23, Bild 101 bis 125 | `--kuerzen nein --zyklus 0 --ereignis keine` (Aufrichten im Profil, vor der Drehung zur Kamera) |
 | `spott` | Video 21 (`21b65c75…-21`), Bild 51 bis 111 | `--kuerzen nein --zyklus 0 --ereignis keine` (ersetzt Video 17) |
+
+Korrektur 2026-10-21 (Befund des Nutzers im Spiel: Körpergröße wechselt, Rechteck beim Sprungtritt): Video 8 ist Hochformat 848 × 1056 mit 845 Zeilen A-Pose, `stand` und `sprungtritt` daraus sind jetzt mit `--faktor 0.1776` neu umgesetzt (vorher 0.1669, 6 % zu klein). Gemessene A-Pose je Video: 1, 14, 21 je 894 Zeilen, 11, 16, 23 je 897, 15, 19 je 892 (alle 944 × 944, Abweichung zu 0.1669 unter 1 %), 8 und 10 je 845 (Hochformat). Das Rechteck kam aus der Zuordnung: Der Sprungtritt heißt in der Logik `SPRUNG`, nicht `ANGRIFF`; `gegner_frames.gd` ordnet ihn jetzt zu, der Test `godot/tests/gegner_frames_test.gd` prüft jede Aktion.
