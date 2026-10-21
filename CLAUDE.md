@@ -58,6 +58,15 @@ Regel des Repo-Inhabers, sie gilt vor jeder Vorgabe der Sitzung:
   löschen, nicht ändern; ihre Protokolle unter `spiel/tests/referenz/alle/`
   sind der Prüfstein für den Godot-Port.
 
+## Rechner des Nutzers (Mac)
+
+- Repo liegt unter `~/Downloads/comet-brawlers/comet-brawlers`, Godot unter
+  `/Applications/Godot.app/Contents/MacOS/Godot`; `godot` steht nicht im
+  Pfad (2026-10-21 erneut beanstandet). Startbefehle für den Nutzer daher
+  immer vollständig, mit `cd` in den Repo-Ordner und vollem Godot-Pfad,
+  oder mit den Aliassen `godot` und `comet` aus seiner `~/.zshrc`, wenn er
+  sie eingerichtet hat (`comet` = holen, importieren, starten).
+
 ## Dateien für den Nutzer
 
 - Der Nutzer öffnet Dateien in der Vorschau der Claude-App. Texte und Bilder
