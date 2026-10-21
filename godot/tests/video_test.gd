@@ -1573,7 +1573,7 @@ func _tabelle_neu() -> void:
 			gmono = false
 	_ok(gmono, "Getroffen: nach der Auslenkung nur noch vorwärts bis zur Ruhe")
 	_gleich(tv[tv.size() - 1], int(ge["ruhe"]), "Getroffen: nach der Dauer hält die Ruhe")
-	# vorn und hinten (G1-11): nur von vorn gibt es einen Clip
+	# vorn und hinten (G1-11): auch von hinten zeigt getroffen_vorn (kein eigener Clip, kein Rückfall auf Puppe oder Rechteck)
 	var welt: KernWelt = KernWelt.new()
 	var fg: KernEntitaeten.Figur = _figur("GETROFFEN")
 	welt.figur = fg
@@ -1587,7 +1587,7 @@ func _tabelle_neu() -> void:
 	gegner.x = KernFestkomma.ausGanz(100)
 	_gleich(T.wahl(fg, welt).get("clip", ""), "getroffen_vorn", "Getroffen: gleiche x-Lage zählt als vorn")
 	gegner.x = KernFestkomma.ausGanz(50)
-	_ok(T.wahl(fg, welt).is_empty() and not DarstellungVelaFrames.abgedeckt(fg, welt), "Getroffen: Angreifer hinter der Figur → kein Clip (Puppe oder Platzhalter)")
+	_gleich(T.wahl(fg, welt).get("clip", ""), "getroffen_vorn", "Getroffen: Angreifer hinter der Figur → ebenfalls getroffen_vorn")
 	fg.blick = -1
 	_gleich(T.wahl(fg, welt).get("clip", ""), "getroffen_vorn", "Getroffen: Blick links, Angreifer links → vorn")
 	fg.letzter_angreifer = null

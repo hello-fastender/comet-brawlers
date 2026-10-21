@@ -39,11 +39,12 @@ const ORDNER: String = "res://grafik/vela_video/"
 ## Vergrößerung der Clips gegenüber ihrer Vermessung (DarstellungMasse.ASSET_ZU_BILD: E28, 4 / 2 = 2).
 const ASSET_ZU_BILD: int = DarstellungMasse.ASSET_ZU_BILD
 
-## Obergrenze des Texturspeichers aller geladenen Clips in MB (4 Byte je Pixel). Alle fünfzehn gemalten Vela-Clips brauchen
-## nach dem Zuschnitt rund 209 MB (docs/godot.md, „Speicher“, Stand 2026-10-08); die Obergrenze lässt sie alle zugleich
-## im Speicher, damit nie ein Clip mitten im Spiel fehlt (Rückfall auf die Puppe wäre ein sichtbarer Stilbruch). Für weitere
-## Figuren reicht das nicht: dort müssen Texturen komprimiert oder nur die Clips der Bühne geladen werden.
-const SPEICHER_BUDGET_MB: int = 256
+## Obergrenze des Texturspeichers aller geladenen Clips in MB (4 Byte je Pixel). Die gemalten Clips brauchen ohne Zuschnitt
+## höchstens rund 232 MB (Vela), 113 MB (Darja) und 180 MB (Vroni), zusammen 525 MB (Stand 2026-10-21); die Obergrenze
+## lässt sie alle zugleich im Speicher, damit nie ein Clip mitten im Spiel fehlt. Mit 256 MB wurden Clips ständig entladen
+## und neu geladen, und solange zeigte das Spiel Rechtecke (Befund des Nutzers 2026-10-21). Für weitere Figuren müssen
+## Texturen komprimiert oder nur die Clips der Bühne geladen werden.
+const SPEICHER_BUDGET_MB: int = 640
 ## Zeitbudget (µs) eines Aufrufs von vorausladen_schritt im Leerlauf und bei vorgemerkten Clips.
 const VORAUS_LEERLAUF_US: int = 3000
 const VORAUS_BEDARF_US: int = 6000
@@ -67,6 +68,9 @@ static var _benutzt_zaehler: int = 0
 static var _gezeigt: String = ""
 ## Ladestatistik (Messung): Clip → {"bilder": int, "us": int, "max_us": int}
 static var ladezeiten: Dictionary = {}
+
+## Weitere Clips, die nach VORAUS_REIHE vorausgeladen werden (Gegnerfiguren, DarstellungGegnerFrames.registrieren).
+static var voraus_weitere: Array[String] = []
 
 ## Modus „nachladen“ (siehe Kopf): im Spiel an, sonst aus.
 static var nachladen: bool = false
@@ -278,7 +282,7 @@ static func _naechster_clip() -> String:
 		if not _clips.has(v):
 			_platz_schaffen(v)
 		return v
-	for name: String in VORAUS_REIHE:
+	for name: String in VORAUS_REIHE + voraus_weitere:
 		if ist_bereit(name) or _fehlt.has(name) or clip_daten(name).is_empty():
 			continue
 		if _clips.has(name):

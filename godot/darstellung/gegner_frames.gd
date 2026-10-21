@@ -28,6 +28,15 @@ const ANGRIFF_CLIPS: Array[String] = ["schlag", "umwerfschlag", "sprungtritt"]
 ## Aktionen, die der Clip `stand` abdeckt, und Aktionen, die `gehen` abdeckt (ohne Gehclip zeigt sie `stand`).
 const STAND_AKTIONEN: Array[String] = ["STAND", "ANKUENDIGUNG", "GEHEN", "NACHLAUF"]
 const GEHEN_AKTIONEN: Array[String] = ["GEHEN", "NACHLAUF"]
+## Reichweite der Schläge im Bild: Die Logik trifft auf bis zu 48 + 31 px Abstand (docs/mechanik.md, „Reichweite der
+## Gegnerangriffe“), die gemalte Faust reicht kürzer. Bis zum Kontaktbild rückt das Bild darum um den fehlenden Abstand
+## zur Figur vor (höchstens REICHWEITE_MAX Spielbildpixel, die Faust endet REICHWEITE_UEBERLAPP Pixel vor dem Fußpunkt der
+## Figur) und im Nachlauf mit dem Clip wieder zurück. Nur Darstellung, die Logik bleibt unberührt.
+const REICHWEITE_MAX: int = 32
+const REICHWEITE_UEBERLAPP: int = 8
+## Clips, für die das gilt (der Sprungtritt fliegt in der Logik selbst).
+const REICHWEITE_CLIPS: Array[String] = ["schlag", "umwerfschlag"]
+
 ## Auftritt aus der Hocke je Typ: Frames bis kampffähig (docs/spezifikation-welt.md, 4.2; Darstellungswert, die Logik
 ## bleibt maßgeblich).
 const AUFTRITT_HOCKE_DAUER: Dictionary = {"Bolzer": KernWerte.AUFTRITT_HOCKE_BOLZER, "Rammbock": KernWerte.AUFTRITT_HOCKE_RAMMBOCK}
@@ -42,9 +51,11 @@ func _init() -> void:
 	name = "GegnerFrames"
 
 
-## Registriert alle Clips aller Figuren einmal. Rückgabe: true, wenn mindestens ein Clip lesbar ist.
+## Registriert alle Clips aller Figuren einmal und reiht sie ins Vorausladen ein (je Figur zuerst stand und gehen).
+## Rückgabe: true, wenn mindestens ein Clip lesbar ist.
 static func registrieren() -> bool:
 	var einer: bool = false
+	var reihe: Array[String] = []
 	for figur: String in CLIPS_JE_FIGUR:
 		for clip: String in CLIPS_JE_FIGUR[figur]:
 			var name: String = figur + "_" + clip
@@ -52,6 +63,13 @@ static func registrieren() -> bool:
 				einer = true
 			elif DarstellungVelaFrames.clip_registrieren(name, "res://grafik/%s_video/%s/" % [figur, clip]):
 				einer = true
+			if ["stand", "gehen"].has(clip):
+				reihe.push_front(name)
+			else:
+				reihe.append(name)
+	for name: String in reihe:
+		if not DarstellungVelaFrames.voraus_weitere.has(name):
+			DarstellungVelaFrames.voraus_weitere.append(name)
 	return einer
 
 
@@ -82,8 +100,8 @@ static func clip_fuer(g: KernEntitaeten.Gegner) -> String:
 			if g.auftritt == "hocke" and DarstellungZeichnen.gegnerForm(g) == "hocke":
 				name = "hocke"
 		"AUFTRITT":
-			if g.auftritt == "hocke":
-				name = "auftritt"
+			# aus der Hocke der eigene Clip; aus Versteck, Luke oder vom Rand kommt der Gegner gehend herein
+			name = "auftritt" if g.auftritt == "hocke" else "gehen"
 		"ANGRIFF", "SPRUNG":
 			# der Sprungtritt des Rammbocks (RS) heißt in der Logik SPRUNG
 			if g.modus == "ANGRIFF" and _nahangriff(g.angriff_code):
@@ -214,13 +232,20 @@ func aus_welt(welt: KernWelt) -> void:
 			continue
 		if DarstellungVelaFrames.nachladen and not DarstellungVelaFrames.ist_bereit(clip):
 			DarstellungVelaFrames.vormerken(clip)
-			node.visible = false
-			continue
-		if not node.aus_clip_bild(clip, bildindex(clip, d, g, welt), blick_fuer(clip, g)):
+			# solange der Clip lädt, zeigt ein stehender Gegner seinen Stand statt des Rechtecks
+			var ersatz: String = clip.get_slice("_", 0) + "_stand"
+			if DarstellungZeichnen.gegnerForm(g) != "stand" or not DarstellungVelaFrames.ist_bereit(ersatz):
+				node.visible = false
+				continue
+			clip = ersatz
+			d = DarstellungVelaFrames.clip_daten(clip)
+		var idx: int = bildindex(clip, d, g, welt)
+		if not node.aus_clip_bild(clip, idx, blick_fuer(clip, g)):
 			continue
 		var l: DarstellungZeichnen.Lage = DarstellungZeichnen.lageVon(k, g)
+		var vor: int = reichweite_versatz(clip, d, idx, g, welt.figur)
 		node.position = Vector2(
-			float(l.x + welt.kamera.schuetteln_x) * DarstellungMasse.DARSTELLUNG + DarstellungMasse.DARSTELLUNG * 0.5,
+			float(l.x + vor + welt.kamera.schuetteln_x) * DarstellungMasse.DARSTELLUNG + DarstellungMasse.DARSTELLUNG * 0.5,
 			float(l.fuss + welt.kamera.schuetteln_y) * DarstellungMasse.DARSTELLUNG
 		)
 		# Tiefe wie DarstellungZeichnen.stueckVor: hinten zuerst (⌊z⌋ absteigend), bei gleicher Tiefe Gegner vor der Figur.
@@ -231,6 +256,20 @@ func aus_welt(welt: KernWelt) -> void:
 		var gz: int = KernFestkomma.ganz(g.z)
 		node.z_index = 0 if gz >= fz else 2
 		extern[i] = true
+
+
+## Versatz des Bildes in x (Spielbildpixel, mit Vorzeichen des Blicks), damit die Faust im Kontaktbild die Figur erreicht
+## (siehe REICHWEITE_MAX). Reine Funktion.
+static func reichweite_versatz(clip: String, d: Dictionary, idx: int, g: KernEntitaeten.Gegner, f: KernEntitaeten.Figur) -> int:
+	if not REICHWEITE_CLIPS.has(clip.get_slice("_", clip.get_slice_count("_") - 1)):
+		return 0
+	var vorn: Array = d.get("vorn", [])
+	var kontakt: int = int(d.get("kontakt", 0))
+	if kontakt < 1 or kontakt >= vorn.size():
+		return 0
+	var abstand: int = (KernFestkomma.ganz(f.x) - KernFestkomma.ganz(g.x)) * g.blick
+	var fehlt: int = clampi(abstand - REICHWEITE_UEBERLAPP - int(vorn[kontakt]), 0, REICHWEITE_MAX)
+	return fehlt * mini(idx, kontakt) / kontakt * g.blick
 
 
 func _node(i: int) -> DarstellungVelaFrames:

@@ -688,7 +688,21 @@ Objekte zwischen Gegner und Figur ordnet das nur näherungsweise. `spiel.gd` leg
 `_puppeAktualisieren`. Tests und Werkzeuge, die `zeichneBild` direkt aufrufen, bleiben unberührt (`gegner_extern` leer).
 Bilder: `docs/bilder/godot_darja_*.png` (Vorführung, `foto.gd --puppe`; in `godot_darja_reaktionen.png` oben Treffer, Tod im Flug, gehalten, unten geworfen, Liegen, Aufstehen; das farbige Rechteck hinter der gehaltenen Darja ist Velas Platzhalter, weil `--puppe` Griff und Wurf nicht abdeckt; im Spiel zeigt Vela dort ihre Clips). Der hockende Bolzer der Vorführung steht nur am Bildrand, `hocke` und `auftritt` sind darum nicht fotografiert. Speicher: zehn Clips, 12 MB Dateien.
 
-### Vroni als Rammbock (seit 2026-10-20)
+### Befunde im Spiel (2026-10-21)
+
+- **Rechtecke bei allen drei Figuren:** Alle gemalten Clips brauchen ohne Zuschnitt rund 525 MB (Vela 232, Darja 113,
+  Vroni 180), das Budget war 256 MB; das Spiel entlud ständig Clips und zeigte beim Nachladen Rechtecke.
+  `SPEICHER_BUDGET_MB` ist jetzt 640, die Gegnerclips werden nach Velas Reihe vorausgeladen (`voraus_weitere`), und ein
+  stehender Gegner zeigt bis zum Ende des Ladens seinen Stand.
+- **Rechtecke beim Auftritt aus Versteck, Luke oder Rand:** Der Gegner zeigt dabei jetzt `gehen`.
+- **Treffer von hinten (Vela):** zeigt bis zu einem eigenen Clip `getroffen_vorn` statt Puppe oder Rechteck.
+- **Schlag ohne Körperkontakt:** Die Logik trifft auf bis zu 79 px Abstand, die gemalte Faust reicht rund 60 px. Bis zum
+  Kontaktbild rückt das Bild um den fehlenden Abstand vor, höchstens 32 Spielbildpixel (`reichweite_versatz`).
+- **Weiter ohne Clip (Vela):** Spezial, Sprintangriff, Waffe, Kniestoß, Aufnehmen und Neueinstieg zeigen das Rechteck,
+  bis es dafür gemalte Clips gibt. Suche: `godot --headless --path godot --script res://werkzeuge/platzhalter_suche.gd`
+  (zählt über alle Testszenen die Zustände ohne Clip).
+
+
 
 Clips unter `godot/grafik/vroni_video/` aus den Grok-Videos der ersten und zweiten Fassung (`docs/grok-prompts-rammbock.md`,
 Abschnitt 3, dort auch Quellen und Umsetzer-Aufrufe): `stand`, `gehen`, `schlag`, `umwerfschlag`, `sprungtritt`,

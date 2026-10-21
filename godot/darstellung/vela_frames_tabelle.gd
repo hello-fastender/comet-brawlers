@@ -24,7 +24,7 @@
 ##                                                   SPRUNGANGRIFF, 5 bis 28 ab A), danach der Rückzug bis zum letzten Luftbild, das im
 ##                                                   letzten Luftframe steht (die Dauer folgt aus der Sprunguhr, Landung J+42)
 ##   GETROFFEN                      getroffen_vorn  treffer: Auslenkung früh (uhr 3 bis 6), Rückkehr bis uhr 27;
-##                                                   nur wenn der Angreifer vorn steht (G1-11), sonst Puppe/Platzhalter
+##                                                   auch beim Angreifer hinten (G1-11), bis es dafür einen Clip gibt
 ##   UMGEWORFEN                     umgeworfen      flug: Stillstand uhr 1 bis 9, Flug nach bahn_frame, Aufprall im
 ##                                                   Bodenkontaktframe (bahn_boden), danach 7 Ticks bis zum Liegen
 ##   TOT                            umgeworfen,     wie UMGEWORFEN mit dem Stillstand von F4 (2); ab der Ruhe (phase R)
@@ -149,6 +149,10 @@ static func clip_lesen(text: String) -> Dictionary:
 			ev[k.substr(9)] = maxi(int(roh[k]) - 1, 0)
 	d["ereignis"] = ev
 	d["kontakt1"] = int(ev.get("kontakt1", d["kontakt"]))
+	var vorn: Array[int] = []
+	for s: String in String(roh.get("vorn", "")).split(",", false):
+		vorn.append(int(s))
+	d["vorn"] = vorn
 	return d
 
 
@@ -621,8 +625,8 @@ static func wahl(f: KernEntitaeten.Figur, welt: KernWelt = null) -> Dictionary:
 			var lclip: String = "sprungtritt" if f.sprung_angriff and tritt_variante(f.sprung_variante) else "sprung"
 			return {"clip": lclip, "art": "landung", "uhr": u, "blick": f.blick}
 		"GETROFFEN":
-			if not angreifer_vorn(f, welt):
-				return {}
+			# ein Clip für Treffer von hinten fehlt; bis dahin zeigt auch der Treffer von hinten getroffen_vorn (Blick bleibt),
+			# statt auf Puppe oder Rechteck zu fallen (Befund des Nutzers 2026-10-21)
 			return {"clip": "getroffen_vorn", "art": "treffer", "uhr": u, "blick": f.blick}
 		"UMGEWORFEN":
 			return {"clip": "umgeworfen", "art": "flug", "uhr": u, "bahn_frame": f.bahn_frame, "bahn_boden": f.bahn_boden, "stillstand": KernWerte.F1_STILLSTAND, "blick": flugblick}
