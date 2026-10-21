@@ -697,7 +697,7 @@ die A-Pose (`--faktor 0.1669` bei 944 × 944, `0.1775` beim Hochformat-Umfallvid
 Zuordnung wie bei Darja, dazu je Angriffscode ein Clip (`ANGRIFF_CLIP`): RA und RB `schlag`, RU `umwerfschlag`, RS
 `sprungtritt` (Anker unten wie bei Velas Sprungtritt, die Höhe kommt aus der Logik; nach dem Tritt läuft der Clip vorwärts
 bis zur Landung). Der Auftritt aus der Hocke dauert beim Rammbock 69 Frames (`KernWerte.AUFTRITT_HOCKE_RAMMBOCK`).
-Vorläufig, weil schräg zur Kamera: `hocke`, `auftritt`, `spott`. Bild: `docs/bilder/godot_vroni.png` (Vorführung Frame 700 und 900, Vroni geht neben Darja und Vela).
+`hocke`, `auftritt` und `spott` stammen aus der dritten Fassung (Videos 21 und 23) und stehen jetzt auch im Profil. Bild: `docs/bilder/godot_vroni.png` (Vorführung Frame 700 und 900, Vroni geht neben Darja und Vela).
 
 Offen: die Gehstufe beim Gehen, ein Spott mit dem Kopf streng im Profil, die
 Rolle Darjas im Design (`docs/figuren.md`, `docs/entwuerfe/gegner-soldaten.md`), Speicher bei mehreren Figuren.

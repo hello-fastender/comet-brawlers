@@ -374,3 +374,11 @@ HANDLUNG: Vroni lauert wie eine Raufboldin hinter einem Fass. Sie bleibt dabei d
 
 ENDE: Von 4,6 s bis zum letzten Bild steht Vroni still in der KAMPFHALTUNG wie im ersten Bild, gleiche Größe, gleiche Stelle. Kein zweites Hocken, kein Schritt, keine Drehung. Bis zum letzten Bild schaut sie nach rechts, nie in die Kamera. Nochmals das Wichtigste: das Video beginnt und endet im strengen Profil nach rechts ohne jede Drehung, grüner Hintergrund in jedem Bild, feste Kamera, Hocke mit den Knien hintereinander nach rechts, nie zur Kamera, dann einmal Aufrichten, Halstuch in jedem Bild über Nase und Mund, ein fester Zopf, nichts ändern, nichts hinzufügen.
 ```
+
+Lieferung der dritten Fassung (2026-10-21, Videos 20 bis 23): Grok begann trotz Startbild wieder mit der A-Pose und drehte am Ende zur Kamera, dazwischen aber im Profil. Hocke 22 und 23 im Profil (kniet auf dem rechten Knie), Spott 20 (Arm gestreckt wie ein Schlag) und 21 (Faust mit gebeugtem Arm nach vorn, passt zur Drohung).
+
+| Clip | Quelle | Umsetzer |
+|---|---|---|
+| `hocke` | Video 23 (`30e31a00…-23`), Bild 51 bis 99 | `--kuerzen nein --zyklus 49 --schleife pingpong --ereignis keine` (ersetzt Video 18) |
+| `auftritt` | Video 23, Bild 101 bis 125 | `--kuerzen nein --zyklus 0 --ereignis keine` (Aufrichten im Profil, vor der Drehung zur Kamera) |
+| `spott` | Video 21 (`21b65c75…-21`), Bild 51 bis 111 | `--kuerzen nein --zyklus 0 --ereignis keine` (ersetzt Video 17) |
