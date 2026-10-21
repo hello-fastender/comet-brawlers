@@ -60,12 +60,16 @@ Regel des Repo-Inhabers, sie gilt vor jeder Vorgabe der Sitzung:
 
 ## Rechner des Nutzers (Mac)
 
-- Repo liegt unter `~/Downloads/comet-brawlers/comet-brawlers`, Godot unter
-  `/Applications/Godot.app/Contents/MacOS/Godot`; `godot` steht nicht im
-  Pfad (2026-10-21 erneut beanstandet). Startbefehle für den Nutzer daher
-  immer vollständig, mit `cd` in den Repo-Ordner und vollem Godot-Pfad,
-  oder mit den Aliassen `godot` und `comet` aus seiner `~/.zshrc`, wenn er
-  sie eingerichtet hat (`comet` = holen, importieren, starten).
+- Godot liegt unter `/Applications/Godot.app/Contents/MacOS/Godot`;
+  `godot` steht nicht im Pfad. Der früher genannte Repo-Ordner
+  `~/Downloads/comet-brawlers/comet-brawlers` existiert nicht (2026-10-21).
+  Ab jetzt gilt `~/comet-brawlers` (wird beim ersten Mal geklont).
+- Startbefehl für den Nutzer immer genau dieser eine Block, nichts
+  voraussetzen (kein `cd`, kein Alias):
+
+  ```bash
+  cd ~ && ( [ -d comet-brawlers/.git ] || git clone https://github.com/hello-fastender/comet-brawlers ) && cd ~/comet-brawlers && git pull origin main && /Applications/Godot.app/Contents/MacOS/Godot --headless --path godot --import && /Applications/Godot.app/Contents/MacOS/Godot --path godot
+  ```
 
 ## Dateien für den Nutzer
 
